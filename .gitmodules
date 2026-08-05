@@ -1,0 +1,6 @@
+[submodule "Evaluation/FVRuleLearner"]
+	path = Evaluation/FVRuleLearner
+	url = https://github.com/NVlabs/FVRuleLearner.git
+[submodule "TCAD-Hybrid-NL2SVA"]
+	path = TCAD-Hybrid-NL2SVA
+	url = https://github.com/FCHXWH823/TCAD-Hybrid-NL2SVA.git

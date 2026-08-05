@@ -5,9 +5,5 @@
 __pycache__/
 *.pyc
 
-# Nested git repos (vendored tools/paper source, not tracked as submodules)
-Evaluation/FVRuleLearner/
-TCAD-Hybrid-NL2SVA/
-
 # Oversized data files (exceed GitHub's 100MB limit)
 verilogFinetune/data/CodeV-SVA-dataset-training-83K.jsonl
