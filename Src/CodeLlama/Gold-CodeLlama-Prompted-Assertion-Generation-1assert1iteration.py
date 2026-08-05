@@ -106,6 +106,39 @@ def extract_prerequist_of_assertions(verilog_code_w_assertions:str, verilog_code
     lines_assertions.append("// above are golden assertions\n\n")
     return lines_assertions
 
+def golden_check(explanation, logic_expression):
+
+    checking_str = ""
+    ops = []
+    with open("sva_property_sequence_operators.jsonl","r") as file:
+        lines = file.readlines()
+        for line in lines:
+            line = line.strip()
+            ops.append(json.loads(line)) 
+    
+    if "|=>" in logic_expression or "|->" in logic_expression:
+        checking_str += '''"Op": "|->", "Usage": "sequence_expr |-> property_expr",  "Explanation": "for every match of the sequence_expr beginning at the start point, the evaluation of the property_expr beginning in the current clock cycle at the end point of the match succeeds and returns true."\n'''
+        checking_str += '''"Op": "|=>", "Usage": "sequence_expr |=> property_expr",  "Explanation": "for every match of the sequence_expr beginning at the start point, the evaluation of the property_expr beginning at the next clock cyle after the end point of the match succeeds and returns true."\n'''
+
+    for op in ops:
+        if re.search(op["Op_Regex"], logic_expression):
+            checking_str += f'''"Op": "{op['Op']}", "Usage": "{op['Usage']}",  "Explanation": "{op['Explanation']}"\n'''
+            # retrieved_doc = code_retriever.invoke(f"`{op}`: {operators[op]}")                    
+            # for doc in retrieved_doc:
+            #     checking_str += doc.page_content + "\n\n"
+            # checking_str += "\n"    
+
+
+    # checking_str += llm_response_explain
+    # print(f"checking_str: {checking_str}")
+    completion = client.invoke(input=[
+        {"role": "system", "content": "You are a helpful bot that answer some questions about SystemVerilog."},
+        {"role": "user", "content": f"Given the desired explanation\n{explanation},\n please check whether the systemverilog assertion {logic_expression} operates with the correct logic and the same timing (i.e., clock cycle).\n The relevant context of the used operators are given:\n {checking_str}.\n If there exists, please modify it into a new systemverilog assertion and output the new assertion.\n"}
+    ])
+    
+    # print(completion.choices[0].message.content)
+    return completion.content
+
 
 def assertion_generation(code, assertion, details):
     explanation = details.get("Assertion Explaination", "No explanation provided")
@@ -123,6 +156,8 @@ def assertion_generation(code, assertion, details):
         {"role": "user", "content": prompt}
     ])
 
+    llm_response = completion.content
+
     # completion = client.chat.completions.create(
     # model=model_name,
     # messages=[
@@ -139,12 +174,22 @@ def assertion_generation(code, assertion, details):
     #         {"role": "system", "content": "You are a helpful bot that correct the syntax errors of systemverilog assertion if there exists."},
     #         {"role": "user", "content": checker_prompt}
     #     ])
-    rewrite_prompt = assertion_format_prompt(completion.content,assertion_format)
-    completion = OpenAI_client.invoke(input=[
-        {"role": "system", "content": "You are a helpful bot that rewrite the input to follow the specified format."},
-        {"role": "user", "content": rewrite_prompt}
-    ])
-    return completion
+
+    completion = OpenAI_client.invoke(
+    input=[
+        {"role": "user", "content": f"Please output the final generated SystemVerilog assertion following the format:\n{assertion_format}\nfrom the following text:\n" + llm_response+ "\nPlease double-check the signals used in the assertion are from the given Verilog code:\n" + code}
+    ]
+    )
+    sva = completion.content.strip()
+
+    checked_output = golden_check(explanation, sva)
+    completion = OpenAI_client.invoke(
+    input=[
+        {"role": "user", "content": f"Please output the final generated SystemVerilog assertion following the format:\n{assertion_format}\nfrom the following text:\n" + checked_output+ "\nPlease double-check the signals used in the assertion are from the given Verilog code:\n" + code}
+    ]
+    )
+    modified_sva = completion
+    return modified_sva
 
 with open("Evaluation/Dataset/Ripple_Carry_Adder/explanation.json") as jsonfile:
     data = json.load(jsonfile)
@@ -205,7 +250,6 @@ with open('Results/Openai-4o-mini-Prompted-Assertion-Generation-Results-for-New-
             llm_response +=llm_responses[-1]+"\n}"
             csv_writer.writerow([folder,code,explanation_origin,llm_response])
 
-            print(f"====================={folder} finished=====================")
 
             if config["JasperGold_VERIFY"] == 1:
                 llm_assertions = json.loads(llm_response)
@@ -264,8 +308,10 @@ with open('Results/Openai-4o-mini-Prompted-Assertion-Generation-Results-for-New-
                     processed_code += assertion+"\n"
                 processed_code += "\nendmodule\n"
 
-                with open(folder_path+"/"+folder+f"_{CodeLlama_Model_Name}.sv","w") as file:
+                with open(folder_path+"/"+folder+f"_Gold-{CodeLlama_Model_Name}.sv","w") as file:
                     file.write(processed_code)
+                
+                print(f"====================={folder} finished=====================")
 
 
 

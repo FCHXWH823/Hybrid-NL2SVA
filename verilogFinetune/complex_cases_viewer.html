@@ -1,0 +1,2336 @@
+<title>CodeV-SVA-training-83K — 5 complex cases</title>
+<style>
+:root {
+  --bg: #101823;
+  --grid-line: #1b2836;
+  --panel: #172233;
+  --panel-2: #0d1420;
+  --border: #2a3a4d;
+  --text: #e4ecf3;
+  --text-dim: #8fa3b8;
+  --text-faint: #5c7188;
+  --accent: #d98e46;
+  --accent-soft: #d98e461f;
+  --system-role: #7fa8c9;
+  --user-role: #93c9a3;
+  --assistant-role: #d98e46;
+  --tok-kw: #7fb2d9;
+  --tok-com: #5c7188;
+  --tok-num: #d98e46;
+  --font-mono: "SF Mono", "JetBrains Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+:root[data-theme="light"] {
+  --bg: #eef1f5;
+  --grid-line: #dfe5ec;
+  --panel: #ffffff;
+  --panel-2: #e6eaf0;
+  --border: #ccd5e0;
+  --text: #16212c;
+  --text-dim: #52667a;
+  --text-faint: #8194a6;
+  --accent: #a85f1a;
+  --accent-soft: #a85f1a17;
+  --system-role: #2f6690;
+  --user-role: #2c8058;
+  --assistant-role: #a85f1a;
+  --tok-kw: #2f6690;
+  --tok-com: #8194a6;
+  --tok-num: #a85f1a;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eef1f5;
+    --grid-line: #dfe5ec;
+    --panel: #ffffff;
+    --panel-2: #e6eaf0;
+    --border: #ccd5e0;
+    --text: #16212c;
+    --text-dim: #52667a;
+    --text-faint: #8194a6;
+    --accent: #a85f1a;
+    --accent-soft: #a85f1a17;
+    --system-role: #2f6690;
+    --user-role: #2c8058;
+    --assistant-role: #a85f1a;
+    --tok-kw: #2f6690;
+    --tok-com: #8194a6;
+    --tok-num: #a85f1a;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--text);
+  font-family: var(--font-serif);
+  line-height: 1.55;
+}
+
+.page { max-width: 900px; margin: 0 auto; padding: 56px 28px 90px; }
+
+.masthead {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 14px 28px; padding-bottom: 22px; border-bottom: 1px solid var(--border); margin-bottom: 8px;
+}
+.masthead-left { display: flex; flex-direction: column; gap: 6px; }
+.dataset-tag {
+  font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+}
+h1 { font-family: var(--font-mono); font-size: 22px; font-weight: 600; margin: 0; color: var(--text); text-wrap: balance; }
+.subtitle { font-family: var(--font-serif); font-size: 14.5px; color: var(--text-dim); max-width: 62ch; margin: 4px 0 0; }
+.count-chip {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--text-dim); background: var(--panel); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 14px; white-space: nowrap; height: fit-content;
+}
+
+/* ---------- table of contents ---------- */
+.toc {
+  display: flex; flex-direction: column; gap: 2px;
+  margin: 24px 0 36px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+}
+.toc-item {
+  display: flex; align-items: center; gap: 14px; padding: 12px 18px;
+  background: var(--panel); text-decoration: none; color: var(--text);
+  border-bottom: 1px solid var(--border); transition: background 0.1s ease;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:hover { background: var(--panel-2); }
+.toc-num {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent);
+  width: 22px; flex-shrink: 0;
+}
+.toc-text { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }
+
+/* ---------- case (accordion) ---------- */
+.case {
+  border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden;
+  background: var(--panel); scroll-margin-top: 20px;
+}
+.case summary {
+  cursor: pointer; list-style: none; display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px; background: var(--panel-2);
+}
+.case summary::-webkit-details-marker { display: none; }
+.case summary::before {
+  content: "▸"; color: var(--accent); font-size: 13px; flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.case[open] summary::before { transform: rotate(90deg); }
+.case-num {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--accent); flex-shrink: 0;
+}
+.case-summary { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.case-spec { font-family: var(--font-serif); font-size: 15px; color: var(--text); text-wrap: balance; }
+.case-tag {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-faint);
+}
+.case-idx {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); flex-shrink: 0;
+}
+.case-body { padding: 22px 20px; display: flex; flex-direction: column; gap: 18px; }
+
+/* ---------- transcript turns (shared) ---------- */
+.turn { display: grid; grid-template-columns: 22px 1fr; gap: 16px; }
+.rail { display: flex; justify-content: center; }
+.rail-bar { width: 3px; border-radius: 2px; background: var(--role-color); }
+.turn-card { background: var(--panel); border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+.turn-head {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  background: var(--panel-2); border-bottom: 1px solid var(--border);
+}
+.role-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--role-color); }
+.role-label {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--role-color);
+}
+.role-note { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-left: auto; }
+.turn-body { padding: 16px 18px; }
+.prose { font-family: var(--font-serif); font-size: 14.5px; color: var(--text); max-width: 68ch; }
+.field-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--text-faint); margin: 14px 0 6px;
+}
+.field-label:first-child { margin-top: 0; }
+
+.code-scroll { overflow: auto; max-height: 300px; border: 1px solid var(--border); border-radius: 6px; }
+pre.code {
+  margin: 0; padding: 14px 16px; font-family: var(--font-mono); font-size: 12px;
+  line-height: 1.6; white-space: pre; color: var(--text); background: var(--panel-2);
+}
+.tok-kw { color: var(--tok-kw); }
+.tok-com { color: var(--tok-com); font-style: italic; }
+.tok-num { color: var(--tok-num); }
+
+details.think summary {
+  cursor: pointer; padding: 9px 13px; font-family: var(--font-mono); font-size: 10.5px;
+  font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-faint);
+  background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px;
+  list-style: none; display: flex; align-items: center; gap: 8px;
+}
+details.think summary::before { content: "▸"; color: var(--assistant-role); transition: transform 0.15s ease; }
+details.think[open] summary::before { transform: rotate(90deg); }
+details.think summary::-webkit-details-marker { display: none; }
+details.think[open] summary { border-radius: 6px 6px 0 0; border-bottom: none; }
+.think-body {
+  padding: 14px 16px; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px;
+  font-family: var(--font-mono); font-size: 12px; line-height: 1.65; color: var(--text-dim);
+  white-space: pre-wrap; max-height: 360px; overflow: auto;
+}
+.answer-label {
+  display: flex; align-items: center; gap: 8px; margin: 14px 0 6px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--assistant-role);
+}
+.answer-label::before { content: "✓"; }
+pre.answer {
+  margin: 0; padding: 15px 17px; font-family: var(--font-mono); font-size: 13px; line-height: 1.65;
+  white-space: pre-wrap; color: var(--accent);
+  background: linear-gradient(90deg, var(--accent-soft), transparent 55%);
+  border: 1px solid var(--border); border-radius: 6px;
+}
+
+footer {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint);
+  text-align: center; margin-top: 34px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case summary::before, details.think summary::before { transition: none; }
+}
+</style>
+
+<div class="page">
+  <div class="masthead">
+    <div class="masthead-left">
+      <span class="dataset-tag">wyt2000 / CodeV&#8209;SVA&#8209;dataset&#8209;training&#8209;83K</span>
+      <h1>5 complex cases</h1>
+      <p class="subtitle">Hand-picked for genuinely uncommon SVA constructs, not just length &mdash; ranked by rare temporal operators (<code>s_eventually</code>, <code>intersect</code>, <code>throughout</code>), long <code>##1</code>-chained sequences, dense combinational logic, and multi-property answers.</p>
+    </div>
+    <span class="count-chip">5 of 83,195</span>
+  </div>
+
+  <div class="toc">
+    <a class="toc-item" href="#case-1"><span class="toc-num">01</span><span class="toc-text">s_eventually — traffic-light liveness</span></a>
+    <a class="toc-item" href="#case-2"><span class="toc-num">02</span><span class="toc-text">intersect + throughout — pattern-detect window</span></a>
+    <a class="toc-item" href="#case-3"><span class="toc-num">03</span><span class="toc-text">12-step FSM sequence</span></a>
+    <a class="toc-item" href="#case-4"><span class="toc-num">04</span><span class="toc-text">32-bit CRC polynomial</span></a>
+    <a class="toc-item" href="#case-5"><span class="toc-num">05</span><span class="toc-text">3-property answer — per-bit RX capture</span></a>
+  </div>
+
+
+    <details class="case" id="case-1">
+      <summary>
+        <span class="case-num">01</span>
+        <span class="case-summary">
+          <span class="case-spec">Create a SVA assertion that checks: When the traffic light is in the red state and a car is detected, it must eventually transition to the green state with only the green light illuminated. Use the signals &#x27;CAR&#x27;, &#x27;GREEN&#x27;, &#x27;RED&#x27;, &#x27;YELLOW&#x27; and &#x27;present&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</span>
+          <span class="case-tag">s_eventually · liveness property (only occurrence in all 83K records)</span>
+        </span>
+        <span class="case-idx">record 75240</span>
+      </summary>
+      <div class="case-body">
+        <div class="turn" style="--role-color: var(--system-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">system</span></div>
+            <div class="turn-body">
+              <p class="prose">You are an AI assistant tasked with formal verification of register transfer level (RTL) designs. Your job is to translate a description of an assertion to concrete SystemVerilog Assertion (SVA) implementation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--user-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">user</span><span class="role-note">testbench + question</span></div>
+            <div class="turn-body">
+              <div class="field-label">testbench</div>
+              <div class="code-scroll"><pre class="code"><span class="tok-kw">module</span> TrafficLight(Clock, Reset, CAR, TIMEOUT, GREEN, YELLOW, RED);
+	<span class="tok-kw">input</span> Clock, Reset, CAR, TIMEOUT;
+	<span class="tok-kw">output</span> <span class="tok-kw">reg</span> GREEN, YELLOW, RED;
+	<span class="tok-kw">reg</span> [<span class="tok-num">1</span>:<span class="tok-num">0</span>] present, Next;
+	<span class="tok-kw">parameter</span> green = <span class="tok-num">2</span>&#x2<span class="tok-num">7</span>;b0<span class="tok-num">0</span>;
+	<span class="tok-kw">parameter</span> yellow = <span class="tok-num">2</span>&#x2<span class="tok-num">7</span>;b0<span class="tok-num">1</span>;
+	<span class="tok-kw">parameter</span> red = <span class="tok-num">2</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0</span>;
+	<span class="tok-kw">always</span> @(CAR, present) <span class="tok-kw">begin</span>
+		case(present)
+			green: 	<span class="tok-kw">if</span>(CAR == <span class="tok-num">0</span>) 	Next = green;
+						<span class="tok-kw">else</span> 			 	Next = yellow; 
+			yellow:	<span class="tok-kw">if</span>(CAR == <span class="tok-num">0</span>) 	Next = yellow;
+						<span class="tok-kw">else</span> 				Next = red; 
+			red:		<span class="tok-kw">if</span>(CAR == <span class="tok-num">0</span>) 	Next = red;
+						<span class="tok-kw">else</span> 				Next = green; 
+			default: Next = <span class="tok-num">2</span>&#x2<span class="tok-num">7</span>;bxx;
+		endcase
+	<span class="tok-kw">end</span>
+	<span class="tok-kw">always</span> @(<span class="tok-kw">posedge</span> Clock, <span class="tok-kw">negedge</span> Reset) <span class="tok-kw">begin</span>
+		<span class="tok-kw">if</span> (Reset == <span class="tok-num">0</span>) present &lt;= green;
+		<span class="tok-kw">else</span> <span class="tok-kw">begin</span>
+			<span class="tok-kw">if</span>(present == red &amp;&amp; Next == green)
+				#<span class="tok-num">300000000</span> present &lt;= Next;
+			<span class="tok-kw">else</span> present &lt;= Next;
+			case(Next)
+					<span class="tok-num">2</span>&#x2<span class="tok-num">7</span>;b0<span class="tok-num">0</span>: <span class="tok-kw">begin</span> 
+						GREEN 	= <span class="tok-num">1</span>;
+						YELLOW 	= <span class="tok-num">0</span>;
+						RED 		= <span class="tok-num">0</span>;
+					<span class="tok-kw">end</span>
+					<span class="tok-num">2</span>&#x2<span class="tok-num">7</span>;b0<span class="tok-num">1</span>: <span class="tok-kw">begin</span> 
+						GREEN 	= <span class="tok-num">0</span>;
+						YELLOW 	= <span class="tok-num">1</span>;
+						RED 		= <span class="tok-num">0</span>;
+					<span class="tok-kw">end</span>
+					<span class="tok-num">2</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0</span>: <span class="tok-kw">begin</span> 
+						GREEN 	= <span class="tok-num">0</span>;
+						YELLOW 	= <span class="tok-num">0</span>;
+						RED 		= <span class="tok-num">1</span>;
+					<span class="tok-kw">end</span>
+			endcase
+		<span class="tok-kw">end</span> 
+	<span class="tok-kw">end</span>
+
+<span class="tok-kw">wire</span> tb_reset;
+<span class="tok-kw">assign</span> tb_reset = (Reset == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0);
+<span class="tok-com">// TODO: ASSERTION</span>
+<span class="tok-kw">endmodule</span></pre></div>
+              <div class="field-label">question</div>
+              <p class="prose">Question: Create a SVA assertion that checks: When the traffic light is in the red state and a car is detected, it must eventually transition to the green state with only the green light illuminated. Use the signals &#x27;CAR&#x27;, &#x27;GREEN&#x27;, &#x27;RED&#x27;, &#x27;YELLOW&#x27; and &#x27;present&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--assistant-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">assistant</span><span class="role-note">&lt;think&gt; reasoning &rarr; final answer</span></div>
+            <div class="turn-body">
+              <details class="think">
+                <summary>Reasoning (&lt;think&gt;...&lt;/think&gt;, 9,829 chars)</summary>
+                <div class="think-body">We are given the module TrafficLight with signals: Clock, Reset, CAR, TIMEOUT, GREEN, YELLOW, RED, and present state.
+ The requirement: When the traffic light is in the red state and a car is detected, it must eventually transition to the green state with only the green light illuminated.
+
+ Steps:
+ 1. We are to use `tb_reset` as the disable condition (which is defined as: assign tb_reset = (Reset == 1&#x27;b0);)
+ 2. We are to use the signals: CAR, GREEN, RED, YELLOW, and present.
+
+ Interpretation:
+ - The antecedent (trigger condition): 
+      (present == red) &amp;&amp; (CAR == 1)   [since car detected is when CAR is 1? Note: the problem says &quot;a car is detected&quot;]
+ - The consequent: 
+      Eventually (the system must transition to green state with only green light illuminated).
+
+ However, note that the state machine:
+   present state: red (2&#x27;b10) and then it transitions to green (2&#x27;b00) when CAR is 1? Actually, in the RTL:
+        red: if(CAR == 0) Next = red; else Next = green;
+
+ So when in red and CAR==1, the next state is green.
+
+ But note: the transition from red to green has a delay of 300000000 time units? 
+        if(present == red &amp;&amp; Next == green)
+            #300000000 present &lt;= Next;
+        else present &lt;= Next;
+
+ So the transition to green state is delayed by 300000000 time units. However, in SVA we don&#x27;t model time delays in the same way? 
+ Actually, the assertion is about the behavior over time. We can use a sequence to capture the eventual transition.
+
+ However, the requirement says &quot;eventually&quot;, so we can use the strong operator `s_eventually` or a bounded eventually? 
+ But note: the standard way is to use `s_eventually` if we are in a liveness property. However, the transition is guaranteed to happen after the delay? 
+
+ But note: the property is a liveness property? Actually, it is: &quot;must eventually&quot;, so we can use:
+
+   assert property (
+        @(posedge Clock) disable iff (tb_reset)
+        ( (present == red &amp;&amp; CAR) |-&gt; s_eventually (present == green &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED) )
+   );
+
+ However, the problem says: &quot;with only the green light illuminated&quot;. So we require:
+        GREEN is 1, YELLOW is 0, RED is 0.
+
+ But note: the state green is defined as:
+        case(Next)
+          2&#x27;b00: begin 
+            GREEN  = 1;
+            YELLOW = 0;
+            RED    = 0;
+          end
+
+ So when present is green, the outputs are set accordingly. Therefore, when present is green, we have GREEN=1, YELLOW=0, RED=0.
+
+ So we can write: (present == green) which implies the outputs are set appropriately? But note: the outputs are set in the same always block when present is updated? 
+ However, the outputs are set based on `Next` at the time of the clock edge? Actually, the outputs are set in the same always block that updates `present`? 
+
+ But note: the always block is:
+        always @(posedge Clock, negedge Reset) begin
+          if (Reset == 0) present &lt;= green;
+          else begin
+            if(present == red &amp;&amp; Next == green)
+                #300000000 present &lt;= Next;
+            else present &lt;= Next;
+            case(Next) ... sets the outputs ...
+
+ So the outputs are set at the same time as `present` is updated? Actually, no: because the `present` update is non-blocking and the output assignment is blocking? 
+ But note: the outputs are set in the same clock cycle? However, the delay of 300000000 is a simulation delay. In assertion, we are at the clock edge. 
+
+ Actually, the assertion is to be checked on the clock edge. The outputs are set in the same always block, so when `present` becomes green, the outputs are set to (1,0,0) at the same time? 
+ But note: the blocking assignment for outputs? They are set immediately? So at the same clock edge, when `present` is updated to green, the outputs are set accordingly? 
+
+ However, the problem says: &quot;transition to the green state with only the green light illuminated&quot;. This implies that at the time of the state being green, the lights must be correct.
+
+ Therefore, we can use: (present == green) and then check the lights? But note: the state green is defined as 2&#x27;b00, and the outputs are set accordingly. 
+ But what if there is a bug in the output logic? The requirement says &quot;with only the green light illuminated&quot;, so we must check the outputs.
+
+ So the consequent should be: 
+        (present == green) &amp;&amp; (GREEN == 1) &amp;&amp; (YELLOW == 0) &amp;&amp; (RED == 0)
+
+ However, note that the state green is defined as 2&#x27;b00 and the outputs are set to (1,0,0) when Next is 2&#x27;b00. But when the state is green, the outputs should be (1,0,0). 
+ So we can rely on the state? Or we must check the outputs? The requirement says &quot;with only the green light illuminated&quot;, so we must check the outputs.
+
+ Therefore, we write the consequent as: 
+        (present == green) &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED
+
+ But note: the state green is defined as a parameter: `green = 2&#x27;b00`. So we can use `present == green`.
+
+ However, the problem says: use the signals &#x27;CAR&#x27;, &#x27;GREEN&#x27;, &#x27;RED&#x27;, &#x27;YELLOW&#x27; and &#x27;present&#x27;. So we are allowed to use all of them.
+
+ But note: the transition from red to green might take multiple cycles? Actually, the delay of 300000000 is a fixed delay. In terms of clock cycles, it is 300000000 time units, which might be multiple clock cycles? 
+ However, the assertion is about eventual occurrence, so we don&#x27;t specify the number of cycles. The property is liveness.
+
+ However, the standard way is to use `s_eventually` for liveness. But note: in simulation, we might have a bound? We are not given a bound. 
+
+ But note: the property is: 
+        When in red and car is detected, then eventually we get to green with the lights set appropriately.
+
+ We can write:
+
+        asrt: assert property (
+            @(posedge Clock) disable iff (tb_reset)
+            ( (present == red &amp;&amp; CAR) |-&gt; s_eventually (present == green &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED) )
+        );
+
+ However, `s_eventually` is a SystemVerilog keyword for sequences? Actually, it is used in properties. But note: `s_eventually` is a property operator.
+
+ But wait: the standard way to write liveness is:
+
+        property p;
+            (present == red &amp;&amp; CAR) |-&gt; s_eventually (present == green &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED);
+        endproperty
+
+        asrt: assert property (@(posedge Clock) disable iff (tb_reset) p);
+
+ However, we can write it inline.
+
+ But note: the requirement says &quot;Do not add code to output an error message string&quot;, so we just write the assertion.
+
+ However, the example provided uses a simple assert property without defining a separate property. We can do:
+
+        asrt: assert property (@(posedge Clock) disable iff (tb_reset)
+            ( (present == red &amp;&amp; CAR) |-&gt; s_eventually (present == green &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED) )
+        );
+
+ But note: the use of `s_eventually` might require the property to be checked over unbounded time. In simulation, tools might have a limit. But that&#x27;s acceptable.
+
+ However, there is an alternative: we can use a bounded eventually if we know the maximum delay. But the problem does not specify a bound. 
+
+ But note: the RTL has a fixed delay of 300000000 time units. However, we don&#x27;t know the clock period. So we cannot bound it by a fixed number of cycles. 
+
+ Therefore, we use `s_eventually`.
+
+ But wait: the RTL has a delay of 300000000 time units. This is a simulation delay. In the assertion, we are sampling at clock edges. The transition will occur at a clock edge after the delay. 
+ So the property will hold because the transition does occur. However, the `s_eventually` will wait until it happens.
+
+ However, note: the reset condition: we disable on `tb_reset` (which is active when Reset is low). So during reset, we don&#x27;t check.
+
+ One more point: the antecedent (present == red &amp;&amp; CAR) is sampled at a clock edge. Then we require that eventually the consequent holds at some future clock edge.
+
+ Therefore, the code is:
+
+```systemverilog
+asrt: assert property (@(posedge Clock) disable iff (tb_reset)
+    ( (present == red &amp;&amp; CAR) |-&gt; s_eventually (present == green &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED) )
+);
+```
+
+ But note: the state `green` is a parameter, so we can use `green` (which is 2&#x27;b00). Also, the outputs are signals.
+
+ However, the problem says: use the signals. We are using the signal `present` and comparing it to the parameter `green`? That&#x27;s acceptable because `green` is defined in the module.
+
+ But note: the assertion is written inside the module? Actually, we are to put it in the `// TODO: ASSERTION` part. So the parameter `green` is in scope.
+
+ Alternatively, we could use the numeric value? But using the parameter is clearer.
+
+ However, the problem says: &quot;use the signals ... and &#x27;present&#x27;&quot;, so we are using the signal `present`.
+
+ Therefore, we write the code as above.
+
+ But note: the example output format. We must enclose with ```systemverilog and ```.
+
+ However, the instruction says: &quot;Only output the code snippet and do NOT output anything else.&quot;
+
+ So we output:
+
+```systemverilog
+asrt: assert property (@(posedge Clock) disable iff (tb_reset)
+    ( (present == red &amp;&amp; CAR) |-&gt; s_eventually (present == green &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED) )
+);
+```
+
+ But wait: the RTL has a delay of 300000000 time units. What if the clock period is very long? The transition might take only one clock cycle? Or multiple? 
+ Actually, the delay is a fixed simulation time. The number of clock cycles depends on the clock period. But the property is liveness and will wait until it happens.
+
+ However, note: the `s_eventually` might not be supported by all tools? But it is standard SystemVerilog.
+
+ Alternatively, we can write without `s_eventually` by using a sequence that eventually matches? But the property operator `s_eventually` is the direct way.
+
+ But note: the problem does not specify a bound, so we use unbounded.
+
+ Therefore, the above code is the answer.</div>
+              </details>
+              <div class="answer-label">final answer</div>
+              <pre class="answer">asrt: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> Clock) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    ( (present == red &amp;&amp; CAR) |-&gt; s_eventually (present == green &amp;&amp; GREEN &amp;&amp; !YELLOW &amp;&amp; !RED) )
+);</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+
+    <details class="case" id="case-2">
+      <summary>
+        <span class="case-num">02</span>
+        <span class="case-summary">
+          <span class="case-spec">Create a SVA assertion that checks: When the module is active, it must have detected at least one valid pattern. Use the signals &#x27;achou&#x27;, &#x27;achou2&#x27; and &#x27;ativo&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</span>
+          <span class="case-tag">intersect + throughout + goto-repetition [-&gt;1]</span>
+        </span>
+        <span class="case-idx">record 60725</span>
+      </summary>
+      <div class="case-body">
+        <div class="turn" style="--role-color: var(--system-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">system</span></div>
+            <div class="turn-body">
+              <p class="prose">You are an AI assistant tasked with formal verification of register transfer level (RTL) designs. Your job is to translate a description of an assertion to concrete SystemVerilog Assertion (SVA) implementation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--user-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">user</span><span class="role-note">testbench + question</span></div>
+            <div class="turn-body">
+              <div class="field-label">testbench</div>
+              <div class="code-scroll"><pre class="code"><span class="tok-kw">module</span> Verificador(
+			Clk,
+			Rst,
+			morfologico,
+			padrao,
+			H_Cont,
+			V_Cont,
+			V_SYNC_TOTAL,
+			x1,
+			x2,
+			y1,
+			y2,
+			ativo
+			);
+<span class="tok-kw">input</span>		[<span class="tok-num">12</span>:<span class="tok-num">0</span>]		H_Cont;
+<span class="tok-kw">input</span>		[<span class="tok-num">12</span>:<span class="tok-num">0</span>]		V_Cont, V_SYNC_TOTAL;
+<span class="tok-kw">reg</span> [<span class="tok-num">10</span>:<span class="tok-num">0</span>] OkLinha, LinhaCheck, OkLinha2, LinhaCheck2;
+<span class="tok-kw">reg</span> [<span class="tok-num">10</span>:<span class="tok-num">0</span>] contadorBranco, contadorBranco2;
+<span class="tok-kw">reg</span> achou, achou2;
+<span class="tok-kw">input</span> [<span class="tok-num">9</span>:<span class="tok-num">0</span>] morfologico;
+<span class="tok-kw">input</span> Clk, Rst, padrao;
+<span class="tok-kw">output</span> <span class="tok-kw">reg</span> [<span class="tok-num">12</span>:<span class="tok-num">0</span>] x1, x2, y1, y2;
+<span class="tok-kw">output</span> <span class="tok-kw">reg</span> ativo;
+<span class="tok-kw">reg</span> [<span class="tok-num">12</span>:<span class="tok-num">0</span>] x1_achou, x2_achou, y1_achou, y2_achou, x1_achou2, x2_achou2, y1_achou2, y2_achou2;
+<span class="tok-kw">reg</span> [<span class="tok-num">12</span>:<span class="tok-num">0</span>] x1_search, x2_search,x1_search2, x2_search2;
+<span class="tok-kw">always</span>@(<span class="tok-kw">posedge</span> Clk <span class="tok-kw">or</span> <span class="tok-kw">negedge</span> Rst) <span class="tok-kw">begin</span>
+		<span class="tok-kw">if</span> (!Rst)	<span class="tok-kw">begin</span>
+				achou &lt;= <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0;
+				contadorBranco &lt;= <span class="tok-num">0</span>;
+				x1_search &lt;= <span class="tok-num">0</span>;
+				x2_search &lt;= <span class="tok-num">250</span>;
+				OkLinha &lt;= <span class="tok-num">0</span>;
+				LinhaCheck &lt;= <span class="tok-num">0</span>;
+				achou2 &lt;= <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0;
+				contadorBranco2 &lt;= <span class="tok-num">0</span>;
+				x1_search2 &lt;= <span class="tok-num">800</span>;
+				x2_search2 &lt;= <span class="tok-num">550</span>;
+				OkLinha2 &lt;= <span class="tok-num">0</span>;
+				LinhaCheck2 &lt;= <span class="tok-num">0</span>;
+				ativo = <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0;
+		<span class="tok-kw">end</span>
+		<span class="tok-kw">else</span>
+			<span class="tok-kw">begin</span>
+				<span class="tok-kw">if</span>(padrao == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1 &amp;&amp; achou == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0 &amp;&amp; achou2 == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0) <span class="tok-kw">begin</span>
+					<span class="tok-kw">if</span>(LinhaCheck == <span class="tok-num">75</span>)<span class="tok-kw">begin</span>
+						OkLinha &lt;= <span class="tok-num">0</span>;
+						LinhaCheck &lt;= <span class="tok-num">0</span>;
+					<span class="tok-kw">end</span>
+					<span class="tok-kw">if</span>(LinhaCheck2 == <span class="tok-num">75</span>) <span class="tok-kw">begin</span>
+						OkLinha2 &lt;= <span class="tok-num">0</span>;
+						LinhaCheck2 &lt;= <span class="tok-num">0</span>;
+					<span class="tok-kw">end</span>				
+					<span class="tok-kw">if</span>(H_Cont == x2_search)
+						LinhaCheck &lt;= LinhaCheck + <span class="tok-num">1</span>;
+					<span class="tok-kw">if</span>(H_Cont == x1_search2)
+						LinhaCheck2 &lt;= LinhaCheck2 + <span class="tok-num">1</span>;
+					<span class="tok-kw">if</span>(H_Cont &gt;= x1_search &amp;&amp; H_Cont &lt;= x2_search) <span class="tok-kw">begin</span>
+						<span class="tok-kw">if</span>(H_Cont == x1_search)
+								contadorBranco2 &lt;= <span class="tok-num">0</span>;
+						<span class="tok-kw">if</span>(morfologico == <span class="tok-num">10</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111111111</span>) <span class="tok-kw">begin</span>
+							<span class="tok-kw">if</span>(OkLinha == <span class="tok-num">0</span> &amp;&amp; contadorBranco == <span class="tok-num">0</span>) <span class="tok-kw">begin</span>
+								x1_achou &lt;= H_Cont;
+								y1_achou &lt;= V_Cont;
+							<span class="tok-kw">end</span>
+							contadorBranco &lt;= contadorBranco + <span class="tok-num">1</span>;
+							<span class="tok-kw">if</span>(contadorBranco &gt;= <span class="tok-num">180</span>) <span class="tok-kw">begin</span>
+								contadorBranco &lt;= <span class="tok-num">0</span>;
+								OkLinha &lt;= OkLinha + <span class="tok-num">1</span>;
+								<span class="tok-kw">if</span>(OkLinha == <span class="tok-num">1</span>) 
+									LinhaCheck &lt;= OkLinha;
+							<span class="tok-kw">end</span>
+							<span class="tok-kw">else</span>
+								achou &lt;= <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0;
+						<span class="tok-kw">end</span>
+						<span class="tok-kw">if</span>(OkLinha &gt;= <span class="tok-num">55</span>) <span class="tok-kw">begin</span>
+							x1_achou &lt;= x1_achou - <span class="tok-num">15</span>;
+							y1_achou &lt;= y1_achou - <span class="tok-num">10</span>;
+							x2_achou &lt;= H_Cont + <span class="tok-num">30</span>;
+							y2_achou &lt;= V_Cont + <span class="tok-num">20</span>;
+							OkLinha &lt;= <span class="tok-num">0</span>;
+							achou &lt;= <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1;
+						<span class="tok-kw">end</span>
+					<span class="tok-kw">end</span>
+					<span class="tok-kw">if</span>(H_Cont &gt;= x2_search2 &amp;&amp; H_Cont &lt;= x1_search2) <span class="tok-kw">begin</span>
+						<span class="tok-kw">if</span>(H_Cont == x2_search2)
+								contadorBranco &lt;= <span class="tok-num">0</span>;
+						<span class="tok-kw">if</span>(morfologico == <span class="tok-num">10</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111111111</span>) <span class="tok-kw">begin</span>
+							<span class="tok-kw">if</span>(OkLinha2 == <span class="tok-num">0</span> &amp;&amp; contadorBranco2 == <span class="tok-num">0</span>) <span class="tok-kw">begin</span>
+								x1_achou2 &lt;= H_Cont;
+								y1_achou2 &lt;= V_Cont;
+							<span class="tok-kw">end</span>
+							contadorBranco2 &lt;= contadorBranco2 + <span class="tok-num">1</span>;
+							<span class="tok-kw">if</span>(contadorBranco2 &gt;= <span class="tok-num">180</span>) <span class="tok-kw">begin</span>
+								contadorBranco2 &lt;= <span class="tok-num">0</span>;
+								OkLinha2 &lt;= OkLinha2 + <span class="tok-num">1</span>;
+								<span class="tok-kw">if</span>(OkLinha2 == <span class="tok-num">1</span>) 
+									LinhaCheck2 &lt;= OkLinha2;								
+							<span class="tok-kw">end</span>
+							<span class="tok-kw">else</span>
+								achou2 &lt;= <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0;
+						<span class="tok-kw">end</span>
+						<span class="tok-kw">if</span>(OkLinha2 &gt;= <span class="tok-num">55</span>) <span class="tok-kw">begin</span>
+							x1_achou2 &lt;= x1_achou2 - <span class="tok-num">15</span>;
+							y1_achou2 &lt;= y1_achou2 - <span class="tok-num">10</span>;
+							x2_achou2 &lt;= H_Cont + <span class="tok-num">30</span>;
+							y2_achou2 &lt;= V_Cont + <span class="tok-num">20</span>;
+							OkLinha2 &lt;= <span class="tok-num">0</span>;
+							achou2 &lt;= <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1;
+						<span class="tok-kw">end</span>
+					<span class="tok-kw">end</span>
+					<span class="tok-kw">if</span>(V_Cont &gt;= V_SYNC_TOTAL &amp;&amp; H_Cont == <span class="tok-num">0</span>) <span class="tok-kw">begin</span>
+						x1_search &lt;= x1_search + <span class="tok-num">10</span>;
+						x2_search &lt;= x2_search + <span class="tok-num">10</span>;
+						x1_search2 &lt;= x1_search2 - <span class="tok-num">10</span>;
+						x2_search2 &lt;= x2_search2 - <span class="tok-num">10</span>;
+						<span class="tok-kw">if</span>(x1_search == x1_search2) <span class="tok-kw">begin</span>
+							x1_search &lt;= <span class="tok-num">0</span>;
+							x2_search &lt;= <span class="tok-num">300</span>;
+							x1_search2 &lt;= <span class="tok-num">800</span>;
+							x2_search2 &lt;= <span class="tok-num">500</span>;
+						<span class="tok-kw">end</span>
+					<span class="tok-kw">end</span>
+				<span class="tok-kw">end</span>
+			<span class="tok-kw">if</span>(achou == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1) <span class="tok-kw">begin</span>
+				x1 &lt;= x1_achou;
+				x2 &lt;= x2_achou;
+				y1 &lt;= y1_achou;
+				y2 &lt;= y2_achou;
+				ativo = <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1;
+			<span class="tok-kw">end</span>
+			<span class="tok-kw">if</span>(achou2 == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1) <span class="tok-kw">begin</span>
+				x1 &lt;= x1_achou2;
+				x2 &lt;= x2_achou2;
+				y1 &lt;= y1_achou2;
+				y2 &lt;= y2_achou2;
+				ativo = <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1;
+			<span class="tok-kw">end</span>			
+		<span class="tok-kw">end</span>
+<span class="tok-kw">end</span>
+
+<span class="tok-kw">wire</span> tb_reset;
+<span class="tok-kw">assign</span> tb_reset = (Rst == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0);
+<span class="tok-com">// TODO: ASSERTION</span>
+<span class="tok-kw">endmodule</span></pre></div>
+              <div class="field-label">question</div>
+              <p class="prose">Question: Create a SVA assertion that checks: When the module is active, it must have detected at least one valid pattern. Use the signals &#x27;achou&#x27;, &#x27;achou2&#x27; and &#x27;ativo&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--assistant-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">assistant</span><span class="role-note">&lt;think&gt; reasoning &rarr; final answer</span></div>
+            <div class="turn-body">
+              <details class="think">
+                <summary>Reasoning (&lt;think&gt;...&lt;/think&gt;, 19,690 chars)</summary>
+                <div class="think-body">We are given the following requirement: 
+&quot;When the module is active, it must have detected at least one valid pattern.&quot;
+
+We are told to use the signals &#x27;achou&#x27;, &#x27;achou2&#x27;, and &#x27;ativo&#x27;. The condition for the module being active is when &#x27;ativo&#x27; is high.
+
+The requirement can be interpreted as: 
+Whenever &#x27;ativo&#x27; is high, then at least one of &#x27;achou&#x27; or &#x27;achou2&#x27; must have been detected (i.e., they must have been high at some point in the past).
+
+However, note that the requirement does not specify that the detection must be in the same cycle as &#x27;ativo&#x27;. In fact, looking at the code, &#x27;ativo&#x27; is set in the same cycle when either &#x27;achou&#x27; or &#x27;achou2&#x27; is set. But note that &#x27;ativo&#x27; is a registered output and remains high until reset? Actually, the code sets &#x27;ativo&#x27; to 1 when either &#x27;achou&#x27; or &#x27;achou2&#x27; is set, and then it remains? But note that in the reset block, &#x27;ativo&#x27; is reset to 0. Also, in the same cycle when &#x27;achou&#x27; or &#x27;achou2&#x27; is set, we set the outputs and set &#x27;ativo&#x27;. However, the requirement is about the module being active (ativo high) and that it must have detected at least one valid pattern.
+
+But note: the requirement does not say that the detection must be ongoing, but that it must have detected at least one. So we can think of it as: when &#x27;ativo&#x27; is high, then either &#x27;achou&#x27; or &#x27;achou2&#x27; must have been high at some time in the past (since reset). However, note that after reset, the module starts fresh. Also, note that the module might set &#x27;achou&#x27; or &#x27;achou2&#x27; and then set &#x27;ativo&#x27;, and then in the next cycle, &#x27;achou&#x27; and &#x27;achou2&#x27; might be low again (because they are set only for one cycle?).
+
+Looking at the code:
+- When either `achou` or `achou2` becomes 1, then in the same cycle, the outputs are set and `ativo` is set to 1.
+- In the next cycle, unless reset, `achou` and `achou2` are not set again until the next pattern? Actually, the code sets `achou` and `achou2` to 0 only on reset? But note: in the block, after setting `achou` to 1 (for example) in the pattern detection part, it doesn&#x27;t reset it until the next reset? Actually, no: the code sets `achou` to 1 only when the condition `OkLinha &gt;= 55` is met, and then it sets `achou &lt;= 1&#x27;b1`. But then in the next cycle, the condition `if(achou == 1&#x27;b1)` will be true and it will set the outputs again? Actually, no: because the outputs are set only once? But note that the outputs are set in the same cycle when `achou` is set? Actually, no: the setting of the outputs and `ativo` happens in the same cycle as when `achou` is set? Because the condition `if(achou == 1&#x27;b1)` is in the same always block and after the block that sets `achou`. So in the cycle when `achou` is set, the condition `achou == 1&#x27;b1` is true and then the outputs are set and `ativo` is set. But note that `achou` is set in the same cycle? Actually, the assignment to `achou` is non-blocking, so it will be updated at the end of the cycle. Therefore, in the same cycle, the condition `achou == 1&#x27;b1` will not be true until the next cycle? 
+
+But note: the code has:
+    if (OkLinha &gt;= 55) begin
+        ... 
+        achou &lt;= 1&#x27;b1;
+    end
+
+and then later in the same else block (for the same clock edge) we have:
+
+    if(achou == 1&#x27;b1) begin
+        ... 
+    end
+
+Because non-blocking assignment, the value of `achou` in the condition `if(achou == 1&#x27;b1)` is still the old value. So in the cycle when `achou` is set to 1, the condition `achou == 1&#x27;b1` is false (because the non-blocking assignment hasn&#x27;t updated yet). Then in the next cycle, the condition will be true and then the outputs and `ativo` are set? Actually, no: because the setting of `achou` is in the `else` block of the reset, and then the next conditions are also in the same `else` block. So in the same cycle, after setting `achou` non-blocking, the condition `if(achou == 1&#x27;b1)` is checked with the old value (which is 0). Therefore, the outputs and `ativo` are set in the cycle after `achou` is set.
+
+But note: the code also sets `ativo` in the same way for `achou2`. And also, note that `ativo` is set to 1 in the cycle when either `achou` or `achou2` is set? Actually, no: because the condition for `achou` and `achou2` are separate and in the same always block. So in the cycle after `achou` is set (non-blocking, so the next cycle) then the condition `if(achou == 1&#x27;b1)` is true and then `ativo` is set. Similarly for `achou2`.
+
+Therefore, the requirement: when the module is active (ativo high) then it must have detected at least one pattern. But note that `ativo` is set only when either `achou` or `achou2` was set in the previous cycle? Actually, in the current cycle, `achou` or `achou2` might be set, but the condition for `ativo` is in the next cycle? Actually, no: because the setting of `achou` and `achou2` is non-blocking, so in the next cycle they are high. And then in that next cycle, the condition `if(achou == 1&#x27;b1)` is true and then `ativo` is set (using blocking assignment: `ativo = 1&#x27;b1`). So in the same cycle when `achou` is high (the next cycle after the condition that set it), `ativo` is set.
+
+So the requirement can be rephrased: whenever `ativo` is high, then either `achou` or `achou2` must have been high in the previous cycle? Or in the same cycle? Actually, in the same cycle: because in the cycle when `achou` is high (non-blocking, so it was set in the previous cycle and now is high), then the condition `if(achou == 1&#x27;b1)` is true and `ativo` is set (blocking) in the same cycle. So in the cycle when `ativo` is high, `achou` or `achou2` is also high? 
+
+But note: the code sets `ativo` in two separate conditions:
+
+    if(achou == 1&#x27;b1) begin
+        ... 
+        ativo = 1&#x27;b1;
+    end
+    if(achou2 == 1&#x27;b1) begin
+        ... 
+        ativo = 1&#x27;b1;
+    end
+
+So in a cycle, if `achou` is high, then `ativo` is set to 1. Similarly for `achou2`. And note that both `achou` and `achou2` can be high at the same time? But the code doesn&#x27;t prevent that. However, the requirement is that when `ativo` is high, then at least one of the detections must have occurred. But in the same cycle, we have that `achou` or `achou2` is high. So we can write:
+
+    When ativo is high, then either achou or achou2 must be high in the same cycle.
+
+But note: what about the next cycles? The requirement says &quot;it must have detected at least one valid pattern&quot;. The detection is represented by `achou` or `achou2` being high. However, once `ativo` is set, it remains set? Actually, the code does not reset `ativo` until a reset. So after the first detection, `ativo` remains high forever? 
+
+Looking at the code: 
+- In the reset block, `ativo` is set to 0.
+- Then, when either `achou` or `achou2` is set (and then in the next cycle, the condition for `achou` or `achou2` being high is met) we set `ativo` to 1 (blocking assignment). 
+- But note: in subsequent cycles, if neither `achou` nor `achou2` is high, then the condition for setting `ativo` is not executed? But `ativo` is a reg and it retains its value. So once set, it remains 1 until reset.
+
+Therefore, the requirement is that whenever `ativo` is high (which might be many cycles after the detection), then we must have had at least one detection in the past. But note that the requirement does not specify a time window. So we can say: from the time when `ativo` is high, there must have been at least one cycle in the past (since reset) when either `achou` or `achou2` was high.
+
+However, note that the requirement says &quot;when the module is active&quot;, meaning during the time when `ativo` is high. But the detection might have happened in the past. So we can use a property that says: if `ativo` is high, then at some time in the past (since reset) either `achou` or `achou2` was high.
+
+But note: the SVA operator for &quot;at some time in the past&quot; is not directly available. We can use a sequence that captures the entire time from reset until now. However, we can use the `$past` operator? But `$past` only goes back one cycle. Alternatively, we can use a property that uses a sequence that starts at reset and then eventually we had a detection.
+
+But note: the requirement is not about the entire history, but about the fact that the module has detected at least one pattern. And the module sets `ativo` only after it has detected a pattern. So the first time `ativo` becomes high, it is because of a detection. But then it remains high. So the requirement is that `ativo` should never be high without having had a detection in the past. 
+
+We can use a property that says: `ativo` implies that at some time in the past (since reset) we had a detection. But how to write that? We can use a flag that is set when a detection occurs and then check that when `ativo` is high, the flag is set. However, we are not allowed to modify the design. We can use an auxiliary variable in the assertion? But the problem says: &quot;Do not add code to output an error message string.&quot; and we are only to write the SVA.
+
+Alternatively, we can use a sequence that captures the entire time from reset until now? Actually, we can use:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        $rose(ativo) |-&gt; (achou || achou2) [*0:$] ##1 1
+    );
+
+But that doesn&#x27;t work because we are saying that from reset until the time when `ativo` rises, there must be a cycle where `achou` or `achou2` is high? Actually, we can use:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        ativo |-&gt; s_first_detection
+    );
+
+But we need to define `s_first_detection` as a sequence that eventually happened? Actually, we can use:
+
+    sequence s_detection;
+        (achou || achou2);
+    endsequence
+
+    property p_detected;
+        s_detection.triggered;
+    endproperty
+
+But the `triggered` property is for checking that a sequence has occurred in the past? Actually, we can use:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        ativo |-&gt; (s_detection.triggered or (achou || achou2))
+    );
+
+But note: the `triggered` method returns true if the sequence has been matched at the current time step or in the past? Actually, the `triggered` method is used on a named sequence and it checks that the sequence has ended at the current time step? 
+
+Alternatively, we can use a property that uses a flag that we set when a detection occurs. But we cannot add code. 
+
+Another approach: we can use an auxiliary variable in the assertion? But that is not allowed because we are only to write the SVA without modifying the design.
+
+Alternatively, we can use:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        ativo |-&gt; (first_match(##[0:$] (achou || achou2)) throughout (1&#x27;b1)
+    );
+
+But that is not standard.
+
+Actually, the simplest way is to note that `ativo` is set only after a detection. Therefore, the first time `ativo` becomes high, it is because of a detection. And then it remains high. So we can check that whenever `ativo` is high, then either:
+    - either `achou` or `achou2` is high in the current cycle (which would be the cycle when the detection is being acted upon, i.e., the cycle after the detection condition was met) OR
+    - in the past, there was a cycle when `achou` or `achou2` was high.
+
+But note: the cycle when the detection condition is met (when `achou` or `achou2` is set to 1 via non-blocking assignment) is the cycle before `ativo` is set. So in the cycle when `ativo` is set, `achou` or `achou2` is high (because of the non-blocking update). And then in subsequent cycles, `achou` and `achou2` might be low, but `ativo` remains high.
+
+Therefore, we can break the property into two cases:
+    Case 1: the current cycle is the first cycle when `ativo` is high. Then we must have either `achou` or `achou2` high (because that&#x27;s what sets `ativo`).
+    Case 2: `ativo` has been high for several cycles. Then we don&#x27;t require `achou` or `achou2` to be high in the current cycle, but we require that at some time in the past (since reset) they were high.
+
+But note: the requirement is that the module has detected at least one pattern. So we can use:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        ativo |-&gt; (achou || achou2 || $past(achou || achou2, 1) || ... ) // we cannot go arbitrarily back.
+
+This is not feasible.
+
+Alternatively, we can use a property that says: `ativo` should not be high until we have had a detection. And once we have had a detection, then `ativo` can be high. So we can use:
+
+    property p_never_active_without_detection;
+        @(posedge Clk) disable iff (tb_reset)
+        not (ativo &amp;&amp; !(achou || achou2) throughout (1&#x27;b1 until (achou || achou2));
+    );
+
+But that is complex.
+
+Another idea: we can use a sequence that starts at reset and then we require that the first occurrence of `ativo` must be preceded by a detection. But what about multiple resets? The disable condition is `tb_reset` (which is active low reset). So we can write:
+
+    sequence s_detection_occurred;
+        (achou || achou2) [-&gt;1];
+    endsequence
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        $rose(ativo) |-&gt; s_detection_occurred.triggered
+    );
+
+But the `triggered` method is used on a named sequence that is matched in the current time step? Actually, we want to know if a detection has occurred at any time in the past. We can use:
+
+    sequence s_detection_occurred;
+        (achou || achou2);
+    endsequence
+
+    property p_detection_ever;
+        s_detection_occurred.triggered;
+    endproperty
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        $rose(ativo) |-&gt; p_detection_ever
+    );
+
+But the `triggered` method is applied to a sequence instance? We can use:
+
+    sequence s_detection;
+        (achou || achou2);
+    endsequence
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        $rose(ativo) |-&gt; s_detection.triggered
+    );
+
+But the `triggered` method returns true if the sequence has been matched at the current time step? Actually, the `triggered` method is used to check that a sequence has been matched and ended at the current time step. It does not look into the past beyond the current time step. 
+
+Alternatively, we can use the `matched` method? But `matched` is for a sequence that ended in the past. However, it requires a starting point.
+
+Given the complexity, and since the design sets `ativo` only in the cycle immediately after a detection (i.e., when `achou` or `achou2` is high), then in the cycle when `ativo` rises, either `achou` or `achou2` must be high. And then for subsequent cycles, we don&#x27;t care about the current value of `achou` and `achou2`, but we know that a detection has occurred in the past (specifically, in the cycle before `ativo` rose). So we can write:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        $rose(ativo) |-&gt; (achou || achou2)
+    );
+
+This ensures that at the time when `ativo` becomes high, either `achou` or `achou2` is high. And that is exactly what the design does. And this covers the requirement because the module becomes active only after a detection, and at that moment the detection flags are high.
+
+But what about if `ativo` is high for multiple cycles? The requirement says &quot;when the module is active&quot;, meaning any time `ativo` is high. However, the above assertion only checks the rising edge. But note: the requirement is that the module has detected at least one valid pattern. The rising edge of `ativo` is the moment when the module becomes active, and at that moment we require a detection. For subsequent cycles, we don&#x27;t require a detection in every cycle because the detection might have been only once. And the requirement is satisfied by the fact that a detection occurred in the past.
+
+Therefore, the above assertion is sufficient.
+
+But note: what if `ativo` is set by `achou` in one cycle, and then in a later cycle `achou2` sets `ativo` again? But `ativo` is already set. The rising edge of `ativo` only happens once until reset. So we only check the first time.
+
+Alternatively, we can check that whenever `ativo` is high, then either `achou` or `achou2` must have been high at the time when `ativo` became high. But we cannot easily refer to that time. 
+
+Given the above, I think the rising edge check is sufficient and matches the requirement.
+
+So we write:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        $rose(ativo) |-&gt; (achou || achou2)
+    );
+
+But note: the requirement says &quot;at least one valid pattern&quot;, and we are checking that at the rising edge of `ativo`, one of the flags is high. This is because the design sets `ativo` only when one of the flags is high (in the same cycle, because the non-blocking assignment of `achou` and `achou2` was done in the previous cycle and now they are high). 
+
+But wait: in the cycle when `achou` is set (non-blocking) by the pattern detection logic, then in the next cycle (the current cycle for the assertion) we have:
+    - `achou` is high (non-blocking update from previous cycle)
+    - and then the condition `if(achou == 1&#x27;b1)` is true and sets `ativo` (blocking) in the same cycle.
+
+So in the same cycle, we have both `achou` high and `ativo` being set (and hence `$rose(ativo)` is true). Therefore, the condition `achou || achou2` is true in the same cycle as the rose of `ativo`.
+
+So the assertion is:
+
+    asrt: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        $rose(ativo) |-&gt; (achou || achou2)
+    );
+
+But note: what if both `achou` and `achou2` are set in the same cycle? That&#x27;s fine.
+
+Also, note that `ativo` might be set by either `achou` or `achou2` or both. The condition `achou || achou2` covers all.
+
+Therefore, we write the assertion accordingly.
+
+But note: the requirement says &quot;when the module is active&quot;, which is when `ativo` is high. We are only checking at the rising edge. However, the requirement might be interpreted as for every cycle that `ativo` is high, we require that a detection has occurred. But note that the detection might have occurred only once in the past. And we cannot check the entire history. However, the rising edge of `ativo` is the only time when the module becomes active, and at that time we know a detection has just occurred. For subsequent cycles, we don&#x27;t require a new detection. So the requirement is satisfied by the rising edge check.
+
+Alternatively, we can write an assertion that checks that `ativo` is never high without a detection having occurred in the past. But that is equivalent to the rising edge check because after the rising edge, `ativo` remains high and we don&#x27;t reset it until a system reset. And at the rising edge, we check that a detection is present.
+
+Therefore, we output:
+
+```systemverilog
+asrt: assert property (
+    @(posedge Clk) disable iff (tb_reset)
+    $rose(ativo) |-&gt; (achou || achou2)
+);
+```
+
+But note: the requirement does not specify that the detection must be in the same cycle as the rising edge of `ativo`. However, the design ensures that. And the requirement is about the module being active: it must have detected at least one pattern. The rising edge of `ativo` is the moment when the module becomes active, and at that moment we require a detection. This ensures that the activation is due to a detection.
+
+If the requirement is for every cycle that `ativo` is high, then we would need a different approach. But the requirement does not specify that the detection must be ongoing, only that it must have been detected at least one. And the rising edge assertion ensures that at the time of activation, a detection is present (which implies that at least one has been detected).
+
+Therefore, we use the above.</div>
+              </details>
+              <div class="answer-label">final answer</div>
+              <pre class="answer">asrt: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (
+    @(<span class="tok-kw">posedge</span> Clk) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    ativo |-&gt; (achou || achou2) throughout (1&#x27;b1 [-&gt;1] intersect (achou || achou2))
+);</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+
+    <details class="case" id="case-3">
+      <summary>
+        <span class="case-num">03</span>
+        <span class="case-summary">
+          <span class="case-spec">Create a SVA assertion that checks: After a valid handshake occurs while the address state machine is idle, the address state machine must progress sequentially through all twelve address states in consecutive cycles. Use the signals &#x27;addr_state&#x27; and &#x27;handshake&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</span>
+          <span class="case-tag">12-step FSM sequence — ##1 chained twelve times</span>
+        </span>
+        <span class="case-idx">record 30354</span>
+      </summary>
+      <div class="case-body">
+        <div class="turn" style="--role-color: var(--system-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">system</span></div>
+            <div class="turn-body">
+              <p class="prose">You are an AI assistant tasked with formal verification of register transfer level (RTL) designs. Your job is to translate a description of an assertion to concrete SystemVerilog Assertion (SVA) implementation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--user-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">user</span><span class="role-note">testbench + question</span></div>
+            <div class="turn-body">
+              <div class="field-label">testbench</div>
+              <div class="code-scroll"><pre class="code"><span class="tok-kw">module</span> slave_in_port (
+	<span class="tok-kw">input</span> clk, 
+	<span class="tok-kw">input</span> reset,
+	<span class="tok-kw">input</span> rx_address,
+	<span class="tok-kw">input</span> rx_data,
+	<span class="tok-kw">input</span> master_valid,
+	<span class="tok-kw">input</span> read_en,
+	<span class="tok-kw">input</span> write_en,
+	<span class="tok-kw">output</span> slave_ready,
+	<span class="tok-kw">output</span> rx_done,
+	<span class="tok-kw">output</span> <span class="tok-kw">reg</span>[<span class="tok-num">11</span>:<span class="tok-num">0</span>]address,
+	<span class="tok-kw">output</span> <span class="tok-kw">reg</span>[<span class="tok-num">7</span>:<span class="tok-num">0</span>]data);
+<span class="tok-kw">reg</span> [<span class="tok-num">3</span>:<span class="tok-num">0</span>]addr_state = <span class="tok-num">0</span>;
+<span class="tok-kw">reg</span> [<span class="tok-num">3</span>:<span class="tok-num">0</span>]data_state = <span class="tok-num">0</span>;
+<span class="tok-kw">reg</span> addr_idle = <span class="tok-num">1</span>;
+<span class="tok-kw">reg</span> data_idle = <span class="tok-num">1</span>;
+<span class="tok-kw">reg</span> addr_done = <span class="tok-num">0</span>;
+<span class="tok-kw">reg</span> data_done = <span class="tok-num">0</span>;
+<span class="tok-kw">assign</span> slave_ready = data_idle &amp; addr_idle;
+<span class="tok-kw">assign</span> rx_done = addr_done;
+<span class="tok-kw">wire</span> handshake = master_valid &amp; slave_ready;
+<span class="tok-com">// Statemachine to capture the <span class="tok-num">12</span> bit address</span>
+<span class="tok-kw">parameter</span> 
+IDLE = <span class="tok-num">0</span>, 
+ADDR1 = <span class="tok-num">1</span>, 
+ADDR2 = <span class="tok-num">2</span>, 
+ADDR3 = <span class="tok-num">3</span>, 
+ADDR4 = <span class="tok-num">4</span>,
+ADDR5 = <span class="tok-num">5</span>, 
+ADDR6 = <span class="tok-num">6</span>, 
+ADDR7 = <span class="tok-num">7</span>, 
+ADDR8 = <span class="tok-num">8</span>, 
+ADDR9 = <span class="tok-num">9</span>, 
+ADDR1<span class="tok-num">0</span> = <span class="tok-num">10</span>, 
+ADDR1<span class="tok-num">1</span> = <span class="tok-num">11</span>,
+ADDR1<span class="tok-num">2</span> = <span class="tok-num">12</span>;
+<span class="tok-kw">always</span> @ (addr_state) 
+<span class="tok-kw">begin</span>
+	case (addr_state)
+	IDLE:
+	<span class="tok-kw">begin</span>
+		addr_idle = <span class="tok-num">1</span>;
+		addr_done = <span class="tok-num">0</span>;
+	<span class="tok-kw">end</span>
+	ADDR1:
+	<span class="tok-kw">begin</span>
+		address[<span class="tok-num">0</span>] = rx_address;
+		addr_idle = <span class="tok-num">0</span>;
+	<span class="tok-kw">end</span>
+	ADDR2:
+		address[<span class="tok-num">1</span>] = rx_address;
+	ADDR3:
+		address[<span class="tok-num">2</span>] = rx_address;
+	ADDR4:
+		address[<span class="tok-num">3</span>] = rx_address;
+	ADDR5:
+		address[<span class="tok-num">4</span>] = rx_address;
+	ADDR6:
+		address[<span class="tok-num">5</span>] = rx_address;
+	ADDR7:
+		address[<span class="tok-num">6</span>] = rx_address;
+	ADDR8:
+		address[<span class="tok-num">7</span>] = rx_address;
+	ADDR9:
+		address[<span class="tok-num">8</span>] = rx_address;
+	ADDR1<span class="tok-num">0</span>:
+		address[<span class="tok-num">9</span>] = rx_address;
+	ADDR1<span class="tok-num">1</span>:
+		address[<span class="tok-num">10</span>] = rx_address;
+	ADDR1<span class="tok-num">2</span>:
+	<span class="tok-kw">begin</span>
+		address[<span class="tok-num">11</span>] = rx_address;
+		addr_done = <span class="tok-num">1</span>;
+	<span class="tok-kw">end</span>
+	default:
+		address[<span class="tok-num">0</span>] = rx_address;
+	endcase
+<span class="tok-kw">end</span>
+<span class="tok-kw">always</span> @ (<span class="tok-kw">posedge</span> clk <span class="tok-kw">or</span> <span class="tok-kw">posedge</span> reset) 
+<span class="tok-kw">begin</span>
+	<span class="tok-kw">if</span> (reset)
+		addr_state &lt;= IDLE;
+	<span class="tok-kw">else</span>
+		case (addr_state)
+			IDLE:
+				<span class="tok-kw">if</span> (handshake == <span class="tok-num">1</span>)
+				<span class="tok-kw">begin</span>
+					addr_state &lt;= ADDR1;
+				<span class="tok-kw">end</span>
+				<span class="tok-kw">else</span>
+					addr_state &lt;= IDLE;
+			ADDR1:
+				addr_state &lt;= ADDR2;
+			ADDR2:
+				addr_state &lt;= ADDR3;
+			ADDR3:
+				addr_state &lt;= ADDR4;
+			ADDR4:
+				addr_state &lt;= ADDR5;
+			ADDR5:
+				addr_state &lt;= ADDR6;
+			ADDR6:
+				addr_state &lt;= ADDR7;
+			ADDR7:
+				addr_state &lt;= ADDR8;
+			ADDR8:
+				addr_state &lt;= ADDR9;
+			ADDR9:
+				addr_state &lt;= ADDR1<span class="tok-num">0</span>;
+			ADDR1<span class="tok-num">0</span>:
+				addr_state &lt;= ADDR1<span class="tok-num">1</span>;
+			ADDR1<span class="tok-num">1</span>:
+				addr_state &lt;= ADDR1<span class="tok-num">2</span>;
+			ADDR1<span class="tok-num">2</span>:
+				addr_state &lt;= IDLE;
+		endcase
+<span class="tok-kw">end</span>
+<span class="tok-com">// Statemachine to capture the <span class="tok-num">8</span> bit data</span>
+<span class="tok-kw">parameter</span> 
+DATA1 = <span class="tok-num">1</span>, 
+DATA2 = <span class="tok-num">2</span>, 
+DATA3 = <span class="tok-num">3</span>, 
+DATA4 = <span class="tok-num">4</span>,
+DATA5 = <span class="tok-num">5</span>, 
+DATA6 = <span class="tok-num">6</span>, 
+DATA7 = <span class="tok-num">7</span>, 
+DATA8 = <span class="tok-num">8</span>;
+<span class="tok-kw">always</span> @ (data_state) 
+<span class="tok-kw">begin</span>
+	case (data_state)
+	IDLE:
+	<span class="tok-kw">begin</span>
+		data_idle = <span class="tok-num">1</span>;
+		data_done = <span class="tok-num">0</span>;
+	<span class="tok-kw">end</span>
+	DATA1:
+	<span class="tok-kw">begin</span>
+		data[<span class="tok-num">0</span>] = rx_data;
+		data_idle = <span class="tok-num">0</span>;
+	<span class="tok-kw">end</span>
+	DATA2:
+		data[<span class="tok-num">1</span>] = rx_data;
+	DATA3:
+		data[<span class="tok-num">2</span>] = rx_data;
+	DATA4:
+		data[<span class="tok-num">3</span>] = rx_data;
+	DATA5:
+		data[<span class="tok-num">4</span>] = rx_data;
+	DATA6:
+		data[<span class="tok-num">5</span>] = rx_data;
+	DATA7:
+		data[<span class="tok-num">6</span>] = rx_data;
+	DATA8:
+	<span class="tok-kw">begin</span>
+		data[<span class="tok-num">7</span>] = rx_data;
+		data_done = <span class="tok-num">1</span>;
+	<span class="tok-kw">end</span>
+	default:
+		data[<span class="tok-num">0</span>] = rx_data;
+	endcase
+<span class="tok-kw">end</span>
+<span class="tok-kw">always</span> @ (<span class="tok-kw">posedge</span> clk <span class="tok-kw">or</span> <span class="tok-kw">posedge</span> reset) 
+<span class="tok-kw">begin</span>
+	<span class="tok-kw">if</span> (reset)
+		data_state &lt;= IDLE;
+	<span class="tok-kw">else</span>
+		case (data_state)
+			IDLE:
+				<span class="tok-kw">if</span> (handshake == <span class="tok-num">1</span>)
+				<span class="tok-kw">begin</span>
+					data_state &lt;= DATA1;
+				<span class="tok-kw">end</span>
+				<span class="tok-kw">else</span>
+					data_state &lt;= IDLE;
+			DATA1:
+				data_state &lt;= DATA2;
+			DATA2:
+				data_state &lt;= DATA3;
+			DATA3:
+				data_state &lt;= DATA4;
+			DATA4:
+				data_state &lt;= DATA5;
+			DATA5:
+				data_state &lt;= DATA6;
+			DATA6:
+				data_state &lt;= DATA7;
+			DATA7:
+				data_state &lt;= DATA8;	
+			DATA8:
+				data_state &lt;= IDLE;
+		endcase
+<span class="tok-kw">end</span>
+
+<span class="tok-kw">wire</span> tb_reset;
+<span class="tok-kw">assign</span> tb_reset = (reset == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1);
+<span class="tok-com">// TODO: ASSERTION</span>
+<span class="tok-kw">endmodule</span></pre></div>
+              <div class="field-label">question</div>
+              <p class="prose">Question: Create a SVA assertion that checks: After a valid handshake occurs while the address state machine is idle, the address state machine must progress sequentially through all twelve address states in consecutive cycles. Use the signals &#x27;addr_state&#x27; and &#x27;handshake&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--assistant-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">assistant</span><span class="role-note">&lt;think&gt; reasoning &rarr; final answer</span></div>
+            <div class="turn-body">
+              <details class="think">
+                <summary>Reasoning (&lt;think&gt;...&lt;/think&gt;, 7,224 chars)</summary>
+                <div class="think-body">We are given the following requirement:
+ &quot;After a valid handshake occurs while the address state machine is idle, the address state machine must progress sequentially through all twelve address states in consecutive cycles.&quot;
+
+ Steps:
+ 1. We are to use the signals &#x27;addr_state&#x27; and &#x27;handshake&#x27;.
+ 2. The disable condition is `tb_reset` (which is defined as `reset == 1&#x27;b1`).
+
+ Interpretation:
+ - The condition starts when a handshake occurs and the address state machine is idle. 
+   Note: The state machine has an IDLE state (value 0). We can check that `addr_state == IDLE` and `handshake` is high.
+
+ - Then, in the next cycle (consecutive cycles), the state machine must go through states ADDR1 (1), ADDR2 (2), ... up to ADDR12 (12) in order, one state per cycle.
+
+ We can break it down:
+  a. When at the start condition (handshake and addr_state==IDLE), then in the next cycle addr_state must be ADDR1.
+  b. Then, in the following cycle, it must be ADDR2, and so on until ADDR12.
+
+ We can use a sequence to describe the progression.
+
+ Let&#x27;s define the states as per the parameter (they are 0 to 12 for the address state machine).
+
+ We can write a sequence that starts at the handshake in IDLE and then checks the next 12 cycles:
+
+ sequence addr_progression;
+   (handshake &amp;&amp; addr_state == IDLE) ##1 addr_state == ADDR1
+   ##1 addr_state == ADDR2
+   ##1 addr_state == ADDR3
+   ##1 addr_state == ADDR4
+   ##1 addr_state == ADDR5
+   ##1 addr_state == ADDR6
+   ##1 addr_state == ADDR7
+   ##1 addr_state == ADDR8
+   ##1 addr_state == ADDR9
+   ##1 addr_state == ADDR10
+   ##1 addr_state == ADDR11
+   ##1 addr_state == ADDR12;
+ endsequence
+
+ Then, we can write an assertion that this sequence must hold.
+
+ However, note that the requirement says &quot;after a valid handshake occurs while the address state machine is idle&quot;, meaning that whenever such a handshake occurs, the progression must follow.
+
+ We can write:
+
+ asrt_addr_progression: assert property (
+   @(posedge clk) disable iff (tb_reset)
+     (handshake &amp;&amp; addr_state == IDLE) |-&gt; ##1 addr_state == ADDR1
+        and then for the next 11 cycles we have to check? 
+
+ But the above sequence already covers 12 cycles after the handshake (including the first cycle after). Actually, the handshake happens at cycle T, then at T+1 we are in ADDR1, T+2 in ADDR2, ... T+12 in ADDR12.
+
+ Alternatively, we can use the sequence we defined and then use:
+
+   (handshake &amp;&amp; addr_state == IDLE) |-&gt; addr_progression;
+
+ But note: the sequence `addr_progression` starts at the cycle when handshake and IDLE occur, and then the next cycle (##1) is ADDR1, then next is ADDR2, etc. So it covers 13 cycles? Actually, the starting cycle is the handshake cycle, then the next 12 cycles.
+
+ However, the requirement says &quot;after&quot; the handshake, meaning the progression starts in the next cycle.
+
+ So the sequence is:
+
+   Cycle 0: handshake and IDLE
+   Cycle 1: ADDR1
+   Cycle 2: ADDR2
+   ...
+   Cycle 12: ADDR12
+
+ That is 13 cycles in total (from cycle0 to cycle12).
+
+ But note: the state machine in the design does:
+   - At cycle0 (handshake and IDLE) -&gt; next state is set to ADDR1 (which will be at cycle1).
+   - Then at cycle1, the state is ADDR1 and then it transitions to ADDR2 at cycle2, etc.
+
+ So the sequence above is correct.
+
+ However, we must note that the state machine does not get interrupted? The requirement says &quot;must progress sequentially through all twelve address states in consecutive cycles&quot;. So we are checking that once started, it goes through all without skipping.
+
+ But what if reset happens in the middle? We have the disable condition (tb_reset) which will disable the assertion. So if reset occurs, the assertion is disabled and we don&#x27;t care.
+
+ Implementation:
+
+ We can write:
+
+ ```systemverilog
+ asrt_addr_progression: assert property (
+   @(posedge clk) disable iff (tb_reset)
+     (handshake &amp;&amp; addr_state == IDLE) |-&gt; 
+        ##1 (addr_state == ADDR1) ##1 (addr_state == ADDR2) ##1 (addr_state == ADDR3) 
+        ##1 (addr_state == ADDR4) ##1 (addr_state == ADDR5) ##1 (addr_state == ADDR6) 
+        ##1 (addr_state == ADDR7) ##1 (addr_state == ADDR8) ##1 (addr_state == ADDR9) 
+        ##1 (addr_state == ADDR10) ##1 (addr_state == ADDR11) ##1 (addr_state == ADDR12)
+ );
+ ```
+
+ Alternatively, we can define a sequence for the progression and then use it.
+
+ But the problem says: &quot;Do not add code to output an error message string.&quot; and we are to enclose in ```systemverilog.
+
+ However, note that the state machine parameters are defined in the module. We can use the numeric values? But it&#x27;s better to use the named states. Since the testbench module is provided, the named states (like IDLE, ADDR1, etc.) are in scope.
+
+ But note: the sequence above uses 12 consecutive ##1. That is 12 cycles after the handshake cycle? Actually, the handshake cycle is the starting point, then we have 12 cycles (##1 ... up to 12 times) to cover the 12 states.
+
+ However, the requirement is that the state machine must progress through the twelve states in consecutive cycles. So we are checking that at the 12 consecutive cycles after the handshake, the state is as expected.
+
+ But note: the handshake cycle is when the state is IDLE and handshake occurs. Then the next cycle (1 cycle after) is ADDR1, then 2 cycles after is ADDR2, ... 12 cycles after is ADDR12.
+
+ So the above property is correct.
+
+ However, we can write it more compactly by using a loop? But SVA doesn&#x27;t allow loops in the sequence concatenation in this way. We have to write it out.
+
+ Alternatively, we can use a counter? But that would be more complex.
+
+ Since the requirement is fixed (12 states), we can write it as above.
+
+ Let&#x27;s write the assertion accordingly.
+
+ Important: The state machine has a state called `IDLE` (0) and then `ADDR1` (1) to `ADDR12` (12). We can use the named constants.
+
+ But note: the module defines the parameters. We are inside the module, so we can use them.
+
+ So the code:
+
+```systemverilog
+asrt_addr_progression: assert property (
+  @(posedge clk) disable iff (tb_reset)
+    (handshake &amp;&amp; addr_state == IDLE) |-&gt;
+      ##1 (addr_state == ADDR1)  ##1 (addr_state == ADDR2)  ##1 (addr_state == ADDR3) 
+      ##1 (addr_state == ADDR4)  ##1 (addr_state == ADDR5)  ##1 (addr_state == ADDR6) 
+      ##1 (addr_state == ADDR7)  ##1 (addr_state == ADDR8)  ##1 (addr_state == ADDR9) 
+      ##1 (addr_state == ADDR10) ##1 (addr_state == ADDR11) ##1 (addr_state == ADDR12)
+);
+```
+
+But note: the requirement says &quot;in consecutive cycles&quot;, meaning without interruption. The above sequence requires that each state appears in the next consecutive cycle.
+
+This matches the design: the state machine transitions in every cycle (from ADDR1 to ADDR2 in the next cycle, etc.).
+
+However, what if the state machine does not transition? The assertion will fail.
+
+This is exactly what we want.
+
+But note: the state machine is designed to transition on every clock edge (unless reset). So we are checking that it does.
+
+One more thing: the handshake signal is only used to start the state machine. After that, the state machine runs independently. So we don&#x27;t require handshake to be high in the subsequent cycles.
+
+Therefore, the above assertion is correct.
+
+Let&#x27;s output the code accordingly.</div>
+              </details>
+              <div class="answer-label">final answer</div>
+              <pre class="answer">asrt_addr_progression: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (
+  @(<span class="tok-kw">posedge</span> clk) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (handshake &amp;&amp; addr_state == IDLE) |-&gt;
+      ##1 (addr_state == ADDR1)  ##1 (addr_state == ADDR2)  ##1 (addr_state == ADDR3) 
+      ##1 (addr_state == ADDR4)  ##1 (addr_state == ADDR5)  ##1 (addr_state == ADDR6) 
+      ##1 (addr_state == ADDR7)  ##1 (addr_state == ADDR8)  ##1 (addr_state == ADDR9) 
+      ##1 (addr_state == ADDR10) ##1 (addr_state == ADDR11) ##1 (addr_state == ADDR12)
+);</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+
+    <details class="case" id="case-4">
+      <summary>
+        <span class="case-num">04</span>
+        <span class="case-summary">
+          <span class="case-spec">Create a SVA assertion that checks: The next state of the CRC calculation is computed correctly from the current state and the input data according to the CRC polynomial. Use the signals &#x27;Crc&#x27;, &#x27;CrcNext&#x27; and &#x27;Data&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</span>
+          <span class="case-tag">32-bit CRC polynomial — dense combinational XOR</span>
+        </span>
+        <span class="case-idx">record 74732</span>
+      </summary>
+      <div class="case-body">
+        <div class="turn" style="--role-color: var(--system-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">system</span></div>
+            <div class="turn-body">
+              <p class="prose">You are an AI assistant tasked with formal verification of register transfer level (RTL) designs. Your job is to translate a description of an assertion to concrete SystemVerilog Assertion (SVA) implementation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--user-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">user</span><span class="role-note">testbench + question</span></div>
+            <div class="turn-body">
+              <div class="field-label">testbench</div>
+              <div class="code-scroll"><pre class="code">`timescale 1ns / 1ps
+<span class="tok-com">// Description: </span>
+<span class="tok-com">//</span>
+<span class="tok-com">// Dependencies: </span>
+<span class="tok-com">//</span>
+<span class="tok-com">// Revision: </span>
+<span class="tok-com">// Revision <span class="tok-num">0</span>.0<span class="tok-num">1</span> - File Created</span>
+<span class="tok-com">// Additional Comments: </span>
+<span class="tok-com">//</span>
+<span class="tok-kw">module</span> crc (Clk, Reset, Data_in, Enable, Crc,CrcNext);
+<span class="tok-kw">parameter</span> Tp = <span class="tok-num">1</span>;
+<span class="tok-kw">input</span> Clk;
+<span class="tok-kw">input</span> Reset;
+<span class="tok-kw">input</span> [<span class="tok-num">7</span>:<span class="tok-num">0</span>] Data_in;
+<span class="tok-kw">input</span> Enable;
+<span class="tok-kw">output</span> [<span class="tok-num">31</span>:<span class="tok-num">0</span>] Crc;
+<span class="tok-kw">reg</span>  [<span class="tok-num">31</span>:<span class="tok-num">0</span>] Crc;
+<span class="tok-kw">output</span> [<span class="tok-num">31</span>:<span class="tok-num">0</span>] CrcNext;
+<span class="tok-kw">wire</span> [<span class="tok-num">7</span>:<span class="tok-num">0</span>] Data;
+<span class="tok-kw">assign</span> Data={Data_in[<span class="tok-num">0</span>],Data_in[<span class="tok-num">1</span>],Data_in[<span class="tok-num">2</span>],Data_in[<span class="tok-num">3</span>],Data_in[<span class="tok-num">4</span>],Data_in[<span class="tok-num">5</span>],Data_in[<span class="tok-num">6</span>],Data_in[<span class="tok-num">7</span>]};
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">0</span>] = Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">30</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">6</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">1</span>] = Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">2</span>] = Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">3</span>] = Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">4</span>] = Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">30</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">6</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">5</span>] = Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">6</span>] = Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">7</span>] = Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">8</span>] = Crc[<span class="tok-num">0</span>] ^ Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">28</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">4</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">9</span>] = Crc[<span class="tok-num">1</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">29</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">5</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">10</span>] = Crc[<span class="tok-num">2</span>] ^ Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">29</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">5</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">11</span>] = Crc[<span class="tok-num">3</span>] ^ Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">28</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">4</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">12</span>] = Crc[<span class="tok-num">4</span>] ^ Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">30</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">6</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">13</span>] = Crc[<span class="tok-num">5</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">14</span>] = Crc[<span class="tok-num">6</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">15</span>] =  Crc[<span class="tok-num">7</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">16</span>] = Crc[<span class="tok-num">8</span>] ^ Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">29</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">5</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">17</span>] = Crc[<span class="tok-num">9</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">30</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">6</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">18</span>] = Crc[<span class="tok-num">10</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">19</span>] = Crc[<span class="tok-num">11</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">20</span>] = Crc[<span class="tok-num">12</span>] ^ Crc[<span class="tok-num">28</span>] ^ Data[<span class="tok-num">4</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">21</span>] = Crc[<span class="tok-num">13</span>] ^ Crc[<span class="tok-num">29</span>] ^ Data[<span class="tok-num">5</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">22</span>] = Crc[<span class="tok-num">14</span>] ^ Crc[<span class="tok-num">24</span>] ^ Data[<span class="tok-num">0</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">23</span>] = Crc[<span class="tok-num">15</span>] ^ Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">30</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">6</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">24</span>] = Crc[<span class="tok-num">16</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">25</span>] = Crc[<span class="tok-num">17</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">27</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">3</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">26</span>] = Crc[<span class="tok-num">18</span>] ^ Crc[<span class="tok-num">24</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">30</span>] ^ Data[<span class="tok-num">0</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">6</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">27</span>] = Crc[<span class="tok-num">19</span>] ^ Crc[<span class="tok-num">25</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">1</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">28</span>] = Crc[<span class="tok-num">20</span>] ^ Crc[<span class="tok-num">26</span>] ^ Crc[<span class="tok-num">29</span>] ^ Crc[<span class="tok-num">30</span>] ^ Data[<span class="tok-num">2</span>] ^ Data[<span class="tok-num">5</span>] ^ Data[<span class="tok-num">6</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">29</span>] = Crc[<span class="tok-num">21</span>] ^ Crc[<span class="tok-num">27</span>] ^ Crc[<span class="tok-num">30</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">3</span>] ^ Data[<span class="tok-num">6</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">30</span>] = Crc[<span class="tok-num">22</span>] ^ Crc[<span class="tok-num">28</span>] ^ Crc[<span class="tok-num">31</span>] ^ Data[<span class="tok-num">4</span>] ^ Data[<span class="tok-num">7</span>];
+<span class="tok-kw">assign</span> CrcNext[<span class="tok-num">31</span>] = Crc[<span class="tok-num">23</span>] ^ Crc[<span class="tok-num">29</span>] ^ Data[<span class="tok-num">5</span>];
+<span class="tok-kw">always</span> @ (<span class="tok-kw">posedge</span> Clk, <span class="tok-kw">posedge</span> Reset)
+ <span class="tok-kw">begin</span>
+  <span class="tok-kw">if</span> (Reset) <span class="tok-kw">begin</span>
+    Crc &lt;={<span class="tok-num">32</span>{<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1}};
+  <span class="tok-kw">end</span>
+   <span class="tok-kw">else</span> <span class="tok-kw">if</span> (Enable)
+    Crc &lt;=CrcNext;
+ <span class="tok-kw">end</span>
+
+<span class="tok-kw">wire</span> tb_reset;
+<span class="tok-kw">assign</span> tb_reset = (Reset == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1);
+<span class="tok-com">// TODO: ASSERTION</span>
+<span class="tok-kw">endmodule</span></pre></div>
+              <div class="field-label">question</div>
+              <p class="prose">Question: Create a SVA assertion that checks: The next state of the CRC calculation is computed correctly from the current state and the input data according to the CRC polynomial. Use the signals &#x27;Crc&#x27;, &#x27;CrcNext&#x27; and &#x27;Data&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--assistant-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">assistant</span><span class="role-note">&lt;think&gt; reasoning &rarr; final answer</span></div>
+            <div class="turn-body">
+              <details class="think">
+                <summary>Reasoning (&lt;think&gt;...&lt;/think&gt;, 18,578 chars)</summary>
+                <div class="think-body">We are given the module `crc` with signals:
+  - Clk, Reset, Enable
+  - Data_in (8-bit) but then we have an assignment: 
+        assign Data = {Data_in[0], ... , Data_in[7]}; 
+    This reverses the bits? Actually, it assigns Data[0] = Data_in[0], Data[1]=Data_in[1], ... so it&#x27;s the same as Data_in? 
+    But note: the assignment is: 
+        assign Data={Data_in[0],Data_in[1],Data_in[2],Data_in[3],Data_in[4],Data_in[5],Data_in[6],Data_in[7]};
+    This is the same as just assigning Data = Data_in? Because the indices are in increasing order. 
+    However, the original Data_in is input as [7:0] and then we assign Data[0]=Data_in[0], Data[1]=Data_in[1], ... so Data[7]=Data_in[7]. 
+    So Data is the same as Data_in? 
+
+But looking at the equations, for example:
+    assign CrcNext[0] = Crc[24] ^ Crc[30] ^ Data[0] ^ Data[6];
+So we are using Data[0] and Data[6]. 
+
+The requirement: 
+    &quot;The next state of the CRC calculation is computed correctly from the current state and the input data according to the CRC polynomial.&quot;
+
+We are given the combinational assignments for CrcNext in terms of Crc and Data. 
+We note that the module has a register Crc that is updated on the clock edge when Enable is high and Reset is not active.
+
+We are to write an assertion that checks that at every clock cycle (posedge Clk), the computed CrcNext (which is a wire) is correct. 
+But note: the correctness of CrcNext is defined by the set of equations provided. 
+
+However, we cannot re-write the entire set of equations in the property because that would be redundant and error-prone. 
+But note: the module already defines CrcNext by a set of continuous assignments. 
+
+Wait: the problem says &quot;according to the CRC polynomial&quot;. But we are not given the polynomial. Instead, we are given the implementation. 
+The assertion should check that the implementation of CrcNext is as expected? 
+
+But note: the question says: &quot;computed correctly from the current state and the input data according to the CRC polynomial&quot;. 
+However, we are not given the polynomial. We are only given the module. 
+
+But observe: the module itself is the implementation. The assertion is to check that the next state (CrcNext) is computed correctly. 
+But how? We cannot know the polynomial from the problem. 
+
+But note: the testbench is provided and we are to write an assertion for the module. 
+The module already defines CrcNext by the given equations. 
+
+So what does the assertion do? 
+It should check that the value of CrcNext (the wire) is indeed computed as per the equations? 
+But that would be checking the combinational logic against itself? 
+
+Alternatively, the requirement might be to check that the register Crc updates to CrcNext when Enable is high? 
+But the requirement says: &quot;The next state of the CRC calculation is computed correctly&quot; meaning the combinational next state.
+
+However, the problem states: &quot;Use the signals &#x27;Crc&#x27;, &#x27;CrcNext&#x27; and &#x27;Data&#x27;.&quot;
+
+We are to check that the combinational logic for CrcNext is correct? But without a reference, we cannot. 
+
+But wait: the problem says &quot;according to the CRC polynomial&quot;. We are not given the polynomial. 
+
+However, note that the module is provided and we are to write an assertion inside this module. 
+The only way is to use the same equations that are implemented? 
+
+But that would be a tautology. 
+
+Alternatively, the problem might be expecting that we write an assertion that checks that when the register updates (on the clock edge when Enable is high), then the new Crc is equal to the CrcNext that was computed from the previous Crc and Data. 
+
+But note: the requirement says &quot;the next state of the CRC calculation is computed correctly&quot;, meaning the combinational part. 
+
+However, the module already defines CrcNext by the equations. So if we write an assertion that checks that the CrcNext is equal to the same equations, it would be:
+
+    (CrcNext[0] == (Crc[24] ^ Crc[30] ^ Data[0] ^ Data[6])) and 
+    (CrcNext[1] == (Crc[24] ^ Crc[25] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[6] ^ Data[7])) and 
+    ... 
+
+But that would be very long and exactly the same as the assignment statements. 
+
+Alternatively, we can note that the module already has the assignments for CrcNext. So if we want to check that the combinational logic is working as intended, we would need a reference model. 
+
+But the problem does not provide a reference model. 
+
+Re-reading the problem: &quot;Create a SVA assertion that checks: The next state of the CRC calculation is computed correctly from the current state and the input data according to the CRC polynomial.&quot;
+
+It is possible that the polynomial is the standard CRC-32? But we are not told. 
+
+Given the complexity, and the fact that the module already defines CrcNext by the equations, I think the intended assertion is to check that when the register updates, the new value of Crc is the same as the CrcNext that was present at the time of the clock edge. 
+
+But note: the requirement says &quot;computed correctly&quot;, meaning the combinational function. 
+
+However, the problem says &quot;Use the signals &#x27;Crc&#x27;, &#x27;CrcNext&#x27; and &#x27;Data&#x27;.&quot; and we are in the same module. 
+
+Another interpretation: the assertion is to check that the combinational logic for CrcNext is stable and not changing due to some glitch? But that is not what the requirement says. 
+
+Given the ambiguity, let me look at the example: 
+    asrt: assert property (@(posedge clk) disable iff (tb_reset) (a &amp;&amp; b) != 1&#x27;b1);
+
+But note: the requirement is about the next state being computed correctly. 
+
+I think the intended meaning is to check that at every clock cycle, the value of CrcNext is indeed the correct function of the current Crc and Data. But without a reference, we cannot. 
+
+But wait: the module itself is the design under test. The assertion is for formal verification. We are to check that the design meets the specification. The specification is the polynomial. 
+
+But we are not given the polynomial. 
+
+Therefore, the only way is to have a reference model. However, the problem does not provide one. 
+
+Alternatively, we can note that the polynomial is fixed and we can write the expected equations. But the problem does not specify the polynomial. 
+
+Looking at the equations, it seems to be a standard CRC-32 (Ethernet, etc.) but with the bit order reversed? 
+
+But without the polynomial, we cannot write a reference. 
+
+Given the constraints, I think the problem expects us to write an assertion that checks that the update happens correctly: that when Enable is high, the next Crc becomes the current CrcNext. But that is already implemented by the always block. 
+
+Alternatively, we can write an assertion that checks that the combinational CrcNext is computed as per the same equations that we are given? That would be redundant. 
+
+But note: the problem says &quot;according to the CRC polynomial&quot;. We are not given the polynomial, but the module is given. 
+
+I think the intended solution is to write an assertion that checks the combinational logic against a reference model that is the same as the combinational logic? That doesn&#x27;t make sense. 
+
+Alternatively, the problem might be to check that the next state (the registered state) is updated correctly from the current state and data. But that would be:
+
+    When Enable is high, then on the next clock cycle, Crc should be equal to the CrcNext that was computed at the current clock cycle.
+
+But note: the requirement says &quot;the next state of the CRC calculation is computed correctly&quot;, meaning the combinational next state (CrcNext) is correct. 
+
+But without a reference, we cannot. 
+
+Given the confusion, I note that the problem says: &quot;Use the signals &#x27;Crc&#x27;, &#x27;CrcNext&#x27; and &#x27;Data&#x27;.&quot; and we are to check the computation of CrcNext from Crc and Data. 
+
+So we must write a property that expresses that CrcNext is equal to a function of Crc and Data. 
+
+But the function is the set of 32 equations. 
+
+We can write:
+
+    crc_next_check: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        (CrcNext == ... )
+    );
+
+But we cannot write ... because we have to write the entire 32-bit value as a function. 
+
+Alternatively, we can write a function that computes the expected CrcNext and then compare. 
+
+But the problem says: &quot;Do not add code to output an error message string.&quot; and &quot;Only output the code snippet&quot;.
+
+We are allowed to write helper code? But the example only shows a simple assertion. 
+
+Given the complexity, and since the module already defines CrcNext by the equations, I think the intended solution is to note that the combinational logic is already defined and we don&#x27;t need to check it. 
+
+But the requirement is to check it. 
+
+Another idea: the problem might be to check that when the design is not in reset and Enable is high, then the next state of the register (Crc) becomes the current CrcNext. 
+
+That is, we are checking the register update. 
+
+But the requirement says &quot;computed correctly&quot;, meaning the combinational part. 
+
+However, let me read the requirement again: &quot;The next state of the CRC calculation is computed correctly from the current state and the input data according to the CRC polynomial.&quot;
+
+The next state of the CRC calculation is stored in the register on update. But the combinational value CrcNext is the next state. 
+
+So we are to check that CrcNext is the correct function of Crc and Data. 
+
+Without a reference model, we cannot. 
+
+Given the provided information, I think we have to assume that the polynomial is the one implemented by the equations. 
+
+But then the assertion would be to check that the equations are implemented correctly? That is not possible because we are in the same module. 
+
+I think there is a misunderstanding. 
+
+Looking at the example testbench: it has a wire `tb_reset` defined as (Reset == 1&#x27;b1). 
+
+And the module has the combinational assignments for CrcNext. 
+
+Perhaps the intended assertion is to check that the combinational logic is stable and does not change during the clock cycle? But that is not what the requirement says. 
+
+Given the time, I will propose the following: 
+
+We write an assertion that checks that at every clock edge, the value of CrcNext is consistent with the current Crc and Data as per the given equations. 
+
+But that would be re-writing the entire set of equations in the property. 
+
+We can do that by creating a property that checks each bit of CrcNext against the equation. 
+
+But note: the property would be very long. 
+
+Alternatively, we can define a function that computes the expected CrcNext and then compare. 
+
+But the problem does not say we can add a function. 
+
+However, the problem says: &quot;Enclose your SVA code with ```systemverilog and ```.&quot; and &quot;Only output the code snippet&quot;. 
+
+We are allowed to define a function if needed? 
+
+But the example does not show a function. 
+
+Given the complexity, I think we have to write a long property. 
+
+But note: the problem says &quot;Do not add code to output an error message string.&quot; - that means we can add other code as long as it&#x27;s for the assertion. 
+
+Let me write a function that computes the expected CrcNext from Crc and Data. 
+
+We can do:
+
+    function [31:0] expected_crc_next;
+        input [31:0] Crc;
+        input [7:0] Data;
+        begin
+            expected_crc_next[0] = Crc[24] ^ Crc[30] ^ Data[0] ^ Data[6];
+            expected_crc_next[1] = Crc[24] ^ Crc[25] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[6] ^ Data[7];
+            // ... and so on for all 32 bits
+        end
+    endfunction
+
+Then the assertion would be:
+
+    crc_next_check: assert property (
+        @(posedge Clk) disable iff (tb_reset)
+        (CrcNext == expected_crc_next(Crc, Data))
+    );
+
+But this function is exactly the same as the continuous assignments in the module. 
+
+And it would be very long. 
+
+But it is a direct translation. 
+
+Alternatively, we can note that the continuous assignments are already there, so we can use them? But we cannot because the function must be independent. 
+
+Given the instructions, I think this is acceptable. 
+
+But the problem says: &quot;Use the signals &#x27;Crc&#x27;, &#x27;CrcNext&#x27; and &#x27;Data&#x27;.&quot; - and we are using them. 
+
+However, the function uses Crc and Data, and then we compare to CrcNext. 
+
+But note: the function is not synthesizable and only for assertion. 
+
+But the module is for simulation/formal. 
+
+But the problem does not specify. 
+
+Given the complexity and the requirement, I will write the function and the assertion. 
+
+But note: the problem says &quot;Do not add code to output an error message string.&quot; - we are not. 
+
+But the function is additional code. 
+
+Alternatively, we can write the property without a function by doing a bit-by-bit comparison in the property. 
+
+That would be:
+
+    property crc_next_prop;
+        (CrcNext[0] == (Crc[24] ^ Crc[30] ^ Data[0] ^ Data[6])) &amp;&amp;
+        (CrcNext[1] == (Crc[24] ^ Crc[25] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[6] ^ Data[7])) &amp;&amp;
+        ... // for all 32 bits
+    endproperty
+
+    crc_next_check: assert property (@(posedge Clk) disable iff (tb_reset) crc_next_prop);
+
+But this is also very long. 
+
+Given the two options, the function is more concise and readable. 
+
+But the problem does not specify whether we can use a function. 
+
+However, the example does not use a function, but it is a simple example. 
+
+Given the instructions, I will choose to write the function and then the assertion. 
+
+But note: the function must be declared inside the module? 
+
+The problem says: &quot;Answer:&quot; and then the code snippet. 
+
+We are to output the code snippet that goes in the module at the &quot;// TODO: ASSERTION&quot; part. 
+
+So we can write:
+
+```systemverilog
+// Function to compute expected CrcNext
+function [31:0] expected_crc_next;
+    input [31:0] Crc;
+    input [7:0] Data;
+    begin
+        expected_crc_next[0] = Crc[24] ^ Crc[30] ^ Data[0] ^ Data[6];
+        expected_crc_next[1] = Crc[24] ^ Crc[25] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[6] ^ Data[7];
+        expected_crc_next[2] = Crc[24] ^ Crc[25] ^ Crc[26] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[2] ^ Data[6] ^ Data[7];
+        expected_crc_next[3] = Crc[25] ^ Crc[26] ^ Crc[27] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[3] ^ Data[7];
+        expected_crc_next[4] = Crc[24] ^ Crc[26] ^ Crc[27] ^ Crc[28] ^ Crc[30] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[4] ^ Data[6];
+        expected_crc_next[5] = Crc[24] ^ Crc[25] ^ Crc[27] ^ Crc[28] ^ Crc[29] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[3] ^ Data[4] ^ Data[5] ^ Data[6] ^ Data[7];
+        expected_crc_next[6] = Crc[25] ^ Crc[26] ^ Crc[28] ^ Crc[29] ^ Crc[30] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[4] ^ Data[5] ^ Data[6] ^ Data[7];
+        expected_crc_next[7] = Crc[24] ^ Crc[26] ^ Crc[27] ^ Crc[29] ^ Crc[31] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[5] ^ Data[7];
+        expected_crc_next[8] = Crc[0] ^ Crc[24] ^ Crc[25] ^ Crc[27] ^ Crc[28] ^ Data[0] ^ Data[1] ^ Data[3] ^ Data[4];
+        expected_crc_next[9] = Crc[1] ^ Crc[25] ^ Crc[26] ^ Crc[28] ^ Crc[29] ^ Data[1] ^ Data[2] ^ Data[4] ^ Data[5];
+        expected_crc_next[10] = Crc[2] ^ Crc[24] ^ Crc[26] ^ Crc[27] ^ Crc[29] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[5];
+        expected_crc_next[11] = Crc[3] ^ Crc[24] ^ Crc[25] ^ Crc[27] ^ Crc[28] ^ Data[0] ^ Data[1] ^ Data[3] ^ Data[4];
+        expected_crc_next[12] = Crc[4] ^ Crc[24] ^ Crc[25] ^ Crc[26] ^ Crc[28] ^ Crc[29] ^ Crc[30] ^ Data[0] ^ Data[1] ^ Data[2] ^ Data[4] ^ Data[5] ^ Data[6];
+        expected_crc_next[13] = Crc[5] ^ Crc[25] ^ Crc[26] ^ Crc[27] ^ Crc[29] ^ Crc[30] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[3] ^ Data[5] ^ Data[6] ^ Data[7];
+        expected_crc_next[14] = Crc[6] ^ Crc[26] ^ Crc[27] ^ Crc[28] ^ Crc[30] ^ Crc[31] ^ Data[2] ^ Data[3] ^ Data[4] ^ Data[6] ^ Data[7];
+        expected_crc_next[15] = Crc[7] ^ Crc[27] ^ Crc[28] ^ Crc[29] ^ Crc[31] ^ Data[3] ^ Data[4] ^ Data[5] ^ Data[7];
+        expected_crc_next[16] = Crc[8] ^ Crc[24] ^ Crc[28] ^ Crc[29] ^ Data[0] ^ Data[4] ^ Data[5];
+        expected_crc_next[17] = Crc[9] ^ Crc[25] ^ Crc[29] ^ Crc[30] ^ Data[1] ^ Data[5] ^ Data[6];
+        expected_crc_next[18] = Crc[10] ^ Crc[26] ^ Crc[30] ^ Crc[31] ^ Data[2] ^ Data[6] ^ Data[7];
+        expected_crc_next[19] = Crc[11] ^ Crc[27] ^ Crc[31] ^ Data[3] ^ Data[7];
+        expected_crc_next[20] = Crc[12] ^ Crc[28] ^ Data[4];
+        expected_crc_next[21] = Crc[13] ^ Crc[29] ^ Data[5];
+        expected_crc_next[22] = Crc[14] ^ Crc[24] ^ Data[0];
+        expected_crc_next[23] = Crc[15] ^ Crc[24] ^ Crc[25] ^ Crc[30] ^ Data[0] ^ Data[1] ^ Data[6];
+        expected_crc_next[24] = Crc[16] ^ Crc[25] ^ Crc[26] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[7];
+        expected_crc_next[25] = Crc[17] ^ Crc[26] ^ Crc[27] ^ Data[2] ^ Data[3];
+        expected_crc_next[26] = Crc[18] ^ Crc[24] ^ Crc[27] ^ Crc[28] ^ Crc[30] ^ Data[0] ^ Data[3] ^ Data[4] ^ Data[6];
+        expected_crc_next[27] = Crc[19] ^ Crc[25] ^ Crc[28] ^ Crc[29] ^ Crc[31] ^ Data[1] ^ Data[4] ^ Data[5] ^ Data[7];
+        expected_crc_next[28] = Crc[20] ^ Crc[26] ^ Crc[29] ^ Crc[30] ^ Data[2] ^ Data[5] ^ Data[6];
+        expected_crc_next[29] = Crc[21] ^ Crc[27] ^ Crc[30] ^ Crc[31] ^ Data[3] ^ Data[6] ^ Data[7];
+        expected_crc_next[30] = Crc[22] ^ Crc[28] ^ Crc[31] ^ Data[4] ^ Data[7];
+        expected_crc_next[31] = Crc[23] ^ Crc[29] ^ Data[5];
+    end
+endfunction
+
+crc_next_assertion: assert property (
+    @(posedge Clk) disable iff (tb_reset)
+    (CrcNext == expected_crc_next(Crc, Data))
+);
+```
+
+But note: the function uses the same bit indices as the module. 
+
+However, there is a potential issue: the function is evaluated in the same time step, so it should be fine. 
+
+But note: the module has an assignment for `Data` which is the same as `Data_in` (bit order preserved). 
+
+We are using `Data` in the function, which is the same signal as in the module. 
+
+This assertion will check that the combinational logic for CrcNext matches the function. 
+
+But the function is defined exactly as the continuous assignments. So it should always pass. 
+
+Why would we want this? In formal verification, this might be used to check that the function is implemented correctly against a specification? But here we are using the same function. 
+
+Alternatively, in a real design, the function might be replaced by the polynomial specification. But here we don&#x27;t have that. 
+
+Given the problem, this is the best we can do. 
+
+But note: the problem says &quot;according to the CRC polynomial&quot;. We are not given the polynomial, so we use the provided equations. 
+
+Therefore, I will output the above code. 
+
+However, the problem says &quot;Do not add code to output an error message string.&quot; and we are not. 
+
+Let me write the code snippet as required.</div>
+              </details>
+              <div class="answer-label">final answer</div>
+              <pre class="answer">crc_next_assertion: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (
+    @(<span class="tok-kw">posedge</span> Clk) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (CrcNext[0] == (Crc[24] ^ Crc[30] ^ Data[0] ^ Data[6])) &amp;&amp;
+    (CrcNext[1] == (Crc[24] ^ Crc[25] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[2] == (Crc[24] ^ Crc[25] ^ Crc[26] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[2] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[3] == (Crc[25] ^ Crc[26] ^ Crc[27] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[3] ^ Data[7])) &amp;&amp;
+    (CrcNext[4] == (Crc[24] ^ Crc[26] ^ Crc[27] ^ Crc[28] ^ Crc[30] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[4] ^ Data[6])) &amp;&amp;
+    (CrcNext[5] == (Crc[24] ^ Crc[25] ^ Crc[27] ^ Crc[28] ^ Crc[29] ^ Crc[30] ^ Crc[31] ^ Data[0] ^ Data[1] ^ Data[3] ^ Data[4] ^ Data[5] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[6] == (Crc[25] ^ Crc[26] ^ Crc[28] ^ Crc[29] ^ Crc[30] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[4] ^ Data[5] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[7] == (Crc[24] ^ Crc[26] ^ Crc[27] ^ Crc[29] ^ Crc[31] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[5] ^ Data[7])) &amp;&amp;
+    (CrcNext[8] == (Crc[0] ^ Crc[24] ^ Crc[25] ^ Crc[27] ^ Crc[28] ^ Data[0] ^ Data[1] ^ Data[3] ^ Data[4])) &amp;&amp;
+    (CrcNext[9] == (Crc[1] ^ Crc[25] ^ Crc[26] ^ Crc[28] ^ Crc[29] ^ Data[1] ^ Data[2] ^ Data[4] ^ Data[5])) &amp;&amp;
+    (CrcNext[10] == (Crc[2] ^ Crc[24] ^ Crc[26] ^ Crc[27] ^ Crc[29] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[5])) &amp;&amp;
+    (CrcNext[11] == (Crc[3] ^ Crc[24] ^ Crc[25] ^ Crc[27] ^ Crc[28] ^ Data[0] ^ Data[1] ^ Data[3] ^ Data[4])) &amp;&amp;
+    (CrcNext[12] == (Crc[4] ^ Crc[24] ^ Crc[25] ^ Crc[26] ^ Crc[28] ^ Crc[29] ^ Crc[30] ^ Data[0] ^ Data[1] ^ Data[2] ^ Data[4] ^ Data[5] ^ Data[6])) &amp;&amp;
+    (CrcNext[13] == (Crc[5] ^ Crc[25] ^ Crc[26] ^ Crc[27] ^ Crc[29] ^ Crc[30] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[3] ^ Data[5] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[14] == (Crc[6] ^ Crc[26] ^ Crc[27] ^ Crc[28] ^ Crc[30] ^ Crc[31] ^ Data[2] ^ Data[3] ^ Data[4] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[15] == (Crc[7] ^ Crc[27] ^ Crc[28] ^ Crc[29] ^ Crc[31] ^ Data[3] ^ Data[4] ^ Data[5] ^ Data[7])) &amp;&amp;
+    (CrcNext[16] == (Crc[8] ^ Crc[24] ^ Crc[28] ^ Crc[29] ^ Data[0] ^ Data[4] ^ Data[5])) &amp;&amp;
+    (CrcNext[17] == (Crc[9] ^ Crc[25] ^ Crc[29] ^ Crc[30] ^ Data[1] ^ Data[5] ^ Data[6])) &amp;&amp;
+    (CrcNext[18] == (Crc[10] ^ Crc[26] ^ Crc[30] ^ Crc[31] ^ Data[2] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[19] == (Crc[11] ^ Crc[27] ^ Crc[31] ^ Data[3] ^ Data[7])) &amp;&amp;
+    (CrcNext[20] == (Crc[12] ^ Crc[28] ^ Data[4])) &amp;&amp;
+    (CrcNext[21] == (Crc[13] ^ Crc[29] ^ Data[5])) &amp;&amp;
+    (CrcNext[22] == (Crc[14] ^ Crc[24] ^ Data[0])) &amp;&amp;
+    (CrcNext[23] == (Crc[15] ^ Crc[24] ^ Crc[25] ^ Crc[30] ^ Data[0] ^ Data[1] ^ Data[6])) &amp;&amp;
+    (CrcNext[24] == (Crc[16] ^ Crc[25] ^ Crc[26] ^ Crc[31] ^ Data[1] ^ Data[2] ^ Data[7])) &amp;&amp;
+    (CrcNext[25] == (Crc[17] ^ Crc[26] ^ Crc[27] ^ Data[2] ^ Data[3])) &amp;&amp;
+    (CrcNext[26] == (Crc[18] ^ Crc[24] ^ Crc[27] ^ Crc[28] ^ Crc[30] ^ Data[0] ^ Data[3] ^ Data[4] ^ Data[6])) &amp;&amp;
+    (CrcNext[27] == (Crc[19] ^ Crc[25] ^ Crc[28] ^ Crc[29] ^ Crc[31] ^ Data[1] ^ Data[4] ^ Data[5] ^ Data[7])) &amp;&amp;
+    (CrcNext[28] == (Crc[20] ^ Crc[26] ^ Crc[29] ^ Crc[30] ^ Data[2] ^ Data[5] ^ Data[6])) &amp;&amp;
+    (CrcNext[29] == (Crc[21] ^ Crc[27] ^ Crc[30] ^ Crc[31] ^ Data[3] ^ Data[6] ^ Data[7])) &amp;&amp;
+    (CrcNext[30] == (Crc[22] ^ Crc[28] ^ Crc[31] ^ Data[4] ^ Data[7])) &amp;&amp;
+    (CrcNext[31] == (Crc[23] ^ Crc[29] ^ Data[5]))
+);</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+
+    <details class="case" id="case-5">
+      <summary>
+        <span class="case-num">05</span>
+        <span class="case-summary">
+          <span class="case-spec">Create a SVA assertion that checks: When sampling is enabled at a specific edge count and prescale value, the sampled input value is stored in the corresponding edge bit on the next cycle. Use the signals &#x27;RX_IN&#x27;, &#x27;edge_bits&#x27;, &#x27;edge_cnt&#x27;, &#x27;prescale&#x27; and &#x27;samp_en&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</span>
+          <span class="case-tag">multi-property answer — three separate assert property blocks</span>
+        </span>
+        <span class="case-idx">record 82085</span>
+      </summary>
+      <div class="case-body">
+        <div class="turn" style="--role-color: var(--system-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">system</span></div>
+            <div class="turn-body">
+              <p class="prose">You are an AI assistant tasked with formal verification of register transfer level (RTL) designs. Your job is to translate a description of an assertion to concrete SystemVerilog Assertion (SVA) implementation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--user-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">user</span><span class="role-note">testbench + question</span></div>
+            <div class="turn-body">
+              <div class="field-label">testbench</div>
+              <div class="code-scroll"><pre class="code"><span class="tok-kw">module</span> data_sampling (
+ <span class="tok-kw">input</span> <span class="tok-kw">wire</span>                                               RX_IN,CLK,RST,samp_en,
+ <span class="tok-kw">input</span> <span class="tok-kw">wire</span>             [<span class="tok-num">4</span>:<span class="tok-num">0</span>]                           prescale,
+ <span class="tok-kw">input</span> <span class="tok-kw">wire</span>             [<span class="tok-num">4</span>:<span class="tok-num">0</span>]                           edge_cnt,
+ <span class="tok-kw">output</span> <span class="tok-kw">reg</span>                                              sampled_bit
+);
+<span class="tok-kw">reg</span>                        [<span class="tok-num">31</span>:<span class="tok-num">0</span>]                         edge_bits ;
+<span class="tok-kw">reg</span>                        [<span class="tok-num">2</span>:<span class="tok-num">0</span>]                           sum ;
+<span class="tok-kw">always</span> @(*)
+ <span class="tok-kw">begin</span>
+     <span class="tok-kw">if</span> (samp_en) 
+	  <span class="tok-kw">begin</span>
+	     <span class="tok-kw">if</span>(edge_cnt&gt;=<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">00</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1</span>)
+		  sampled_bit=edge_bits[<span class="tok-num">2</span>] ;
+		 <span class="tok-kw">else</span> <span class="tok-kw">if</span> (((edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">000</span>)|(edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1)) &amp; (prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">11</span>))
+	      <span class="tok-kw">begin</span>
+	         <span class="tok-kw">if</span> (sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b0 | sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1)
+		      sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0 ;
+		     <span class="tok-kw">else</span>  <span class="tok-com">// <span class="tok-kw">if</span> (sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0</span> | sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1</span>)</span>
+		      sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1 ;
+	     <span class="tok-kw">end</span>
+	     <span class="tok-kw">else</span> <span class="tok-kw">if</span> (((edge_cnt&gt;=<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">101</span>)|(edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1))&amp;( prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>))
+	      <span class="tok-kw">begin</span>
+	         <span class="tok-kw">if</span> (sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b0 | sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1 | sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0</span>)
+		      sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0 ;
+		     <span class="tok-kw">else</span>
+		      sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1 ;
+	     <span class="tok-kw">end</span>
+	     <span class="tok-kw">else</span> <span class="tok-kw">if</span> (((edge_cnt&gt;=<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0110</span>)|(edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1))&amp;(prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>))
+	      <span class="tok-kw">begin</span>
+	         <span class="tok-kw">if</span> (sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b0 | sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1 | sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0</span> | sum==<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1</span>)
+		      sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0 ;
+		     <span class="tok-kw">else</span>
+		      sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b1 ;
+	     <span class="tok-kw">end</span>
+		 <span class="tok-kw">else</span>
+		 sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0 ;
+	  <span class="tok-kw">end</span>
+	 <span class="tok-kw">else</span>
+	  sampled_bit=<span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0 ;
+ <span class="tok-kw">end</span>
+<span class="tok-kw">always</span> @(<span class="tok-kw">posedge</span> CLK <span class="tok-kw">or</span> <span class="tok-kw">negedge</span> RST)
+ <span class="tok-kw">begin</span>
+     <span class="tok-kw">if</span>(!RST)
+	  <span class="tok-kw">begin</span>
+		 edge_bits&lt;=<span class="tok-num">32</span>&#x2<span class="tok-num">7</span>;b0 ;
+		 sum&lt;=<span class="tok-num">3</span>&#x2<span class="tok-num">7</span>;b0 ;
+	  <span class="tok-kw">end</span>
+	 <span class="tok-kw">else</span> <span class="tok-kw">if</span> (samp_en) 
+	  <span class="tok-kw">begin</span>
+	     <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1</span>)
+		  edge_bits[<span class="tok-num">2</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span>(edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">00</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">11</span>) 
+	      edge_bits[<span class="tok-num">3</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span> ( edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">01</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">11</span>)
+	      edge_bits[<span class="tok-num">4</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">10</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">11</span>)
+	      edge_bits[<span class="tok-num">5</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">11</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>)
+	      edge_bits[<span class="tok-num">6</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">000</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>)
+	      edge_bits[<span class="tok-num">7</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">001</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>)
+	      edge_bits[<span class="tok-num">8</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">010</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>)
+	      edge_bits[<span class="tok-num">9</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">011</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>)
+	      edge_bits[<span class="tok-num">10</span>]&lt;=RX_IN ;
+		 <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">110</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+		  edge_bits[<span class="tok-num">13</span>]&lt;=RX_IN ;
+		 <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+		  edge_bits[<span class="tok-num">14</span>]&lt;=RX_IN ;
+		 <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0000</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+		  edge_bits[<span class="tok-num">15</span>]&lt;=RX_IN ;
+		 <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0001</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+		  edge_bits[<span class="tok-num">16</span>]&lt;=RX_IN ;
+		 <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0010</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+		  edge_bits[<span class="tok-num">17</span>]&lt;=RX_IN ;
+		 <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0011</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+		  edge_bits[<span class="tok-num">18</span>]&lt;=RX_IN ;
+		 <span class="tok-kw">if</span> (edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0100</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+		  edge_bits[<span class="tok-num">19</span>]&lt;=RX_IN ;
+	     <span class="tok-kw">if</span>(edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">11</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">11</span>)
+	      sum&lt;=edge_bits[<span class="tok-num">3</span>]+edge_bits[<span class="tok-num">4</span>]+edge_bits[<span class="tok-num">5</span>] ;
+	     <span class="tok-kw">if</span>(edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">100</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">111</span>)
+	      sum&lt;=edge_bits[<span class="tok-num">6</span>]+edge_bits[<span class="tok-num">7</span>]+edge_bits[<span class="tok-num">8</span>]+edge_bits[<span class="tok-num">9</span>]+edge_bits[<span class="tok-num">10</span>] ;
+	     <span class="tok-kw">if</span>(edge_cnt==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">0101</span> &amp; prescale==<span class="tok-num">5</span>&#x2<span class="tok-num">7</span>;b1<span class="tok-num">1111</span>)
+	      sum&lt;=edge_bits[<span class="tok-num">13</span>]+edge_bits[<span class="tok-num">14</span>]+edge_bits[<span class="tok-num">15</span>]+edge_bits[<span class="tok-num">16</span>]+edge_bits[<span class="tok-num">17</span>]+edge_bits[<span class="tok-num">18</span>]+edge_bits[<span class="tok-num">19</span>] ;
+	  <span class="tok-kw">end</span>
+ <span class="tok-kw">end</span>
+
+<span class="tok-kw">wire</span> tb_reset;
+<span class="tok-kw">assign</span> tb_reset = (RST == <span class="tok-num">1</span>&#x2<span class="tok-num">7</span>;b0);
+<span class="tok-com">// TODO: ASSERTION</span>
+<span class="tok-kw">endmodule</span></pre></div>
+              <div class="field-label">question</div>
+              <p class="prose">Question: Create a SVA assertion that checks: When sampling is enabled at a specific edge count and prescale value, the sampled input value is stored in the corresponding edge bit on the next cycle. Use the signals &#x27;RX_IN&#x27;, &#x27;edge_bits&#x27;, &#x27;edge_cnt&#x27;, &#x27;prescale&#x27; and &#x27;samp_en&#x27;.
+You should use `tb_reset` as the disable condition signal. Do not add code to output an error message string.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn" style="--role-color: var(--assistant-role)">
+          <div class="rail"><div class="rail-bar" style="height:100%"></div></div>
+          <div class="turn-card">
+            <div class="turn-head"><span class="role-dot"></span><span class="role-label">assistant</span><span class="role-note">&lt;think&gt; reasoning &rarr; final answer</span></div>
+            <div class="turn-body">
+              <details class="think">
+                <summary>Reasoning (&lt;think&gt;...&lt;/think&gt;, 17,875 chars)</summary>
+                <div class="think-body">We are given a testbench module `data_sampling` and we need to write an SVA assertion.
+ The requirement: &quot;When sampling is enabled at a specific edge count and prescale value, the sampled input value is stored in the corresponding edge bit on the next cycle.&quot;
+
+ Observing the always block for `edge_bits` and `sum` (which is triggered on posedge CLK or negedge RST):
+   - On the next clock cycle (i.e., at the next posedge CLK) after the condition occurs, we expect that the value of RX_IN at the time of the condition is stored in a specific bit of `edge_bits`.
+
+ The conditions in the testbench for storing into `edge_bits` are:
+   - if (edge_cnt==5&#x27;b11 &amp; prescale==5&#x27;b11) then edge_bits[2] &lt;= RX_IN;
+   - if (edge_cnt==5&#x27;b100 &amp; prescale==5&#x27;b111) then edge_bits[3] &lt;= RX_IN;
+   - ... and so on.
+
+ Therefore, the assertion should check that whenever one of these conditions is true (i.e., at the current clock edge), then on the next clock edge the corresponding bit of `edge_bits` equals the value of `RX_IN` at the time the condition occurred.
+
+ However, note that the condition must occur when `samp_en` is high (because the assignments are inside `else if (samp_en)`).
+
+ Steps:
+ 1. We need to capture the value of RX_IN at the time the condition occurs (so that we can compare it in the next cycle).
+ 2. We have multiple conditions. We can write one assertion per condition or use a sequence for each condition and then combine them.
+
+ But note: the conditions are mutually exclusive in time? Actually, the edge_cnt and prescale are changing, and at a given cycle only one condition might be true. However, we cannot assume that. But the design only assigns one bit per cycle? Actually, looking at the code, multiple conditions might be true in the same cycle? Let&#x27;s see:
+
+ The assignments in the always block are non-blocking and multiple if conditions are independent. For example, if at a cycle we have:
+   edge_cnt==5&#x27;b11 and prescale==5&#x27;b11 -&gt; then edge_bits[2] is assigned
+   and if at the same cycle we have edge_cnt==5&#x27;b100 and prescale==5&#x27;b111 -&gt; that condition is false because edge_cnt is 3 (5&#x27;b11) not 4 (5&#x27;b100).
+
+ So actually, the conditions are mutually exclusive because the edge_cnt and prescale values are specific and non-overlapping.
+
+ However, to be safe, we can write separate assertions for each condition.
+
+ Alternatively, we can write one assertion that covers all conditions by using a function or by using a sequence that covers all cases.
+
+ But note: the requirement says &quot;a specific edge count and prescale value&quot;, meaning each condition is specific.
+
+ Approach:
+
+ We can write a property for each condition. For example:
+
+   condition1: (samp_en &amp;&amp; (edge_cnt == 5&#x27;b11) &amp;&amp; (prescale == 5&#x27;b11))
+   Then, in the next cycle, edge_bits[2] should be equal to the RX_IN at the time of condition1.
+
+ Similarly for the others.
+
+ How to capture RX_IN at the time of the condition? We can use a local variable or use the fact that in the next cycle we can refer to the past value of RX_IN.
+
+ We can use the $past function? But note: the condition is true at time t, then at time t+1 we want to check that edge_bits[2] equals RX_IN at time t.
+
+ So we can write:
+
+   asrt_condition1: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b11) &amp;&amp; (prescale == 5&#x27;b11)) |=&gt; (edge_bits[2] == $past(RX_IN,1))
+   );
+
+ Similarly for the other conditions.
+
+ However, note that the testbench has multiple conditions for different prescale and edge_cnt. We have:
+
+   Condition for edge_bits[2]: (edge_cnt==5&#x27;b11 &amp; prescale==5&#x27;b11)
+   Condition for edge_bits[3]: (edge_cnt==5&#x27;b100 &amp; prescale==5&#x27;b111)
+   Condition for edge_bits[4]: (edge_cnt==5&#x27;b101 &amp; prescale==5&#x27;b111)
+   Condition for edge_bits[5]: (edge_cnt==5&#x27;b110 &amp; prescale==5&#x27;b111)
+   Condition for edge_bits[6]: (edge_cnt==5&#x27;b111 &amp; prescale==5&#x27;b1111)
+   Condition for edge_bits[7]: (edge_cnt==5&#x27;b1000 &amp; prescale==5&#x27;b1111)
+   Condition for edge_bits[8]: (edge_cnt==5&#x27;b1001 &amp; prescale==5&#x27;b1111)
+   Condition for edge_bits[9]: (edge_cnt==5&#x27;b1010 &amp; prescale==5&#x27;b1111)
+   Condition for edge_bits[10]: (edge_cnt==5&#x27;b1011 &amp; prescale==5&#x27;b1111)
+   Condition for edge_bits[13]: (edge_cnt==5&#x27;b1110 &amp; prescale==5&#x27;b11111)
+   Condition for edge_bits[14]: (edge_cnt==5&#x27;b1111 &amp; prescale==5&#x27;b11111)
+   Condition for edge_bits[15]: (edge_cnt==5&#x27;b10000 &amp; prescale==5&#x27;b11111)
+   Condition for edge_bits[16]: (edge_cnt==5&#x27;b10001 &amp; prescale==5&#x27;b11111)
+   Condition for edge_bits[17]: (edge_cnt==5&#x27;b10010 &amp; prescale==5&#x27;b11111)
+   Condition for edge_bits[18]: (edge_cnt==5&#x27;b10011 &amp; prescale==5&#x27;b11111)
+   Condition for edge_bits[19]: (edge_cnt==5&#x27;b10100 &amp; prescale==5&#x27;b11111)
+
+ We must write an assertion for each of these.
+
+ But note: the testbench also has conditions for updating `sum`, but the requirement is only about storing the sampled input value in the edge bit. So we ignore the `sum` conditions.
+
+ However, note that the assignments to `edge_bits` are non-blocking and occur at the same time as the condition. So the value of RX_IN at the time of the condition is the one that gets stored.
+
+ Implementation:
+
+ We can write 15 separate assertions? That might be verbose but clear.
+
+ Alternatively, we can write a sequence for each and then use a generate block? But the testbench is fixed and we are writing assertions for a fixed set.
+
+ Since the number is fixed, we can write 15 assertions.
+
+ But note: the requirement says &quot;on the next cycle&quot;, so we use |=&gt; which means one clock cycle later.
+
+ Also, note that the condition must be true and samp_en must be high (which is already included in the condition because the assignments are inside `else if (samp_en)` and the condition is inside that block). However, in the testbench, the condition for assignment is inside the `samp_en` block, so we must also require `samp_en` to be true.
+
+ Therefore, each condition will be: `samp_en &amp;&amp; (edge_cnt == ...) &amp;&amp; (prescale == ...)`
+
+ Let&#x27;s write the assertions:
+
+   For edge_bits[2]:
+        condition: samp_en &amp;&amp; (edge_cnt == 5&#x27;d3) &amp;&amp; (prescale == 5&#x27;d3)   [since 5&#x27;b11 is 3]
+        then |=&gt; (edge_bits[2] == $past(RX_IN))
+
+   But note: the $past function by default takes one step back, so $past(RX_IN) in the next cycle is the value of RX_IN at the time the condition was true.
+
+ However, we can also use the implication with |=&gt; which already shifts by one cycle. So we don&#x27;t need to put $past in the consequent? Actually, we do because we want to compare with the value of RX_IN at the time the antecedent was true.
+
+ Alternatively, we can capture the value at the time of the condition and then use it in the next cycle. But $past is the standard way.
+
+ But note: the $past function in the consequent of |=&gt; would look back one cycle from the current cycle (which is the next cycle after the condition). So $past(RX_IN,1) at time t+1 is RX_IN at time t.
+
+ So we can write:
+
+   asrt_bit2: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;d3) &amp;&amp; (prescale == 5&#x27;d3)) |=&gt; (edge_bits[2] == $past(RX_IN,1))
+   );
+
+ Similarly, for the others.
+
+ However, note that the prescale values are given in binary. Let&#x27;s convert the edge_cnt and prescale values to decimal for clarity? Or we can use the same binary representation? But in SVA, we can write numbers in binary.
+
+ But for consistency, we can write the numbers in the same base as the testbench. The testbench uses 5&#x27;b... so we can use 5&#x27;b... in the assertion.
+
+ Alternatively, we can use decimal. It doesn&#x27;t matter because the values are the same.
+
+ Let me list the conditions with the bit index and the values:
+
+   bit[2]: edge_cnt=5&#x27;b00011 (3), prescale=5&#x27;b00011 (3)
+   bit[3]: edge_cnt=5&#x27;b00100 (4), prescale=5&#x27;b00111 (7)
+   bit[4]: edge_cnt=5&#x27;b00101 (5), prescale=5&#x27;b00111 (7)
+   bit[5]: edge_cnt=5&#x27;b00110 (6), prescale=5&#x27;b00111 (7)
+   bit[6]: edge_cnt=5&#x27;b00111 (7), prescale=5&#x27;b01111 (15)
+   bit[7]: edge_cnt=5&#x27;b01000 (8), prescale=5&#x27;b01111 (15)
+   bit[8]: edge_cnt=5&#x27;b01001 (9), prescale=5&#x27;b01111 (15)
+   bit[9]: edge_cnt=5&#x27;b01010 (10), prescale=5&#x27;b01111 (15)
+   bit[10]: edge_cnt=5&#x27;b01011 (11), prescale=5&#x27;b01111 (15)
+   bit[13]: edge_cnt=5&#x27;b01110 (14), prescale=5&#x27;b11111 (31)
+   bit[14]: edge_cnt=5&#x27;b01111 (15), prescale=5&#x27;b11111 (31)
+   bit[15]: edge_cnt=5&#x27;b10000 (16), prescale=5&#x27;b11111 (31)
+   bit[16]: edge_cnt=5&#x27;b10001 (17), prescale=5&#x27;b11111 (31)
+   bit[17]: edge_cnt=5&#x27;b10010 (18), prescale=5&#x27;b11111 (31)
+   bit[18]: edge_cnt=5&#x27;b10011 (19), prescale=5&#x27;b11111 (31)
+   bit[19]: edge_cnt=5&#x27;b10100 (20), prescale=5&#x27;b11111 (31)
+
+ We&#x27;ll write 15 assertions.
+
+ However, note that the testbench also has conditions for updating `sum` but we are only concerned with the edge_bits assignments.
+
+ Let&#x27;s write the assertions accordingly.
+
+ Important: We must use `tb_reset` as the disable condition.
+
+ We&#x27;ll write:
+
+   asrt_bit2: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b00011) &amp;&amp; (prescale == 5&#x27;b00011)) |=&gt; (edge_bits[2] == $past(RX_IN,1));
+
+   asrt_bit3: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b00100) &amp;&amp; (prescale == 5&#x27;b00111)) |=&gt; (edge_bits[3] == $past(RX_IN,1));
+
+   ... and so on.
+
+ But note: the testbench uses 5-bit values, so we can write the numbers as 5&#x27;b... to match.
+
+ Alternatively, we can write in decimal. Since the numbers are small, we can use decimal for edge_cnt and prescale? But the prescale values are 3,7,15,31 and edge_cnt are 3,4,...,20.
+
+ However, to be consistent with the testbench, we&#x27;ll use the same representation. The testbench uses binary, so we&#x27;ll use binary.
+
+ But note: the testbench uses 5&#x27;b11 for 3, which is 5&#x27;b00011? Actually, in Verilog, 5&#x27;b11 is 5&#x27;b00011? No, 5&#x27;b11 is 5&#x27;b00011? Actually, it is 2&#x27;b11 extended to 5 bits? The standard is that the number of bits is fixed, so 5&#x27;b11 is 5&#x27;b00011? Actually, no: 5&#x27;b11 is 5&#x27;b00011? Let me check: 
+   In Verilog, if you write 5&#x27;b11, it is indeed 5 bits with the two LSBs as 1 and the rest 0 -&gt; so 5&#x27;b00011.
+
+ So we can write the numbers as in the testbench.
+
+ Alternatively, we can write the exact binary string. For example, for edge_cnt=4 (for bit3) we have 5&#x27;b00100.
+
+ But note: the testbench wrote 5&#x27;b100 for edge_cnt in the condition for bit3? Actually, 5&#x27;b100 is 5&#x27;b00100? No, 5&#x27;b100 is 5&#x27;b00100? Let me count: 
+   &#x27;b100 is 3 bits: 100 -&gt; which is 4. But when stored in a 5-bit variable, it is 00100? Actually, the testbench wrote 5&#x27;b100, which is a 5-bit literal? No, in Verilog, the number before &#x27;b specifies the total number of bits. So 5&#x27;b100 is 5 bits: the binary representation of 4 is 5&#x27;b00100? Actually, 5&#x27;b100 is 5&#x27;b00100? No, 5&#x27;b100 is 5 bits: the bits are [4:0] = 0,0,1,0,0? Actually, the leftmost bit is the MSB? So 5&#x27;b100 is:
+   bit4: 0, bit3:0, bit2:1, bit1:0, bit0:0 -&gt; which is 4? Actually, no: the value is 1*2^2 = 4. So it is 5&#x27;b00100? But the representation 5&#x27;b100 is the same as 5&#x27;b00100? Actually, no: 5&#x27;b100 is 5&#x27;b00100? I think I&#x27;m confused.
+
+ In Verilog, the number of bits is fixed. 5&#x27;b100 means:
+   The binary number is 100 and it is represented in 5 bits by padding zeros to the left? Actually, no: the number of bits is exactly 5, and the binary digits are given without leading zeros? Then it would be 3 bits? Actually, the specification is: &lt;size&gt;&#x27;&lt;base&gt;&lt;number&gt;. The &lt;size&gt; is the total number of bits. So 5&#x27;b100 is 5 bits: the three LSBs are 100 and the two MSBs are 0? Actually, no: the number is written in the given base and then truncated or padded to the left with zeros to the specified size. So 5&#x27;b100 is the same as 5&#x27;b00100? Actually, no: 5&#x27;b100 is 5 bits: the bits are [4:0] = 0,0,1,0,0? Actually, the leftmost character in the string is the MSB? 
+
+ According to the standard: 
+   The number is stored in the specified number of bits. The string of bits is taken as is. For example, 5&#x27;b100: 
+        The string &quot;100&quot; has 3 bits, so it is padded to the left with zeros to make 5 bits? Actually, no: the string must have exactly the number of bits specified? 
+
+ Actually, the standard says: the number of bits in the string must be equal to the size (unless you use the unsized form). So 5&#x27;b100 is illegal because 3 != 5? 
+
+ Correction: the standard allows the string to have fewer bits than the size, and then it is padded to the left with zeros. So 5&#x27;b100 is the same as 5&#x27;b00100? Actually, no: the string &quot;100&quot; is 3 bits, so to make 5 bits we pad two zeros to the left? Then it becomes 00100? But note: the leftmost bit is the MSB? So 5&#x27;b00100 is the same as 5&#x27;b100? 
+
+ Actually, 5&#x27;b100 is a 5-bit value: the three most significant bits are 1,0,0? That doesn&#x27;t make sense because we only have 3 digits. 
+
+ I think I made a mistake: the standard says that the number of digits can be less than the size, and then it is padded to the left with zeros. So 5&#x27;b100 is the same as 5&#x27;b00100? Actually, no: 5&#x27;b100 is 5 bits: the string &quot;100&quot; is interpreted as a 3-bit number and then extended to 5 bits by adding two zeros at the left? Then the value is 4? 
+
+ But in the testbench, they wrote:
+   if(edge_cnt==5&#x27;b100 &amp; prescale==5&#x27;b111)
+
+ Here, 5&#x27;b100: the value is 4? and 5&#x27;b111: the value is 7? 
+
+ So we can write the conditions with the same binary string.
+
+ However, to avoid confusion, we can write the conditions with the same binary string as in the testbench.
+
+ But note: the testbench also has 5&#x27;b11, which is 3? So we write 5&#x27;b11 for 3? But 5&#x27;b11 is 3? Actually, 5&#x27;b11 is 3? Yes, because 2&#x27;b11 is 3, and 5&#x27;b11 is also 3? 
+
+ So we&#x27;ll use the same binary strings as in the testbench.
+
+ Therefore, we write:
+
+   For bit2: edge_cnt==5&#x27;b11, prescale==5&#x27;b11
+   For bit3: edge_cnt==5&#x27;b100, prescale==5&#x27;b111
+   ... etc.
+
+ Now, let&#x27;s write the assertions.
+
+ We have 15 conditions. We&#x27;ll write 15 assertions.
+
+ But note: the testbench also has conditions for edge_bits[13] to [19] with prescale=5&#x27;b11111 (31) and edge_cnt from 14 to 20.
+
+ We&#x27;ll write each one.
+
+ However, note that the testbench uses non-blocking assignment, so the value appears in the next cycle.
+
+ We are using |=&gt; which is equivalent to:
+   ##1 (edge_bits[x] == $past(RX_IN))
+
+ But note: $past(RX_IN,1) is the value of RX_IN at the previous clock cycle, which is exactly when the condition was true.
+
+ Therefore, the assertions are:
+
+   asrt_bit2: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b11) &amp;&amp; (prescale == 5&#x27;b11)) |=&gt; (edge_bits[2] == $past(RX_IN,1));
+
+   asrt_bit3: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b100) &amp;&amp; (prescale == 5&#x27;b111)) |=&gt; (edge_bits[3] == $past(RX_IN,1));
+
+   asrt_bit4: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b101) &amp;&amp; (prescale == 5&#x27;b111)) |=&gt; (edge_bits[4] == $past(RX_IN,1));
+
+   asrt_bit5: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b110) &amp;&amp; (prescale == 5&#x27;b111)) |=&gt; (edge_bits[5] == $past(RX_IN,1));
+
+   asrt_bit6: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b111) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[6] == $past(RX_IN,1));
+
+   asrt_bit7: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1000) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[7] == $past(RX_IN,1));
+
+   asrt_bit8: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1001) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[8] == $past(RX_IN,1));
+
+   asrt_bit9: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1010) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[9] == $past(RX_IN,1));
+
+   asrt_bit10: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1011) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[10] == $past(RX_IN,1));
+
+   asrt_bit13: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1110) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[13] == $past(RX_IN,1));
+
+   asrt_bit14: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1111) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[14] == $past(RX_IN,1));
+
+   asrt_bit15: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10000) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[15] == $past(RX_IN,1));
+
+   asrt_bit16: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10001) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[16] == $past(RX_IN,1));
+
+   asrt_bit17: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10010) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[17] == $past(RX_IN,1));
+
+   asrt_bit18: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10011) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[18] == $past(RX_IN,1));
+
+   asrt_bit19: assert property (@(posedge CLK) disable iff (tb_reset)
+        (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10100) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[19] == $past(RX_IN,1));
+
+ But note: the testbench also has an assignment for edge_bits[2] in the condition (edge_cnt==5&#x27;b11 &amp; prescale==5&#x27;b11) and that is already covered.
+
+ However, note that the testbench has an assignment for edge_bits[2] in two places? 
+   - One in the condition for prescale=3 and edge_cnt=3 (5&#x27;b11) for the first if.
+   - And then in the condition for prescale=7 and edge_cnt=8 (5&#x27;b1000) or 1 (5&#x27;b1) ... but that is in the combinational block for sampled_bit, not for the edge_bits assignment.
+
+ So the edge_bits assignments are only in the sequential block and only for the conditions we listed.
+
+ Therefore, we have 15 assertions.
+
+ Let&#x27;s write the code accordingly.
+
+ We&#x27;ll enclose the entire set of assertions in the specified markdown code block.
+
+ Note: We are not allowed to output anything else.
+
+ So the final code:</div>
+              </details>
+              <div class="answer-label">final answer</div>
+              <pre class="answer">asrt_bit2: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b11) &amp;&amp; (prescale == 5&#x27;b11)) |=&gt; (edge_bits[2] == $past(RX_IN,1))
+);
+asrt_bit3: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b100) &amp;&amp; (prescale == 5&#x27;b111)) |=&gt; (edge_bits[3] == $past(RX_IN,1))
+);
+asrt_bit4: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b101) &amp;&amp; (prescale == 5&#x27;b111)) |=&gt; (edge_bits[4] == $past(RX_IN,1))
+);
+asrt_bit5: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b110) &amp;&amp; (prescale == 5&#x27;b111)) |=&gt; (edge_bits[5] == $past(RX_IN,1))
+);
+asrt_bit6: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b111) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[6] == $past(RX_IN,1))
+);
+asrt_bit7: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1000) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[7] == $past(RX_IN,1))
+);
+asrt_bit8: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1001) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[8] == $past(RX_IN,1))
+);
+asrt_bit9: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1010) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[9] == $past(RX_IN,1))
+);
+asrt_bit10: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1011) &amp;&amp; (prescale == 5&#x27;b1111)) |=&gt; (edge_bits[10] == $past(RX_IN,1))
+);
+asrt_bit13: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1110) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[13] == $past(RX_IN,1))
+);
+asrt_bit14: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b1111) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[14] == $past(RX_IN,1))
+);
+asrt_bit15: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10000) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[15] == $past(RX_IN,1))
+);
+asrt_bit16: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10001) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[16] == $past(RX_IN,1))
+);
+asrt_bit17: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10010) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[17] == $past(RX_IN,1))
+);
+asrt_bit18: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10011) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[18] == $past(RX_IN,1))
+);
+asrt_bit19: <span class="tok-kw">assert</span> <span class="tok-kw">property</span> (@(<span class="tok-kw">posedge</span> CLK) <span class="tok-kw">disable</span> <span class="tok-kw">iff</span> (tb_reset)
+    (samp_en &amp;&amp; (edge_cnt == 5&#x27;b10100) &amp;&amp; (prescale == 5&#x27;b11111)) |=&gt; (edge_bits[19] == $past(RX_IN,1))
+);</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+
+  <footer>verilogFinetune/data/CodeV-SVA-dataset-training-83K.jsonl &middot; records 30354, 60725, 74732, 75240, 82085</footer>
+</div>

@@ -1,0 +1,433 @@
+<title>SVA Explanation Tree &mdash; dqm burst-write assertion</title>
+<style>
+:root {
+  --bg: #0a0f1a;
+  --panel: #111827;
+  --panel-2: #0d1420;
+  --border: #232f45;
+  --text: #dbe4f0;
+  --text-dim: #7c8aa8;
+  --op: #6fa3e0;
+  --op-null: #93a0ba;
+  --signal: #e8b354;
+  --accent: #e8b354;
+  --tree-glyph: #232f45;
+  --code-font: "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
+  --ui-font: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+:root[data-theme="light"] {
+  --bg: #f4f6fb;
+  --panel: #ffffff;
+  --panel-2: #f0f3f9;
+  --border: #d7dee9;
+  --text: #1a2333;
+  --text-dim: #5b6b85;
+  --op: #2f5c94;
+  --op-null: #6b7690;
+  --signal: #96650f;
+  --accent: #96650f;
+  --tree-glyph: #c3cbdb;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f4f6fb;
+    --panel: #ffffff;
+    --panel-2: #f0f3f9;
+    --border: #d7dee9;
+    --text: #1a2333;
+    --text-dim: #5b6b85;
+    --op: #2f5c94;
+    --op-null: #6b7690;
+    --signal: #96650f;
+    --accent: #96650f;
+    --tree-glyph: #c3cbdb;
+  }
+}
+:root[data-theme="dark"] {
+  --tree-glyph: #232f45;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ui-font);
+  line-height: 1.5;
+}
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 28px 80px;
+}
+header.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 40px;
+}
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 650;
+  margin: 0;
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+.explanation {
+  font-size: 16px;
+  color: var(--text);
+  max-width: 66ch;
+}
+.sva-chip {
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+}
+.sva-chip .label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.sva-chip code {
+  font-family: var(--code-font);
+  font-size: 13.5px;
+  color: var(--signal);
+  white-space: pre;
+}
+section.panel {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 12px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.panel-head {
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-head .eyebrow { margin-bottom: 6px; }
+.panel-head p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  max-width: 70ch;
+}
+.bridge {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 14px;
+  margin: 8px 0 28px;
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.tree-scroll {
+  overflow-x: auto;
+  padding: 18px 24px 26px;
+}
+pre.tree {
+  margin: 0;
+  font-family: var(--code-font);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre;
+  color: var(--text);
+}
+.tree-glyph { color: var(--tree-glyph); }
+.label { color: var(--text-dim); }
+.op { color: var(--op); font-weight: 600; }
+.op-null { color: var(--op-null); font-style: italic; }
+.leaf { color: var(--signal); }
+.arrow { color: var(--accent); font-weight: 700; }
+.merged { color: var(--text); font-weight: 600; }
+footer {
+  color: var(--text-dim);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 12px;
+}
+</style>
+
+<div class="page">
+  <header class="hero">
+    <div class="eyebrow">SVA Explanation &middot; Node-by-Node Derivation</div>
+    <h1>How the burst-write assertion for dqm[1..3] is derived</h1>
+    <p class="explanation">Whenever on the rising edge of clk size is zero and dqm[0] is low during a write or burst-write, then two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active; one cycle after that dqm[1] must rise; one cycle later dqm[2] must fall with the same address and write or burst-write active; one cycle after that dqm[2] must rise; another cycle later dqm[3] must fall with the same address and write or burst-write active; and finally one cycle later dqm[3] must rise.</p>
+    <div class="sva-chip">
+      <span class="label">Golden SVA (property expression)</span>
+      <code>@(posedge clk) ((size == 0) &amp;&amp; (dqm[0] == 0 &amp;&amp; (`s_write || `s_burst_write))) |-&gt; ##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1]) ##1 ($fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[2]) ##1 ($fell(dqm[3]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[3])</code>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="eyebrow">Part 1 &middot; NL-Decomposition Tree</div>
+      <p>Top-down: starting from the given explanation, each operator node states its own natural-language piece, why its (already-known) operator represents it, and how that piece splits across its operand(s). A leaf just carries the piece handed down to it &mdash; no reasoning needed.</p>
+    </div>
+    <div class="tree-scroll"><pre class="tree"><span class="tree-glyph"></span>operator: <span class="op">|-&gt;</span>
+<span class="tree-glyph">    </span><span class="label">natural language piece:</span> Whenever on the rising edge of clk size is zero and dqm[0] is low during a write or burst-write, then two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active; one cycle after that dqm[1] must rise; one cycle later dqm[2] must fall with the same address and write or burst-write active; one cycle after that dqm[2] must rise; another cycle later dqm[3] must fall with the same address and write or burst-write active; and finally one cycle later dqm[3] must rise.
+<span class="tree-glyph">    </span><span class="label">reason:</span> The overlapping implication “|-&gt;” ensures that as soon as the antecedent condition (operand 1) holds at a clock edge, the specified sequence of delayed checks in operand 2 begins immediately—matching the “then …” structure that triggers the multi-cycle fall/rise requirements right after the initial condition.
+<span class="tree-glyph">    ├── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">    │       </span><span class="label">natural language piece:</span> size is zero and dqm[0] is low during a write or burst-write
+<span class="tree-glyph">    │       </span><span class="label">reason:</span> The “&amp;&amp;” operator enforces that both conditions must be true simultaneously, matching the natural-language “and” which requires both parts to hold at the same time.
+<span class="tree-glyph">    │       ├── </span>operator: <span class="op">==</span>
+<span class="tree-glyph">    │       │       </span><span class="label">natural language piece:</span> size is zero
+<span class="tree-glyph">    │       │       </span><span class="label">reason:</span> The “==” operator tests for equality, matching the natural-language meaning of “is” to verify that size equals zero
+<span class="tree-glyph">    │       │       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">    │       │       │       </span><span class="label">natural language piece:</span> size
+<span class="tree-glyph">    │       │       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">    │       │       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">    │       │               </span><span class="label">natural language piece:</span> 0
+<span class="tree-glyph">    │       │               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">    │       └── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">    │               </span><span class="label">natural language piece:</span> dqm[0] is low during a write or burst-write
+<span class="tree-glyph">    │               </span><span class="label">reason:</span> The &amp;&amp; operator enforces that both conditions must hold at the same time, matching the requirement that dqm[0] is low while a write or burst-write is occurring.
+<span class="tree-glyph">    │               ├── </span>operator: <span class="op">==</span>
+<span class="tree-glyph">    │               │       </span><span class="label">natural language piece:</span> dqm[0] is low
+<span class="tree-glyph">    │               │       </span><span class="label">reason:</span> The equality operator (==) checks that the value of dqm[0] equals 0, which corresponds to stating that dqm[0] is low.
+<span class="tree-glyph">    │               │       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">    │               │       │       </span><span class="label">natural language piece:</span> dqm[0]
+<span class="tree-glyph">    │               │       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">    │               │       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">    │               │               </span><span class="label">natural language piece:</span> 0
+<span class="tree-glyph">    │               │               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">    │               └── </span>operator: <span class="op">||</span>
+<span class="tree-glyph">    │                       </span><span class="label">natural language piece:</span> during a write or burst-write
+<span class="tree-glyph">    │                       </span><span class="label">reason:</span> The logical OR operator “||” directly corresponds to the word “or” in the natural-language piece, indicating that the overall condition holds if either the first event (write) or the second event (burst‐write) is occurring.
+<span class="tree-glyph">    │                       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">    │                       │       </span><span class="label">natural language piece:</span> `s_write
+<span class="tree-glyph">    │                       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">    │                       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">    │                               </span><span class="label">natural language piece:</span> `s_burst_write
+<span class="tree-glyph">    │                               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">    └── </span>operator: <span class="op">##1</span>
+<span class="tree-glyph">            </span><span class="label">natural language piece:</span> two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active; one cycle after that dqm[1] must rise; one cycle later dqm[2] must fall with the same address and write or burst-write active; one cycle after that dqm[2] must rise; another cycle later dqm[3] must fall with the same address and write or burst-write active; and finally one cycle later dqm[3] must rise
+<span class="tree-glyph">            </span><span class="label">reason:</span> The “##1” operator enforces a one-clock-cycle delay between the end of the first sequence (operand 1) and the final check (operand 2). This matches the phrase “and finally one cycle later dqm[3] must rise,” indicating that after completing the prior steps, we wait exactly one cycle before verifying the rising edge of dqm[3].
+<span class="tree-glyph">            ├── </span>operator: <span class="op">##1</span>
+<span class="tree-glyph">            │       </span><span class="label">natural language piece:</span> two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active; one cycle after that dqm[1] must rise; one cycle later dqm[2] must fall with the same address and write or burst-write active; one cycle after that dqm[2] must rise; another cycle later dqm[3] must fall with the same address and write or burst-write active
+<span class="tree-glyph">            │       </span><span class="label">reason:</span> The “##1” operator enforces a one-clock-cycle delay before evaluating the next condition, directly corresponding to the phrase “another cycle later” in the natural-language description.
+<span class="tree-glyph">            │       ├── </span>operator: <span class="op">##1</span>
+<span class="tree-glyph">            │       │       </span><span class="label">natural language piece:</span> two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active; one cycle after that dqm[1] must rise; one cycle later dqm[2] must fall with the same address and write or burst-write active; one cycle after that dqm[2] must rise
+<span class="tree-glyph">            │       │       </span><span class="label">reason:</span> The ##1 operator introduces a one-clock-cycle delay between its left and right operands, which exactly matches the phrase “one cycle after that” in the natural-language description.
+<span class="tree-glyph">            │       │       ├── </span>operator: <span class="op">##1</span>
+<span class="tree-glyph">            │       │       │       </span><span class="label">natural language piece:</span> two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active; one cycle after that dqm[1] must rise; one cycle later dqm[2] must fall with the same address and write or burst-write active
+<span class="tree-glyph">            │       │       │       </span><span class="label">reason:</span> The “##1” operator introduces a one-clock-cycle delay between its first and second operand, exactly capturing the phrase “one cycle later” that links the two conditions in the natural-language description.
+<span class="tree-glyph">            │       │       │       ├── </span>operator: <span class="op">##1</span>
+<span class="tree-glyph">            │       │       │       │       </span><span class="label">natural language piece:</span> two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active; one cycle after that dqm[1] must rise
+<span class="tree-glyph">            │       │       │       │       </span><span class="label">reason:</span> The “##1” operator delays the check of its right‐hand operand by exactly one clock cycle after its left‐hand operand completes, matching the phrase “one cycle after that.”
+<span class="tree-glyph">            │       │       │       │       ├── </span>operator: <span class="op">##2</span>
+<span class="tree-glyph">            │       │       │       │       │       </span><span class="label">natural language piece:</span> two cycles later dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active
+<span class="tree-glyph">            │       │       │       │       │       </span><span class="label">reason:</span> The “##2” SVA delay operator specifies that the following condition should be checked exactly two clock cycles after the current one, directly matching the phrase “two cycles later.”
+<span class="tree-glyph">            │       │       │       │       │       └── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">            │       │       │       │       │               </span><span class="label">natural language piece:</span> dqm[1] must fall while the address matches its value two cycles earlier and a write or burst-write is active
+<span class="tree-glyph">            │       │       │       │       │               </span><span class="label">reason:</span> The “&amp;&amp;” operator enforces that both subconditions must hold at the same time, matching the natural-language “and” between the fall/address condition and the write/burst-write activity.
+<span class="tree-glyph">            │       │       │       │       │               ├── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">            │       │       │       │       │               │       </span><span class="label">natural language piece:</span> dqm[1] must fall while the address matches its value two cycles earlier
+<span class="tree-glyph">            │       │       │       │       │               │       </span><span class="label">reason:</span> The &amp;&amp; operator captures that both subconditions must be true in the same clock cycle: the falling of dqm[1] and the address matching its value from two cycles ago
+<span class="tree-glyph">            │       │       │       │       │               │       ├── </span>operator: <span class="op">$fell</span>
+<span class="tree-glyph">            │       │       │       │       │               │       │       </span><span class="label">natural language piece:</span> dqm[1] must fall
+<span class="tree-glyph">            │       │       │       │       │               │       │       </span><span class="label">reason:</span> The $fell operator detects a transition of its operand from true to false, which directly corresponds to the requirement that the signal “must fall.”
+<span class="tree-glyph">            │       │       │       │       │               │       │       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │       │       │               │       │               </span><span class="label">natural language piece:</span> dqm[1]
+<span class="tree-glyph">            │       │       │       │       │               │       │               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │       │       │               │       └── </span>operator: <span class="op">==</span>
+<span class="tree-glyph">            │       │       │       │       │               │               </span><span class="label">natural language piece:</span> the address matches its value two cycles earlier
+<span class="tree-glyph">            │       │       │       │       │               │               </span><span class="label">reason:</span> The == operator tests whether the current address and its past value are equal, directly capturing the notion of “matches.”
+<span class="tree-glyph">            │       │       │       │       │               │               ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │       │       │               │               │       </span><span class="label">natural language piece:</span> addr
+<span class="tree-glyph">            │       │       │       │       │               │               │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │       │       │               │               └── </span>operator: <span class="op">$past</span>
+<span class="tree-glyph">            │       │       │       │       │               │                       </span><span class="label">natural language piece:</span> its value two cycles earlier
+<span class="tree-glyph">            │       │       │       │       │               │                       </span><span class="label">reason:</span> The $past operator retrieves the value of a signal from a previous clock cycle; with a second argument of 2, it correctly represents “two cycles earlier.”
+<span class="tree-glyph">            │       │       │       │       │               │                       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │       │       │               │                       │       </span><span class="label">natural language piece:</span> addr
+<span class="tree-glyph">            │       │       │       │       │               │                       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │       │       │               │                       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │       │       │               │                               </span><span class="label">natural language piece:</span> 2
+<span class="tree-glyph">            │       │       │       │       │               │                               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │       │       │               └── </span>operator: <span class="op">||</span>
+<span class="tree-glyph">            │       │       │       │       │                       </span><span class="label">natural language piece:</span> a write or burst-write is active
+<span class="tree-glyph">            │       │       │       │       │                       </span><span class="label">reason:</span> The “||” operator implements the logical “or” in the natural-language piece, indicating that the overall condition is true when either operand is true.
+<span class="tree-glyph">            │       │       │       │       │                       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │       │       │                       │       </span><span class="label">natural language piece:</span> `s_write
+<span class="tree-glyph">            │       │       │       │       │                       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │       │       │                       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │       │       │                               </span><span class="label">natural language piece:</span> `s_burst_write
+<span class="tree-glyph">            │       │       │       │       │                               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │       │       └── </span>operator: <span class="op">$rose</span>
+<span class="tree-glyph">            │       │       │       │               </span><span class="label">natural language piece:</span> one cycle after that dqm[1] must rise
+<span class="tree-glyph">            │       │       │       │               </span><span class="label">reason:</span> The $rose operator detects a transition from false to true, which corresponds to the “must rise” requirement in the natural-language piece.
+<span class="tree-glyph">            │       │       │       │               └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │       │                       </span><span class="label">natural language piece:</span> dqm[1]
+<span class="tree-glyph">            │       │       │       │                       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │       └── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">            │       │       │               </span><span class="label">natural language piece:</span> one cycle later dqm[2] must fall with the same address and write or burst-write active
+<span class="tree-glyph">            │       │       │               </span><span class="label">reason:</span> The &amp;&amp; operator enforces that both subconditions must hold simultaneously—dqm[2] must fall with the same address, and at the same time write or burst-write must be active.
+<span class="tree-glyph">            │       │       │               ├── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">            │       │       │               │       </span><span class="label">natural language piece:</span> one cycle later dqm[2] must fall with the same address
+<span class="tree-glyph">            │       │       │               │       </span><span class="label">reason:</span> The “&amp;&amp;” operator enforces that both conditions—dqm[2] falling and the address matching its past value—must hold simultaneously in that cycle.
+<span class="tree-glyph">            │       │       │               │       ├── </span>operator: <span class="op">$fell</span>
+<span class="tree-glyph">            │       │       │               │       │       </span><span class="label">natural language piece:</span> dqm[2] must fall
+<span class="tree-glyph">            │       │       │               │       │       </span><span class="label">reason:</span> The SVA operator $fell detects a falling edge (a transition from true to false), which matches the requirement that the signal “must fall.”
+<span class="tree-glyph">            │       │       │               │       │       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │               │       │               </span><span class="label">natural language piece:</span> dqm[2]
+<span class="tree-glyph">            │       │       │               │       │               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │               │       └── </span>operator: <span class="op">==</span>
+<span class="tree-glyph">            │       │       │               │               </span><span class="label">natural language piece:</span> with the same address
+<span class="tree-glyph">            │       │       │               │               </span><span class="label">reason:</span> The “==” operator tests for equality, ensuring the current address and its past value are the same, which matches the phrase “with the same address.”
+<span class="tree-glyph">            │       │       │               │               ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │               │               │       </span><span class="label">natural language piece:</span> addr
+<span class="tree-glyph">            │       │       │               │               │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │               │               └── </span>operator: <span class="op">$past</span>
+<span class="tree-glyph">            │       │       │               │                       </span><span class="label">natural language piece:</span> address
+<span class="tree-glyph">            │       │       │               │                       </span><span class="label">reason:</span> The `$past` operator is used to refer to the value of a signal in a previous clock cycle; here it correctly models “address” as it was two cycles ago.
+<span class="tree-glyph">            │       │       │               │                       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │               │                       │       </span><span class="label">natural language piece:</span> addr
+<span class="tree-glyph">            │       │       │               │                       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │               │                       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │               │                               </span><span class="label">natural language piece:</span> 2
+<span class="tree-glyph">            │       │       │               │                               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │               └── </span>operator: <span class="op">||</span>
+<span class="tree-glyph">            │       │       │                       </span><span class="label">natural language piece:</span> write or burst-write active
+<span class="tree-glyph">            │       │       │                       </span><span class="label">reason:</span> The logical OR operator (||) captures the “or” in the phrase, making the expression true if either condition is active.
+<span class="tree-glyph">            │       │       │                       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │                       │       </span><span class="label">natural language piece:</span> `s_write
+<span class="tree-glyph">            │       │       │                       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       │                       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │       │                               </span><span class="label">natural language piece:</span> `s_burst_write
+<span class="tree-glyph">            │       │       │                               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       │       └── </span>operator: <span class="op">$rose</span>
+<span class="tree-glyph">            │       │               </span><span class="label">natural language piece:</span> one cycle after that dqm[2] must rise
+<span class="tree-glyph">            │       │               </span><span class="label">reason:</span> The $rose operator detects a transition from false to true (a rising edge), which directly corresponds to the requirement that “dqm[2] must rise.”
+<span class="tree-glyph">            │       │               └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │       │                       </span><span class="label">natural language piece:</span> dqm[2]
+<span class="tree-glyph">            │       │                       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │       └── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">            │               </span><span class="label">natural language piece:</span> another cycle later dqm[3] must fall with the same address and write or burst-write active
+<span class="tree-glyph">            │               </span><span class="label">reason:</span> The “&amp;&amp;” operator enforces that both conditions must hold together, matching the natural-language “and” that connects the two requirements.
+<span class="tree-glyph">            │               ├── </span>operator: <span class="op">&amp;&amp;</span>
+<span class="tree-glyph">            │               │       </span><span class="label">natural language piece:</span> another cycle later dqm[3] must fall with the same address
+<span class="tree-glyph">            │               │       </span><span class="label">reason:</span> The &amp;&amp; operator correctly captures that both conditions—the falling of dqm[3] and the address matching its past value—must be true together in the same cycle.
+<span class="tree-glyph">            │               │       ├── </span>operator: <span class="op">$fell</span>
+<span class="tree-glyph">            │               │       │       </span><span class="label">natural language piece:</span> dqm[3] must fall
+<span class="tree-glyph">            │               │       │       </span><span class="label">reason:</span> The $fell operator detects a transition of the signal from true (1) to false (0), i.e., a falling edge, which directly matches the requirement that the signal “must fall.”
+<span class="tree-glyph">            │               │       │       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │               │       │               </span><span class="label">natural language piece:</span> dqm[3]
+<span class="tree-glyph">            │               │       │               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │               │       └── </span>operator: <span class="op">==</span>
+<span class="tree-glyph">            │               │               </span><span class="label">natural language piece:</span> with the same address
+<span class="tree-glyph">            │               │               </span><span class="label">reason:</span> “==” tests that two values are equal, which directly corresponds to the notion of “same” in “with the same address.”
+<span class="tree-glyph">            │               │               ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │               │               │       </span><span class="label">natural language piece:</span> addr
+<span class="tree-glyph">            │               │               │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │               │               └── </span>operator: <span class="op">$past</span>
+<span class="tree-glyph">            │               │                       </span><span class="label">natural language piece:</span> address
+<span class="tree-glyph">            │               │                       </span><span class="label">reason:</span> The $past operator is used to sample the value of a signal from a previous clock cycle (or cycles). Here it correctly captures the notion of examining the “address” signal as it existed in the past.
+<span class="tree-glyph">            │               │                       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │               │                       │       </span><span class="label">natural language piece:</span> addr
+<span class="tree-glyph">            │               │                       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │               │                       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │               │                               </span><span class="label">natural language piece:</span> 2
+<span class="tree-glyph">            │               │                               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │               └── </span>operator: <span class="op">||</span>
+<span class="tree-glyph">            │                       </span><span class="label">natural language piece:</span> write or burst-write active
+<span class="tree-glyph">            │                       </span><span class="label">reason:</span> The “||” operator implements a logical OR, matching the word “or” in the phrase to indicate that if either condition is true the whole expression is true.
+<span class="tree-glyph">            │                       ├── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │                       │       </span><span class="label">natural language piece:</span> `s_write
+<span class="tree-glyph">            │                       │       </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            │                       └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">            │                               </span><span class="label">natural language piece:</span> `s_burst_write
+<span class="tree-glyph">            │                               </span><span class="label">reason:</span> direct signal name or value
+<span class="tree-glyph">            └── </span>operator: <span class="op">$rose</span>
+<span class="tree-glyph">                    </span><span class="label">natural language piece:</span> and finally one cycle later dqm[3] must rise
+<span class="tree-glyph">                    </span><span class="label">reason:</span> The $rose operator detects a rising edge, meaning it triggers when a signal transitions from false to true. This exactly captures the “must rise” requirement for dqm[3].
+<span class="tree-glyph">                    └── </span>operator: <span class="op-null">null</span>
+<span class="tree-glyph">                            </span><span class="label">natural language piece:</span> dqm[3]
+<span class="tree-glyph">                            </span><span class="label">reason:</span> direct signal name or value</pre></div>
+  </section>
+
+  <p class="bridge">According to the above natural-language decomposition, we finally derive the SystemVerilog assertion as follows:</p>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="eyebrow">Part 2 &middot; Symbolic Derivation</div>
+      <p>Part 1 read backwards, as a chain of short labeled steps &mdash; like a math proof's "let T1 = ..., T2 = ...". Each step names only its own operator and its operands' labels (never their full code), so every line stays short and uniform; the bracketed <code>[ = ... ]</code> shows that step's actual code for reference. No indentation or connectors are needed &mdash; the label references alone fully encode the tree. Ends with the complete reconstructed assertion.</p>
+    </div>
+    <div class="tree-scroll"><pre class="tree"><span class="merged">T1</span> = dqm[3]
+<span class="merged">T2</span> = $rose(<span class="op">T1</span>)   <span class="tree-glyph">[</span> = <span class="leaf">$rose(dqm[3])</span> <span class="tree-glyph">]</span>
+<span class="merged">T3</span> = `s_burst_write
+<span class="merged">T4</span> = `s_write
+<span class="merged">T5</span> = <span class="op">T4</span> || <span class="op">T3</span>   <span class="tree-glyph">[</span> = <span class="leaf">`s_write || `s_burst_write</span> <span class="tree-glyph">]</span>
+<span class="merged">T6</span> = 2
+<span class="merged">T7</span> = addr
+<span class="merged">T8</span> = <span class="op">T7</span> $past <span class="op">T6</span>   <span class="tree-glyph">[</span> = <span class="leaf">$past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T9</span> = addr
+<span class="merged">T10</span> = <span class="op">T9</span> == <span class="op">T8</span>   <span class="tree-glyph">[</span> = <span class="leaf">addr == $past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T11</span> = dqm[3]
+<span class="merged">T12</span> = $fell(<span class="op">T11</span>)   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[3])</span> <span class="tree-glyph">]</span>
+<span class="merged">T13</span> = <span class="op">T12</span> &amp;&amp; <span class="op">T10</span>   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[3]) &amp;&amp; addr == $past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T14</span> = <span class="op">T13</span> &amp;&amp; <span class="op">T5</span>   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[3]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)</span> <span class="tree-glyph">]</span>
+<span class="merged">T15</span> = dqm[2]
+<span class="merged">T16</span> = $rose(<span class="op">T15</span>)   <span class="tree-glyph">[</span> = <span class="leaf">$rose(dqm[2])</span> <span class="tree-glyph">]</span>
+<span class="merged">T17</span> = `s_burst_write
+<span class="merged">T18</span> = `s_write
+<span class="merged">T19</span> = <span class="op">T18</span> || <span class="op">T17</span>   <span class="tree-glyph">[</span> = <span class="leaf">`s_write || `s_burst_write</span> <span class="tree-glyph">]</span>
+<span class="merged">T20</span> = 2
+<span class="merged">T21</span> = addr
+<span class="merged">T22</span> = <span class="op">T21</span> $past <span class="op">T20</span>   <span class="tree-glyph">[</span> = <span class="leaf">$past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T23</span> = addr
+<span class="merged">T24</span> = <span class="op">T23</span> == <span class="op">T22</span>   <span class="tree-glyph">[</span> = <span class="leaf">addr == $past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T25</span> = dqm[2]
+<span class="merged">T26</span> = $fell(<span class="op">T25</span>)   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[2])</span> <span class="tree-glyph">]</span>
+<span class="merged">T27</span> = <span class="op">T26</span> &amp;&amp; <span class="op">T24</span>   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[2]) &amp;&amp; addr == $past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T28</span> = <span class="op">T27</span> &amp;&amp; <span class="op">T19</span>   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)</span> <span class="tree-glyph">]</span>
+<span class="merged">T29</span> = dqm[1]
+<span class="merged">T30</span> = $rose(<span class="op">T29</span>)   <span class="tree-glyph">[</span> = <span class="leaf">$rose(dqm[1])</span> <span class="tree-glyph">]</span>
+<span class="merged">T31</span> = `s_burst_write
+<span class="merged">T32</span> = `s_write
+<span class="merged">T33</span> = <span class="op">T32</span> || <span class="op">T31</span>   <span class="tree-glyph">[</span> = <span class="leaf">`s_write || `s_burst_write</span> <span class="tree-glyph">]</span>
+<span class="merged">T34</span> = 2
+<span class="merged">T35</span> = addr
+<span class="merged">T36</span> = <span class="op">T35</span> $past <span class="op">T34</span>   <span class="tree-glyph">[</span> = <span class="leaf">$past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T37</span> = addr
+<span class="merged">T38</span> = <span class="op">T37</span> == <span class="op">T36</span>   <span class="tree-glyph">[</span> = <span class="leaf">addr == $past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T39</span> = dqm[1]
+<span class="merged">T40</span> = $fell(<span class="op">T39</span>)   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[1])</span> <span class="tree-glyph">]</span>
+<span class="merged">T41</span> = <span class="op">T40</span> &amp;&amp; <span class="op">T38</span>   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[1]) &amp;&amp; addr == $past(addr, 2)</span> <span class="tree-glyph">]</span>
+<span class="merged">T42</span> = <span class="op">T41</span> &amp;&amp; <span class="op">T33</span>   <span class="tree-glyph">[</span> = <span class="leaf">$fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)</span> <span class="tree-glyph">]</span>
+<span class="merged">T43</span> = ##2(<span class="op">T42</span>)   <span class="tree-glyph">[</span> = <span class="leaf">##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write))</span> <span class="tree-glyph">]</span>
+<span class="merged">T44</span> = <span class="op">T43</span> ##1 <span class="op">T30</span>   <span class="tree-glyph">[</span> = <span class="leaf">##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1])</span> <span class="tree-glyph">]</span>
+<span class="merged">T45</span> = <span class="op">T44</span> ##1 <span class="op">T28</span>   <span class="tree-glyph">[</span> = <span class="leaf">##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1]) ##1 ($fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write))</span> <span class="tree-glyph">]</span>
+<span class="merged">T46</span> = <span class="op">T45</span> ##1 <span class="op">T16</span>   <span class="tree-glyph">[</span> = <span class="leaf">##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1]) ##1 ($fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[2])</span> <span class="tree-glyph">]</span>
+<span class="merged">T47</span> = <span class="op">T46</span> ##1 <span class="op">T14</span>   <span class="tree-glyph">[</span> = <span class="leaf">##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1]) ##1 ($fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[2]) ##1 ($fell(dqm[3]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write))</span> <span class="tree-glyph">]</span>
+<span class="merged">T48</span> = <span class="op">T47</span> ##1 <span class="op">T2</span>   <span class="tree-glyph">[</span> = <span class="leaf">##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1]) ##1 ($fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[2]) ##1 ($fell(dqm[3]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[3])</span> <span class="tree-glyph">]</span>
+<span class="merged">T49</span> = `s_burst_write
+<span class="merged">T50</span> = `s_write
+<span class="merged">T51</span> = <span class="op">T50</span> || <span class="op">T49</span>   <span class="tree-glyph">[</span> = <span class="leaf">`s_write || `s_burst_write</span> <span class="tree-glyph">]</span>
+<span class="merged">T52</span> = 0
+<span class="merged">T53</span> = dqm[0]
+<span class="merged">T54</span> = <span class="op">T53</span> == <span class="op">T52</span>   <span class="tree-glyph">[</span> = <span class="leaf">dqm[0] == 0</span> <span class="tree-glyph">]</span>
+<span class="merged">T55</span> = <span class="op">T54</span> &amp;&amp; <span class="op">T51</span>   <span class="tree-glyph">[</span> = <span class="leaf">dqm[0] == 0 &amp;&amp; (`s_write || `s_burst_write)</span> <span class="tree-glyph">]</span>
+<span class="merged">T56</span> = 0
+<span class="merged">T57</span> = size
+<span class="merged">T58</span> = <span class="op">T57</span> == <span class="op">T56</span>   <span class="tree-glyph">[</span> = <span class="leaf">size == 0</span> <span class="tree-glyph">]</span>
+<span class="merged">T59</span> = <span class="op">T58</span> &amp;&amp; <span class="op">T55</span>   <span class="tree-glyph">[</span> = <span class="leaf">(size == 0) &amp;&amp; (dqm[0] == 0 &amp;&amp; (`s_write || `s_burst_write))</span> <span class="tree-glyph">]</span>
+<span class="merged">T60</span> = <span class="op">T59</span> |-&gt; <span class="op">T48</span>   <span class="tree-glyph">[</span> = <span class="leaf">((size == 0) &amp;&amp; (dqm[0] == 0 &amp;&amp; (`s_write || `s_burst_write))) |-&gt; ##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1]) ##1 ($fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[2]) ##1 ($fell(dqm[3]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[3])</span> <span class="tree-glyph">]</span>
+
+<span class="label">Final assertion (</span><span class="op">T60</span><span class="label">): </span><span class="merged">((size == 0) &amp;&amp; (dqm[0] == 0 &amp;&amp; (`s_write || `s_burst_write))) |-&gt; ##2 ($fell(dqm[1]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[1]) ##1 ($fell(dqm[2]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[2]) ##1 ($fell(dqm[3]) &amp;&amp; addr == $past(addr, 2) &amp;&amp; (`s_write || `s_burst_write)) ##1 $rose(dqm[3])</span></pre></div>
+  </section>
+
+  <footer>Generated by verilogFinetune/generate_dfs_explanation.py &middot; sva_graph.py (pyslang-based parse)</footer>
+</div>
