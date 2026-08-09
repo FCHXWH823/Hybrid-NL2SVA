@@ -7,3 +7,27 @@ __pycache__/
 
 # Oversized data files (exceed GitHub's 100MB limit)
 verilogFinetune/data/CodeV-SVA-dataset-training-83K.jsonl
+
+# Secrets -- never track this; see Src/Config.yml.example instead
+Src/Config.yml
+
+# Generated/intermediate data -- reproducible from source datasets, not
+# meant to be redistributed via git
+verilogFinetune/data/*.jsonl
+!verilogFinetune/data/CodeV-SVA-dataset-training-83K.sample.jsonl
+verilogFinetune/data/*_scratch/
+verilogFinetune/data/*.log
+verilogFinetune/data/*.pid
+
+# Persisted RAG vector store -- regenerable from the textbook PDFs
+RAG_Database/
+
+# Experiment output CSVs -- regenerable by rerunning the pipeline
+Results/fveval_rag_outputs/
+
+# Session scratch/debug traces
+.tmp/
+
+# Copyrighted reference PDFs -- not meant to be redistributed via git
+RelatedWorks/*.pdf
+VerilogTextBooks/*.pdf

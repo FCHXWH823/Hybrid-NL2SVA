@@ -11,8 +11,11 @@ Usage:
 """
 import argparse
 import json
+import os
+import sys
 from collections import Counter
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sva_tree"))
 from sva_parser import parse_sva_property
 
 

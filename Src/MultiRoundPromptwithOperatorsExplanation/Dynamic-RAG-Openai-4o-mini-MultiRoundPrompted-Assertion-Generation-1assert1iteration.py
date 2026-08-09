@@ -1,20 +1,29 @@
 import os
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.docstore.document import Document
-from PyMuPDF import *
+import sys
+
+# This system's built-in sqlite3 (3.34.1) is below Chroma's minimum (3.35.0);
+# swap in pysqlite3-binary's bundled modern build before chromadb (imported
+# transitively by extract_keywords.py's own Chroma import just below, and
+# again by rag_database.py) checks the version. Idempotent, so having this
+# patch in both this file and rag_database.py is safe -- it just needs to
+# run before the *first* chromadb import in either possible order.
+# See https://docs.trychroma.com/troubleshooting#sqlite
+__import__("pysqlite3")
+sys.modules["sqlite3"] = sys.modules["pysqlite3"]
+
 import yaml
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 import json
 import csv
 import re
 from openai import OpenAI
-from sentence_splitter import SentenceSplitter, split_text_into_sentences
 from extract_keywords import *
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "sva_tree"))
+from explanation_merge_tree import build_and_render_explanation_merge_tree
 
 with open("Src/Config.yml") as file:
     config = yaml.safe_load(file)
@@ -31,106 +40,23 @@ client = OpenAI(
         api_key=OpenAI_API_Key
 )
 
-# def build_rag_system(pdf_path):
-#     """
-#     1. Extract code blocks and text blocks from the PDF.
-#     2. Store code blocks in a 'code_db' (Chroma).
-#     3. Store text blocks in a 'text_db' (Chroma).
-#     4. Return the two vector stores for retrieval.
-#     """
-#     # 1) Get all blocks from PDF
-#     blocks = get_pdf_blocks(pdf_path)
+# sva_temporal_operators.json (38 entries, includes strong/weak) replaces the
+# older operators.json (11 entries) as the sole operator table -- used for
+# HybridRetrieval's keyword-guided path, SOR rechecking (merge-tree + the
+# final recheck completion below), and this generation pipeline's own
+# fallback glossary.
+with open("sva_temporal_operators.json", "r") as file:
+    _operators = json.load(file)
+operator_context = "\n".join(
+    f"{op} ({entry['type']}): {entry['natural_langage_explanation']} Example: {entry['example_usgae']}"
+    for op, entry in _operators.items()
+)
 
-#     # 2) Separate code vs. text
-#     code_docs = []
-#     text_docs = []
-#     for idx, block in enumerate(blocks):
-#         content = block_to_text(block)
-#         # Create a LangChain "Document" object with page_content plus metadata
-#         if block["type"] == "code":
-#             last_content = "" if idx == 0 else block_to_text(blocks[idx-1])
-#             next_content = "" if idx == len(blocks)-1 else block_to_text(blocks[idx+1])
-#             content = f"{last_content}\n\n{content}\n\n{next_content}"
-#             print(content+"\n-----------------------\n\n")
-#         doc = Document(page_content=content, metadata={"type": block["type"], "block_index": idx})
-#         if block["type"] == "code":
-#             code_docs.append(doc)
-#         else:
-#             text_docs.append(doc)
+from rag_database import build_rag_system
 
-#     # 3) Build embeddings
-#     embedding_fn = OpenAIEmbeddings(openai_api_key=OpenAI_API_Key)  # or HuggingFaceEmbeddings(), etc.
-
-#     # 4) Create code vector store
-#     code_db = Chroma.from_documents(code_docs, embedding=embedding_fn, collection_name="code_blocks")
-
-#     # 5) Create text vector store
-#     text_db = Chroma.from_documents(text_docs, embedding=embedding_fn, collection_name="text_blocks")
-
-#     return code_db, text_db
-
-
-def build_rag_system():
-    """
-    1. Extract code blocks and text blocks from the PDF.
-    2. Store code blocks in a 'code_db' (Chroma).
-    3. Store text blocks in a 'text_db' (Chroma).
-    4. Return the two vector stores for retrieval.
-    """
-    splitter = SentenceSplitter(language='en')
-    pdf_names = []
-
-    with open(f"VerilogTextBooks/{PDF_Txt}") as file:
-        pdf_names = file.readlines()
-
-    pdf_names = [pdf_name.strip() for pdf_name in pdf_names]
-
-    # Loop over each PDF name provided in the list
-    blocks = []
-    for pdf_name in pdf_names:
-        # Construct the file path for the current PDF
-        pdf_path = f"VerilogTextBooks/{pdf_name}.pdf"
-    # 1) Get all blocks from PDF
-        blocks += get_pdf_blocks(pdf_path)
-
-    # 2) Separate code vs. text
-    code_docs = []
-    text_docs = []
-    for idx, block in enumerate(blocks):
-        content = block_to_text(block)
-        # Create a LangChain "Document" object with page_content plus metadata
-        if block["type"] == "code":
-            last_content = "" if idx == 0 else block_to_text(blocks[idx-1])
-            next_content = "" if idx == len(blocks)-1 else block_to_text(blocks[idx+1])
-            content = f"{last_content}\n\n{content}\n\n{next_content}"
-            print(content+"\n-----------------------\n\n")
-        doc = Document(page_content=content, metadata={"type": block["type"], "block_index": idx})
-        if block["type"] == "code":
-            code_docs.append(doc)
-        else:
-            text_docs.append(doc)
-            # sentences = splitter.split(content)
-            # for sentence in sentences:
-            #     text_docs.append(Document(page_content=sentence, metadata={"type": block["type"], "block_index": idx}))
-
-    # 3) Build embeddings
-    embedding_fn = OpenAIEmbeddings(openai_api_key=OpenAI_API_Key)  # or HuggingFaceEmbeddings(), etc.
-
-    # 4) Create code vector store
-    code_db = Chroma.from_documents(code_docs, embedding=embedding_fn, collection_name="code_blocks")
-
-    # 5) Create text vector store
-    text_db = Chroma.from_documents(text_docs, embedding=embedding_fn, collection_name="text_blocks")
-
-    return code_db, text_db
- 
-
-code_store, text_store = build_rag_system()
+code_store = build_rag_system(PDF_Txt, OpenAI_API_Key)
 
 code_retriever = code_store.as_retriever()
-text_retriever = text_store.as_retriever()
-
-results = code_retriever.invoke("To ensure correct arbitration behavior, it is necessary to examine the value of the arb_type_sel signal in the previous clock cycle.")
 
 # prompt
 system_prompt = (
@@ -176,12 +102,6 @@ rag_chain = create_retrieval_chain(code_retriever,question_answer_chain)
 
 question_answer_chain_checker = create_stuff_documents_chain(llm,prompt_checker)
 rag_chain_checker = create_retrieval_chain(code_retriever,question_answer_chain_checker)
-
-
-# query_from_llm = MultiQueryRetriever.from_llm(
-#     retriever=text_retriever, llm=llm
-# )
-# question = "Show me the usage of the always block in the code"
 
 
 # llm_response = rag_chain.invoke({"input":question})
@@ -314,30 +234,62 @@ with open(f'Results/Dynamic-RAG-Openai-4o-mini-Prompted-Assertion-Generation-Res
                 # property_ops = completion.choices[0].message.content
 
                 # property_ops = str(re.search(r'\((.*?)\)',property_ops,re.DOTALL).group(1)).split(',')
-                property_ops = logic_expression.split(" ")
-                checking_str = ""
-                if "|=>" in logic_expression or "|->" in logic_expression:
-                    checking_str += "`|->`: \nif the left-hand side condition of |-> is true, the right-hand side condition of |-> is true in the same clock cycle\n\n\n"
-                    checking_str += "`|=>`: \nif the left-hand side condition of |=> is true, the right-hand side condition of |=> is true in the next one clock cycle\n\n\n"
-                # read operators.json
-                with open("operators.json","r") as file:
-                    operators = json.load(file)
-                for op in operators:
-                    if op in logic_expression:
-                        checking_str += f"`{op}`: {operators[op]}\n\n"
-                        retrieved_doc = code_retriever.invoke(f"`{op}`: {operators[op]}")                    
-                        for doc in retrieved_doc:
-                            checking_str += doc.page_content + "\n\n"
-                        checking_str += "\n"    
+                # SVA operator-based rechecking: rather than pattern-matching operators
+                # present in the generated assertion against a generic glossary, parse
+                # the assertion into its operator/signal syntax tree (sva_tree/sva_graph.py)
+                # and compose a bottom-up, node-by-node natural-language explanation of
+                # what the generated code actually means (sva_tree/explanation_merge_tree.py).
+                # That derived meaning is what gets compared against the original
+                # explanation below, so a mismatch points at the specific operator node
+                # responsible instead of relying on a holistic re-read of raw SVA syntax.
+                try:
+                    merge_tree_str = build_and_render_explanation_merge_tree(
+                        client, Model_Name, logic_expression, operator_context, max_retries=5
+                    )
+                    used_merge_tree = True
+                    checking_str = (
+                        "The following is a derived, node-by-node breakdown of what the "
+                        f"generated assertion `{logic_expression}` actually means, built "
+                        "mechanically from its parsed syntax tree. Each `Tn` line shows one "
+                        "subexpression, the SVA operator that merges its operand(s) into it, "
+                        f"and the resulting natural-language meaning:\n\n{merge_tree_str}"
+                    )
+                except ValueError:
+                    # sva_graph.py couldn't parse this assertion (~15% of the corpus) --
+                    # fall back to the plain operator-glossary + retrieval context.
+                    used_merge_tree = False
+                    checking_str = ""
+                    if "|=>" in logic_expression or "|->" in logic_expression:
+                        checking_str += "`|->`: \nif the left-hand side condition of |-> is true, the right-hand side condition of |-> is true in the same clock cycle\n\n\n"
+                        checking_str += "`|=>`: \nif the left-hand side condition of |=> is true, the right-hand side condition of |=> is true in the next one clock cycle\n\n\n"
+                    for op in _operators:
+                        if op in logic_expression:
+                            entry = _operators[op]
+                            op_text = f"{op} ({entry['type']}): {entry['natural_langage_explanation']} Example: {entry['example_usgae']}"
+                            checking_str += f"`{op_text}`\n\n"
+                            retrieved_doc = code_retriever.invoke(op_text)
+                            for doc in retrieved_doc:
+                                checking_str += doc.page_content + "\n\n"
+                            checking_str += "\n"
 
+                recheck_instruction = (
+                    "If there is a mismatch, point to the specific Tn node responsible, "
+                    "list the differences, and modify it into a new systemverilog assertion "
+                    "and output the new assertion.\n"
+                    if used_merge_tree else
+                    "If there exists a mismatch, please list the differences and modify it "
+                    "into a new systemverilog assertion and output the new assertion.\n"
+                )
 
-                # checking_str += llm_response_explain
-
+                recheck_system_msg = (
+                    "You are a helpful bot to modify the systemverilog assertion based on the given explanation.\n\n"
+                    "SVA Operator Context:\n" + operator_context
+                )
                 completion = client.chat.completions.create(
                 model= Model_Name,
                 messages=[
-                    {"role": "system", "content": "You are a helpful bot to modify the systemverilog assertion based on the given explanation."},
-                    {"role": "user", "content": f"Given the desired explanation\n{explanation},\n please check whether the systemverilog assertion {logic_expression} operates with the correct logic and the same timing (i.e., clock cycle).\n The relevant context of the used operators are given:\n {checking_str}.\n If there exists, please list the differences and modify it into a new systemverilog assertion and output the new assertion.\n"}
+                    {"role": "system", "content": recheck_system_msg},
+                    {"role": "user", "content": f"Given the desired explanation\n{explanation},\n please check whether the systemverilog assertion {logic_expression} operates with the correct logic and the same timing (i.e., clock cycle).\n{checking_str}\n{recheck_instruction}"}
                 ]
                 )
                 # print(completion.choices[0].message.content)

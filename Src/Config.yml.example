@@ -4,15 +4,13 @@ DeepSeek_API_Key:
 PDF_Name: The Power of Assertions in SystemVerilog
 PDF_Txt: AllTextbooks.txt
 JasperGold_VERIFY: 1
-Model_Name: ft:gpt-4o-mini-2024-07-18:nyuccs::BS8kJVdb
+Model_Name: gpt-4o
 OpenAI_Model_Name: gpt-4o
 PostProcess_Model_Name: o4-mini
 DeepSeek_Model_Name: deepseek-chat
-# Fine_Tune_Model_Name: ft:gpt-4o-mini-2024-07-18:nyuccs::BZqvEC9X
 Fine_Tune_Model_Name: Qwen-2.5-Coder-Instruct-NL2SVA-7B-Prompt
-# Fine_Tune_Model_Name: ft:gpt-4o-mini-2024-07-18:nyuccs::BUh3lZyT
 CodeLlama_Model_Name: qwen2.5-coder:7b-instruct
-Excute_Folder: ALL_DESIGNS
+Excute_Folder: register
 Excute_Folders_Basic_Model: [Ripple_Carry_Adder, or1200_operandmuxes, gray, Flip_Flop_Array, PSGBusArb, apb, host_interface, control_unit, Programmable_Sequence_Detector, PWM, module_i2c, delay2, simple_req_ack, Gray_Code_Counter, uartTrans, i2c, uartRec, APB_FSM_Controller, register, SEVEN, arbiter, simple_pipeline, lcd, Parallel_In_Serial_Out_Shift_Reg, fifo]
 Excute_Folders_nl2spec: [Ripple_Carry_Adder, or1200_operandmuxes, gray, Flip_Flop_Array, PSGBusArb, apb, host_interface, control_unit, Programmable_Sequence_Detector, PWM, module_i2c, delay2, simple_req_ack, Gray_Code_Counter, uartTrans, i2c, uartRec, APB_FSM_Controller, register, SEVEN, arbiter, simple_pipeline, lcd, Parallel_In_Serial_Out_Shift_Reg, fifo, or1200_if, uart_transmit, ff, BusArbiter, eth_rxstatem, Gray_To_Binary, delay, arb2, Edge_Detector, VGA, simple_router, a25_wishbone, second_largest, reversing_bits]
 Excute_Folders_RAG: [Ripple_Carry_Adder, or1200_operandmuxes, gray, Flip_Flop_Array, PSGBusArb, apb, host_interface, control_unit, Programmable_Sequence_Detector, PWM, module_i2c, delay2, simple_req_ack, Gray_Code_Counter, uartTrans, i2c, uartRec, APB_FSM_Controller, register, SEVEN, arbiter, simple_pipeline, lcd, Parallel_In_Serial_Out_Shift_Reg, fifo, or1200_if, uart_transmit, ff, BusArbiter, eth_rxstatem, Gray_To_Binary, delay, arb2, Edge_Detector, VGA, simple_router, a25_wishbone, second_largest, reversing_bits]

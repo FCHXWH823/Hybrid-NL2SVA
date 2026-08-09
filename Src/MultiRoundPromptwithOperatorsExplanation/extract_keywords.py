@@ -83,25 +83,31 @@ def extract_keywords(nl_sva):
 
 
 def extract_related_operators_of_keyword(keywords):
+    """Maps each keyword/phrase to the most relevant SVA operator, using the
+    richer sva_temporal_operators.json (38 entries, e.g. includes strong/weak
+    which the older operators.json lacked entirely) -- not operators.json.
+    The operator context is given in the SYSTEM message (stable across all
+    per-keyword calls), not repeated in each user message."""
     operators = set()
-    # read the json file and print the operators and explanations
-    with open("operators.json","r") as file:
+    with open("sva_temporal_operators.json", "r") as file:
         data = json.load(file)
-        ops = []
-        ops_explanation = ""
-        for key, value in data.items():
-            ops.append(key)
-            ops_explanation += f"{key}: {value}\n"
-            
-        
-        # nl_sva = "when the third bit of grant output is asserted and in the previous clock cycle the arbitration type selector signal was equal to 1, then in the previous clock cycle the third bit of request input signal must be asserted and the first and second bits of request input signal must not be asserted from the current clock cycle"
-        
+    ops = list(data.keys())
+    ops_explanation = "\n".join(
+        f"{op} ({entry['type']}): {entry['natural_langage_explanation']} "
+        f"Example: {entry['example_usgae']}"
+        for op, entry in data.items()
+    )
+    system_msg = (
+        "You are a helpful bot to extract the relevant systemverilog assertion operator "
+        "from a given list.\n\nSVA Operator Context:\n" + ops_explanation
+    )
+
     for i, keyword in enumerate(keywords, 1):
-        prompt = f"Given a set of systemverilog assertion operatosrs and their explanations as follows:\n {ops_explanation}\n Please extract the most relevant operator from the natural language input \n`{keyword}`\n, but do not return anything if no relevant operator exists.\n"
+        prompt = f"Please extract the most relevant operator from the natural language input \n`{keyword}`\n, but do not return anything if no relevant operator exists.\n"
         completion = client.chat.completions.create(
                     model= Model_Name,
                     messages=[
-                        {"role": "system", "content": "You are a helpful bot to extract the relevant systemverilog assertion operator from a given list."},
+                        {"role": "system", "content": system_msg},
                         {"role": "user", "content": prompt}
                     ]
         )
@@ -109,10 +115,14 @@ def extract_related_operators_of_keyword(keywords):
         for op in ops:
             if op in completion.choices[0].message.content:
                 operators.add(op)
-        
-        ops_explanations = []
-        for op in operators:
-            ops_explanations.append(f"`{op}`: {data[op]}")
+
+    ops_explanations = []
+    for op in operators:
+        entry = data[op]
+        ops_explanations.append(
+            f"`{op}` ({entry['type']}): {entry['natural_langage_explanation']} "
+            f"Example: {entry['example_usgae']}"
+        )
     return ops_explanations
 
     

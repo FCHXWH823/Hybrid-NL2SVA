@@ -31,6 +31,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sva_tree"))
 from sva_graph import build_operator_signal_graph
 
 CODE_RE = re.compile(r"```systemverilog\s*(.*?)```", re.DOTALL)

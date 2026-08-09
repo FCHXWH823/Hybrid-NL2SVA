@@ -242,10 +242,12 @@ def render_merge_tree(node):
             lines.append(f"{label} = {n['label']}")
             continue
         operand_labels = [label_of[c["id"]] for c in n["children"]]
-        if len(operand_labels) == 1:
-            expr = f"{n['label']}({operand_labels[0]})"
-        else:
+        if len(operand_labels) == 2:
             expr = f"{operand_labels[0]} {n['label']} {operand_labels[1]}"
+        else:
+            # Unary, or 3+ operands (e.g. $past(x, N, gate)): function-call
+            # style generalizes cleanly to any arity, including 1.
+            expr = f"{n['label']}({', '.join(operand_labels)})"
         lines.append(f"{label} = {expr}   [ = {n['code']} ]")
     lines.append("")
     lines.append(f"Final assertion ({label_of[node['id']]}): {node['code']}")

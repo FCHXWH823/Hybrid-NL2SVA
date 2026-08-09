@@ -39,10 +39,9 @@ import sys
 import time
 
 import yaml
-from openai import OpenAI
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generate_prompt_guided_explanation import load_operator_context
+from generate_prompt_guided_explanation import add_provider_arg, build_llm_client, load_operator_context
 from jasper_equiv_check import run_equivalence_check
 from sva_graph import build_operator_signal_graph, dfs_nodes
 
@@ -232,6 +231,24 @@ def generate_ol_nl(client, model, question, sva, testbench, operator_context, ma
     golden SVA within max_retries attempts -- callers decide whether to use
     the best-effort text anyway or drop the record.
 
+    Deliberately does NOT catch exceptions from the API calls here (unlike
+    the missing-label/no-code-block/not-equivalent cases below, which are
+    genuine content-quality retries and consume this function's own
+    max_retries budget): an API/infra failure (rate limit, network error,
+    billing) is not evidence this record's statement is bad, so it shouldn't
+    be spent against the same budget or -- worse -- exhaust it and return
+    verified=False, which looks identical to a real verification failure and
+    causes the caller to permanently drop the record for backfill. Letting
+    it propagate means the caller's own retry-with-backoff (generate_
+    codev_sva_reasoning_dataset.worker()) handles it once, uniformly, for
+    the whole record (Stage 2 and Stage 3 together) instead of duplicating
+    -- and getting subtly wrong -- backoff logic at every layer that happens
+    to make an API call. (An earlier version of this function caught and
+    retried API errors right here, which meant a sustained outage silently
+    exhausted this loop's budget for every single record, every time,
+    indistinguishable from genuine bad statements -- see
+    PIPELINE_EXECUTION_NOTES.md.)
+
     sv_dir/task_id are passed straight through to jasper_equiv_check --
     task_id should be unique per concurrent caller (e.g. the source record's
     index) so parallel JasperGold invocations don't collide on temp files."""
@@ -242,19 +259,14 @@ def generate_ol_nl(client, model, question, sva, testbench, operator_context, ma
 
     for attempt in range(max_retries):
         prompt = build_ol_nl_prompt(question, sva, testbench, operator_context, correction)
-        try:
-            completion = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": prompt},
-                ],
-            )
-            text = parse_ol_nl_response(completion.choices[0].message.content)
-        except Exception as error:
-            print(f"    OL-NL call failed ({error}), retrying...")
-            time.sleep(2 ** attempt)
-            continue
+        completion = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        text = parse_ol_nl_response(completion.choices[0].message.content)
 
         if text is None:
             print("    OL-NL reply missing 'OL NL:' label, retrying...")
@@ -292,13 +304,14 @@ def main():
     parser.add_argument("--operators", default="operators.json")
     parser.add_argument("--config", default="Src/Config.yml")
     parser.add_argument("--model", default="o4-mini")
+    add_provider_arg(parser)
     parser.add_argument("--max-retries", type=int, default=3)
     parser.add_argument("--sv-dir", default="/tmp/ol_nl_validation", help="Scratch dir for JasperGold temp files")
     args = parser.parse_args()
 
     with open(args.config) as file:
         config = yaml.safe_load(file)
-    client = OpenAI(api_key=config["Openai_API_Key"])
+    client = build_llm_client(config, args.provider)
     operator_context = load_operator_context(args.operators)
 
     targets = set(int(i) for i in args.indices.split(","))

@@ -35,16 +35,35 @@ _FVRULE_LEARNER_ROOT = os.path.abspath(
 DEFAULT_TCL_FILE_PATH = os.path.join(_FVRULE_LEARNER_ROOT, "FVEval", "tool_scripts", "run_jg_nl2sva_human.tcl")
 
 
+_RAW_ASSERTION_PREFIX_RE = re.compile(r'^\s*(\w+\s*:\s*)?assert\s*(property\s*)?\(')
+
+
 def strip_assertion_body(assertion_text):
     """Mirrors NL2SVAHumanEvaluator's own extraction: run_jg_nl2sva_human.tcl's
     prop_eq_checker wants just the property body, not the
     `assert property (... disable iff (tb_reset)` wrapper or the trailing
     `);` -- matching exactly how Stage 6 scoring will strip both the
-    LM-generated and reference assertion text before comparing them."""
+    LM-generated and reference assertion text before comparing them.
+
+    No-ops on text that's already a bare property body (callers like
+    score_nl2sva_human.py/run_rag_on_fveval_benchmarks.py pre-extract via
+    extract_property_body's more robust, order-independent stripping before
+    calling run_equivalence_check at all). Without this guard, the naive
+    "tb_reset)" search below matches ANY occurrence of that substring, not
+    just a disable iff clause -- confirmed corrupting a real response whose
+    property body legitimately referenced tb_reset as a boolean operand
+    (`!(jump_vld_d1 || tb_reset) |-> ...`), silently truncating it down to
+    ` |-> ...` and surfacing as a JasperGold syntax error, not the intended
+    functional-equivalence result."""
     text = assertion_text.strip().replace("\n", "")
+    if not _RAW_ASSERTION_PREFIX_RE.match(text):
+        return text
     if "tb_reset)" in text:
         text = text.split("tb_reset)")[-1].strip()
-    return text.split(");")[0].strip()
+    # re.split, not text.split(");"): misses a ") ;" (space before the
+    # semicolon), leaving a dangling unbalanced close -- same fix as
+    # score_nl2sva_human.extract_property_body.
+    return re.split(r'\)\s*;', text)[0].strip()
 
 
 def is_equivalent(jg_output):
@@ -78,6 +97,12 @@ def run_equivalence_check(
 
     Returns (equivalent: bool, raw_jg_output: str).
     """
+    # jg itself runs with cwd=fveval_dir (below), and the tcl script resolves
+    # ${SV_DIR} relative to THAT cwd, not this process's -- a relative sv_dir
+    # would make `analyze -sv12 ${SV_DIR}/...` look in the wrong place and
+    # fail with "file does not exist" before any real analysis runs, which
+    # reads indistinguishably from a genuine "not equivalent" result.
+    sv_dir = os.path.abspath(sv_dir)
     os.makedirs(sv_dir, exist_ok=True)
     sva_path = os.path.join(sv_dir, f"{experiment_id}_{task_id}.sva")
     with open(sva_path, "w") as file:
@@ -91,7 +116,14 @@ def run_equivalence_check(
         "jg", "-fpv", "-batch", "-tcl", tcl_file_path,
         "-define", "LM_ASSERT_TEXT", strip_assertion_body(lm_assertion),
         "-define", "REF_ASSERT_TEXT", strip_assertion_body(ref_assertion),
-        "-define", "SIGNAL_LIST", ",".join(signal_list),
+        # dict.fromkeys(...): dedupe while preserving order -- a duplicate
+        # entry makes prop_eq_checker's generated wrapper module reject the
+        # whole check ("ANSI port 'X' cannot be redeclared"), an
+        # elaboration error indistinguishable from a genuine functional
+        # mismatch to callers just pattern-matching the output. Centralized
+        # here (not just at each caller) since every caller ultimately
+        # funnels through this one SIGNAL_LIST join.
+        "-define", "SIGNAL_LIST", ",".join(dict.fromkeys(signal_list)),
         "-define", "EXP_ID", experiment_id,
         "-define", "TASK_ID", task_id,
         "-define", "SV_DIR", sv_dir,

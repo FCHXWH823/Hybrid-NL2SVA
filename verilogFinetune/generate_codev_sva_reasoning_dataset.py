@@ -34,21 +34,30 @@ Usage:
         --source verilogFinetune/data/CodeV-SVA-dataset-training-83K.jsonl \\
         --output verilogFinetune/data/codev_sva_ol_dfs_5000.jsonl \\
         --workers 24
+
+    # Or against DeepSeek instead of OpenAI for both Stage 2 (OL-NL rewrite +
+    # candidate SVA) and Stage 3 (per-node decomposition) -- they share the
+    # one client/model the orchestrator builds, so this one flag pair covers
+    # both:
+    #   --provider deepseek --model deepseek-v4-pro
+    # reads config["DeepSeek_API_Key"] from --config and calls
+    # https://api.deepseek.com.
 """
 import argparse
 import json
 import os
 import sys
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import yaml
-from openai import OpenAI
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sva_tree"))
 from generate_dfs_explanation import render_decomposition_tree, walk_tree
 from generate_ol_nl_explanation import generate_ol_nl, split_user_content
-from generate_prompt_guided_explanation import load_operator_context
+from generate_prompt_guided_explanation import add_provider_arg, build_llm_client, load_operator_context
 from select_codev_sva_sample import extract_final_sva
 from sva_graph import build_operator_signal_graph, render_merge_tree
 
@@ -152,6 +161,7 @@ def main():
     parser.add_argument("--operators", default="operators.json")
     parser.add_argument("--config", default="Src/Config.yml")
     parser.add_argument("--model", default="o4-mini")
+    add_provider_arg(parser)
     parser.add_argument("--max-retries", type=int, default=3)
     parser.add_argument("--workers", type=int, default=24)
     parser.add_argument("--limit", type=int, default=None, help="Only process this many records (for smoke-testing)")
@@ -163,7 +173,7 @@ def main():
 
     with open(args.config) as file:
         config = yaml.safe_load(file)
-    client = OpenAI(api_key=config["Openai_API_Key"])
+    client = build_llm_client(config, args.provider)
     operator_context = load_operator_context(args.operators)
 
     with open(args.sample) as file:
@@ -187,7 +197,15 @@ def main():
 
     checkpoint_lock = threading.Lock()
     checkpoint_file = open(checkpoint_path, "a")
-    backfill_cursor = [max(target_indices) + 1 if target_indices else 0]
+    # Starting past the highest target index (the original choice) restricts
+    # every backfill, for the whole run, to whatever sliver of the source
+    # file happens to sit after it -- for this 5000-record sample drawn from
+    # an ~82.8K-record eligible pool, that sliver was 28 lines wide, out of
+    # ~77,800 unused-but-eligible records actually available in the file.
+    # Starting at 0 makes the full file searchable; used_indices (already
+    # seeded with every target_index) makes the scan skip straight past
+    # anything already spoken for.
+    backfill_cursor = [0]
     backfill_lock = threading.Lock()
     dropped_lock = threading.Lock()
     dropped_count = [0]
@@ -209,7 +227,21 @@ def main():
         writes directly to the checkpoint file under a lock. `completed` is
         keyed by the original source_index (the target slot), never by a
         backfilled replacement's own index -- checked once upfront so a
-        resumed run skips slots a prior run already finished."""
+        resumed run skips slots a prior run already finished.
+
+        An exception from process_one() (API/infra failure -- rate limit,
+        network blip, momentary billing hiccup) is retried on the SAME
+        record with backoff before falling through to backfill; only a
+        clean `None` return (the record's own OL-NL statement genuinely
+        never verified, or it's a bare-signal degenerate case) backfills
+        immediately. Without this split, a sustained infra outage looks
+        identical to every candidate in the corpus being individually bad,
+        and 24 threads will race through the entire remaining pool trying
+        (and permanently burning) a fresh candidate for every single failed
+        attempt -- which is exactly what happened when the API account ran
+        out of balance mid-run: thousands of instantly-rejected calls each
+        consumed one backfill candidate, until the pool was exhausted and
+        the whole process crashed with StopIteration."""
         if source_index in completed:
             with progress_lock:
                 progress[0] += 1
@@ -219,14 +251,27 @@ def main():
         record = source.read_record(index)
         while True:
             sva = extract_final_sva(record["messages"][2]["content"])
-            try:
-                assistant_content = process_one(
-                    client, args.model, record, sva, operator_context, args.max_retries,
-                    args.sv_dir, task_id=index,
-                )
-            except Exception as error:
-                print(f"    unexpected error on source_index={index} ({error}), dropping and backfilling")
-                assistant_content = None
+            assistant_content = None
+            infra_error = None
+            for infra_attempt in range(args.max_retries):
+                try:
+                    assistant_content = process_one(
+                        client, args.model, record, sva, operator_context, args.max_retries,
+                        args.sv_dir, task_id=index,
+                    )
+                    infra_error = None
+                    break
+                except Exception as error:
+                    infra_error = error
+                    wait_seconds = 2 ** infra_attempt
+                    print(f"    unexpected error on source_index={index} ({error}), "
+                          f"retrying same record in {wait_seconds}s "
+                          f"({infra_attempt + 1}/{args.max_retries})...")
+                    time.sleep(wait_seconds)
+
+            if infra_error is not None:
+                print(f"    giving up on source_index={index} after {args.max_retries} infra "
+                      f"retries (last error={infra_error}), dropping and backfilling")
 
             if assistant_content is not None:
                 result = {

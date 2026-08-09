@@ -45,6 +45,7 @@ import yaml
 from openai import OpenAI
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sva_tree"))
 from sva_parser import UnsupportedSVAConstruct, parse_sva_property, render_parsed_sva
 
 PROMPT_STEPS = """Step 1: Identify the top-level property operator:
@@ -123,6 +124,38 @@ def load_operator_context(operators_path):
         operators = json.load(file)
     lines = [f"{op}: {explanation}" for op, explanation in operators.items()]
     return "\n".join(lines)
+
+
+def add_provider_arg(parser):
+    """Adds the --provider flag shared by every script in this directory that
+    talks to an LLM, so --provider deepseek is spelled the same way
+    everywhere. Kept as a separate opt-in call (not bundled into
+    build_llm_client) since a couple of callers build their ArgumentParser
+    before other setup."""
+    parser.add_argument(
+        "--provider", choices=["openai", "deepseek"], default="openai",
+        help="Which config keys to read and which API endpoint to call. "
+             "'deepseek' uses config['DeepSeek_API_Key'] against "
+             "https://api.deepseek.com (an OpenAI-compatible endpoint) -- "
+             "pair it with e.g. --model deepseek-v4-pro.",
+    )
+
+
+def build_llm_client(config, provider):
+    """One OpenAI() client construction shared by every script here, so
+    switching providers (e.g. to run Stage 2/3 against DeepSeek instead of
+    OpenAI) is a single --provider flag rather than a per-script edit.
+    Mirrors the base_url convention already used throughout Src/DeepSeek/.
+
+    The API key comes from the environment first, config.yml second -- an
+    env var never ends up committed to Src/Config.yml, which is tracked in
+    git (and already has one hardcoded DeepSeek key checked in, in
+    Src/DeepSeek/deepseek.py, that shouldn't be treated as a safe example)."""
+    if provider == "deepseek":
+        api_key = os.environ.get("DEEPSEEK_API_KEY") or config.get("DeepSeek_API_Key")
+        return OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
+    api_key = os.environ.get("OPENAI_API_KEY") or config.get("Openai_API_Key")
+    return OpenAI(api_key=api_key)
 
 
 def load_input_records(input_path):

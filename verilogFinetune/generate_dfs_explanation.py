@@ -10,17 +10,19 @@ For each (golden SVA, natural-language explanation) pair, this script:
      going through the sequence and Boolean layers too, not stopping at the
      property layer the way sva_parser.py (and the Fig. 12 prompt) does.
   2. Walks that tree depth-first, root first. At each *operator* node, it
-     asks the model for exactly four things, given only that node's own
-     operator, code, and operand(s):
+     asks the model for the node's own piece and reasoning, plus one
+     sub-piece per operand, given only that node's own operator, code, and
+     operand(s):
          (a) the natural-language piece for this node (restated, not chosen)
          (b) why the (given) operator represents that piece
-         (c) the sub-piece belonging to operand 1
-         (d) the sub-piece belonging to operand 2 (if binary)
-     Python then threads (c)/(d) down as the *input* natural-language piece
-     for the corresponding child call -- so a child's (a) is never generated
-     independently, it's mechanically inherited from its parent's split. This
-     is what actually enforces top-down consistency, rather than an
-     instruction the model has to remember to follow.
+         (c), (d), (e), ... the sub-piece belonging to each operand in turn
+             -- almost always 1 or 2 of these, but e.g. $past(x, N, gate)
+             has three real operands, so the node's arity decides the count
+     Python then threads (c)/(d)/... down as the *input* natural-language
+     piece for the corresponding child call -- so a child's (a) is never
+     generated independently, it's mechanically inherited from its parent's
+     split. This is what actually enforces top-down consistency, rather than
+     an instruction the model has to remember to follow.
   3. Signal (leaf) nodes never get their own block or LLM call at all: their
      natural-language piece is already sitting verbatim in their parent's
      (c)/(d), so a separate block for them would just repeat that text.
@@ -53,10 +55,12 @@ import sys
 import time
 
 import yaml
-from openai import OpenAI
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sva_tree"))
 from generate_prompt_guided_explanation import (
+    add_provider_arg,
+    build_llm_client,
     load_checkpoint,
     load_input_records,
     load_operator_context,
@@ -91,16 +95,23 @@ Output exactly the following labeled lines in plain text (not JSON):
 
 (a) Natural language piece: <restate the natural-language piece given above, unchanged, word for word>
 (b) Operator reasoning: <why the operator "{operator}" correctly represents this natural-language piece>
-(c) Operand 1 natural language piece: <the part of the natural-language piece above that corresponds to operand 1's code>
-{d_line}
+{operand_output_lines}
 """
 
-_FIELD_PATTERN = re.compile(r"\(([abcd])\)[^:\n]*:\s*(.*?)(?=\n\s*\([abcd]\)|\Z)", re.DOTALL)
+# Letters, not just a-d: a node's arity decides how many operand fields
+# (c), (d), (e), ... are expected -- e.g. $past(x, N, gate) has three.
+_FIELD_PATTERN = re.compile(r"\(([a-z])\)[^:\n]*:\s*(.*?)(?=\n\s*\([a-z]\)|\Z)", re.DOTALL)
+
+
+def _operand_letter(index):
+    """0-indexed operand position -> its output-field letter: c, d, e, ..."""
+    return chr(ord("c") + index)
 
 
 def parse_node_response(text):
-    """Extract {"a":..., "b":..., "c":..., "d":...} from the model's labeled
-    plain-text reply. Missing labels are simply absent from the result."""
+    """Extract {"a":..., "b":..., "c":..., ...} from the model's labeled
+    plain-text reply -- one letter per operand, however many there are.
+    Missing labels are simply absent from the result."""
     return {letter: content.strip() for letter, content in _FIELD_PATTERN.findall(text)}
 
 
@@ -110,21 +121,19 @@ def _code_of(node):
 
 def build_node_prompt(nl_piece, node, operator_context):
     children = node["children"]
-    operand_lines = [f"Operand 1 code: {_code_of(children[0])}"]
-    d_line = ""
-    if len(children) == 2:
-        operand_lines.append(f"Operand 2 code: {_code_of(children[1])}")
-        d_line = (
-            "(d) Operand 2 natural language piece: <the part of the natural-language "
-            "piece above that corresponds to operand 2's code>"
-        )
+    operand_lines = [f"Operand {i + 1} code: {_code_of(child)}" for i, child in enumerate(children)]
+    operand_output_lines = "\n".join(
+        f"({_operand_letter(i)}) Operand {i + 1} natural language piece: <the part of the "
+        f"natural-language piece above that corresponds to operand {i + 1}'s code>"
+        for i in range(len(children))
+    )
     return PROMPT_TEMPLATE_NODE.format(
         nl_piece=nl_piece,
         code=node["code"],
         operator=node["label"],
         operand_lines="\n".join(operand_lines),
         operator_context=operator_context,
-        d_line=d_line,
+        operand_output_lines=operand_output_lines,
     )
 
 
@@ -132,9 +141,8 @@ def call_node_llm(client, model, nl_piece, node, operator_context, max_retries):
     """Call the LLM for one operator node, retrying on API failure or on a
     reply missing a required field. After max_retries, degrades to reusing
     nl_piece verbatim for every operand rather than losing the subtree."""
-    required = {"a", "b", "c"}
-    if len(node["children"]) == 2:
-        required.add("d")
+    operand_letters = [_operand_letter(i) for i in range(len(node["children"]))]
+    required = {"a", "b", *operand_letters}
 
     prompt = build_node_prompt(nl_piece, node, operator_context)
     last_error = None
@@ -158,9 +166,9 @@ def call_node_llm(client, model, nl_piece, node, operator_context, max_retries):
 
     print(f"    giving up on this node after {max_retries} attempts; "
           f"degrading to a verbatim split (last_error={last_error})")
-    parsed = {"a": nl_piece, "b": "(reasoning unavailable -- extraction failed after retries)", "c": nl_piece}
-    if "d" in required:
-        parsed["d"] = nl_piece
+    parsed = {"a": nl_piece, "b": "(reasoning unavailable -- extraction failed after retries)"}
+    for letter in operand_letters:
+        parsed[letter] = nl_piece
     return parsed
 
 
@@ -196,22 +204,23 @@ def render_decomposition_tree(node, parsed_by_id, prefix=""):
 
 
 def walk_tree(client, model, node, nl_piece, operator_context, max_retries, parsed_by_id):
-    """Visits *operator* nodes only, storing each one's parsed a/b/c/d in
+    """Visits *operator* nodes only, storing each one's parsed a/b/c/d/... in
     parsed_by_id (keyed by node id) instead of building a flat block list --
     render_decomposition_tree() re-walks the same tree afterward to lay these
     out with proper nesting. Signal/leaf nodes never get an LLM call: their
-    piece is already sitting verbatim in their parent's (c)/(d)."""
+    piece is already sitting verbatim in their parent's (c)/(d)/....
+
+    Visits every child, not just the first two -- a system-function call
+    like $past(x, N, gate) has three real operands, and a child skipped here
+    would leave a gap in parsed_by_id that crashes render_decomposition_tree
+    later if that child turns out to be an operator itself rather than a
+    bare signal leaf."""
     parsed = call_node_llm(client, model, nl_piece, node, operator_context, max_retries)
     parsed_by_id[node["id"]] = parsed
-    binary = len(node["children"]) == 2
 
-    first_child = node["children"][0]
-    if first_child["type"] == "operator":
-        walk_tree(client, model, first_child, parsed["c"], operator_context, max_retries, parsed_by_id)
-    if binary:
-        second_child = node["children"][1]
-        if second_child["type"] == "operator":
-            walk_tree(client, model, second_child, parsed["d"], operator_context, max_retries, parsed_by_id)
+    for i, child in enumerate(node["children"]):
+        if child["type"] == "operator":
+            walk_tree(client, model, child, parsed[_operand_letter(i)], operator_context, max_retries, parsed_by_id)
 
 
 def generate_explanation(client, model, assertion, explanation, operator_context, max_retries):
@@ -277,7 +286,8 @@ def main():
     parser.add_argument("--config", default="Src/Config.yml",
                          help="Path to the project config.yml containing Openai_API_Key")
     parser.add_argument("--model", default="o4-mini",
-                         help="OpenAI model used to generate the DFS explanation")
+                         help="Model used to generate the DFS explanation")
+    add_provider_arg(parser)
     parser.add_argument("--start", type=int, default=0, help="Start index into the input dataset")
     parser.add_argument("--limit", type=int, default=None, help="Max number of records to process")
     parser.add_argument("--max-retries", type=int, default=5)
@@ -287,7 +297,7 @@ def main():
 
     with open(args.config) as file:
         config = yaml.safe_load(file)
-    client = OpenAI(api_key=config["Openai_API_Key"])
+    client = build_llm_client(config, args.provider)
 
     operator_context = load_operator_context(args.operators)
     records = load_input_records(args.input)
