@@ -14,7 +14,6 @@ Src/Config.yml
 # Generated/intermediate data -- reproducible from source datasets, not
 # meant to be redistributed via git
 verilogFinetune/data/*.jsonl
-!verilogFinetune/data/CodeV-SVA-dataset-training-83K.sample.jsonl
 !verilogFinetune/data/qwen_explanation.jsonl
 !verilogFinetune/data/qwen_prompt_guided_explanation.jsonl
 !verilogFinetune/data/codev_sva_ol_dfs_5000.jsonl
