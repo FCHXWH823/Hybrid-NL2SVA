@@ -15,6 +15,9 @@ Src/Config.yml
 # meant to be redistributed via git
 verilogFinetune/data/*.jsonl
 !verilogFinetune/data/CodeV-SVA-dataset-training-83K.sample.jsonl
+!verilogFinetune/data/qwen_explanation.jsonl
+!verilogFinetune/data/qwen_prompt_guided_explanation.jsonl
+!verilogFinetune/data/codev_sva_ol_dfs_5000.jsonl
 verilogFinetune/data/*_scratch/
 verilogFinetune/data/*.log
 verilogFinetune/data/*.pid
