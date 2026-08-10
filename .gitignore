@@ -18,6 +18,7 @@ verilogFinetune/data/*.jsonl
 !verilogFinetune/data/qwen_prompt_guided_explanation.jsonl
 !verilogFinetune/data/codev_sva_ol_dfs_5000.jsonl
 verilogFinetune/data/*.json
+!verilogFinetune/data/dataset_info.json
 verilogFinetune/data/*_scratch/
 verilogFinetune/data/*.log
 verilogFinetune/data/*.pid
