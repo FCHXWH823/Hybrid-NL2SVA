@@ -17,11 +17,15 @@ verilogFinetune/data/*.jsonl
 !verilogFinetune/data/qwen_explanation.jsonl
 !verilogFinetune/data/qwen_prompt_guided_explanation.jsonl
 !verilogFinetune/data/codev_sva_ol_dfs_5000.jsonl
+!verilogFinetune/data/codev_sva_ol_dfs_5000_think.jsonl
 verilogFinetune/data/*.json
 !verilogFinetune/data/dataset_info.json
 verilogFinetune/data/*_scratch/
 verilogFinetune/data/*.log
 verilogFinetune/data/*.pid
+
+# Slurm job stdout captured next to the scripts that produced it
+verilogFinetune/*.10g
 
 # Persisted RAG vector store -- regenerable from the textbook PDFs
 RAG_Database/

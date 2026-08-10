@@ -84,5 +84,19 @@
             "assistant_tag": "assistant",
             "system_tag": "system"
         }
+    },
+    "codev_sva_ol_dfs_5000_think": {
+        "file_name": "codev_sva_ol_dfs_5000_think.jsonl",
+        "formatting": "sharegpt",
+        "columns": {
+            "messages": "messages"
+        },
+        "tags": {
+            "role_tag": "role",
+            "content_tag": "content",
+            "user_tag": "user",
+            "assistant_tag": "assistant",
+            "system_tag": "system"
+        }
     }
 }
