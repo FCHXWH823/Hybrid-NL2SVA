@@ -1,230 +1,327 @@
 {
+    "##N": {
+        "type": "sequence",
+        "original": "sequence_expr ## constant_primary sequence_expr",
+        "natural_langage_explanation": "Concatenate two sequences so that the second sequence begins exactly N clock ticks after the first sequence ends. ##0 starts it on the same ending tick; ##1 starts it on the next tick.",
+        "example_usgae": "assert property (@(posedge clk) req |-> ##2 gnt);",
+        "template_unary": "{op1}, occurring exactly {n} clock cycle(s) after the point already established",
+        "template_binary": "{op1}, followed exactly {n} clock cycle(s) later by {op2}"
+    },
+    "##[M:N]": {
+        "type": "sequence",
+        "original": "sequence_expr ##[min:max] sequence_expr",
+        "natural_langage_explanation": "Concatenate two sequences so that the second sequence begins at some clock tick from M through N ticks after the first sequence ends. The upper bound may be $ for a finite but unbounded choice of delay.",
+        "example_usgae": "assert property (@(posedge clk) req |-> ##[1:4] gnt);",
+        "template_unary": "{op1}, occurring somewhere between {m} and {n} clock cycle(s) after the point already established",
+        "template_binary": "{op1}, followed somewhere between {m} and {n} clock cycle(s) later by {op2}"
+    },
+    "##[*]": {
+        "type": "sequence",
+        "original": "sequence_expr ##[*] sequence_expr",
+        "natural_langage_explanation": "Allow the second sequence to begin after any finite delay of zero or more clock ticks; this is equivalent to ##[0:$].",
+        "example_usgae": "assert property (@(posedge clk) req |-> strong(##[*] gnt));",
+        "template_binary": "{op1}, followed after any finite number of clock cycles (zero or more) by {op2}"
+    },
+    "##[+]": {
+        "type": "sequence",
+        "original": "sequence_expr ##[+] sequence_expr",
+        "natural_langage_explanation": "Allow the second sequence to begin after any finite delay of one or more clock ticks; this is equivalent to ##[1:$].",
+        "example_usgae": "assert property (@(posedge clk) req |-> strong(##[+] ack));",
+        "template_binary": "{op1}, followed after any finite number of clock cycles (one or more) by {op2}"
+    },
     "[*N]": {
         "type": "sequence",
         "original": "sequence_expr [* constant_expression]",
         "natural_langage_explanation": "Match the operand sequence exactly the specified number of times in succession. Successive matches begin one clock tick after the preceding match ends.",
-        "example_usgae": "assert property (@(posedge clk) a |-> b[*3]);"
+        "example_usgae": "assert property (@(posedge clk) a |-> b[*3]);",
+        "template_unary": "{op1}, matched exactly {n} time(s) in immediate succession"
     },
     "[*M:N]": {
         "type": "sequence",
         "original": "sequence_expr [* min:max]",
         "natural_langage_explanation": "Match the operand consecutively between min and max times. $ may be the finite-but-unbounded upper limit.",
-        "example_usgae": "assert property (@(posedge clk) a |-> b[*2:4] ##1 c);"
+        "example_usgae": "assert property (@(posedge clk) a |-> b[*2:4] ##1 c);",
+        "template_unary": "{op1}, matched between {m} and {n} times in immediate succession"
     },
     "[*]": {
         "type": "sequence",
         "original": "sequence_expr [*]",
         "natural_langage_explanation": "Match zero or more consecutive iterations; this is shorthand for [*0:$].",
-        "example_usgae": "assert property (@(posedge clk) a |-> b[*] ##1 c);"
+        "example_usgae": "assert property (@(posedge clk) a |-> b[*] ##1 c);",
+        "template_unary": "{op1}, matched zero or more times in immediate succession"
     },
     "[+]": {
         "type": "sequence",
         "original": "sequence_expr [+]",
         "natural_langage_explanation": "Match one or more consecutive iterations; this is shorthand for [*1:$].",
-        "example_usgae": "assert property (@(posedge clk) a |-> b[+] ##1 c);"
+        "example_usgae": "assert property (@(posedge clk) a |-> b[+] ##1 c);",
+        "template_unary": "{op1}, matched one or more times in immediate succession"
     },
     "[->M:N]": {
         "type": "sequence",
         "original": "boolean_expr [-> min:max]",
         "natural_langage_explanation": "Match the Boolean expression min through max times, not necessarily consecutively, with no extra match between counted matches; the repetition ends on the last counted match.",
-        "example_usgae": "assert property (@(posedge clk) req |-> ack[->2:4] ##1 c);"
+        "example_usgae": "assert property (@(posedge clk) req |-> ack[->2:4] ##1 c);",
+        "template_unary": "{op1}, becoming true between {m} and {n} times, not necessarily consecutively"
     },
     "[=M:N]": {
         "type": "sequence",
         "original": "boolean_expr [= min:max]",
         "natural_langage_explanation": "Count min through max nonconsecutive matches with no extra match between them. Unlike goto repetition, the sequence may finish after the final counted match, provided the operand remains false until the finish.",
-        "example_usgae": "assert property (@(posedge clk) req |-> ack[=2:4] ##1 c);"
+        "example_usgae": "assert property (@(posedge clk) req |-> ack[=2:4] ##1 c);",
+        "template_unary": "{op1}, becoming true between {m} and {n} times, not necessarily consecutively, with the sequence allowed to finish after the final counted match"
     },
     "$sampled": {
         "type": "sequence",
         "original": "$sampled(expression)",
         "natural_langage_explanation": "Return the value sampled for the current assertion time slot. This is most useful in an assertion action block; inside the property expression it is normally redundant.",
-        "example_usgae": "assert property (@(posedge clk) a == b) else $error(\"a=%b b=%b\", $sampled(a), $sampled(b));"
+        "example_usgae": "assert property (@(posedge clk) a == b) else $error(\"a=%b b=%b\", $sampled(a), $sampled(b));",
+        "template_unary": "the sampled value of {op1} at the current assertion time slot"
     },
     "$rose": {
         "type": "sequence",
         "original": "$rose(expression [, clocking_event])",
         "natural_langage_explanation": "True when the least-significant bit is sampled as 1 now and was not 1 at the preceding sampling tick.",
-        "example_usgae": "assert property (@(posedge clk) $rose(req) |=> ack);"
+        "example_usgae": "assert property (@(posedge clk) $rose(req) |=> ack);",
+        "template_unary": "{op1} has just risen to 1, sampled as 1 now but not at the preceding tick"
     },
     "$fell": {
         "type": "sequence",
         "original": "$fell(expression [, clocking_event])",
         "natural_langage_explanation": "True when the least-significant bit is sampled as 0 now and was not 0 at the preceding sampling tick.",
-        "example_usgae": "assert property (@(posedge clk) $fell(req) |=> !ack);"
+        "example_usgae": "assert property (@(posedge clk) $fell(req) |=> !ack);",
+        "template_unary": "{op1} has just fallen to 0, sampled as 0 now but not at the preceding tick"
     },
     "$stable": {
         "type": "sequence",
         "original": "$stable(expression [, clocking_event])",
         "natural_langage_explanation": "True when the complete sampled value is unchanged from the preceding sampling tick.",
-        "example_usgae": "assert property (@(posedge clk) a |-> $stable(data));"
+        "example_usgae": "assert property (@(posedge clk) a |-> $stable(data));",
+        "template_unary": "{op1} is unchanged from its value at the preceding sampling tick"
     },
     "$changed": {
         "type": "sequence",
         "original": "$changed(expression [, clocking_event])",
         "natural_langage_explanation": "True when the complete sampled value differs from the preceding sampling tick.",
-        "example_usgae": "assert property (@(posedge clk) a |-> $changed(data));"
+        "example_usgae": "assert property (@(posedge clk) a |-> $changed(data));",
+        "template_unary": "{op1} differs from its value at the preceding sampling tick"
     },
     "$past": {
         "type": "sequence",
         "original": "$past(expr [, ticks [, gate [, clocking_event]]])",
         "natural_langage_explanation": "Return the sampled value from ticks prior ticks of the relevant clock; when a gate is supplied, count only ticks on which that gate is true. The default depth is one.",
-        "example_usgae": "assert property (@(posedge clk) ack |-> $past(req, 2));"
+        "example_usgae": "assert property (@(posedge clk) ack |-> $past(req, 2));",
+        "template_unary": "the value {op1} had one clock tick ago",
+        "template_binary": "the value {op1} had {op2} clock tick(s) ago"
+    },
+    "$onehot": {
+        "type": "sequence",
+        "original": "$onehot(expression)",
+        "natural_langage_explanation": "True if exactly one bit of the expression is 1 -- use for \"exactly one of these signals/bits is asserted\" claims.",
+        "example_usgae": "assert property (@(posedge clk) req |-> $onehot(gnt));",
+        "template_unary": "exactly one bit of {op1} is 1"
+    },
+    "$onehot0": {
+        "type": "sequence",
+        "original": "$onehot0(expression)",
+        "natural_langage_explanation": "True if at most one bit of the expression is 1 (zero or one bits set) -- use for \"never two or more of these signals/bits are asserted at the same time\" claims. Do NOT approximate this with a hand-written conjunction like !(a && b && c), which only catches the all-asserted case and misses any two-asserted case.",
+        "example_usgae": "assert property (@(posedge clk) $onehot0({hold, busy, cont_gnt}));",
+        "template_unary": "at most one bit of {op1} is 1 (zero or one bits set)"
+    },
+    "$countones": {
+        "type": "sequence",
+        "original": "$countones(expression)",
+        "natural_langage_explanation": "Returns the number of bits in the expression that are 1, as an integer -- use when a claim needs an exact or bounded count of asserted bits (e.g. \"at most two requests are pending\").",
+        "example_usgae": "assert property (@(posedge clk) $countones(req) <= 2);",
+        "template_unary": "the number of bits in {op1} that are 1"
+    },
+    "$countbits": {
+        "type": "sequence",
+        "original": "$countbits(expression, control_bit[, control_bit...])",
+        "natural_langage_explanation": "Returns the number of bits in the expression matching any of the given control_bit values (1'b0, 1'b1, 1'bx, 1'bz) -- a generalization of $countones (which only counts 1-bits) to counting 0/x/z bits too.",
+        "example_usgae": "assert property (@(posedge clk) $countbits(bus, 1'bx, 1'bz) == 0);",
+        "template_binary": "the number of bits in {op1} matching the control-bit value {op2}"
     },
     "intersect": {
         "type": "sequence",
         "original": "sequence_expr1 intersect sequence_expr2",
         "natural_langage_explanation": "Require both operand sequences to match from the same start and to finish on the same clock tick.",
-        "example_usgae": "assert property (@(posedge clk) a |-> ((b ##1 c) intersect (b[*2])));"
+        "example_usgae": "assert property (@(posedge clk) a |-> ((b ##1 c) intersect (b[*2])));",
+        "template_binary": "{op1}, required to match from the same start and finish on the same clock tick as {op2}"
     },
     "first_match": {
         "type": "sequence",
         "original": "first_match(sequence_expr)",
         "natural_langage_explanation": "Select only the chronologically earliest match of a sequence that may have several possible end points.",
-        "example_usgae": "assert property (@(posedge clk) a |-> first_match(##[1:4] b) ##1 c);"
+        "example_usgae": "assert property (@(posedge clk) a |-> first_match(##[1:4] b) ##1 c);",
+        "template_unary": "the chronologically earliest match of {op1}"
     },
     "throughout": {
         "type": "sequence",
         "original": "expression throughout sequence_expr",
         "natural_langage_explanation": "Require the expression to be true at every clock tick covered by a finite match of the sequence.",
-        "example_usgae": "assert property (@(posedge clk) req |-> (req throughout (1'b1 ##[1:4] ack)));"
+        "example_usgae": "assert property (@(posedge clk) req |-> (req throughout (1'b1 ##[1:4] ack)));",
+        "template_binary": "{op1}, required to hold true at every clock tick covered by a match of {op2}"
     },
     "within": {
         "type": "sequence",
         "original": "sequence_expr1 within sequence_expr2",
         "natural_langage_explanation": "Require a match of the first sequence to occur wholly inside the start-to-end interval of a match of the second sequence.",
-        "example_usgae": "assert property (@(posedge clk) a |-> ((b ##1 c) within (1'b1 ##[1:5] ack)));"
+        "example_usgae": "assert property (@(posedge clk) a |-> ((b ##1 c) within (1'b1 ##[1:5] ack)));",
+        "template_binary": "a match of {op1}, required to occur wholly inside the start-to-end interval of a match of {op2}"
     },
     "strong": {
         "type": "property",
         "original": "strong(sequence_expr)",
         "natural_langage_explanation": "The property is true only if the sequence has a nonempty match. An unbounded search must eventually reach a successful finite match.",
-        "example_usgae": "assert property (@(posedge clk) a |-> strong(##[1:$] b));"
+        "example_usgae": "assert property (@(posedge clk) a |-> strong(##[1:$] b));",
+        "template_unary": "{op1}, required to have a nonempty match (an unbounded search must eventually succeed)"
     },
     "weak": {
         "type": "property",
         "original": "weak(sequence_expr)",
         "natural_langage_explanation": "The property is true if the sequence has a match; it also remains true when an unbounded search is cut short because no later clock tick exists.",
-        "example_usgae": "assert property (@(posedge clk) a |-> weak(##[1:$] b));"
+        "example_usgae": "assert property (@(posedge clk) a |-> weak(##[1:$] b));",
+        "template_unary": "{op1}, allowed to match, or to remain true if an unbounded search is cut short with no later clock tick available"
     },
     "|->": {
         "type": "property",
         "original": "sequence_expr |-> property_expr",
-        "natural_langage_explanation": "For every antecedent match, start the consequent on the antecedent's ending tick. If the antecedent has no match, the implication succeeds vacuously.",
-        "example_usgae": "assert property (@(posedge clk) req |-> ack);"
+        "natural_langage_explanation": "For every antecedent match, start the consequent on the same clock cycle when the antecedent ends. If the antecedent has no match, the implication succeeds vacuously.",
+        "example_usgae": "assert property (@(posedge clk) req |-> ack);",
+        "template_binary": "if {op1}, then {op2}"
     },
     "|=>": {
         "type": "property",
         "original": "sequence_expr |=> property_expr",
-        "natural_langage_explanation": "For every antecedent match, start the consequent on the tick after the antecedent ends. If the antecedent has no match, the implication succeeds vacuously.",
-        "example_usgae": "assert property (@(posedge clk) req |=> ack);"
+        "natural_langage_explanation": "For every antecedent match, start the consequent on the next clock cycle when the antecedent ends. If the antecedent has no match, the implication succeeds vacuously.",
+        "example_usgae": "assert property (@(posedge clk) req |=> ack);",
+        "template_binary": "if {op1}, then, starting at the next clock cycle, {op2}"
     },
     "implies": {
         "type": "property",
         "original": "property_expr1 implies property_expr2",
         "natural_langage_explanation": "Evaluate both properties from the same starting tick; if the first property succeeds, the second must succeed.",
-        "example_usgae": "assert property (@(posedge clk) (always req) implies (always ack));"
+        "example_usgae": "assert property (@(posedge clk) (always req) implies (always ack));",
+        "template_binary": "if {op1} holds from its own starting tick, then {op2} must also hold from that same starting tick"
     },
     "iff": {
         "type": "property",
         "original": "property_expr1 iff property_expr2",
         "natural_langage_explanation": "Evaluate both properties from the same starting tick and require both implications, so the two properties have the same truth outcome.",
-        "example_usgae": "assert property (@(posedge clk) (always req) iff (always ack));"
+        "example_usgae": "assert property (@(posedge clk) (always req) iff (always ack));",
+        "template_binary": "{op1} and {op2}, evaluated from the same starting tick, must have the same truth outcome"
     },
     "#-#": {
         "type": "property",
         "original": "sequence_expr #-# property_expr",
         "natural_langage_explanation": "Concatenate a sequence with a property starting on the sequence's ending tick. Unlike implication, it does not succeed vacuously merely because the sequence has no match.",
-        "example_usgae": "assert property (@(posedge clk) (req ##1 ack) #-# always c);"
+        "example_usgae": "assert property (@(posedge clk) (req ##1 ack) #-# always c);",
+        "template_binary": "{op1}, concatenated with {op2} starting on {op1}'s ending tick (not vacuously true if {op1} never matches)"
     },
     "#=#": {
         "type": "property",
         "original": "sequence_expr #=# property_expr",
         "natural_langage_explanation": "Concatenate a sequence with a property starting one tick after the sequence ends. It is a concatenation-style operator, not vacuous implication.",
-        "example_usgae": "assert property (@(posedge clk) (req ##1 ack) #=# always c);"
+        "example_usgae": "assert property (@(posedge clk) (req ##1 ack) #=# always c);",
+        "template_binary": "{op1}, concatenated with {op2} starting one clock tick after {op1}'s ending tick (not vacuously true if {op1} never matches)"
     },
     "nexttime": {
         "type": "property",
         "original": "nexttime property_expr",
         "natural_langage_explanation": "If a next tick exists, the property must hold there; if no next tick exists, the weak form is still true.",
-        "example_usgae": "assert property (@(posedge clk) a |-> nexttime b);"
+        "example_usgae": "assert property (@(posedge clk) a |-> nexttime b);",
+        "template_unary": "{op1}, required to hold at the next clock tick if one exists (vacuously true otherwise)"
     },
     "nexttime[N]": {
         "type": "property",
         "original": "nexttime[n] property_expr",
         "natural_langage_explanation": "Apply weak-nexttime semantics at the nth future tick. It succeeds weakly if the clock stops before that tick.",
-        "example_usgae": "assert property (@(posedge clk) a |-> nexttime[2] b);"
+        "example_usgae": "assert property (@(posedge clk) a |-> nexttime[2] b);",
+        "template_unary": "{op1}, required to hold at the {n}th future clock tick if it exists (vacuously true otherwise)"
     },
     "s_nexttime": {
         "type": "property",
         "original": "s_nexttime property_expr",
         "natural_langage_explanation": "Require a next clock tick to exist and require the property to hold at that tick.",
-        "example_usgae": "assert property (@(posedge clk) a |-> s_nexttime b);"
+        "example_usgae": "assert property (@(posedge clk) a |-> s_nexttime b);",
+        "template_unary": "{op1}, required to hold at the next clock tick, which must exist"
     },
     "s_nexttime[N]": {
         "type": "property",
         "original": "s_nexttime[n] property_expr",
         "natural_langage_explanation": "Require at least n future ticks and require the property at the nth future tick.",
-        "example_usgae": "assert property (@(posedge clk) a |-> s_nexttime[2] b);"
+        "example_usgae": "assert property (@(posedge clk) a |-> s_nexttime[2] b);",
+        "template_unary": "{op1}, required to hold at the {n}th future clock tick, which must exist"
     },
     "always": {
         "type": "property",
         "original": "always property_expr",
         "natural_langage_explanation": "Require the property at every current and future clock tick; the operator does not itself require more ticks to exist.",
-        "example_usgae": "assert property (@(posedge clk) a |-> always b);"
+        "example_usgae": "assert property (@(posedge clk) a |-> always b);",
+        "template_unary": "{op1}, required to hold at every current and future clock tick"
     },
     "always[M:N]": {
         "type": "property",
         "original": "always[min:max] property_expr",
         "natural_langage_explanation": "Require the property at every existing tick in the specified future range. Missing ticks do not cause failure, and $ is allowed as the upper bound.",
-        "example_usgae": "assert property (@(posedge clk) a |-> always[2:5] b);"
+        "example_usgae": "assert property (@(posedge clk) a |-> always[2:5] b);",
+        "template_unary": "{op1}, required to hold at every existing clock tick from {m} through {n} ticks in the future (missing ticks do not cause failure)"
     },
     "s_always[M:N]": {
         "type": "property",
         "original": "s_always[min:max] property_expr",
         "natural_langage_explanation": "Require every tick in the bounded range to exist and require the property at each of those ticks. An unbounded upper limit is illegal.",
-        "example_usgae": "assert property (@(posedge clk) a |-> s_always[2:5] b);"
+        "example_usgae": "assert property (@(posedge clk) a |-> s_always[2:5] b);",
+        "template_unary": "{op1}, required to hold at every clock tick from {m} through {n} ticks in the future, all of which must exist"
     },
     "until": {
         "type": "property",
         "original": "property_expr1 until property_expr2",
         "natural_langage_explanation": "Require the first property through every tick before the second becomes true. The second need never occur; if it occurs now, the first need not hold now.",
-        "example_usgae": "assert property (@(posedge clk) req until ack);"
+        "example_usgae": "assert property (@(posedge clk) req until ack);",
+        "template_binary": "{op1}, required to hold at every tick before {op2} becomes true ({op2} is never required to occur)"
     },
     "s_until": {
         "type": "property",
         "original": "property_expr1 s_until property_expr2",
         "natural_langage_explanation": "As above, but require the second property to become true at some current or future tick.",
-        "example_usgae": "assert property (@(posedge clk) req s_until ack);"
+        "example_usgae": "assert property (@(posedge clk) req s_until ack);",
+        "template_binary": "{op1}, required to hold at every tick before {op2} becomes true, and {op2} is required to become true at some current or future tick"
     },
     "until_with": {
         "type": "property",
         "original": "property_expr1 until_with property_expr2",
         "natural_langage_explanation": "Require the first property through and including a tick where the second holds; the second need never occur in the weak form.",
-        "example_usgae": "assert property (@(posedge clk) req until_with ack);"
+        "example_usgae": "assert property (@(posedge clk) req until_with ack);",
+        "template_binary": "{op1}, required to hold through and including the tick where {op2} becomes true ({op2} is never required to occur)"
     },
     "s_until_with": {
         "type": "property",
         "original": "property_expr1 s_until_with property_expr2",
         "natural_langage_explanation": "Require the second property eventually and require the first through and including the terminating tick.",
-        "example_usgae": "assert property (@(posedge clk) req s_until_with ack);"
+        "example_usgae": "assert property (@(posedge clk) req s_until_with ack);",
+        "template_binary": "{op1}, required to hold through and including the tick where {op2} becomes true, and {op2} is required to eventually occur"
     },
     "s_eventually": {
         "type": "property",
         "original": "s_eventually property_expr",
         "natural_langage_explanation": "Require the property to become true at some current or future clock tick.",
-        "example_usgae": "assert property (@(posedge clk) req |-> s_eventually ack);"
+        "example_usgae": "assert property (@(posedge clk) req |-> s_eventually ack);",
+        "template_unary": "{op1}, required to become true at some current or future clock tick"
     },
     "eventually[M:N]": {
         "type": "property",
         "original": "eventually[min:max] property_expr",
         "natural_langage_explanation": "Require a match in the bounded range if every tick in that range exists; if the clock ends before the range is fully available, the weak form is true. $ is illegal here.",
-        "example_usgae": "assert property (@(posedge clk) req |-> eventually[2:5] ack);"
+        "example_usgae": "assert property (@(posedge clk) req |-> eventually[2:5] ack);",
+        "template_unary": "{op1}, required to become true somewhere between {m} and {n} clock ticks in the future, if every tick in that range exists (vacuously true if the clock ends first)"
     },
     "s_eventually[M:N]": {
         "type": "property",
         "original": "s_eventually[min:max] property_expr",
         "natural_langage_explanation": "Require the property at some tick in the range. The range may be unbounded with $.",
-        "example_usgae": "assert property (@(posedge clk) req |-> s_eventually[2:$] ack);"
+        "example_usgae": "assert property (@(posedge clk) req |-> s_eventually[2:$] ack);",
+        "template_unary": "{op1}, required to become true somewhere between {m} and {n} clock ticks in the future (the range may be unbounded)"
     }
 }

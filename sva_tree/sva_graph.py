@@ -51,6 +51,28 @@ def _signal(label):
     return {"id": _new_id(), "type": "signal", "label": label, "children": []}
 
 
+def _delay_element_label(element):
+    """Builds one DelayedSequenceElement's "##..." label. pyslang populates
+    exactly one of three fields depending on which delay form was written,
+    leaving the other two None -- reading .delayVal unconditionally (the
+    old behavior) silently produced a bogus "##None" label, discarding the
+    real bounds entirely, for every range/unbounded delay:
+        ##N        -> .delayVal is the integer N ("##4")
+        ##[M:N]    -> .range stringifies as "M:N" (or "M:$") ("##[4:9]")
+        ##[*]/##[+] -> .op is the literal "*"/"+" ("##[*]")
+    Confirmed live, 2026-08-17, FVEval-NL2SVA-Machine-181: a real "##[4:9]"
+    consequent rendered as "##None" throughout the explanation-merge-tree,
+    so its derived natural-language meaning falsely claimed no delay at
+    all existed."""
+    if element.delayVal is not None:
+        return f"##{element.delayVal}"
+    if element.range is not None:
+        return f"##[{element.range}]"
+    if element.op is not None:
+        return f"##[{element.op}]"
+    return f"##{element.delayVal}"
+
+
 def _unwrap_delayed_sequence(node, restore):
     """##N chains (DelayedSequenceExpr) are flattened by pyslang into an
     optional `.first` sequence plus a list of `.elements`, each carrying its
@@ -71,13 +93,13 @@ def _unwrap_delayed_sequence(node, restore):
         # Chain starts directly with a delay (e.g. "##2 ack ##1 done"): the
         # prefix rule applies to the first element, giving a unary ##N node.
         first_element = elements.pop(0)
-        delay_label = f"##{str(first_element.delayVal).strip()}"
+        delay_label = _delay_element_label(first_element)
         term_code = restore_macros(str(first_element.expr).strip(), restore)
         code_so_far = f"{delay_label} {term_code}"
         chain = _operator(delay_label, [_node_to_graph(first_element.expr, restore)], code_so_far)
 
     for element in elements:
-        delay_label = f"##{str(element.delayVal).strip()}"
+        delay_label = _delay_element_label(element)
         term_code = restore_macros(str(element.expr).strip(), restore)
         code_so_far = f"{code_so_far} {delay_label} {term_code}"
         chain = _operator(delay_label, [chain, _node_to_graph(element.expr, restore)], code_so_far)

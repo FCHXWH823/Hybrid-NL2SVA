@@ -43,11 +43,13 @@ Usage:
         --limit 10
 """
 import argparse
+import concurrent.futures
 import csv
 import json
 import os
 import re
 import sys
+import threading
 
 import yaml
 from openai import OpenAI
@@ -88,17 +90,10 @@ from run_codev_sva_ol_dfs_eval import (
 # NL2SVAMachineLauncher) before trusting their functionality-match numbers.
 from fv_eval import prompts_nl2sva_human
 
-# jasper_equiv_check.run_equivalence_check: the real JasperGold formal
-# equivalence check used to validate OL-NL against a plain-generation anchor
-# (see generate_and_validate_ol_nl below) -- requires `jg` on PATH and
-# CDS_LIC_FILE set, but only when --ol-nl-grounding is actually used.
-from jasper_equiv_check import run_equivalence_check
-# jasper_counterexample_check.run_counterexample_checks: alternative Step 1
-# validation mechanism (--counterexample-validation) -- checks sva_ol_nl
-# against concrete example scenarios derived from the ORIGINAL NL directly,
-# instead of against a second independently-generated SVA. See
-# generate_and_validate_ol_nl_counterexample below.
-from jasper_counterexample_check import run_counterexample_checks
+# jasper_direct_equiv_check.check_sva_elaboration: real JasperGold
+# elaboration-only check (no equivalence, no proof) used by generate_rag_sva's
+# syntax-cleanup loop -- see that function's docstring.
+from jasper_direct_equiv_check import check_sva_elaboration, summarize_elaboration_errors
 # score_nl2sva_human's more robust body/signal extraction (handles any
 # disable-iff clause, not just the literal "tb_reset)" jasper_equiv_check.py
 # itself looks for) -- reused here instead of duplicated.
@@ -115,6 +110,21 @@ DEFAULT_CSV_PATHS = {
     # 'last_gnt' among the prompt's "use these signals", where the original
     # nl2sva_human silently omitted them despite the golden requiring both.
     "nl2sva_human_verified": "Evaluation/FVEval-Verified/fveval_nl2sva_human.jsonl",
+    # Human-expert-corrected nl2sva_machine (283 rows), same wyt2000/
+    # FVEval-Verified source as nl2sva_human_verified. Structurally
+    # different from the two nl2sva_human variants in ways that matter to
+    # this pipeline: the "problem" text here is ALREADY operator-level NL
+    # (names real signals directly, e.g. "sig_F and sig_H are high"), so
+    # Step 1 grounding is redundant by construction -- just don't pass
+    # --ol-nl-grounding for this task, same as any other row where it's
+    # not wanted. Its bare dummy testbenches (module ports only, no
+    # internal logic) declare no reset signal at all -- confirmed 0/283
+    # rows mention "reset" anywhere -- and golden answers have no disable
+    # iff clause, so this task is threaded through with disable_signal=None
+    # everywhere a complete SVA gets assembled or elaboration-checked
+    # (wrap_property_expression, check_sva_elaboration), unlike the fixed
+    # `tb_reset` convention every nl2sva_human(_verified) row uses.
+    "nl2sva_machine_verified": "Evaluation/FVEval-Verified/fveval_nl2sva_machine.jsonl",
 }
 
 LMRESULT_FIELDNAMES = [
@@ -133,14 +143,59 @@ LMRESULT_FIELDNAMES = [
 # difference. Not applicable to nl2sva_machine/module_sva_nl_manual_editing,
 # whose testbenches don't follow this convention -- only injected when
 # args.task == "nl2sva_human".
-NL2SVA_HUMAN_RESET_NOTE = (
-    "Note: this testbench declares a signal named exactly `tb_reset` "
-    "specifically for use in the assertion's disable iff (...) clause. "
-    "Always use exactly `tb_reset` there, never a derived, delayed, or "
-    "pulse/shadow variant of it (e.g. tb_reset_d1, tb_reset_d2, "
-    "tb_reset_1_cycle_pulse_shadow) -- even if such a variant is what the "
-    "property's own logic needs to reference elsewhere in the assertion body."
+# NL2SVA_HUMAN_RESET_NOTE (REMOVED 2026-08-10): used to tell the model
+# "use exactly `tb_reset` in the assertion's disable iff (...) clause" --
+# written for the OLD design, before the expression-only redesign below,
+# where the model wrote the full statement including disable iff itself.
+# Under the current architecture the model NEVER writes disable iff at all
+# (wrap_property_expression adds `disable iff (tb_reset)` mechanically,
+# always correctly, with zero model involvement) -- so the note had
+# nothing legitimate left to do, and confirmed live it was actively
+# harmful: it explicitly primed the model with the name `tb_reset` and a
+# reason to reference it, directly undermining allowed_signals_note's
+# "reference ONLY these signals" instruction whenever tb_reset wasn't
+# itself one of the row's approved signals (FVEval-NL2SVA-Human-37: the
+# model added a redundant `&& !tb_reset` inside the bare expression,
+# duplicating what disable iff already handles, weakening the property
+# just enough to turn a full equivalence into a one-directional-only
+# match). generate_baseline_sva (official FVEval-0-shot fidelity) never
+# used this note in the first place, so removing it here has no effect
+# there.
+
+# Our RAG+OL-NL flow (Step 1, Stage 2 RAG generation, Stage 3 SOR/cleanup --
+# NOT generate_baseline_sva, which stays on the official FVEval-0-shot
+# prompt/output shape for baseline fidelity) has the model generate ONLY the
+# bare property expression, never the `assert property (@(posedge clk)
+# disable iff (tb_reset) ...);` wrapper -- the clock/reset/label are always
+# supplied mechanically via wrap_property_expression below. This eliminates,
+# by construction rather than by hoping the model complies with a prompt
+# instruction, the whole class of bugs already confirmed this session: using
+# the wrong reset signal in disable iff (tb_reset vs
+# tb_reset_1_cycle_pulse_shadow), and SOR/cleanup reordering or otherwise
+# mangling the clock/disable-iff clause.
+EXPRESSION_ONLY_INSTRUCTION = (
+    "IMPORTANT OVERRIDE: even if an example elsewhere shows a complete `assert property (...)` "
+    "statement, you must output ONLY the bare property expression itself -- the boolean/temporal-"
+    "logic condition. Do NOT include a label, the `assert property (` / `);` wrapper, the "
+    "`@(posedge clk)` clocking event, or a `disable iff (...)` clause. Those are added separately "
+    "from a fixed template; including them yourself is unnecessary and risks getting the clock or "
+    "reset signal name wrong."
 )
+
+
+def wrap_property_expression(expression, label="asrt", disable_signal="tb_reset"):
+    """Mechanically builds a complete, well-formed SVA from a bare property
+    expression, using this benchmark's fixed clock convention (every row's
+    testbench exposes `clk`) -- the model is never trusted to produce the
+    clock/disable-iff/label itself in our RAG+OL-NL flow.
+
+    disable_signal: nl2sva_human(_verified) testbenches all expose exactly
+    `tb_reset` for this. Pass None for testbenches with no reset signal at
+    all (e.g. nl2sva_machine_verified's bare dummy modules -- confirmed
+    none of its 283 rows declare one, and golden answers there have no
+    disable iff clause either) to omit the clause entirely."""
+    disable_clause = f" disable iff ({disable_signal})" if disable_signal else ""
+    return f"{label}: assert property (@(posedge clk){disable_clause}\n    {expression.strip()}\n);"
 
 
 def load_rich_operator_context(path="sva_temporal_operators.json"):
@@ -237,17 +292,74 @@ OL NL: <the operator-level, signal-grounded statement>
 
 _OL_NL_PATTERN = re.compile(r"OL NL:\s*(.*)", re.DOTALL)
 
+# --ol-nl-conservative: appended to Step 1's extra_note when set. NOT a
+# default -- reverse-engineering golden phrasing into a prompt rule is
+# against this project's own standard (see EVENTUALLY_TIMING_NOTE's
+# rejection); this note instead just asks Step 1 to be more literal, and
+# is opt-in/togglable pending further testing.
+OL_NL_CONSERVATIVE_NOTE = (
+    "Stay as faithful and accurate to the original description as possible. Do not invent, "
+    "infer, or imagine additional structure, conditions, or behavior that the description "
+    "does not actually state -- only ground the description in real signal names and restate "
+    "its own logic, without adding meaning, timing, or structure that wasn't there."
+)
 
-def generate_ol_nl_grounding(client, model_name, prompt_text, testbench, operator_context):
-    """Best-effort, no-golden OL-NL grounding call (used only for the first
-    attempt -- see generate_and_validate_ol_nl for how later rounds revise
-    it). Returns the grounded restatement, or prompt_text unchanged if the
-    model's reply doesn't contain a parseable 'OL NL:' line.
+# --sor-conservative: appended to run_sor_recheck's system message when set.
+# Motivation: confirmed live (2026-08-14, FVEval-NL2SVA-Machine-120/-280,
+# --sor-template-timing 2-pass trials) that SOR's own revision, when it does
+# decide a change is warranted, isn't reliably minimal -- e.g. dropping the
+# `|->`/`|=>` implication operator entirely down to a bare sequence
+# concatenation, or inserting a spurious `##1 1'b1` clause nobody asked
+# for, rather than touching only the specific Tn node actually responsible
+# for the flagged mismatch. Same principle as OL_NL_CONSERVATIVE_NOTE
+# (opt-in, not reverse-engineered from any golden answer -- just a general
+# minimal-edit instruction), applied to SOR's revision step instead of
+# Step 1's grounding step.
+SOR_CONSERVATIVE_NOTE = (
+    "When revising, change ONLY the minimal part of the expression responsible for a genuine, "
+    "clearly-identified mismatch -- do not restructure, drop, or add operators, clauses, or "
+    "sub-expressions beyond what that specific mismatch requires. Do not invent additional "
+    "structure, conditions, or timing that the property description does not actually state."
+)
+
+# --only-overlap-implication: appended to both Stage 2's generation note and
+# SOR's extra_note when set. Sidesteps the whole |->/|=> confusion this
+# session repeatedly traced (e.g. FVEval-NL2SVA-Machine-18/-106/-120/-205:
+# the model writes `A |=> ##N B`, double-counting `|=>`'s own implicit
+# +1-cycle advance on top of the explicit ##N, landing on N+1 total cycles
+# instead of golden's N) at its root: rather than teaching the model to
+# correctly juggle TWO delay-encoding conventions that compose additively
+# (|=>'s hidden +1, plus ##N's explicit +N), this eliminates one of the two
+# conventions entirely. If the model only ever writes `|->` and always
+# spells the FULL total delay out explicitly via `##N`, there is nothing
+# left to add together -- it only has to get one number right, not "N,
+# given that this operator itself already silently contributes 1." Opt-in,
+# not a default -- untested at scale yet.
+ONLY_OVERLAP_IMPLICATION_NOTE = (
+    "Always use the overlapped implication operator `|->` for property implications -- never use "
+    "the nonoverlapped implication operator `|=>`. If the property requires a delay before the "
+    "consequent (e.g. \"N cycles later\", \"at the next clock cycle\"), express that delay "
+    "explicitly as `##N` (or a range `##[M:N]`) inside the consequent, using the TOTAL number of "
+    "clock cycles from the antecedent -- e.g. write `A |-> ##1 B` for \"B holds one cycle later\", "
+    "not `A |=> B`. Do NOT use `|=>`, which implicitly adds one extra cycle on top of any explicit "
+    "`##N` you also write, making the total easy to miscount."
+)
+
+
+def generate_ol_nl_grounding(client, model_name, prompt_text, testbench, operator_context, extra_note=""):
+    """Best-effort, no-golden OL-NL grounding call -- this IS Step 1: called
+    once, used directly, no independent second candidate and no formal
+    check against one (see the removed-code note above for why). Returns
+    the grounded restatement, or prompt_text unchanged if the model's
+    reply doesn't contain a parseable 'OL NL:' line.
 
     operator_context goes in the SYSTEM message, not repeated in the user
-    prompt template."""
+    prompt template. extra_note (e.g. a row's authoritative allowed-signals
+    note) is appended after it."""
     prompt = PROMPT_TEMPLATE_OL_NL_NO_GOLDEN.format(testbench=testbench, question=prompt_text)
     system_msg = OL_NL_SYSTEM_PROMPT + "\n\nSVA Operator Context:\n" + operator_context
+    if extra_note:
+        system_msg += "\n\n" + extra_note
     completion = client.chat.completions.create(
         model=model_name,
         messages=[
@@ -261,92 +373,79 @@ def generate_ol_nl_grounding(client, model_name, prompt_text, testbench, operato
     return match.group(1).strip().splitlines()[0].strip()
 
 
-RECHECK_SVA_ORIG_SYSTEM_PROMPT = (
-    "You are a helpful bot that checks a SystemVerilog assertion against its natural-language "
-    "description and corrects it if there is a mismatch, following the requested format exactly."
-)
-
-PROMPT_TEMPLATE_RECHECK_SVA_ORIG = """Given the desired property description:
-{description}
-
-please check whether the following SystemVerilog assertion correctly and completely implements it:
-{sva}
-
-If it is already correct, repeat it verbatim. If there is a mismatch, output a corrected, complete \
-SystemVerilog assertion instead. Enclose your SVA code with ```systemverilog and ```. Only output the \
-code snippet and do NOT output anything else."""
+_QUOTED_SIGNAL_NAME_RE = re.compile(r"'([^'\s]+)'")
 
 
-def recheck_sva_orig_ques(client, model_name, prompt_text, sva_orig_ques):
-    """Path A's independent self-check: does sva_orig_ques (generated
-    directly from the real question) actually match that question? Unlike
-    the old design, sva_orig_ques is never treated as a fixed, unquestioned
-    anchor -- it gets exactly the same chance to self-correct as the OL-NL
-    path does, since we've seen real cases (e.g. counter_0/counter_1) where
-    the plain-question generation itself was the flawed one, not the
-    grounding. Always returns a full assertion (falls back to the input
-    unchanged if the reply doesn't parse)."""
-    prompt = PROMPT_TEMPLATE_RECHECK_SVA_ORIG.format(description=prompt_text, sva=sva_orig_ques)
-    completion = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {"role": "system", "content": RECHECK_SVA_ORIG_SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-    )
-    revised = parse_code_response(completion.choices[0].message.content)
-    return revised or sva_orig_ques
+def extract_named_signals(user_prompt):
+    """Just the signal names explicitly quoted in the question's own "Use
+    the signals '...'" phrasing -- deliberately NOT build_signal_list's
+    parameter/localparam scan, which exists for a DIFFERENT purpose
+    (making sure prop_eq_checker's SIGNAL_LIST declares every parameter a
+    golden answer might reference during scoring, not constraining what
+    the model itself should use during generation). Using the param-
+    inclusive list for allowed_signals_note instead produces a bloated,
+    noisy instruction telling the model to use testbench-wide parameters
+    that have nothing to do with this row's actual property -- confirmed
+    real (FVEval-NL2SVA-Human-37 pulled in fsm_width/num_of_states/
+    num_of_times_initial_state_repeats this way, unrelated to "should not
+    remain in the same state")."""
+    return _QUOTED_SIGNAL_NAME_RE.findall(user_prompt)
 
 
-RECHECK_OL_NL_SYSTEM_PROMPT = (
-    "You are a helpful bot that checks an OL-NL restatement and its corresponding SystemVerilog "
-    "assertion against the original description, correcting either or both if there is a mismatch, "
+SIGNAL_DESCRIPTION_SYSTEM_PROMPT = (
+    "You are a helpful bot that writes a brief, precise natural-language description of what each "
+    "given RTL signal represents, based strictly on its declaration and usage in the testbench, "
     "following the requested format exactly."
 )
 
-PROMPT_TEMPLATE_RECHECK_OL_NL = """Original property description:
-{prompt_text}
+PROMPT_TEMPLATE_SIGNAL_DESCRIPTIONS = """RTL testbench:
+{testbench}
 
-Your OL-NL (operator-level, signal-grounded) restatement of it:
-{ol_nl_text}
+For each of the following signals, write ONE brief, precise sentence describing what it represents, \
+based strictly on its declaration and how it's used in the testbench above -- do not guess or invent \
+behavior the code doesn't show:
+{signal_list}
 
-The SystemVerilog assertion generated from that restatement:
-{sva_ol_nl}
+Output exactly one line per signal, in this format, and nothing else:
+<signal_name>: <description>
+"""
 
-Please check two things: (1) does the OL-NL restatement faithfully and completely capture the \
-original description's intent (never inventing or dropping a condition), and (2) does the \
-SystemVerilog assertion correctly and completely implement the OL-NL restatement. If both are \
-already correct, repeat them unchanged. If either has a mismatch, output a corrected version of \
-both, in exactly this format and nothing else:
-
-OL NL: <corrected restatement>
-```systemverilog
-<corrected assertion>
-```"""
-
-_RECHECK_OL_NL_LINE_PATTERN = re.compile(r"OL NL:\s*(.*)")
+_SIGNAL_DESCRIPTION_LINE_RE = re.compile(r'^(\w+)\s*:\s*(.+)$', re.MULTILINE)
 
 
-def recheck_ol_nl_path(client, model_name, prompt_text, ol_nl_text, sva_ol_nl):
-    """Path B's independent self-check: does ol_nl_text still faithfully
-    restate prompt_text, and does sva_ol_nl still faithfully implement
-    ol_nl_text? May revise either or both. Returns (ol_nl_text, sva_ol_nl),
-    falling back to the inputs unchanged for whichever half doesn't parse."""
-    prompt = PROMPT_TEMPLATE_RECHECK_OL_NL.format(
-        prompt_text=prompt_text, ol_nl_text=ol_nl_text, sva_ol_nl=sva_ol_nl
+def describe_signals(client, model_name, raw_testbench, signal_list):
+    """Preprocessing step, run ONCE per row before Step 1: derives a brief
+    NL description of each authoritative signal straight from the
+    testbench, so allowed_signals_note can tell the model what each signal
+    MEANS, not just its bare name. Confirmed real gap (FVEval-NL2SVA-
+    Human-37): a bare name list alone didn't stop the model from inventing/
+    using an unapproved shadow register (fsm_state_d1) instead of correctly
+    using $past() on the approved fsm_state signal -- it had no per-signal
+    guidance steering it toward the right approach, just a "don't invent
+    names" instruction with no positive signal-meaning content.
+
+    Returns {signal_name: description}. A signal the model's reply doesn't
+    cover (or that isn't in signal_list) is simply left out -- callers fall
+    back to the bare name for it, same as before this preprocessing step
+    existed."""
+    if not signal_list:
+        return {}
+    prompt = PROMPT_TEMPLATE_SIGNAL_DESCRIPTIONS.format(
+        testbench=raw_testbench, signal_list="\n".join(signal_list)
     )
     completion = client.chat.completions.create(
         model=model_name,
         messages=[
-            {"role": "system", "content": RECHECK_OL_NL_SYSTEM_PROMPT},
+            {"role": "system", "content": SIGNAL_DESCRIPTION_SYSTEM_PROMPT},
             {"role": "user", "content": prompt},
         ],
     )
     raw = completion.choices[0].message.content
-    ol_nl_match = _RECHECK_OL_NL_LINE_PATTERN.search(raw)
-    new_ol_nl = ol_nl_match.group(1).strip().splitlines()[0].strip() if ol_nl_match else ol_nl_text
-    new_sva = parse_code_response(raw)
-    return new_ol_nl, (new_sva or sva_ol_nl)
+    signal_set = set(signal_list)
+    return {name: desc.strip() for name, desc in _SIGNAL_DESCRIPTION_LINE_RE.findall(raw) if name in signal_set}
+
+
+_RECHECK_OL_NL_LINE_PATTERN = re.compile(r"OL NL:\s*(.*)")
 
 
 def generate_sva_direct(client, model_name, user_prompt, rich_operator_context, extra_note=""):
@@ -358,12 +457,21 @@ def generate_sva_direct(client, model_name, user_prompt, rich_operator_context, 
     otherwise-identical prompt so the only thing that can make them diverge
     is the question text itself.
 
-    extra_note, when non-empty (e.g. NL2SVA_HUMAN_RESET_NOTE), is appended
-    to the system message verbatim -- used for task-specific generation
-    guidance that shouldn't be baked into the shared SYSTEM_PROMPT, which
-    is also used unmodified by generate_baseline_sva for 0-shot-baseline
-    fidelity."""
-    system_msg = SYSTEM_PROMPT + "\n\nSVA Operator Context:\n" + rich_operator_context
+    extra_note, when non-empty (e.g. a row's authoritative allowed-signals
+    note), is appended to the system message verbatim -- used for task-
+    specific generation guidance that shouldn't be baked into the shared
+    SYSTEM_PROMPT, which is also used unmodified by generate_baseline_sva
+    for 0-shot-baseline fidelity.
+
+    Returns a BARE property expression (EXPRESSION_ONLY_INSTRUCTION), not a
+    complete `assert property (...)` statement -- the caller is responsible
+    for wrap_property_expression-ing it when a complete SVA is needed.
+    extract_property_body normalizes away any wrapper the model adds
+    despite the instruction, so this is correct regardless of compliance."""
+    system_msg = (
+        SYSTEM_PROMPT + "\n\nSVA Operator Context:\n" + rich_operator_context
+        + "\n\n" + EXPRESSION_ONLY_INSTRUCTION
+    )
     if extra_note:
         system_msg += "\n\n" + extra_note
     completion = client.chat.completions.create(
@@ -373,298 +481,41 @@ def generate_sva_direct(client, model_name, user_prompt, rich_operator_context, 
             {"role": "user", "content": user_prompt},
         ],
     )
-    return parse_code_response(completion.choices[0].message.content)
+    return extract_property_body(parse_code_response(completion.choices[0].message.content))
 
 
-def generate_and_validate_ol_nl(
-    client, model_name, prompt_text, raw_testbench, user_prompt_orig,
-    rich_operator_context, sv_dir, experiment_id, task_id, max_retries=3,
-    extra_note="", signal_list_override=None,
-):
-    """Step 1, redesigned: generate sva_orig_ques directly from the real
-    question, and an OL-NL restatement plus the SVA it produces (sva_ol_nl);
-    check the two SVAs for real JasperGold formal equivalence -- our only
-    available inference-time self-consistency anchor, since there's no
-    golden to validate against.
-
-    On a mismatch, BOTH paths get an independent chance to self-correct
-    each round (recheck_sva_orig_ques, recheck_ol_nl_path) before
-    verification is redone -- sva_orig_ques is never treated as a fixed,
-    unquestioned anchor the way the previous design treated it, since real
-    cases (counter_0/counter_1) showed the plain-question generation itself
-    can be the flawed one, not just the grounding.
-
-    Accepts the OL-NL text the first time the two SVAs prove equivalent;
-    falls back to prompt_text unchanged (i.e. no grounding effect
-    downstream) if it never converges within max_retries rounds.
-
-    Returns (ol_nl_text, verified: bool).
-    """
-    sva_orig_ques = generate_sva_direct(client, model_name, user_prompt_orig, rich_operator_context, extra_note)
-    ol_nl_text = generate_ol_nl_grounding(client, model_name, prompt_text, raw_testbench, rich_operator_context)
-    user_prompt_ol_nl = build_official_nl2sva_human_user_prompt(raw_testbench, ol_nl_text)
-    sva_ol_nl = generate_sva_direct(client, model_name, user_prompt_ol_nl, rich_operator_context, extra_note)
-
-    # signal_list_override, when given (nl2sva_human_verified's authoritative
-    # signals_for_validity + a parameter/localparam scan), replaces the
-    # regex-over-prompt-text heuristic below -- see build_signal_list's own
-    # docstring/callers for why that heuristic exists at all for the other
-    # tasks (no authoritative list is available there).
-    signal_list = signal_list_override if signal_list_override is not None else build_signal_list(user_prompt_orig, raw_testbench)
-
-    for attempt in range(max_retries):
-        equivalent, _jg_output = run_equivalence_check(
-            testbench=raw_testbench,
-            lm_assertion=extract_property_body(sva_orig_ques),
-            ref_assertion=extract_property_body(sva_ol_nl),
-            signal_list=signal_list,
-            sv_dir=sv_dir,
-            experiment_id=experiment_id,
-            task_id=f"{task_id}_step1iter{attempt}",
-        )
-        if equivalent:
-            return ol_nl_text, True
-
-        # Not equivalent -- let both paths independently self-correct
-        # against their own reference point, then redo verification.
-        sva_orig_ques = recheck_sva_orig_ques(client, model_name, prompt_text, sva_orig_ques)
-        ol_nl_text, sva_ol_nl = recheck_ol_nl_path(client, model_name, prompt_text, ol_nl_text, sva_ol_nl)
-
-    return prompt_text, False
-
-
-# ---------------------------------------------------------------------------
-# Step 1, Plan-1 alternative: counterexample-scenario validation
-# (--counterexample-validation). Does NOT replace generate_and_validate_ol_nl
-# above (the dual-path self-consistency check remains the default) -- this is
-# a selectable alternative mechanism. See jasper_counterexample_check.py's
-# module docstring for the full formal-verification mechanism and its
-# empirically-confirmed vacuity pitfall (an unreachable scenario makes any
-# implication built on it vacuously "proven" regardless of whether sva_ol_nl
-# is actually correct -- confirmed live against counter_0/width=1 on
-# 2026-08-08, e.g. `count==2` against a 1-bit `count` signal).
-# ---------------------------------------------------------------------------
-
-_PARAM_NAME_RE = re.compile(r'\b(?:parameter|localparam)\s+(?:int\s+|real\s+|bit\s+|\[[^\]]+\]\s*)?(\w+)')
-
-
-def extract_param_names(testbench):
-    return list(dict.fromkeys(_PARAM_NAME_RE.findall(testbench)))
-
-
-COUNTEREXAMPLE_SYSTEM_PROMPT = (
-    "You are a helpful bot that derives concrete example scenarios (signal-value traces) from a "
-    "natural-language hardware property description, used to formally validate a candidate SVA "
-    "implementation of that description, following the requested format exactly."
-)
-
-PROMPT_TEMPLATE_COUNTEREXAMPLE_SCENARIOS = """You are given a SystemVerilog RTL testbench and a natural-language \
-description of a property that should hold on it. Your job is to derive a small set of concrete example \
-scenarios that a verification engineer would use to sanity-check a candidate SVA implementation of this \
-property -- WITHOUT being shown any candidate implementation yourself.
-
-RTL testbench (for grounding signal names/widths only -- do not describe the RTL itself):
- {testbench}
-
-The following identifiers are PARAMETERS (fixed constants for this testbench instance) -- you may \
-reference them in comparisons (e.g. `count > max`), but NEVER assign them a specific value yourself, \
-since they cannot be set at runtime:
- {param_names}
-
-Property description:
- {question}
-
-For each scenario, specify:
-- One or more numbered cycles (Cycle 0, Cycle 1, ...), each a comma-separated list of concrete \
-signal_name==value assignments (or !=, <, >, <=, >= comparisons against a parameter). Only reference \
-signals that actually appear in the testbench (never invented or paraphrased names). Prefer using the \
-testbench's own precomputed delayed/history signals (e.g. names ending in _d1, _d2, or similar "previous \
-cycle" shadow registers) to express history in a SINGLE cycle where such a signal already exists, rather \
-than spelling out a multi-cycle trace -- only use multiple cycles when no such precomputed signal captures \
-what you need.
-- Exactly one verdict, labeled "Expected: hold" (the property's intent, applied to this exact scenario, \
-must be satisfied) or "Expected: violate" (this exact scenario is a case the property's intent says must \
-NOT be allowed to happen).
-
-Produce a MIX of both kinds -- at least 2 "hold" scenarios and at least 2 "violate" scenarios, covering \
-distinct, meaningfully different situations (not trivial variations of the same one).
-
-Output ONLY the following, in plain text, and nothing else:
-
-Scenario 1:
-Expected: <hold|violate>
-Cycle 0: <signal==value, signal==value, ...>
-Cycle 1: <signal==value, ...>    (omit if single-cycle)
-
-Scenario 2:
-...
-"""
-
-_SCENARIO_BLOCK_RE = re.compile(r'Scenario\s+\d+\s*:\s*\n(.*?)(?=\nScenario\s+\d+\s*:|\Z)', re.DOTALL)
-_EXPECTED_RE = re.compile(r'Expected:\s*(hold|violate)', re.IGNORECASE)
-_CYCLE_LINE_RE = re.compile(r'Cycle\s+(\d+)\s*:\s*(.+)')
-
-
-def parse_counterexample_scenarios(text):
-    """Parses PROMPT_TEMPLATE_COUNTEREXAMPLE_SCENARIOS's labeled-block format
-    into scenario dicts consumable by jasper_counterexample_check.
-    run_counterexample_checks: {"id", "cycle_conditions": [str, ...],
-    "expected": "hold"|"violate"}. Malformed blocks (no parseable Expected:
-    label, or no Cycle lines) are silently skipped -- same
-    tolerance-over-strictness convention as this file's other labeled-text
-    parsers (e.g. build_explanation_merge_tree's per-node retry/degrade)."""
-    scenarios = []
-    for i, block in enumerate(_SCENARIO_BLOCK_RE.findall(text), start=1):
-        expected_match = _EXPECTED_RE.search(block)
-        if not expected_match:
-            continue
-        cycles = sorted(
-            ((int(num), cond.strip()) for num, cond in _CYCLE_LINE_RE.findall(block) if cond.strip()),
-            key=lambda pair: pair[0],
-        )
-        if not cycles:
-            continue
-        cycle_conditions = [cond.replace(",", " &&") for _, cond in cycles]
-        scenarios.append({
-            "id": f"s{i}",
-            "cycle_conditions": cycle_conditions,
-            "expected": expected_match.group(1).lower(),
-        })
-    return scenarios
-
-
-def generate_counterexample_scenarios(client, model_name, prompt_text, testbench):
-    """Best-effort scenario generation from the RAW original NL only (never
-    shown any candidate SVA/OL-NL) -- that independence is the whole point
-    of this alternative to self-consistency validation. Returns a (possibly
-    empty) list of scenario dicts; an empty list means this row can't be
-    counterexample-validated (caller falls back to unverified)."""
-    param_names = extract_param_names(testbench) or ["(none)"]
-    prompt = PROMPT_TEMPLATE_COUNTEREXAMPLE_SCENARIOS.format(
-        testbench=testbench, question=prompt_text, param_names=", ".join(param_names)
-    )
-    completion = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {"role": "system", "content": COUNTEREXAMPLE_SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-    )
-    return parse_counterexample_scenarios(completion.choices[0].message.content)
-
-
-RECHECK_OL_NL_COUNTEREXAMPLE_SYSTEM_PROMPT = (
-    "You are a helpful bot that revises an OL-NL (operator-level, signal-grounded) restatement and its "
-    "corresponding SystemVerilog assertion, given specific example scenarios it failed to handle "
-    "correctly, following the requested format exactly."
-)
-
-PROMPT_TEMPLATE_RECHECK_OL_NL_COUNTEREXAMPLE = """Original property description:
-{prompt_text}
-
-Your OL-NL (operator-level, signal-grounded) restatement of it:
-{ol_nl_text}
-
-The SystemVerilog assertion generated from that restatement:
-{sva_ol_nl}
-
-This restatement/assertion pair was checked against concrete example scenarios derived independently \
-from the original description, and did NOT correctly handle the following:
-{failure_report}
-
-Please revise the OL-NL restatement and/or the assertion so it correctly handles these scenarios, without \
-breaking any scenario it already handled correctly. Output exactly this format and nothing else:
-
-OL NL: <corrected restatement>
-```systemverilog
-<corrected assertion>
-```"""
-
-
-def build_counterexample_failure_report(results):
-    lines = []
-    for res in results:
-        if res["passed"]:
-            continue
-        if not res["reachable"]:
-            lines.append(f"- Scenario {res['id']}: could not be checked (the scenario itself is not "
-                          f"reachable in this testbench -- ignore this one).")
-            continue
-        lines.append(
-            f"- Scenario {res['id']} (expected the property to {res['expected']}): NOT correctly "
-            f"handled (JasperGold status: {res['result']})."
-        )
-    return "\n".join(lines)
-
-
-def recheck_ol_nl_path_counterexample(client, model_name, prompt_text, ol_nl_text, sva_ol_nl, results):
-    """Counterexample-validation variant of recheck_ol_nl_path: same output
-    contract, but the feedback names the SPECIFIC scenarios that failed
-    (and why), not just "there's a mismatch against another SVA"."""
-    failure_report = build_counterexample_failure_report(results)
-    prompt = PROMPT_TEMPLATE_RECHECK_OL_NL_COUNTEREXAMPLE.format(
-        prompt_text=prompt_text, ol_nl_text=ol_nl_text, sva_ol_nl=sva_ol_nl, failure_report=failure_report
-    )
-    completion = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {"role": "system", "content": RECHECK_OL_NL_COUNTEREXAMPLE_SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-    )
-    raw = completion.choices[0].message.content
-    ol_nl_match = _RECHECK_OL_NL_LINE_PATTERN.search(raw)
-    new_ol_nl = ol_nl_match.group(1).strip().splitlines()[0].strip() if ol_nl_match else ol_nl_text
-    new_sva = parse_code_response(raw)
-    return new_ol_nl, (new_sva or sva_ol_nl)
-
-
-def generate_and_validate_ol_nl_counterexample(
-    client, model_name, prompt_text, raw_testbench, user_prompt_orig,
-    rich_operator_context, sv_dir, experiment_id, task_id, max_retries=3,
-    extra_note="",
-):
-    """Step 1, Plan-1 alternative (--counterexample-validation): instead of
-    self-consistency against an independently-generated sva_orig_ques,
-    validates sva_ol_nl against concrete example scenarios derived straight
-    from the ORIGINAL NL (never shown any candidate SVA) -- catches a
-    shared blind spot between generation paths that self-consistency alone
-    cannot, at the cost of needing a scenario-generation call plus a
-    heavier per-row JasperGold check. See jasper_counterexample_check.py
-    for the underlying formal mechanism.
-
-    Falls back to (prompt_text, False) if scenario generation yields
-    nothing parseable, or if verification hasn't succeeded within
-    max_retries rounds.
-
-    Returns (ol_nl_text, verified: bool).
-    """
-    scenarios = generate_counterexample_scenarios(client, model_name, prompt_text, raw_testbench)
-    if not scenarios:
-        return prompt_text, False
-
-    ol_nl_text = generate_ol_nl_grounding(client, model_name, prompt_text, raw_testbench, rich_operator_context)
-    user_prompt_ol_nl = build_official_nl2sva_human_user_prompt(raw_testbench, ol_nl_text)
-    sva_ol_nl = generate_sva_direct(client, model_name, user_prompt_ol_nl, rich_operator_context, extra_note)
-
-    for attempt in range(max_retries):
-        results, _jg_output = run_counterexample_checks(
-            testbench=raw_testbench,
-            scenarios=scenarios,
-            sva_ol_nl_body=extract_property_body(sva_ol_nl),
-            sv_dir=sv_dir,
-            experiment_id=experiment_id,
-            task_id=f"{task_id}_cexiter{attempt}",
-        )
-        reachable_results = [r for r in results if r["reachable"]]
-        if reachable_results and all(r["passed"] for r in reachable_results):
-            return ol_nl_text, True
-
-        ol_nl_text, sva_ol_nl = recheck_ol_nl_path_counterexample(
-            client, model_name, prompt_text, ol_nl_text, sva_ol_nl, results
-        )
-
-    return prompt_text, False
+# generate_and_validate_ol_nl (REMOVED 2026-08-10): used to independently
+# generate sva_orig_ques (direct from the question) and sva_ol_nl (via an
+# OL-NL restatement), then formally check them against each other via
+# JasperGold, retrying/reconciling/falling back based on whether they
+# agreed. Removed after extensive live testing (FVEval-NL2SVA-Human-4,
+# -11, -15, -20, and the full "type A"/"type D" buckets) established the
+# whole self-consistency-checking premise was NET HARMFUL, not just
+# unhelpful, relative to simply using the OL-NL-derived restatement
+# directly with no check at all:
+#   - The two paths oscillating never converging within the retry budget
+#     (Human-4, -11), even though a correct answer was sitting in one of
+#     the two drafts the whole time -- the "fix" for each round's flagged
+#     side reliably reintroduced the mismatch the OTHER side had just been
+#     fixed away from.
+#   - A later "joint reconciliation" redesign fixed the oscillation
+#     structurally, but introduced a WORSE failure mode: it sometimes
+#     confidently converged BOTH sides onto the wrong candidate even when
+#     the OL-NL path alone already had the right answer (Human-15: a
+#     working `!(rd_pop && fifo_empty)` got reconciled into a broken
+#     `$fell(rd_pop) |-> $past(!fifo_empty)`), with no remaining
+#     disagreement signal left to catch it.
+#   - A direct head-to-head test (same 6 "type D" rows, 3 strategies) found
+#     "always just use sva_ol_nl, unverified" beat both the reconciliation
+#     design (5/6 vs multiple false positives) and "fall back on any
+#     mismatch" (5/6 vs 3 rows losing their grounding entirely) -- across
+#     every trace examined, sva_orig_ques (the direct-from-NL path) was
+#     the one making structural mistakes (backwards implications, spurious
+#     |=>/$stable/$changed embellishments) far more often than the OL-NL
+#     path, so "check them against each other" was mostly just risking a
+#     good OL-NL answer on a worse independent draft.
+# Step 1 is now just generate_ol_nl_grounding, called once, used directly
+# -- no sva_orig_ques, no JasperGold check, no retries. See main() below.
 
 
 def build_hybrid_retrieval_context(code_retriever, prompt_text):
@@ -682,13 +533,83 @@ def build_hybrid_retrieval_context(code_retriever, prompt_text):
     return checking_str
 
 
-def build_rechecking_context(client, model_name, sva_text, operator_context, max_retries):
+def run_sor_recheck(client, model_name, sva_text, ol_nl_text, operator_context, max_retries, extra_note="", sor_template_timing=False, sor_conservative=False):
+    """Runs ONE SOR (SVA operator-based rechecking) pass: builds the
+    explanation-merge-tree context (or falls back to no tree-based context
+    when sva_graph.py can't parse sva_text), and asks the model to either
+    confirm sva_text is already correct or produce a revised version.
+
+    sva_text is a BARE property expression in and out (our RAG+OL-NL flow
+    never has the model handle the assert property/clock/disable iff
+    wrapper -- see EXPRESSION_ONLY_INSTRUCTION).
+
+    sor_template_timing: see build_rechecking_context.
+    sor_conservative: appends SOR_CONSERVATIVE_NOTE to the system message,
+    instructing a flagged revision to change only the minimal part
+    responsible for the mismatch. Opt-in, not a default."""
+    recheck_context = build_rechecking_context(
+        client, model_name, sva_text, operator_context, max_retries, sor_template_timing
+    )
+    recheck_instruction = (
+        "If it is already correct, repeat it verbatim -- do not introduce changes (e.g. adding a "
+        "cycle delay like ##1 or |=>, or swapping to a superficially-similar operator) that aren't "
+        "actually needed. "
+    ) + (
+        (
+            "If there is a genuine mismatch, point to the specific Tn node responsible, list the "
+            if recheck_context is not None else
+            "If there is a genuine mismatch, please list the "
+        ) + (
+            "differences, and output a corrected property expression (just the boolean/temporal-"
+            "logic condition -- no assert property/clock/disable iff wrapper) enclosed in "
+            "```systemverilog and ```.\n"
+        )
+    )
+    recheck_system_msg = (
+        "You are a helpful bot to modify an SVA property expression based on the given description.\n\n"
+        "SVA Operator Context:\n" + operator_context + "\n\n" + EXPRESSION_ONLY_INSTRUCTION
+    )
+    if extra_note:
+        recheck_system_msg += "\n\n" + extra_note
+    if sor_conservative:
+        recheck_system_msg += "\n\n" + SOR_CONSERVATIVE_NOTE
+    completion = client.chat.completions.create(
+        model=model_name,
+        messages=[
+            {"role": "system", "content": recheck_system_msg},
+            {"role": "user", "content": (
+                f"Given the desired property description:\n{ol_nl_text}\n\n"
+                f"please check whether the generated SVA property expression below operates "
+                f"with the correct logic and timing (i.e., clock cycle):\n{sva_text}\n\n"
+                f"{recheck_context or ''}\n{recheck_instruction}"
+            )},
+        ],
+    )
+    revised = extract_property_body(parse_code_response(completion.choices[0].message.content))
+    # Same guard as generate_rag_sva's syntax-cleanup loop: if the model
+    # answers with a conversational non-answer instead of code, keep the
+    # input sva_text rather than overwrite it with garbage.
+    return revised if looks_like_property_expression(revised) else sva_text
+
+
+def build_rechecking_context(client, model_name, sva_text, operator_context, max_retries, sor_template_timing=False):
     """SVA operator-based rechecking context: the bottom-up explanation-merge
     tree of the generated SVA, or None if sva_graph.py can't parse it (~15%
-    of the corpus -- same fallback the main pipeline script uses)."""
+    of the corpus -- same fallback the main pipeline script uses).
+
+    sor_template_timing (--sor-template-timing): gives `|->`/`|=>`/`##N`
+    nodes a fixed, deterministic natural-language template instead of an
+    LLM-composed one -- see explanation_merge_tree.py's use_templates
+    docstring for why (confirmed live: the LLM composition silently drops
+    `|=>`'s own implicit +1-cycle advance when merged with a nested `##N`,
+    and SOR's rechecking step can't then detect the resulting off-by-one).
+    Opt-in, not a default -- an earlier attempt at fixing this same bug via
+    a merge-node prompt tweak caused a replicated regression; this is
+    untested at full scale yet."""
     try:
         merge_tree_str = build_and_render_explanation_merge_tree(
-            client, model_name, sva_text, operator_context, max_retries=max_retries
+            client, model_name, sva_text, operator_context, max_retries=max_retries,
+            use_templates=sor_template_timing,
         )
     except ValueError:
         return None
@@ -716,7 +637,39 @@ def build_official_nl2sva_human_user_prompt(raw_testbench, prompt_text):
     return user_prompt_prefix + "\n" + question_prompt
 
 
+def build_verified_machine_user_prompt(raw_testbench, prompt_text):
+    """nl2sva_machine_verified's human-message shape: unlike
+    build_official_nl2sva_human_user_prompt, there's no "official FVEval-
+    0-shot" prompt to reproduce for this task (its own harness launcher
+    uses the SAME borrowed, disable-iff-priming QUESTION_TEMPLATE this repo
+    already flags as wrong for nl2sva_machine -- see the module docstring's
+    TODO), so this is a minimal, dataset-appropriate prompt instead: just
+    the testbench and the (already operator-level) question. No
+    "disable iff (tb_reset)" worked example, no injection marker (this
+    dataset's testbenches are bare port-list modules with no internal logic
+    to mark) -- output-format instructions (EXPRESSION_ONLY_INSTRUCTION)
+    live in the system message, not duplicated here."""
+    return (
+        "Here is the testbench to perform your translation:\n"
+        f"{raw_testbench}\n"
+        f"Question: Create a SVA assertion that checks: {prompt_text}\n"
+    )
+
+
 _SIGNAL_WIDTH_PREFIX_RE = re.compile(r"^\s*\[[^\]]+\]\s*")
+
+
+def iter_verified_nl2sva_machine_rows(jsonl_path):
+    """Same 5-tuple shape as iter_verified_nl2sva_human_rows. signal_list
+    here is always populated (unlike signals_for_validity, which is null
+    for 15/73 human rows) and comma-joined with occasional bit-width
+    prefixes (e.g. "sig_C,[3:0] sig_A") -- stripped down to bare
+    identifiers the same way."""
+    with open(jsonl_path) as file:
+        for line in file:
+            row = json.loads(line)
+            signals = [_SIGNAL_WIDTH_PREFIX_RE.sub("", s).strip() for s in row["signal_list"].split(",")]
+            yield row["name"], row["testbench"], row["problem"], row["ground_truth"], signals
 
 
 def iter_verified_nl2sva_human_rows(jsonl_path):
@@ -747,19 +700,153 @@ def iter_task_rows(task, csv_path):
     those instead, unchanged)."""
     if task == "nl2sva_human_verified":
         yield from iter_verified_nl2sva_human_rows(csv_path)
+    elif task == "nl2sva_machine_verified":
+        yield from iter_verified_nl2sva_machine_rows(csv_path)
     else:
         for task_id, raw_testbench, prompt_text, ref_solution in iter_rows(csv_path, task):
             yield task_id, raw_testbench, prompt_text, ref_solution, None
 
 
+_SVA_TOKEN_RE = re.compile(r'\|->|\|=>|##|\$\w+|[=!<>]=|&&|\|\||[()]')
+_BARE_IDENTIFIER_RE = re.compile(r'^\w+$')
+# A period followed by whitespace and a capital letter is a sentence
+# boundary -- something no real SVA property expression ever contains
+# (periods in this dataset only appear, without following whitespace, in
+# hierarchical references like `module.signal`; there are no decimal
+# literals). Confirmed live (2026-08-11): a SOR recheck completion that
+# QUOTES the correct expression inline while explaining it ("The generated
+# SVA property expression `!(a == 0 && b)` accurately captures the
+# condition...This means...") contains real SVA tokens as substrings, so
+# the token-presence check alone accepted the whole paragraph as if it
+# were the answer -- got mechanically wrapped into a nonsense `assert
+# property`. Checked FIRST, ahead of the token-presence check, since a
+# prose verdict should override an incidental token match.
+_PROSE_SENTENCE_RE = re.compile(r'\.\s+[A-Z]')
+
+
+def looks_like_property_expression(text):
+    """Guard against the syntax-cleanup checker LLM returning a conversational
+    non-answer (e.g. "Please provide the SVA property expression that needs
+    to be checked and corrected." or "The generated SVA property expression
+    is as follows:") instead of actual code. Confirmed live (2026-08-10,
+    nl2sva_human_verified counterexample-validation Step-1-only runs, TWO
+    distinct phrasings) that with no guard, such a response gets silently
+    accepted as sva_text, mechanically wrapped via wrap_property_expression,
+    and counted as a real (malformed) generated SVA -- inflating
+    syntax-failure counts with a pipeline artifact rather than a genuine
+    generation error.
+
+    A phrase blocklist proved too fragile (a first fix catching "please
+    provide" missed this second, differently-worded non-answer) -- checks
+    STRUCTURE instead: any real property expression contains at least one
+    SVA/boolean operator, a `$system` call, or parens, since even the
+    simplest realistic properties compare/combine signals. A bare single
+    identifier (e.g. just `count`) is also accepted as a rare-but-legitimate
+    edge case. Prose sentences (English words, punctuation, no such tokens)
+    are rejected regardless of exact wording -- and prose that happens to
+    QUOTE real SVA tokens inline (confirmed live -- see _PROSE_SENTENCE_RE)
+    is rejected too, via a sentence-boundary check that fires ahead of the
+    token-presence check."""
+    text = text.strip()
+    if not text:
+        return False
+    if _PROSE_SENTENCE_RE.search(text):
+        return False
+    if _BARE_IDENTIFIER_RE.match(text):
+        return True
+    return bool(_SVA_TOKEN_RE.search(text))
+
+
+def jg_driven_syntax_cleanup(rag_chain_checker, raw_testbench, sva_text, sv_dir, experiment_id, task_id, label, allowed_signals_note="", disable_signal="tb_reset"):
+    """Up to 3 rounds of real-JasperGold-elaboration-driven syntax cleanup
+    on sva_text (see check_sva_elaboration). Each round FIRST checks with a
+    real `jg` elaboration whether sva_text actually has a problem at all --
+    if it elaborates cleanly, returns immediately with no LLM call, no risk
+    of "fixing" something that was never broken. Only on a genuine
+    elaboration failure does the model get asked to fix anything, given the
+    REAL JasperGold error text and an explicit "fix ONLY this" instruction.
+
+    allowed_signals_note: the row's authoritative signal list, passed as the
+    checker chain's {allowed_signals} template variable (a per-row dynamic
+    slot -- unlike the operator table, which is static/global and baked
+    directly into system_prompt_checker at chain-construction time in
+    main()). Without this, a fix for one real problem (e.g. an undeclared
+    identifier) could easily introduce or reintroduce a DIFFERENT one: a
+    real-but-unauthorized testbench signal, which check_sva_elaboration
+    itself can't catch either (see its docstring / score_nl2sva_human.py's
+    module docstring for the FVEval-NL2SVA-Human-0 case this describes).
+
+    Factored out so generate_rag_sva can run this TWICE -- once on Stage 2's
+    initial generation (before SOR, since SOR is a functional recheck that
+    only makes sense against something that already elaborates), and once
+    again on SOR's output (after SOR, since SOR can itself introduce a new
+    elaboration error while "fixing" something functional -- confirmed live,
+    2026-08-11, FVEval-NL2SVA-Human-69: SOR combined two implications with
+    an invalid `else` inside a property; nothing re-checked its output
+    afterward in the single-pass version, so it went straight through to
+    the final answer broken).
+
+    label: a short string distinguishing which pass this is (e.g.
+    "presor"/"postsor") so the two passes' JG scratch files/task_ids don't
+    collide when both run for the same row."""
+    for attempt in range(3):
+        ok, jg_output = check_sva_elaboration(
+            raw_testbench, sva_text, sv_dir or "/tmp/syntax_cleanup_jgtmp",
+            experiment_id=experiment_id or "syntax_cleanup", task_id=f"{task_id}_{label}{attempt}",
+            disable_signal=disable_signal,
+        )
+        if ok:
+            break
+        error_summary = summarize_elaboration_errors(jg_output)
+        checker_prompt = (
+            "JasperGold reported a real elaboration error for the following SVA property "
+            f"expression:\n{sva_text}\n\n"
+            f"JasperGold error output:\n{error_summary}\n\n"
+            "Fix ONLY the specific error(s) reported above -- do not otherwise change the "
+            "property's meaning or introduce unrelated changes. Do NOT split the property "
+            "into multiple separate statements or multiple code blocks, even if the fix "
+            "involves an operator like `or`/`and` that combines two conditions -- the "
+            "corrected property must still be exactly ONE single expression. Output ONLY "
+            "that one corrected property expression (no assert property/clock/disable iff "
+            "wrapper -- just the boolean/temporal-logic condition), enclosed in EXACTLY ONE "
+            "```systemverilog ... ``` block -- nothing before or after it, and no second "
+            "code block.\n"
+        )
+        checker_result = rag_chain_checker.invoke({
+            "input": checker_prompt,
+            "allowed_signals": (allowed_signals_note + "\n\n") if allowed_signals_note else "",
+        })["answer"]
+        candidate = extract_property_body(parse_code_response(checker_result))
+        if not looks_like_property_expression(candidate):
+            # Checker returned a conversational non-answer instead of code --
+            # keep the prior sva_text rather than overwrite it with garbage.
+            continue
+        sva_text = candidate
+    return sva_text
+
+
 def generate_rag_sva(
     client, model_name, rag_chain, rag_chain_checker, code_retriever,
     operator_context, user_prompt, prompt_text, ol_nl_text, max_retries,
-    question_replaced=False, extra_note="",
+    question_replaced=False, extra_note="", allowed_signals_note="",
+    sv_dir=None, experiment_id=None, task_id=None, raw_testbench=None,
+    disable_signal="tb_reset", sor_template_timing=False, sor_conservative=False,
+    only_overlap_implication=False,
 ):
     """Runs one FVEval row through the full pipeline: HybridRetrieval-augmented
-    generation, SVA operator-based rechecking, then a few syntax-only cleanup
-    passes. Returns (final_sva_text, initial_response_text).
+    generation, THEN a JasperGold-elaboration-driven syntax cleanup pass,
+    THEN SOR (SVA operator-based rechecking), THEN a SECOND syntax cleanup
+    pass. Cleanup runs before SOR deliberately -- SOR is a functional/
+    semantic recheck, which only makes sense against an expression that
+    already elaborates -- and again after SOR, since SOR can itself
+    introduce a new elaboration error while fixing something functional
+    (confirmed live, FVEval-NL2SVA-Human-69: SOR combined two implications
+    with an invalid `else` inside a property). Returns (final_sva_text,
+    initial_response_text).
+
+    raw_testbench: the row's real RTL testbench, used ONLY by the syntax-
+    cleanup loop's real JasperGold elaboration checks (check_sva_elaboration)
+    -- required whenever this function is actually called (not --no-rag).
 
     ol_nl_text is the description used for HybridRetrieval's query and the
     rechecking step -- either prompt_text unchanged, or a best-effort OL-NL
@@ -770,67 +857,72 @@ def generate_rag_sva(
     question (grounding only augments the system message). If
     question_replaced is True, the caller has already substituted ol_nl_text
     as user_prompt's question itself (--ol-nl-replace-question), so the
-    grounding is skipped here to avoid stating it twice."""
+    grounding is skipped here to avoid stating it twice.
+
+    only_overlap_implication (--only-overlap-implication): appends
+    ONLY_OVERLAP_IMPLICATION_NOTE to both Stage 2's generation note and
+    SOR's extra_note. Opt-in, not a default."""
     checking_str = build_hybrid_retrieval_context(code_retriever, ol_nl_text)
     ol_nl_context = (
         f"Grounded, signal-level restatement of the property description: {ol_nl_text}\n\n"
         if ol_nl_text != prompt_text and not question_replaced else ""
     )
+    step2_extra_note = allowed_signals_note
+    if only_overlap_implication:
+        step2_extra_note = (
+            (step2_extra_note + "\n\n") if step2_extra_note else ""
+        ) + ONLY_OVERLAP_IMPLICATION_NOTE
     llm_result = rag_chain.invoke({
         "keywords_explaination": checking_str,
         "ol_nl_grounding": ol_nl_context,
+        "allowed_signals": (step2_extra_note + "\n\n") if step2_extra_note else "",
         "input": user_prompt,
     })
     initial_response = llm_result["answer"]
-    sva_text = parse_code_response(initial_response)
+    # extract_property_body normalizes away any assert property/clock/
+    # disable iff wrapper the model adds despite EXPRESSION_ONLY_INSTRUCTION
+    # (soft instruction, not guaranteed) -- sva_text is a bare expression
+    # from here on, throughout SOR and syntax cleanup; wrapped back into a
+    # complete SVA only once, right before this function returns.
+    sva_text = extract_property_body(parse_code_response(initial_response))
 
-    recheck_context = build_rechecking_context(client, model_name, sva_text, operator_context, max_retries)
-    recheck_instruction = (
-        "If it is already correct, repeat it verbatim -- do not introduce changes (e.g. adding a "
-        "cycle delay like ##1 or |=>, or swapping to a superficially-similar operator) that aren't "
-        "actually needed. "
-    ) + (
-        (
-            "If there is a genuine mismatch, point to the specific Tn node responsible, list the "
-            if recheck_context is not None else
-            "If there is a genuine mismatch, please list the "
-        ) + (
-            "differences, and output a corrected, complete SystemVerilog assertion (the "
-            "full `assert property (...) ;` statement, including the clocking event and "
-            "any disable condition) enclosed in ```systemverilog and ```.\n"
-        )
+    # JasperGold-elaboration-driven syntax cleanup runs FIRST, before SOR --
+    # SOR is a functional/semantic recheck (does this match the intended
+    # meaning?), which only makes sense to run against an expression that
+    # actually elaborates in the first place; fixing elaboration errors
+    # after SOR would mean SOR spent its one pass reasoning about something
+    # that might not even be valid SystemVerilog yet. See
+    # jg_driven_syntax_cleanup's docstring for why it also runs a SECOND
+    # time after SOR, below.
+    sva_text = jg_driven_syntax_cleanup(
+        rag_chain_checker, raw_testbench, sva_text, sv_dir, experiment_id, task_id, "presor",
+        allowed_signals_note=allowed_signals_note, disable_signal=disable_signal,
     )
-    recheck_system_msg = (
-        "You are a helpful bot to modify a SystemVerilog assertion based on the given description.\n\n"
-        "SVA Operator Context:\n" + operator_context
-    )
-    if extra_note:
-        recheck_system_msg += "\n\n" + extra_note
-    completion = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {"role": "system", "content": recheck_system_msg},
-            {"role": "user", "content": (
-                f"Given the desired property description:\n{ol_nl_text}\n\n"
-                f"please check whether the generated SystemVerilog assertion below operates "
-                f"with the correct logic and timing (i.e., clock cycle):\n{sva_text}\n\n"
-                f"{recheck_context or ''}\n{recheck_instruction}"
-            )},
-        ],
-    )
-    sva_text = parse_code_response(completion.choices[0].message.content)
 
-    for _ in range(3):
-        checker_prompt = (
-            "Please correct the following SystemVerilog assertion if it has syntax "
-            f"errors (such as unmatched parentheses):\n{sva_text}\n"
-            "Output ONLY the corrected assertion as a complete `assert property (...) ;` "
-            "statement, enclosed in ```systemverilog and ```.\n"
-        )
-        checker_result = rag_chain_checker.invoke({"input": checker_prompt})["answer"]
-        sva_text = parse_code_response(checker_result)
+    sor_extra_note = extra_note
+    if only_overlap_implication:
+        sor_extra_note = (
+            (sor_extra_note + "\n\n") if sor_extra_note else ""
+        ) + ONLY_OVERLAP_IMPLICATION_NOTE
+    sva_text = run_sor_recheck(
+        client, model_name, sva_text, ol_nl_text, operator_context, max_retries, extra_note=sor_extra_note,
+        sor_template_timing=sor_template_timing, sor_conservative=sor_conservative,
+    )
 
-    return sva_text, initial_response
+    # Second pass: SOR can itself introduce a new elaboration error while
+    # "fixing" something functional -- confirmed live (2026-08-11,
+    # FVEval-NL2SVA-Human-69) that SOR combined two implications with an
+    # invalid `else` inside a property, and with only the pre-SOR pass above,
+    # nothing re-checked SOR's own output before it became the final answer.
+    sva_text = jg_driven_syntax_cleanup(
+        rag_chain_checker, raw_testbench, sva_text, sv_dir, experiment_id, task_id, "postsor",
+        allowed_signals_note=allowed_signals_note, disable_signal=disable_signal,
+    )
+
+    # The only place a complete SVA gets assembled in this whole function --
+    # mechanically, from a fixed template, never trusting the model to get
+    # the clock/disable-iff/label right itself.
+    return wrap_property_expression(sva_text, disable_signal=disable_signal), initial_response
 
 
 def generate_baseline_sva(client, model_name, user_prompt):
@@ -852,6 +944,176 @@ def generate_baseline_sva(client, model_name, user_prompt):
     return parse_code_response(response_text), response_text
 
 
+def process_row(
+    row_index, task_id, raw_testbench, prompt_text, ref_solution, signals_for_validity,
+    args, client, model_name, rich_operator_context, code_retriever, rag_chain,
+    rag_chain_checker, step1_jg_sv_dir, experiment_id,
+):
+    """One row's worth of main()'s per-row body, factored out unchanged so it
+    can run inside a thread pool (see main()'s ThreadPoolExecutor loop) --
+    the whole pipeline is I/O-bound (OpenAI API calls, Chroma vector
+    lookups, `jg` subprocesses), not CPU-bound, so threads (not processes)
+    parallelize it fine despite the GIL: each blocking call releases the
+    GIL while waiting on network/
+    subprocess I/O. All shared objects touched here (client, code_retriever,
+    rag_chain, rag_chain_checker) are called read-only/statelessly per-
+    invocation -- OpenAI's client and LangChain's LCEL Runnables don't hold
+    mutable per-call state, and Chroma similarity search is a read-only
+    query -- so no locking is needed around them specifically (only around
+    the shared CSV writer in main(), since concurrent writes to one file
+    handle need serializing).
+
+    Returns the LMRESULT_FIELDNAMES-shaped row dict on success, or None on
+    failure (after printing the same "failed (...), skipping" message
+    main()'s try/except used to print inline)."""
+    print(f"[{row_index + 1}] task_id={task_id} ...")
+    try:
+        # Built unconditionally, using the REAL original question --
+        # needed both as Step 1's self-consistency anchor
+        # (sva_orig_ques) and, whenever the question isn't being
+        # replaced, as the prompt actually used for generation.
+        if args.task in ("nl2sva_human", "nl2sva_human_verified"):
+            # Official FVEval-0-shot shape: raw testbench, no marker.
+            design_rtl = raw_testbench
+            user_prompt_orig = build_official_nl2sva_human_user_prompt(raw_testbench, prompt_text)
+        elif args.task == "nl2sva_machine_verified":
+            # Bare dummy testbenches (port declarations only, no internal
+            # logic) -- no injection marker needed, no reason to borrow the
+            # disable-iff-priming QUESTION_TEMPLATE either (see
+            # build_verified_machine_user_prompt's docstring).
+            design_rtl = raw_testbench
+            user_prompt_orig = build_verified_machine_user_prompt(raw_testbench, prompt_text)
+        else:
+            # TODO: give nl2sva_machine / module_sva_nl_manual_editing the
+            # same official-prompt treatment -- still borrowing
+            # run_codev_sva_ol_dfs_eval.py's QUESTION_TEMPLATE here.
+            design_rtl = build_testbench_with_marker(raw_testbench)
+            user_prompt_orig = build_user_prompt(design_rtl, prompt_text)
+
+        # nl2sva_human_verified supplies an authoritative signal list
+        # (signals_for_validity, unioned with a parameter/localparam
+        # scan) instead of build_signal_list's regex-over-prompt-text
+        # heuristic -- None for the other two tasks, which fall back
+        # to that heuristic alone below (row_signal_list's own
+        # ternary).
+        #
+        # nl2sva_machine_verified is deliberately NOT unioned with
+        # build_signal_list: confirmed 0/283 of its bare dummy testbenches
+        # declare any parameter/localparam (the only thing that scan adds
+        # beyond quoted names), while its problem text routinely quotes
+        # BIT VALUES rather than signal names (e.g. "an odd number of '1'
+        # bits") -- build_signal_list's quoted-name regex can't tell the
+        # difference, so the union injected a bogus "1" entry into
+        # SIGNAL_LIST for ~27/283 rows, which broke JasperGold's
+        # prop_eq_checker wrapper outright (syntax error) and surfaced as
+        # a false-negative "functional mismatch" -- confirmed live
+        # (FVEval-NL2SVA-Machine-48, 2026-08-13).
+        if args.task == "nl2sva_machine_verified":
+            row_signal_list = signals_for_validity
+        else:
+            row_signal_list = (
+                list(dict.fromkeys(signals_for_validity + build_signal_list(user_prompt_orig, raw_testbench)))
+                if signals_for_validity is not None
+                else build_signal_list(user_prompt_orig, raw_testbench)
+            )
+
+        # --skip-signal-list-note: nl2sva_machine_verified's "problem" text
+        # already names every real signal directly (e.g. "sig_F and sig_H
+        # are high"), so this note -- and the describe_signals call that
+        # feeds it, an extra LLM call per row -- is redundant there. Kept
+        # as a togglable flag rather than auto-detected by task, so a
+        # human.jsonl rerun stays byte-identical to before this option
+        # existed.
+        allowed_signals_note = ""
+        if not args.skip_signal_list_note:
+            question_signal_list = signals_for_validity if signals_for_validity else extract_named_signals(user_prompt_orig)
+            signal_descriptions = describe_signals(client, model_name, raw_testbench, question_signal_list)
+            signal_list_str = "; ".join(
+                f"'{s}' ({signal_descriptions[s]})" if s in signal_descriptions else f"'{s}'"
+                for s in question_signal_list
+            )
+            allowed_signals_note = (
+                "This row's authoritative signal list -- you must use ONLY signals from this "
+                "list; do not invent or substitute a different, merely-real testbench signal "
+                "in their place, even if it looks related. Each signal, with its meaning "
+                "grounded in the testbench: " + signal_list_str + ". "
+                "If the testbench declares a parameter/localparam for a bound or constant you "
+                "need (e.g. a max/min/width value), you MUST reference that parameter's name "
+                "directly -- do NOT hardcode a literal constant instead, even if its numeric "
+                "value would be the same."
+                if question_signal_list else ""
+            )
+
+        ol_nl_text = prompt_text
+        if args.ol_nl_grounding and not args.no_rag:
+            # No formal check -- see the removed-code note above for
+            # why generating+verifying an independent second candidate
+            # (the old generate_and_validate_ol_nl) was dropped in
+            # favor of just using this directly.
+            step1_extra_note = allowed_signals_note
+            if args.ol_nl_conservative:
+                step1_extra_note = (
+                    (step1_extra_note + "\n\n") if step1_extra_note else ""
+                ) + OL_NL_CONSERVATIVE_NOTE
+            ol_nl_text = generate_ol_nl_grounding(
+                client, model_name, prompt_text, raw_testbench,
+                rich_operator_context, extra_note=step1_extra_note,
+            )
+
+        if args.ol_nl_replace_question:
+            if args.task in ("nl2sva_human", "nl2sva_human_verified"):
+                user_prompt = build_official_nl2sva_human_user_prompt(raw_testbench, ol_nl_text)
+            elif args.task == "nl2sva_machine_verified":
+                user_prompt = build_verified_machine_user_prompt(raw_testbench, ol_nl_text)
+            else:
+                user_prompt = build_user_prompt(design_rtl, ol_nl_text)
+        else:
+            user_prompt = user_prompt_orig
+
+        # nl2sva_machine_verified's bare dummy testbenches declare no reset
+        # signal at all (confirmed 0/283 rows) and golden answers have no
+        # disable iff clause -- see DEFAULT_CSV_PATHS's comment.
+        disable_signal = None if args.task == "nl2sva_machine_verified" else "tb_reset"
+
+        if args.no_rag:
+            sva_text, initial_response = generate_baseline_sva(client, model_name, user_prompt)
+        else:
+            sva_text, initial_response = generate_rag_sva(
+                client, model_name, rag_chain, rag_chain_checker, code_retriever,
+                rich_operator_context, user_prompt, prompt_text, ol_nl_text, args.max_retries,
+                question_replaced=args.ol_nl_replace_question, extra_note=allowed_signals_note,
+                allowed_signals_note=allowed_signals_note,
+                sv_dir=step1_jg_sv_dir, experiment_id=experiment_id, task_id=task_id,
+                raw_testbench=raw_testbench, disable_signal=disable_signal,
+                sor_template_timing=args.sor_template_timing, sor_conservative=args.sor_conservative,
+                only_overlap_implication=args.only_overlap_implication,
+            )
+    except Exception as error:
+        print(f"    failed ({error}), skipping")
+        return None
+
+    return {
+        "experiment_id": experiment_id,
+        "task_id": task_id,
+        "model_name": model_name,
+        "response": f"```systemverilog\n{sva_text}\n```",
+        "ref_solution": ref_solution,
+        "design_rtl": design_rtl,
+        "output_tb": design_rtl,
+        "user_prompt": user_prompt,
+        "cot_response": initial_response,
+        # row_signal_list (signals_for_validity unioned with the
+        # testbench's parameter/localparam scan), not the bare
+        # signals_for_validity -- goldens routinely reference
+        # parameters (e.g. `max`) that signals_for_validity alone
+        # doesn't list (confirmed for FVEval-NL2SVA-Human-0), and
+        # scoring reads this column back verbatim as the JG
+        # SIGNAL_LIST, so leaving params out surfaces as a JG
+        # elaboration error, not a genuine functional mismatch.
+        "signals_for_validity": ",".join(row_signal_list) if row_signal_list is not None else "",
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--task", required=True, choices=list(DEFAULT_CSV_PATHS))
@@ -860,6 +1122,13 @@ def main():
                          help="Defaults to Results/fveval_rag_outputs/{task}_{model_name}_{dynamicrag|baseline0shot}.csv")
     parser.add_argument("--config", default="Src/Config.yml")
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--workers", type=int, default=6,
+                         help="Number of rows processed concurrently via a thread pool (the pipeline "
+                              "is I/O-bound -- OpenAI API calls, Chroma lookups, `jg` subprocesses -- "
+                              "so threads parallelize it despite the GIL). Set to 1 for the old "
+                              "fully-sequential behavior. Each row's syntax-cleanup passes spawn real "
+                              "JasperGold subprocesses -- keep this low enough to stay under your JG "
+                              "license's concurrent-session limit.")
     parser.add_argument("--max-retries", type=int, default=5)
     parser.add_argument("--no-rag", action="store_true",
                          help="Skip HybridRetrieval/rechecking/syntax-cleanup entirely -- plain "
@@ -880,31 +1149,70 @@ def main():
                               "Motivation: chat models tend to weight the human message as the primary "
                               "instruction, so an ambiguous original phrasing sitting there may win out "
                               "over a clarification relegated to the system message.")
-    parser.add_argument("--counterexample-validation", action="store_true",
-                         help="Requires --ol-nl-grounding. Selects an alternative Step 1 validation "
-                              "mechanism: instead of self-consistency against an independently-generated "
-                              "sva_orig_ques (the default, generate_and_validate_ol_nl), validates "
-                              "sva_ol_nl against concrete example scenarios derived straight from the "
-                              "ORIGINAL NL (never shown any candidate SVA) via real JasperGold "
-                              "assert+prove checks -- see generate_and_validate_ol_nl_counterexample and "
-                              "jasper_counterexample_check.py. Catches a shared blind spot between "
-                              "generation paths that self-consistency alone can't, at extra per-row cost.")
+    parser.add_argument("--ol-nl-conservative", action="store_true",
+                         help="Requires --ol-nl-grounding. Appends OL_NL_CONSERVATIVE_NOTE to Step 1's "
+                              "extra_note, instructing it to stay literal and not invent/infer additional "
+                              "structure, conditions, or behavior beyond what the description states. "
+                              "Opt-in, not a default -- tested on a small sample with inconclusive results; "
+                              "unlike EVENTUALLY_TIMING_NOTE (rejected), this note is NOT reverse-engineered "
+                              "from golden phrasing, just a general faithfulness instruction.")
+    parser.add_argument("--skip-signal-list-note", action="store_true",
+                         help="Don't build/inject allowed_signals_note (the 'use only these signals' "
+                              "instruction + per-signal descriptions) at all, and skip the describe_signals "
+                              "call that feeds it. Off by default -- nl2sva_human(_verified) rows benefit "
+                              "from it since their prompt text often doesn't name every signal explicitly. "
+                              "Intended for nl2sva_machine_verified, whose problem text already names every "
+                              "real signal directly, making the note (and its extra LLM call) redundant.")
+    parser.add_argument("--sor-template-timing", action="store_true",
+                         help="Gives SOR's explanation-merge-tree a fixed, deterministic (LLM-free) "
+                              "natural-language template (from sva_temporal_operators.json's own "
+                              "template_unary/template_binary fields, covering all 46 documented "
+                              "operators) instead of an LLM-composed nl_piece, wherever the node's "
+                              "operator has one. Confirmed live: LLM composition silently drops `|=>`'s "
+                              "own implicit +1-cycle advance when merged with a nested `##N` consequent, "
+                              "and SOR can't then detect the resulting off-by-one cycle error. Any "
+                              "operator NOT in the table (booleans, reductions, comparisons, arbitrary "
+                              "system functions) is unaffected. Opt-in, not a default -- untested at "
+                              "full benchmark scale yet; a related earlier fix attempt (a merge-node "
+                              "prompt tweak, not this) caused a replicated regression and was reverted.")
+    parser.add_argument("--sor-conservative", action="store_true",
+                         help="Appends SOR_CONSERVATIVE_NOTE to SOR's recheck system message: when SOR "
+                              "does flag a genuine mismatch, change ONLY the minimal part responsible -- "
+                              "do not restructure, drop, or add operators/clauses beyond what that "
+                              "specific mismatch requires. Confirmed live (surfaced most clearly under "
+                              "--sor-template-timing, which gives SOR more genuine mismatches to act on "
+                              "in the first place) that SOR's own revision isn't reliably minimal on its "
+                              "own -- e.g. dropping the `|->`/`|=>` operator entirely, or inserting a "
+                              "spurious clause nobody asked for. Independent of --sor-template-timing at "
+                              "the code level; not required, just where the problem was found. Opt-in, "
+                              "not a default -- untested at scale yet.")
+    parser.add_argument("--only-overlap-implication", action="store_true",
+                         help="Appends ONLY_OVERLAP_IMPLICATION_NOTE to both Stage 2's generation note "
+                              "and SOR's extra_note: always use `|->`, never `|=>`; express any needed "
+                              "delay explicitly as `##N`/`##[M:N]` using the TOTAL cycle count. Sidesteps "
+                              "the repeatedly-confirmed |=>+##N double-counting bug (model writes `A |=> "
+                              "##N B`, silently landing on N+1 total cycles instead of golden's N) at its "
+                              "root, by eliminating one of the two delay-encoding conventions the model "
+                              "has to correctly combine, rather than trying to teach it to combine them "
+                              "correctly. Opt-in, not a default -- untested at scale yet.")
     args = parser.parse_args()
 
     if args.ol_nl_replace_question and not args.ol_nl_grounding:
         parser.error("--ol-nl-replace-question requires --ol-nl-grounding")
 
-    if args.counterexample_validation and not args.ol_nl_grounding:
-        parser.error("--counterexample-validation requires --ol-nl-grounding")
+    if args.ol_nl_conservative and not args.ol_nl_grounding:
+        parser.error("--ol-nl-conservative requires --ol-nl-grounding")
 
-    if args.ol_nl_grounding and not args.no_rag:
+    if not args.no_rag:
         import shutil
         if shutil.which("jg") is None:
             parser.error(
-                "--ol-nl-grounding now validates each OL-NL restatement against a "
-                "plain-generation anchor via real JasperGold equivalence checking "
-                "(generate_and_validate_ol_nl) -- `jg` was not found on PATH. Add "
-                "JasperGold's bin/ to PATH (and set CDS_LIC_FILE) before running."
+                "generate_rag_sva's syntax-cleanup loop now checks each candidate with a real "
+                "JasperGold elaboration (analyze+elaborate, see jasper_direct_equiv_check."
+                "check_sva_elaboration) before ever asking the model to 'fix' anything -- `jg` "
+                "was not found on PATH. Add JasperGold's bin/ to PATH (and set CDS_LIC_FILE) "
+                "before running. (Only --no-rag, the plain 0-shot baseline with no retrieval/"
+                "rechecking/cleanup at all, doesn't need `jg`.)"
             )
 
     csv_path = args.csv or DEFAULT_CSV_PATHS[args.task]
@@ -938,19 +1246,20 @@ def main():
         # rechecking (merge-tree + final recheck completion), and, when
         # --ol-nl-grounding is set, Step 1's SVA-generation/grounding calls too.
         rich_operator_context = load_rich_operator_context()
-        if args.ol_nl_grounding:
-            step1_jg_sv_dir = f"{output_path}.step1_jgtmp"
+        # Shared JG scratch dir -- used by generate_rag_sva's syntax-cleanup
+        # loop's real elaboration checks (any RAG path).
+        step1_jg_sv_dir = f"{output_path}.step1_jgtmp"
 
         code_store = build_rag_system(config["PDF_Txt"], openai_api_key)
         code_retriever = code_store.as_retriever()
 
         llm = ChatOpenAI(model=model_name, api_key=openai_api_key)
 
-        task_reset_note = NL2SVA_HUMAN_RESET_NOTE if args.task in ("nl2sva_human", "nl2sva_human_verified") else ""
         system_prompt = (
             SYSTEM_PROMPT
-            + (("\n\n" + task_reset_note) if task_reset_note else "")
-            + "\nUse the following pieces of retrieved context to help answer the question.\n\n"
+            + "\n\n" + EXPRESSION_ONLY_INSTRUCTION
+            + "\n{allowed_signals}"
+            + "Use the following pieces of retrieved context to help answer the question.\n\n"
             + "{ol_nl_grounding}"
             + "{keywords_explaination}"
             + "{context}"
@@ -958,10 +1267,25 @@ def main():
         prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("human", "{input}")])
         rag_chain = create_retrieval_chain(code_retriever, create_stuff_documents_chain(llm, prompt))
 
+        # ChatPromptTemplate parses `{...}` in ANY literal template text as a
+        # variable placeholder, not just in the explicit {input}/{context}
+        # slots -- confirmed live (2026-08-11, FVEval-NL2SVA-Human-69) that
+        # embedding rich_operator_context here unescaped crashes with
+        # KeyError "missing variables {'hold, busy, cont_gnt'}" the moment
+        # the checker is actually invoked, because one of the operator
+        # table's own worked examples is `$onehot0({hold, busy, cont_gnt})`.
+        # Doubling every brace is the standard str.format() escape (`{{`/
+        # `}}` render as literal `{`/`}`), applied only to this copy -- the
+        # unescaped rich_operator_context is still used as-is everywhere
+        # else (Step 1, SOR, HybridRetrieval), none of which go through a
+        # ChatPromptTemplate.
+        escaped_operator_context = rich_operator_context.replace("{", "{{").replace("}", "}}")
         system_prompt_checker = (
-            "You are a helpful bot that checks the syntax correctness of the given SystemVerilog "
-            "assertion and corrects it if there are syntax errors, such as unmatched parentheses. "
-            + (("\n" + task_reset_note + "\n") if task_reset_note else "")
+            "You are a helpful bot that fixes a real JasperGold elaboration error reported for the "
+            "given SVA property expression. "
+            + "\n\nSVA Operator Context:\n" + escaped_operator_context
+            + "\n\n" + EXPRESSION_ONLY_INSTRUCTION
+            + "\n{allowed_signals}"
             + "Use the following pieces of retrieved context to help answer the question.\n\n"
             "{context}"
         )
@@ -970,115 +1294,43 @@ def main():
 
     experiment_id = os.path.basename(csv_path).rsplit(".", 1)[0]
 
+    rows = list(iter_task_rows(args.task, csv_path))
+    if args.limit is not None:
+        rows = rows[: args.limit]
+
+    write_lock = threading.Lock()
+    completed_count = 0
+
     with open(output_path, "w", newline="") as out_file:
         writer = csv.DictWriter(out_file, fieldnames=LMRESULT_FIELDNAMES)
         writer.writeheader()
 
-        for row_index, (task_id, raw_testbench, prompt_text, ref_solution, signals_for_validity) in enumerate(iter_task_rows(args.task, csv_path)):
-            if args.limit is not None and row_index >= args.limit:
-                break
-
-            print(f"[{row_index + 1}] task_id={task_id} ...")
-            try:
-                # Built unconditionally, using the REAL original question --
-                # needed both as Step 1's self-consistency anchor
-                # (sva_orig_ques) and, whenever the question isn't being
-                # replaced, as the prompt actually used for generation.
-                if args.task in ("nl2sva_human", "nl2sva_human_verified"):
-                    # Official FVEval-0-shot shape: raw testbench, no marker.
-                    design_rtl = raw_testbench
-                    user_prompt_orig = build_official_nl2sva_human_user_prompt(raw_testbench, prompt_text)
-                else:
-                    # TODO: give nl2sva_machine / module_sva_nl_manual_editing the
-                    # same official-prompt treatment -- still borrowing
-                    # run_codev_sva_ol_dfs_eval.py's QUESTION_TEMPLATE here.
-                    design_rtl = build_testbench_with_marker(raw_testbench)
-                    user_prompt_orig = build_user_prompt(design_rtl, prompt_text)
-
-                # nl2sva_human_verified supplies an authoritative signal list
-                # (signals_for_validity, unioned with a parameter/localparam
-                # scan) instead of build_signal_list's regex-over-prompt-text
-                # heuristic -- None for the other two tasks, which still fall
-                # back to that heuristic inside generate_and_validate_ol_nl.
-                # build_signal_list(user_prompt_orig, ...) here (not ""):
-                # 15/73 verified rows have no signals_for_validity at all
-                # (see iter_verified_nl2sva_human_rows) -- for those, union
-                # in the same quoted-name-in-prompt heuristic the other two
-                # tasks rely on entirely, not just the parameter scan alone.
-                # dict.fromkeys(...): dedupe while preserving order.
-                # signals_for_validity and build_signal_list's quoted-name
-                # heuristic draw from the same "Use the signals '...'"
-                # phrasing in the problem text, so they overlap almost
-                # completely -- an undeduped union produces duplicate
-                # entries in JG's SIGNAL_LIST, which prop_eq_checker's
-                # generated wrapper module then rejects outright ("ANSI
-                # port 'count' cannot be redeclared"), an elaboration error
-                # that calculate_jg_metric silently misclassifies as a
-                # functional mismatch (confirmed: this was corrupting the
-                # large majority of nl2sva_human_verified rows).
-                row_signal_list = (
-                    list(dict.fromkeys(signals_for_validity + build_signal_list(user_prompt_orig, raw_testbench)))
-                    if signals_for_validity is not None else None
+        # Threads, not processes: this whole pipeline is I/O-bound (OpenAI
+        # API calls, Chroma vector lookups, optionally `jg` subprocesses),
+        # so each blocking call releases the GIL while waiting -- no need
+        # for the pickling/reinit overhead multiprocessing would add just
+        # to share client/code_retriever/rag_chain across workers. Results
+        # complete out of row order under concurrency; only the CSV row
+        # order changes (harmless -- scoring reads task_id per row, not
+        # position), not correctness.
+        with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
+            futures = [
+                executor.submit(
+                    process_row, row_index, task_id, raw_testbench, prompt_text, ref_solution,
+                    signals_for_validity, args, client, model_name, rich_operator_context,
+                    code_retriever, rag_chain, rag_chain_checker, step1_jg_sv_dir, experiment_id,
                 )
-
-                ol_nl_text = prompt_text
-                ol_nl_verified = None
-                if args.ol_nl_grounding and not args.no_rag:
-                    if args.counterexample_validation:
-                        ol_nl_text, ol_nl_verified = generate_and_validate_ol_nl_counterexample(
-                            client, model_name, prompt_text, raw_testbench, user_prompt_orig,
-                            rich_operator_context, step1_jg_sv_dir, experiment_id, task_id,
-                            extra_note=task_reset_note,
-                        )
-                    else:
-                        ol_nl_text, ol_nl_verified = generate_and_validate_ol_nl(
-                            client, model_name, prompt_text, raw_testbench, user_prompt_orig,
-                            rich_operator_context, step1_jg_sv_dir, experiment_id, task_id,
-                            extra_note=task_reset_note, signal_list_override=row_signal_list,
-                        )
-                    print(f"    OL-NL {'verified' if ol_nl_verified else 'NOT verified (fell back to original question)'}")
-
-                if args.ol_nl_replace_question:
-                    if args.task in ("nl2sva_human", "nl2sva_human_verified"):
-                        user_prompt = build_official_nl2sva_human_user_prompt(raw_testbench, ol_nl_text)
-                    else:
-                        user_prompt = build_user_prompt(design_rtl, ol_nl_text)
-                else:
-                    user_prompt = user_prompt_orig
-
-                if args.no_rag:
-                    sva_text, initial_response = generate_baseline_sva(client, model_name, user_prompt)
-                else:
-                    sva_text, initial_response = generate_rag_sva(
-                        client, model_name, rag_chain, rag_chain_checker, code_retriever,
-                        rich_operator_context, user_prompt, prompt_text, ol_nl_text, args.max_retries,
-                        question_replaced=args.ol_nl_replace_question, extra_note=task_reset_note,
-                    )
-            except Exception as error:
-                print(f"    failed ({error}), skipping")
-                continue
-
-            writer.writerow({
-                "experiment_id": experiment_id,
-                "task_id": task_id,
-                "model_name": model_name,
-                "response": f"```systemverilog\n{sva_text}\n```",
-                "ref_solution": ref_solution,
-                "design_rtl": design_rtl,
-                "output_tb": design_rtl,
-                "user_prompt": user_prompt,
-                "cot_response": initial_response,
-                # row_signal_list (signals_for_validity unioned with the
-                # testbench's parameter/localparam scan), not the bare
-                # signals_for_validity -- goldens routinely reference
-                # parameters (e.g. `max`) that signals_for_validity alone
-                # doesn't list (confirmed for FVEval-NL2SVA-Human-0), and
-                # scoring reads this column back verbatim as the JG
-                # SIGNAL_LIST, so leaving params out surfaces as a JG
-                # elaboration error, not a genuine functional mismatch.
-                "signals_for_validity": ",".join(row_signal_list) if row_signal_list is not None else "",
-            })
-            out_file.flush()
+                for row_index, (task_id, raw_testbench, prompt_text, ref_solution, signals_for_validity) in enumerate(rows)
+            ]
+            for future in concurrent.futures.as_completed(futures):
+                row = future.result()
+                completed_count += 1
+                if row is None:
+                    continue
+                with write_lock:
+                    writer.writerow(row)
+                    out_file.flush()
+                print(f"    [{completed_count}/{len(rows)} done] task_id={row['task_id']}")
 
     print(f"Wrote responses to {output_path}")
 
