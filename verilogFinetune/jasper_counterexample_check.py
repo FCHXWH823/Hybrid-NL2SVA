@@ -10,42 +10,86 @@ checks sva_ol_nl against concrete example scenarios derived straight from
 the ORIGINAL natural-language description (never shown any candidate SVA),
 so it isn't subject to the same shared-blind-spot risk.
 
-For each scenario (a concrete, possibly multi-cycle signal-value trace,
-plus whether the property should hold or be violated at the final cycle),
-builds two named formal properties against the real testbench:
-  1. A `cover` of the scenario's own sequence alone -- confirms the
-     scenario is actually REACHABLE given the testbench's real signal
-     widths/parameters. This is NOT optional: confirmed empirically
-     (2026-08-08, counter_0/width=1) that a scenario referencing an
-     out-of-range value (count==2 against a 1-bit count signal) makes the
-     scenario's antecedent unsatisfiable, so ANY implication built on top
-     of it -- including one testing a deliberately-wrong sva_ol_nl -- is
-     vacuously "proven" regardless of whether sva_ol_nl is actually
-     correct. Skipping this check would silently validate wrong SVAs.
-  2. The actual claim: `scenario_seq |-> sva_ol_nl_body` (a "should hold"
-     scenario) or `scenario_seq |-> not (sva_ol_nl_body)` (a "should
-     violate" scenario -- SVA's `not` legally negates a whole property,
-     confirmed working via a live smoke test against a deliberately wrong,
-     always-true SVA once the scenario was made reachable).
+POSITIVE-ONLY, NO TESTBENCH (2026-08-10 redesign): scenarios are all
+"should hold" cases -- no LLM-labeled "violate" scenarios anymore, removing
+the mislabeling risk that drove a real regression earlier this session
+(count==max wrongly labeled "violate" -- max is a legal boundary value, not
+an overflow condition -- which corrupted an already-correct answer through
+several rounds of unnecessary SOR "fixes").
+
+Each scenario becomes ONE formal claim: does the concrete example imply the
+candidate holds? `(scenario_seq) |-> (sva_ol_nl_body)`. No testbench/RTL is
+combined in -- confirmed by reading run_jg_nl2sva_human.tcl (the official
+FVEval scoring script): it elaborates the testbench, then `clear -all`s
+that elaboration completely BEFORE calling prop_eq_checker, which works
+from just the two bare assertion strings and a signal_list.
+
+PLAIN SIGNAL LIST (2026-08-10, explicit instruction -- matching
+prop_eq_checker's own convention exactly, not just its spirit): the caller
+provides the authoritative signal_list directly (this pipeline already
+builds one per row -- signals_for_validity / row_signal_list in main()),
+and every name in it becomes a plain, generic `logic` declaration here --
+no width lookup, no parameter-vs-signal distinction, mirroring pec.md's own
+documented usage (`set signal_list [split $SIGNAL_LIST ","]` ->
+`prop_eq_checker $LM_ASSERT_TEXT $REF_ASSERT_TEXT "" "" $signal_list`,
+where every entry is just a name, clk/rst included or omitted by the
+caller).
+
+NOTE, explicitly accepted: this deliberately reintroduces the same
+trade-off that caused prop_eq_checker's own confirmed limitation (missing
+full equivalence between `count>=min` and `count>=0` when `min` elaborates
+to 0) -- if signal_list contains a parameter name, its real value is
+thrown away in favor of an unconstrained free variable, same as any other
+signal. An earlier version of this module avoided that by parsing the
+testbench for parameters' real defining expressions and signals' real
+declared widths; that machinery was removed in favor of this simpler,
+caller-provided-list convention. `clk` is always added automatically
+(needed for our own explicit `@(posedge clk)` usage, which prop_eq_checker
+itself doesn't need since it strips the clocking event before ever seeing
+the assertion bodies).
+
+NO reachability cover and NO tautology guard (2026-08-10, explicit
+instruction -- simplicity over the extra per-row JG cost/complexity those
+added): this means a scenario that happens to be unsatisfiable (e.g.
+count==2 against a 1-bit count) will vacuously "pass" regardless of whether
+sva_ol_nl is actually correct, and an over-permissive/tautological
+candidate (e.g. a hidden 1'b1) can pass every scenario undetected -- known,
+accepted trade-offs, not oversights. See git history for the earlier
+reachability-cover + taut-guard version if this needs revisiting.
+
+KNOWN LIMITATION (accepted, 2026-08-10): because signals are fully free/
+abstract (no real DUT behavior), this cannot catch a |-> vs |=> timing bug
+whenever the consequent happens to be tautological given the testbench's
+real parameter values -- confirmed live against counter_tb (width=1):
+`count <= max` is always true regardless of when it's evaluated, since
+count's next-cycle value is completely unconstrained rather than governed
+by real increment/decrement logic, so a deliberately-mistimed candidate
+(|=> instead of the correct |->) scores identically to the correct one.
+Accepted trade-off: still catches most other bug classes (wrong signals,
+wrong comparisons, dropped conditions, malformed logic); only misses timing
+bugs on the subset of rows whose consequent is coincidentally tautological.
 
 All scenarios for one row are embedded together and checked in a single
-JasperGold invocation -- elaboration/licensing overhead is per-process,
-not per-property, and jg startup dominates runtime for small properties
-like these.
+JasperGold invocation -- elaboration/licensing overhead is per-process, not
+per-property, and jg startup dominates runtime for small properties like
+these.
 
 Mechanism (clock/reset declaration, `prove -all`, `get_status <module>.
-<name>`) was empirically validated live against real `jg` before being
-wired into any pipeline code -- see .tmp/jg_counterexample_check_dev/ for
-the raw exploratory session. Confirmed necessary: `clock <clk>` +
-`reset -none` before `prove -all` (pec.tcle's equivalence path handles
-this internally; this bypasses pec.tcle entirely, so it must be done
-explicitly here or JasperGold errors out with ECK040 "no clocks declared").
+<name>`) mirrors jasper_direct_equiv_check.py, empirically validated live
+against real `jg` before being wired into any pipeline code.
 """
 import os
 import re
 import subprocess
 
-_MODULE_NAME_RE = re.compile(r'\bmodule\s+(\w+)')
+
+def build_abstract_declarations(signal_list):
+    """Every provided name becomes a plain, generic `logic` declaration --
+    no width, no parameter special-casing -- matching prop_eq_checker's own
+    signal_list convention (see module docstring). `clk` is always added,
+    de-duplicated, even if the caller's list already includes it."""
+    names = list(dict.fromkeys([*signal_list, "clk"]))
+    return "\n".join(f"logic {name};" for name in names)
 
 
 def build_scenario_sequence(cycle_conditions):
@@ -55,69 +99,57 @@ def build_scenario_sequence(cycle_conditions):
     return " ##1 ".join(f"({c})" for c in cycle_conditions)
 
 
-def build_testbench_with_scenario_checks(raw_testbench, scenarios, sva_ol_nl_body, clock_signal="clk"):
-    """scenarios: list of dicts {"id": str, "cycle_conditions": [str, ...],
-    "expected": "hold" | "violate"}. id must be a valid, unique SV
-    identifier fragment (used directly in property names).
+def build_abstract_module_with_scenario_checks(
+    signal_list, scenarios, sva_ol_nl_body, module_name="abstract_scenario_check", clock_signal="clk"
+):
+    """scenarios: list of dicts {"id": str, "cycle_conditions": [str, ...]}
+    (all treated as "should hold" -- see module docstring). id must be a
+    valid, unique SV identifier fragment (used directly in property names).
 
-    Returns (testbench_text, module_name, cover_names, claim_names).
+    signal_list: the row's authoritative signal names (caller-provided --
+    see module docstring). The returned module is entirely self-contained,
+    built fresh -- no testbench is elaborated or embedded.
+
+    Returns (module_text, module_name, claim_names).
     """
-    module_match = _MODULE_NAME_RE.search(raw_testbench)
-    if not module_match:
-        raise ValueError("Could not find a `module <name>` declaration in the testbench")
-    module_name = module_match.group(1)
+    decls = build_abstract_declarations(signal_list)
 
-    lines = []
-    cover_names = []
+    lines = [f"module {module_name};", decls]
     claim_names = []
     for sc in scenarios:
         seq = build_scenario_sequence(sc["cycle_conditions"])
-        cover_name = f"cov_{sc['id']}"
         claim_name = f"claim_{sc['id']}"
-        cover_names.append(cover_name)
         claim_names.append(claim_name)
-        lines.append(f"{cover_name}: cover property (@(posedge {clock_signal}) ({seq}));")
-        if sc["expected"] == "hold":
-            claim = f"({seq}) |-> ({sva_ol_nl_body})"
-        else:
-            claim = f"({seq}) |-> not ({sva_ol_nl_body})"
-        lines.append(f"{claim_name}: assert property (@(posedge {clock_signal}) {claim});")
-    block = "\n".join(lines) + "\n"
-
-    if "endmodule" in raw_testbench:
-        tb_text = raw_testbench.replace("endmodule", block + "endmodule", 1)
-    else:
-        tb_text = raw_testbench + "\n" + block
-    return tb_text, module_name, cover_names, claim_names
+        lines.append(f"{claim_name}: assert property (@(posedge {clock_signal}) ({seq}) |-> ({sva_ol_nl_body}));")
+    lines.append("endmodule")
+    return "\n".join(lines) + "\n", module_name, claim_names
 
 
 _STATUS_LINE_RE = re.compile(r'^JGCEXSTATUS (\S+) (\S+)\s*$')
 
 
 def run_counterexample_checks(
-    testbench,
+    signal_list,
     scenarios,
     sva_ol_nl_body,
     sv_dir,
     experiment_id="ol_nl_counterexample_validation",
     task_id="0",
     clock_signal="clk",
-    timeout=180,
+    timeout=120,
 ):
     """Runs all of `scenarios` against `sva_ol_nl_body` in one JasperGold
-    invocation. Returns a list of dicts, one per scenario, in the same
-    order as `scenarios`:
-      {"id", "expected", "reachable": bool, "result": str, "passed": bool}
-    where `result` is JasperGold's raw get_status string for the claim
-    property (e.g. "proven", "cex", "undetermined") and `passed` is True
-    only when the scenario was reachable AND the claim was proven (the
-    claim text already encodes the expected hold/violate direction via
-    its plain/negated form, so "proven" always means "correct" here).
+    invocation (a fresh, self-contained abstract module -- see
+    build_abstract_module_with_scenario_checks). signal_list: the row's
+    authoritative signal names (e.g. main()'s row_signal_list).
 
-    A scenario with reachable=False must be treated as inconclusive, not
-    as a pass -- see this module's docstring for why (vacuity)."""
-    tb_text, module_name, cover_names, claim_names = build_testbench_with_scenario_checks(
-        testbench, scenarios, sva_ol_nl_body, clock_signal
+    Returns (results, raw_output): results is one dict per scenario, in
+    order -- {"id", "result": str, "passed": bool} -- where `result` is
+    JasperGold's raw get_status string for the claim property and `passed`
+    is True only when it's "proven". No reachability/vacuity check and no
+    tautology guard (see module docstring for the accepted trade-off)."""
+    tb_text, module_name, claim_names = build_abstract_module_with_scenario_checks(
+        signal_list, scenarios, sva_ol_nl_body, clock_signal=clock_signal
     )
 
     sv_dir = os.path.abspath(sv_dir)
@@ -126,8 +158,7 @@ def run_counterexample_checks(
     with open(sva_path, "w") as file:
         file.write(tb_text)
 
-    all_names = [n for pair in zip(cover_names, claim_names) for n in pair]
-    status_puts = "\n".join(f'puts "JGCEXSTATUS {n} [get_status {module_name}.{n}]"' for n in all_names)
+    status_puts = "\n".join(f'puts "JGCEXSTATUS {n} [get_status {module_name}.{n}]"' for n in claim_names)
     tcl_content = f"""clear -all
 analyze -clear
 analyze -sv12 {sva_path}
@@ -159,16 +190,7 @@ exit
                 statuses[m.group(1)] = m.group(2)
 
     results = []
-    for sc, cover_name, claim_name in zip(scenarios, cover_names, claim_names):
-        cover_status = statuses.get(cover_name, "unknown")
+    for sc, claim_name in zip(scenarios, claim_names):
         claim_status = statuses.get(claim_name, "unknown")
-        reachable = cover_status == "covered"
-        passed = reachable and claim_status == "proven"
-        results.append({
-            "id": sc["id"],
-            "expected": sc["expected"],
-            "reachable": reachable,
-            "result": claim_status,
-            "passed": passed,
-        })
+        results.append({"id": sc["id"], "result": claim_status, "passed": claim_status == "proven"})
     return results, output
