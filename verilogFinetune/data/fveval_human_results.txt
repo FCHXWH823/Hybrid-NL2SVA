@@ -1,0 +1,1759 @@
+====================================================================================================
+FVEval-Verified / nl2sva_human -- SVA generation results
+====================================================================================================
+
+benchmark : Evaluation/FVEval-Verified/fveval_nl2sva_human.jsonl (73 records)
+model A   : qwen3-8b-codev-sva-ol-dfs-think (ours)   [max_new_tokens=2048]
+model B   : wyt2000/CodeV-SVA-8B (baseline)   [max_new_tokens=8192]
+decoding  : greedy (do_sample=False), qwen3 chat template, enable_thinking=True
+
+----------------------------------------------------------------------------------------------------
+SUMMARY
+----------------------------------------------------------------------------------------------------
+                                   A (ours)               B (baseline)          
+produced a parseable assertion     73/73 (100.0%)         58/73 (79.5%)         
+exact string match vs reference    1                      0                     
+used disable iff (tb_reset)        72                     58                    
+
+idiom distribution
+                                   reference  A          B         
+negated-conjunction                49         0          0         
+implication                        19         59         37        
+other                              5          14         21        
+
+NOTE: exact string match is NOT an accuracy score. The references use the
+negated-conjunction idiom in 49 of 73 cases; both models emit implications
+instead. `A |-> B` and `(A && !B) !== 1'b1` are logically equivalent but never
+compare equal as strings. A real score requires JasperGold equivalence
+checking (see jasper_equiv_check.py).
+
+====================================================================================================
+PER-RECORD RESULTS
+====================================================================================================
+
+----------------------------------------------------------------------------------------------------
+[1/73] FVEval-NL2SVA-Human-0
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that if the current cycle is neither a jump operation nor immediately after a reset pulse, the counter must not overflow. Use the signals 'count', 'jump_vld_d1', and 'tb_reset_1_cycle_pulse_shadow'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!jump_vld_d1 && !tb_reset_1_cycle_pulse_shadow) |-> (count <= max)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!jump_vld_d1 && !tb_reset_1_cycle_pulse_shadow) |-> (count <= max)
+    );
+   [exact_match=True]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!(jump_vld_d1) && !(tb_reset_1_cycle_pulse_shadow)) |-> (count <= max)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[2/73] FVEval-NL2SVA-Human-1
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that if the current cycle is neither a jump operation nor immediately after a reset pulse, the counter must not underflow. Use the signals 'count', 'jump_vld_d1', and 'tb_reset_1_cycle_pulse_shadow'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!jump_vld_d1 && !tb_reset_1_cycle_pulse_shadow) |-> (count >= min)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_underflow: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (!jump_vld_d1 && !tb_reset_1_cycle_pulse_shadow) |-> (count >= 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !(jump_vld_d1 || tb_reset_1_cycle_pulse_shadow) |-> (count >= min)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[3/73] FVEval-NL2SVA-Human-2
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the counter count value is within legal range. Use the signal 'count'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        ((count < min) || (count > max)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_count_range: assert property (@(posedge clk) disable iff (tb_reset)
+        (count >= min && count <= max)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (count >= min) && (count <= max)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[4/73] FVEval-NL2SVA-Human-3
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that for the jump case, counter is properly assigned with the jump value. Use the signals 'count', 'jump_vld_d1' and 'jump_value_d1'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (jump_vld_d1 && (count !== jump_value_d1)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_jump: assert property (@(posedge clk) disable iff (tb_reset)
+        jump_vld_d1 |-> (count == jump_value_d1)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_jump: assert property (@(posedge clk) disable iff (tb_reset)
+        jump_vld_d1 |-> (count == jump_value_d1)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[5/73] FVEval-NL2SVA-Human-4
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that if there is no increment, decrement or jump, the counter should retain its value. Use the signals 'count', 'count_d1', 'jump_vld_d1', 'incr_vld_d1', 'decr_vld_d1', and 'tb_reset_1_cycle_pulse_shadow'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!incr_vld_d1 && !decr_vld_d1 && !jump_vld_d1 && (count !== count_d1) && !tb_reset_1_cycle_pulse_shadow) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_change: assert property (@(posedge clk) disable iff (tb_reset_1_cycle_pulse_shadow)
+        (!incr_vld_d1 && !decr_vld_d1 && !jump_vld_d1) |-> (count_d1 == count)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_op_retain: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        !incr_vld_d1 && !decr_vld_d1 && !jump_vld_d1
+        |-> count == count_d1
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[6/73] FVEval-NL2SVA-Human-5
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter grant signal is 0-1-hot. Use the signal 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !($onehot0(tb_gnt)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_grant_onehot: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_gnt_onehot: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[7/73] FVEval-NL2SVA-Human-6
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that if there is a req, there is a grant except when busy. Use the signals 'tb_req', 'busy', and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        ((tb_req != 0) && !busy) |-> (tb_gnt != 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_req_grant: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (|tb_req && !busy) |-> |tb_gnt
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[8/73] FVEval-NL2SVA-Human-7
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant must be to a requesting client only. Use the signals 'tb_req' and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == 0
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_grant_to_requester: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        tb_gnt |-> tb_req
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_grant_to_requesting: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == 0
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[9/73] FVEval-NL2SVA-Human-8
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that no grants are made when the arbiter downstream is busy. Use the signals 'tb_gnt' and 'busy'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_gnt && busy) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_grant_when_busy: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        busy |-> !tb_gnt
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_grant_when_busy: assert property (@(posedge clk) disable iff (tb_reset)
+        busy |-> (tb_gnt == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[10/73] FVEval-NL2SVA-Human-9
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter holds onto grants when there is hold and the arbiter is not busy. Use the signals 'last_gnt', 'busy', 'tb_gnt' and 'hold'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy && (tb_gnt != last_gnt)) !== 1'b1 
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_hold_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |-> (last_gnt == tb_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_hold_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |-> (tb_gnt == last_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[11/73] FVEval-NL2SVA-Human-10
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the given arbiter follows the priority policy: always grant the highest priority client that is currently requesting. Use the signals 'tb_gnt', 'hold', and 'tb_req'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_gnt && !hold && |((tb_gnt - 'd1) & tb_req)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_priority: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        !hold |-> (tb_gnt == |(tb_req << (NUM_OF_CLIENTS-1-i)))
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[12/73] FVEval-NL2SVA-Human-11
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter is never on hold or busy or on continued grant at the same time. Use the signals 'busy', 'hold', and 'cont_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !$onehot0({hold,busy,cont_gnt}) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !(busy && hold && cont_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0({busy, hold, cont_gnt})
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[13/73] FVEval-NL2SVA-Human-13
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant id is proper, for the case where there no grants yet.Use the signals 'tb_gnt' and 'gnt_id'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        ((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_gnt_id_proper: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt == '0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_gnt_id_proper: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt == 0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[14/73] FVEval-NL2SVA-Human-14
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each of the FSM states provided as the input sequence should end in the final end state. Use the signal 'match_tracker'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !(|(match_tracker[0])) !== 1'b1     
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_final_state: assert property (@(posedge clk) disable iff (tb_reset)
+        (match_tracker != 0) |-> (|match_tracker == 1)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[15/73] FVEval-NL2SVA-Human-15
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not underflow, assuming no bypass. Use the signals 'rd_pop' and 'fifo_empty'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_empty && rd_pop) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_underflow: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (rd_pop && !fifo_empty) |=> !fifo_empty
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_underflow: assert property (@(posedge clk) disable iff (tb_reset)
+        !(rd_pop && fifo_empty)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[16/73] FVEval-NL2SVA-Human-16
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not overflow, assuming no bypass. Use the signals 'wr_push' and 'fifo_full'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_full && wr_push) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        wr_push |-> !fifo_full
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_overflow: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        !(wr_push && fifo_full)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[17/73] FVEval-NL2SVA-Human-17
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the fifo output and read data are consistent, assuming no bypass. Use the signals 'rd_pop', 'rd_data', and 'fifo_out_data'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+           (rd_pop && (fifo_out_data != rd_data)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_fifo_rd_data: assert property (@(posedge clk) disable iff (tb_reset)
+        rd_pop |-> (fifo_out_data == rd_data)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_fifo_rd_data_consistency: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        rd_pop |-> (rd_data == fifo_out_data)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[18/73] FVEval-NL2SVA-Human-18
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when response is pending, data is eventually popped from the FIFO. Use the signals 'rd_pop' and 'fifo_empty'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+           !fifo_empty |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (rd_pop && !fifo_empty) |-> ##1 rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[19/73] FVEval-NL2SVA-Human-19
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when there is a write push to the FIFO, data is eventually popped. Use the signals 'rd_pop' and 'wr_push'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+           wr_push |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_wr_push_implies_rd_pop: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        wr_push |-> rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        wr_push |-> ##[0:$] rd_pop
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[20/73] FVEval-NL2SVA-Human-20
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    for forward progress: whenever there is a push, an output data pop eventually happens. Use the signals 'tb_push_cnt' and 'tb_pop_cnt'.
+
+REFERENCE:
+    asrt: assert property(@(posedge clk) disable iff (tb_reset)
+        (|tb_push_cnt) |-> strong(##[0:$] |tb_pop_cnt)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_forward_progress: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_push_cnt != 0) |-> (tb_pop_cnt != 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[21/73] FVEval-NL2SVA-Human-21
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    for forward progress: whenever FIFO becomes full, an output data pop eventually happens. Use the signals 'tb_fifo_filled_cnt' and 'tb_pop_cnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        tb_fifo_filled_cnt == max_fifo_entries |-> ##[0:$] tb_pop_cnt > 0
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_forward_progress: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_fifo_filled_cnt > 0) |-> (tb_pop_cnt > 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[22/73] FVEval-NL2SVA-Human-22
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the pop count is never greater than current filled count. Use the signals 'tb_fifo_filled_cnt' and 'tb_pop_cnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_pop_cnt > tb_fifo_filled_cnt) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_pop_count: assert property (@(posedge clk) disable iff (tb_reset)
+        tb_pop_cnt <= tb_fifo_filled_cnt
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_pop_le_filled: assert property (@(posedge clk) disable iff (tb_reset)
+        tb_pop_cnt <= tb_fifo_filled_cnt
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[23/73] FVEval-NL2SVA-Human-23
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the filled count is less than or equal to maximum allowed entires in the FIFO. Use the signal 'tb_fifo_filled_cnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_fifo_filled_cnt > max_fifo_entries) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_filled_count: assert property (@(posedge clk) disable iff (tb_reset)
+        tb_fifo_filled_cnt <= max_fifo_entries
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_filled_count: assert property (@(posedge clk) disable iff (tb_reset)
+        tb_fifo_filled_cnt <= max_fifo_entries
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[24/73] FVEval-NL2SVA-Human-24
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not experience overflow. Use the signals 'tb_push_cnt', 'tb_pop_cnt', and 'tb_fifo_filled_cnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        |((tb_fifo_filled_cnt + tb_push_cnt - tb_pop_cnt) > max_fifo_entries) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_fifo_filled_cnt + tb_push_cnt - tb_pop_cnt) <= max_fifo_entries
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_fifo_filled_cnt + tb_push_cnt - tb_pop_cnt) <= max_fifo_entries
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[25/73] FVEval-NL2SVA-Human-25
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter grant signal is 0-1-hot. Use the signal 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !($onehot0(tb_gnt)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_gnt_onehot: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_gnt_onehot: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[26/73] FVEval-NL2SVA-Human-26
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that if there is a req, there is a grant except when busy. Use the signals 'tb_req', 'busy', and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        ((tb_req != 0) && !busy) |-> (tb_gnt != 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_req && !busy) |-> |tb_gnt
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[27/73] FVEval-NL2SVA-Human-27
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant must be to a requesting client only. Use the signals 'tb_req' and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == 0
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_grant_to_requesting: assert property (@(posedge clk) disable iff (tb_reset)
+        tb_gnt |-> tb_req
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_grant_only_to_requesting: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == 0
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[28/73] FVEval-NL2SVA-Human-28
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that no grants are made when the arbiter downstream is busy. Use the signals 'tb_gnt', 'hold', 'busy', and 'last_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_gnt && busy) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_grant_when_busy: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (busy || (hold && (last_gnt != 0))) |-> (tb_gnt == 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_grant_when_busy: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        busy |-> (tb_gnt == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[29/73] FVEval-NL2SVA-Human-29
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter holds onto grants when there is hold and the arbiter is not busy. Use the signals 'busy', 'tb_gnt', 'hold', and 'last_gnt'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy && (tb_gnt != last_gnt)) !== 1'b1 
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_hold_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |-> (tb_gnt == last_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_hold_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |-> (tb_gnt == last_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[30/73] FVEval-NL2SVA-Human-30
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the given arbiter follows the Round Robin policy: start with 0th client and keep granting from 0 to n clients one by one except those that are not requesting, then wrap around. Use the signals 'tb_gnt','last_gnt', 'hold', 'valid_request_mask_rr', and 'tb_req'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (|last_gnt && |tb_gnt && !hold && (|(valid_request_mask_rr & tb_req))) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_round_robin: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        !hold |-> (valid_request_mask_rr |-> tb_req)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_rr: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold == 0) |-> (tb_gnt == (valid_request_mask_rr & (~valid_request_mask_rr + 1)))
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[31/73] FVEval-NL2SVA-Human-31
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the first grant of the arbiter follows the Round Robin policy: start with 0th client and keep granting from 0 to n clients one by one except those that are not requesting, then wrap around. Use the signals 'tb_gnt','last_gnt', 'hold', and 'tb_req'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        ((last_gnt === 'd0) && |tb_gnt && ( ((tb_gnt-'d1) & tb_req) !== 'd0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_round_robin: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (!hold && !(|last_gnt)) |-> (tb_gnt == ((last_gnt << 1) | (tb_req & ~last_gnt)))
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    function logic [NUM_OF_CLIENTS-1:0] next_rr_grant(logic [NUM_OF_CLIENTS-1:0] current_gnt, logic [NUM_OF_CLIENTS-1:0] req);
+        int current_index;
+        if ($onehot0(current_gnt)) begin
+            current_index = $findfirstone(current_gnt);
+        end else begin
+            current_index = 0; // should not happen because current_gnt is one-hot
+        end
+        int next_index = current_index;
+        // Find the next requesting client in circular order
+        for (int i = current_index + 1; i < NUM_OF_CLIENTS; i++) {
+            if (req[i]) begin
+                next_index = i;
+                break;
+            end
+        }
+        if (next_index == current_index) { // no requesting client after current_index
+            for (int i = 0; i < current_index; i++) {
+                if (req[i]) begin
+                    next_index = i;
+                    break;
+                end
+            }
+        }
+        // Create one-hot vector for next_index
+        logic [NUM_OF_CLIENTS-1:0] next_grant = 0;
+        next_grant[next_index] = 1;
+        return next_grant;
+    endfunction
+    
+    asrt_rr_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_gnt && !hold) |=> (tb_gnt == next_rr_grant(tb_gnt, tb_req))
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[32/73] FVEval-NL2SVA-Human-32
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter is never on hold or busy or on continued grant at the same time. Use the signals 'cont_gnt', 'busy' and 'hold'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !$onehot0({hold,busy,cont_gnt}) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !(hold && busy && cont_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_hold_busy_cont_gnt: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        !(hold && busy && cont_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[33/73] FVEval-NL2SVA-Human-34
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant id is proper, for the case where there no grants yet.Use the signals 'tb_gnt' and 'gnt_id'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        ((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_gnt_id_proper: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt == 0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_grant_gnt_id: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt == 0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[34/73] FVEval-NL2SVA-Human-35
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the specified fsm_sequence is never seen. Use the signal 'tb_sequence_seen'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_sequence_seen) !== 1'b1     
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_never_seen: assert property (@(posedge clk) disable iff (tb_reset)
+        !tb_sequence_seen
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[35/73] FVEval-NL2SVA-Human-37
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that for any random state, the FSM should not remain in the same state in the next cycle. Use the signals 'fsm_state' and 'tb_random_state'.
+
+REFERENCE:
+    asrt: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (fsm_state == tb_random_state) |=> (fsm_state != $past(fsm_state))
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_random_state != fsm_state) |=> (fsm_state != $past(fsm_state))
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (fsm_state == tb_random_state) |=> (fsm_state != tb_random_state)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[36/73] FVEval-NL2SVA-Human-38
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter grant signal is 0-1-hot. Use the signal 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !($onehot0(tb_gnt)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_gnt_onehot: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_gnt_onehot: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[37/73] FVEval-NL2SVA-Human-39
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that if there is a req, there is a grant except when busy. Use the signals 'tb_req', 'busy', and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        ((tb_req != 0) && !busy) |-> (tb_gnt != 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_req && !busy) |-> (|tb_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[38/73] FVEval-NL2SVA-Human-40
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant must be to a requesting client only. Use the signals 'tb_req' and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == 0
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_grant_to_requesting: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt) |-> (tb_req)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_grant_to_requesting: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == '0
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[39/73] FVEval-NL2SVA-Human-41
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that no grants are made when the arbiter downstream is busy. Use the signals 'tb_gnt' and 'busy'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_gnt && busy) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_grant_when_busy: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        busy |-> !tb_gnt
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_grant_when_busy: assert property (@(posedge clk) disable iff (tb_reset)
+        busy |-> (tb_gnt == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[40/73] FVEval-NL2SVA-Human-42
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter holds onto grants when there is hold and the arbiter is not busy. Use the signals 'busy', 'hold', 'tb_gnt' and 'last_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy && (tb_gnt != last_gnt)) !== 1'b1 
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_hold_grant: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |=> (tb_gnt == last_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_hold_grant: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |-> (tb_gnt == $past(tb_gnt, 1, tb_gnt))
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[41/73] FVEval-NL2SVA-Human-43
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that no grants are given while there is a grant bubble. Use the signals 'tb_gnt', 'tb_req', 'sticky_req', and 'arbiter_in_sticky'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+    (arbiter_in_sticky && !(|(sticky_req & tb_req)) && (tb_gnt != 'd0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_grant_during_bubble: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (arbiter_in_sticky && (sticky_req != tb_gnt)) |-> (tb_gnt == 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_grant_in_bubble: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (arbiter_in_sticky && |sticky_req) |-> (tb_gnt == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[42/73] FVEval-NL2SVA-Human-44
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the grant of the arbiter stays sticky, i.e.  if sticky bit is high (hold) then keep granting the same client. Use the signals 'tb_gnt', 'sticky_req', and 'arbiter_in_sticky'
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (arbiter_in_sticky && (tb_gnt != sticky_req)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_sticky: assert property (@(posedge clk) disable iff (tb_reset)
+        (arbiter_in_sticky && (|sticky_req)) |-> (tb_gnt == $past(tb_gnt))
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_sticky_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        arbiter_in_sticky |-> (tb_gnt == sticky_req)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[43/73] FVEval-NL2SVA-Human-45
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter is never on hold or busy or on continued grant at the same time. Use the signals 'hold', 'cont_gnt' and 'busy'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !$onehot0({hold,busy,cont_gnt}) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !(busy && hold && cont_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[44/73] FVEval-NL2SVA-Human-47
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant id is proper, for the case where there no grants yet.Use the signals 'tb_gnt' and 'gnt_id'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        ((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_gnt_id_proper: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt == 0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_grant_id_proper: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt == 0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[45/73] FVEval-NL2SVA-Human-48
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not underflow, assuming no bypass. Use the signals 'rd_pop' and 'fifo_empty'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_empty && rd_pop) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_fifo_no_underflow: assert property (@(posedge clk) disable iff (tb_reset)
+        rd_pop |-> !fifo_empty
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_underflow: assert property (@(posedge clk) disable iff (tb_reset)
+        fifo_empty |-> !rd_pop
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[46/73] FVEval-NL2SVA-Human-49
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not overflow, assuming no bypass. Use the signals 'wr_push' and 'fifo_full'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_full && wr_push) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_fifo_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        wr_push |-> !fifo_full
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    fifo_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        !(wr_push && fifo_full)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[47/73] FVEval-NL2SVA-Human-51
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when response is pending, data is eventually popped from the FIFO. Use the signals 'rd_pop' and 'fifo_empty'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_pending_pop: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |-> rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_empty == 1'b0) |-> s_eventually rd_pop
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[48/73] FVEval-NL2SVA-Human-52
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when there is a write push to the FIFO, data is eventually popped. Use the signals 'rd_pop' and 'wr_push'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        wr_push |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_wr_push_implies_rd_pop: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        wr_push |-> rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[49/73] FVEval-NL2SVA-Human-53
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter grant signal is 0-1-hot. Use the signal 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !($onehot0(tb_gnt)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_gnt_onehot: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_gnt_onehot: assert property (@(posedge clk) disable iff (tb_reset)
+        $onehot0(tb_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[50/73] FVEval-NL2SVA-Human-54
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that if there is a req, there is a grant except when busy. Use the signals 'tb_req', 'busy', and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_req != 0) |-> (tb_gnt != 0 || busy)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_req_grant: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (|tb_req && !busy) |-> |tb_gnt
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[51/73] FVEval-NL2SVA-Human-55
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant must be to a requesting client only. Use the signals 'tb_req' and 'tb_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == 0
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_grant_to_requester: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt) |-> (tb_req)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_grant_to_requesting: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt & ~tb_req) == '0
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[52/73] FVEval-NL2SVA-Human-56
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that no grants are made when the arbiter downstream is busy. Use the signals 'tb_gnt' and 'busy'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (|tb_gnt && busy) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_grant_when_busy: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        busy |-> !tb_gnt
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_grant_when_busy: assert property (@(posedge clk) disable iff (tb_reset)
+        busy |-> (tb_gnt == '0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[53/73] FVEval-NL2SVA-Human-57
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter holds onto grants when there is hold and the arbiter is not busy. Use the signals 'busy', 'tb_gnt', 'hold', and 'last_gnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy && (tb_gnt != last_gnt)) !== 1'b1 
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_hold_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |-> (tb_gnt == last_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_hold_grant: assert property (@(posedge clk) disable iff (tb_reset)
+        (hold && !busy) |-> (tb_gnt == last_gnt)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[54/73] FVEval-NL2SVA-Human-58
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the grant of the arbiter stays sticky, i.e.  if sticky bit is high (hold) then keep granting the same client. Use the signals 'tb_gnt', 'sticky_req', and 'arbiter_in_sticky'
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (arbiter_in_sticky && (tb_gnt != sticky_req)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_sticky: assert property (@(posedge clk) disable iff (tb_reset)
+        (arbiter_in_sticky && (|sticky_req)) |-> (tb_gnt == |(sticky_req & tb_gnt))
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[55/73] FVEval-NL2SVA-Human-59
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the arbiter is never on hold or busy or on continued grant at the same time. Use the signals 'hold', 'cont_gnt' and 'busy'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !$onehot0({hold,busy,cont_gnt}) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !(busy && hold && cont_gnt)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_hold_busy_cont_gnt: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        !(hold && cont_gnt && busy)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[56/73] FVEval-NL2SVA-Human-61
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that each grant id is proper, for the case where there no grants yet.Use the signals 'tb_gnt' and 'gnt_id'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        ((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_proper_gnt_id_no_grant: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt == 0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_grant_gnt_id: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (tb_gnt == 0) |-> (gnt_id == 0)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[57/73] FVEval-NL2SVA-Human-62
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not underflow, assuming no bypass. Use the signals 'rd_pop' and 'fifo_empty'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_empty && rd_pop) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_underflow: assert property (@(posedge clk) disable iff (tb_reset)
+        rd_pop |-> !fifo_empty
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_underflow: assert property (@(posedge clk) disable iff (tb_reset)
+        !(rd_pop && fifo_empty)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[58/73] FVEval-NL2SVA-Human-63
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not overflow, assuming no bypass. Use the signals 'wr_push' and 'fifo_full'.
+
+REFERENCE:
+    asrt : assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_full && wr_push) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_overflow: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (wr_push && !fifo_full) |=> !fifo_full
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        fifo_full |-> !wr_push
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[59/73] FVEval-NL2SVA-Human-64
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the fifo output and read data are consistent, assuming no bypass. Use the signals 'rd_pop', 'rd_data', 'rand_packet_tracker', 'rand_packet_tracker_next', 'free_selected_data', and 'rand_pulse_seen'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+           (rd_pop && (free_selected_data != rd_data) && (rand_packet_tracker_next == 'd0) && (rand_packet_tracker != 'd0) && rand_pulse_seen) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_fifo_data_consistent: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (rd_pop && (rand_packet_tracker != 0) && !rand_pulse_seen) |-> (rd_data == free_selected_data)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        rd_pop |-> (rd_data != free_selected_data)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[60/73] FVEval-NL2SVA-Human-65
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when response is pending, data is eventually popped from the FIFO. Use the signals 'rd_pop' and 'fifo_empty'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |=> rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |-> ##[0:$] rd_pop
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[61/73] FVEval-NL2SVA-Human-66
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when there is a write push to the FIFO, data is eventually popped. Use the signals 'rd_pop' and 'wr_push'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        wr_push |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_wr_push_implies_rd_pop: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        wr_push |-> rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[62/73] FVEval-NL2SVA-Human-67
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not underflow, taking the bypass into account. Use the signals 'wr_data', 'fifo_empty', 'rd_pop', 'rd_data', and 'wr_push'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_empty && rd_pop && (!wr_push || (wr_data != rd_data))) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_underflow: assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_empty && rd_pop) |-> (wr_push || (rd_data == wr_data))
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_underflow: assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_empty && rd_pop) |-> (rd_data == wr_data)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[63/73] FVEval-NL2SVA-Human-68
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the FIFO does not overflow, taking bypass into account. Use the signals 'wr_push', 'fifo_full', 'rd_pop'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (fifo_full && wr_push && !rd_pop) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        (wr_push && !rd_pop) |-> !fifo_full
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)
+        !(wr_push && fifo_full && !rd_pop)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[64/73] FVEval-NL2SVA-Human-69
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that the fifo output and read data are consistent, taking bypass into account. Use the signals 'rd_pop', 'rd_data', 'wr_push', 'wr_data', 'fifo_empty', and 'fifo_out_data'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!fifo_empty && rd_pop && (fifo_out_data != rd_data)) || (fifo_empty && rd_pop && wr_push && (wr_data != rd_data)) !== 1'b1
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_fifo_output_consistent: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        (rd_pop && !(fifo_empty && !wr_push)) |-> (fifo_out_data == rd_data)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[65/73] FVEval-NL2SVA-Human-70
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when response is pending, data is eventually popped from the FIFO. Use the signals 'rd_pop' and 'fifo_empty'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |=> rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        !fifo_empty |-> (##[0:$] rd_pop)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[66/73] FVEval-NL2SVA-Human-71
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    that when there is a write push to the FIFO, data is eventually popped. Use the signals 'rd_pop' and 'wr_push'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        wr_push |-> strong(##[0:$] rd_pop)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_wr_push_implies_rd_pop: assert property (
+        @(posedge clk) disable iff (tb_reset)
+        wr_push |-> rd_pop
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[67/73] FVEval-NL2SVA-Human-72
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    read address is not greater than number of entries i.e. the read address is not pointing to an address not in the memory. Use the signals 're' and 'ra'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (re |-> ra < entries)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_ra_le_entries: assert property (@(posedge clk) disable iff (tb_reset)
+        re |-> (ra <= entries)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_read_addr_valid: assert property (@(posedge clk) disable iff (tb_reset)
+        re |-> (ra < entries)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[68/73] FVEval-NL2SVA-Human-73
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    write address is not greater than number of entries i.e. the write address is not pointing to an address not in the memory. Use the signals 'we' and 'wa'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (we |-> wa < entries)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_write_addr: assert property (@(posedge clk) disable iff (tb_reset)
+        we |-> (wa <= entries)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_write_addr_range: assert property (@(posedge clk) disable iff (tb_reset)
+        we |-> (wa < entries)
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[69/73] FVEval-NL2SVA-Human-74
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    write through violation, where a read from and a write to the same address happen in same cycle, does not occur. Use the signals 'we', 'wa', 're' and 'ra'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (we && re |-> !(wa == ra))
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_write_through: assert property (@(posedge clk) disable iff (tb_reset)
+        !(we && re && (wa == ra))
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt_write_through: assert property (@(posedge clk) disable iff (tb_reset)
+        !(we && re && (wa == ra))
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[70/73] FVEval-NL2SVA-Human-75
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    write after write cases, where writes to the same address happen before a read, does not occur. Use the signals 'we', 'wa', 'symbolic_constant_a', and 'addr_aw_seen'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+         (addr_aw_seen |-> !(we && (wa == symbolic_constant_a)))
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_write_after_write: assert property (@(posedge clk) disable iff (tb_reset)
+        (we && (wa == symbolic_constant_a) && addr_aw_seen) |-> 
+        !(we && (wa == symbolic_constant_a) && addr_aw_seen)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[71/73] FVEval-NL2SVA-Human-76
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    read after read cases, where read to the same address happen before a write, does not occur. Use the signals 're', 'ra', 'symbolic_constant_a', and 'addr_ar_seen'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (addr_ar_seen |-> !(re && (ra == symbolic_constant_a)))
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_read_after_read: assert property (@(posedge clk) disable iff (tb_reset)
+        (addr_ar_seen && (ra == symbolic_constant_a)) |-> (re != symbolic_constant_a)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[72/73] FVEval-NL2SVA-Human-77
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    read before write cases, where read to the same address happen before a write, does not occur. Use the signals 're', 'ra', 'symbolic_constant_a', and 'addr_first_aw_seen'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (!addr_first_aw_seen |-> !(re && (ra == symbolic_constant_a)))
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_read_before_write: assert property (@(posedge clk) disable iff (tb_reset)
+        ((addr_first_aw_seen == 1'b0) && (re == 1'b1) && (ra == symbolic_constant_a))
+        |->
+        !(we == 1'b1 && wa == symbolic_constant_a)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (re && ra == symbolic_constant_a) |-> addr_first_aw_seen
+    );
+   [exact_match=False]
+
+----------------------------------------------------------------------------------------------------
+[73/73] FVEval-NL2SVA-Human-78
+----------------------------------------------------------------------------------------------------
+PROBLEM:
+    max latency between a write and following read is within the specified write-read latency threshold. Use the signal 'latency_cnt'.
+
+REFERENCE:
+    asrt: assert property (@(posedge clk) disable iff (tb_reset)
+        (latency_cnt <= wr_latency)
+    );
+
+A  qwen3-8b-codev-sva-ol-dfs-think (ours):
+    asrt_max_latency: assert property (@(posedge clk) disable iff (tb_reset)
+        (wr_latency != 0) |-> (latency_cnt <= wr_latency)
+    );
+   [exact_match=False]
+
+B  wyt2000/CodeV-SVA-8B (baseline):
+    <NO ASSERTION - reasoning never terminated; hit the 8192-token cap>
+   [exact_match=False]
+
+====================================================================================================
+END
+====================================================================================================

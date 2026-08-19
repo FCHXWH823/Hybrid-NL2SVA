@@ -17,11 +17,24 @@ verilogFinetune/data/*.jsonl
 !verilogFinetune/data/qwen_explanation.jsonl
 !verilogFinetune/data/qwen_prompt_guided_explanation.jsonl
 !verilogFinetune/data/codev_sva_ol_dfs_5000.jsonl
+!verilogFinetune/data/codev_sva_ol_dfs_5000_think.jsonl
 verilogFinetune/data/*.json
 !verilogFinetune/data/dataset_info.json
+
+# The rules above only match data/ directly, so generated output written into
+# a SUBdirectory (data/vllm_official/, data/codev_fveval/, ...) slipped past
+# them. Exclude those too. The exception is the slim *_sva.jsonl scoring
+# inputs from the official-prompt vLLM run: a few tens of KB each, and the
+# one artifact that cannot be regenerated bit-identically (sampling at
+# temp=0.8 is seeded but tied to the vLLM/engine version that produced it).
+verilogFinetune/data/**/*.jsonl
+!verilogFinetune/data/vllm_official/*_sva.jsonl
 verilogFinetune/data/*_scratch/
 verilogFinetune/data/*.log
 verilogFinetune/data/*.pid
+
+# Slurm job stdout captured next to the scripts that produced it
+verilogFinetune/*.10g
 
 # Persisted RAG vector store -- regenerable from the textbook PDFs
 RAG_Database/

@@ -1,0 +1,73 @@
+{"name": "FVEval-NL2SVA-Human-0", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    (!jump_vld_d1 && !tb_reset_1_cycle_pulse_shadow) |-> (count <= max)\n);"}
+{"name": "FVEval-NL2SVA-Human-1", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    !(jump_vld_d1 || tb_reset_1_cycle_pulse_shadow) |-> (count > 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-2", "sva": "asrt_counter_range: assert property (@(posedge clk) disable iff (tb_reset)\n    (count >= min) && (count <= max)\n);"}
+{"name": "FVEval-NL2SVA-Human-3", "sva": "asrt_jump: assert property (@(posedge clk) disable iff (tb_reset)\n    jump_vld_d1 |-> (count == jump_value_d1)\n);"}
+{"name": "FVEval-NL2SVA-Human-4", "sva": "asrt_counter_retain: assert property (@(posedge clk) disable iff (tb_reset)\n    (!jump_vld_d1 && !incr_vld_d1 && !decr_vld_d1) |-> (count == count_d1)\n);"}
+{"name": "FVEval-NL2SVA-Human-5", "sva": "asrt_onehot0: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    $onehot0(tb_gnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-6", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    (|tb_req && !busy) |-> |tb_gnt\n);"}
+{"name": "FVEval-NL2SVA-Human-7", "sva": "asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)\n    (tb_gnt & ~tb_req) == 0\n);"}
+{"name": "FVEval-NL2SVA-Human-8", "sva": "no_grant_when_busy: assert property (@(posedge clk) disable iff (tb_reset)\n    busy |-> tb_gnt == '0\n);"}
+{"name": "FVEval-NL2SVA-Human-9", "sva": "asrt_hold_onto_grant: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (hold && !busy) |-> (tb_gnt == last_gnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-10", "sva": "genvar j;\nfor (j=0; j<NUM_OF_CLIENTS; j++) begin\n    a_priority_j: assert property (@(posedge clk) disable iff (tb_reset)\n        (hold == 0) && \n        ((j == 0) ? tb_req[0] : \n         (!(|(tb_req[0:j-1]))) && tb_req[j]) \n        |-> (tb_gnt == (1 << j))\n    );\nend"}
+{"name": "FVEval-NL2SVA-Human-11", "sva": "asrt_at_most_one: assert property (@(posedge clk) disable iff (tb_reset)\n    $onehot0({busy, hold, cont_gnt})\n);"}
+{"name": "FVEval-NL2SVA-Human-13", "sva": "asrt_grant_id_proper_no_grant: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    ($countones(tb_gnt) == 0) |-> (gnt_id == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-14", "sva": "generate\n   for (genvar n = 0; n < num_of_times_initial_state_repeats; n++) begin : gen_final_state\n      asrt_final_state: assert property (@(posedge clk) disable iff (tb_reset)\n          (&match_tracker[n]) |-> (fsm_state == tb_fsm_sequence[num_of_states-1])\n      );\n   end\nendgenerate"}
+{"name": "FVEval-NL2SVA-Human-15", "sva": "underflow_check: assert property (@(posedge clk) disable iff (tb_reset)\n    !(rd_pop && fifo_empty)\n);"}
+{"name": "FVEval-NL2SVA-Human-16", "sva": "asrt_no_overflow: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    wr_push |-> !fifo_full\n);"}
+{"name": "FVEval-NL2SVA-Human-17", "sva": "asrt_fifo_rd_consistency: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    rd_pop |-> (rd_data == fifo_out_data)\n);"}
+{"name": "FVEval-NL2SVA-Human-18", "sva": "asrt_eventual_pop: assert property (@(posedge clk) disable iff (tb_reset)\n    (fifo_empty == 1'b0) |-> s_eventually rd_pop\n);"}
+{"name": "FVEval-NL2SVA-Human-19", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    wr_push |-> s_eventually rd_pop\n);"}
+{"name": "FVEval-NL2SVA-Human-20", "sva": "asrt_forward_progress: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (|tb_push_cnt) |-> ##[1:$] (|tb_pop_cnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-21", "sva": "asrt_forward_progress: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (tb_fifo_filled_cnt == max_fifo_entries) |-> ##[0:$] (tb_pop_cnt != 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-22", "sva": "asrt_pop_le_filled: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    tb_pop_cnt <= tb_fifo_filled_cnt\n);"}
+{"name": "FVEval-NL2SVA-Human-23", "sva": "asrt_filled_cnt: assert property (@(posedge clk) disable iff (tb_reset)\n    (tb_fifo_filled_cnt <= max_fifo_entries)\n);"}
+{"name": "FVEval-NL2SVA-Human-24", "sva": "asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)\n    (tb_fifo_filled_cnt + tb_push_cnt - tb_pop_cnt) <= max_fifo_entries\n);"}
+{"name": "FVEval-NL2SVA-Human-25", "sva": "arbiter_grant_0_1_hot: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    $onehot0(tb_gnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-26", "sva": "asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)\n    (|tb_req && !busy) |-> (|tb_gnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-27", "sva": "asrt_grant_only_to_requesting: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (tb_gnt & ~tb_req) == '0\n);"}
+{"name": "FVEval-NL2SVA-Human-28", "sva": "no_grant_when_busy: assert property (@(posedge clk) disable iff (tb_reset)\n    busy |-> (tb_gnt == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-29", "sva": "asrt_hold_grants: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (hold && !busy && (|tb_gnt)) |=> (tb_gnt == $past(tb_gnt))\n);"}
+{"name": "FVEval-NL2SVA-Human-30", "sva": "asrt_round_robin: assert property (@(posedge clk) disable iff (tb_reset)\n    if (hold)\n        (tb_gnt == last_gnt)\n    else if (|tb_gnt)\n        (tb_gnt == (valid_request_mask_rr & -valid_request_mask_rr))\n    else\n        1'b1\n);"}
+{"name": "FVEval-NL2SVA-Human-31", "sva": "asrt_round_robin: assert property (@(posedge clk) disable iff (tb_reset)\n    (tb_gnt != 0) |->\n    let last_grant_index = (last_gnt != 0) ? $onehot0(last_gnt) : 0;\n    let start_index = (last_grant_index + 1) % NUM_OF_CLIENTS;\n    let expected_gnt = next_req(start_index, tb_req);\n    tb_gnt == (1 << expected_gnt)\n);\n\nfunction automatic [tb_num_client_req_width-1:0] next_req(int start, input [NUM_OF_CLIENTS-1:0] req);\n    for (int i = start; i < NUM_OF_CLIENTS; i++) begin\n        if (req[i]) return i;\n    end\n    for (int i = 0; i < start; i++) begin\n        if (req[i]) return i;\n    end\n    return 'x;\nendfunction"}
+{"name": "FVEval-NL2SVA-Human-32", "sva": "asrt_hold_busy_cont_gnt: assert property (@(posedge clk) disable iff (tb_reset)\n    $onehot0({hold, busy, cont_gnt})\n);"}
+{"name": "FVEval-NL2SVA-Human-34", "sva": "asrt_gnt_id_proper_no_grant: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (tb_gnt == 0) |-> (gnt_id == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-35", "sva": "asrt_sequence_never_seen: assert property (@(posedge clk) disable iff (tb_reset)\n    tb_sequence_seen == '0\n);"}
+{"name": "FVEval-NL2SVA-Human-37", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    (tb_random_state) |=> (fsm_state != $past(fsm_state))\n);"}
+{"name": "FVEval-NL2SVA-Human-38", "sva": "asrt_grant_0_1_hot: assert property (@(posedge clk) disable iff (tb_reset)\n    $onehot0(tb_gnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-39", "sva": "asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)\n    (|tb_req && !busy) |-> |tb_gnt\n);"}
+{"name": "FVEval-NL2SVA-Human-40", "sva": "asrt_grant_only_to_requesting: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    !(|(tb_gnt & ~tb_req))\n);"}
+{"name": "FVEval-NL2SVA-Human-41", "sva": "asrt_no_grant_when_busy: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    busy |-> ~|tb_gnt\n);"}
+{"name": "FVEval-NL2SVA-Human-42", "sva": "asrt_hold_grant: assert property (@(posedge clk) disable iff (tb_reset)\n    (hold && !busy) |-> (tb_gnt == last_gnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-43", "sva": "asrt_no_grant_during_sticky: assert property (@(posedge clk) disable iff (tb_reset)\n    (arbiter_in_sticky && |sticky_req) |-> (tb_gnt == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-44", "sva": "sticky_assertion: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    arbiter_in_sticky |-> (tb_gnt == sticky_req)\n);"}
+{"name": "FVEval-NL2SVA-Human-45", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    $onehot0({hold, busy, cont_gnt})\n);"}
+{"name": "FVEval-NL2SVA-Human-47", "sva": "asrt_gnt_id_proper_no_grant: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    ($countones(tb_gnt) == 0) |-> (gnt_id == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-48", "sva": "asrt_no_underflow: assert property (@(posedge clk) disable iff (tb_reset)\n    rd_pop |-> !fifo_empty\n);"}
+{"name": "FVEval-NL2SVA-Human-49", "sva": "asrt_no_overflow: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    wr_push |-> !fifo_full\n);"}
+{"name": "FVEval-NL2SVA-Human-51", "sva": "asrt_nonempty_then_pop: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    !fifo_empty |-> s_eventually (rd_pop)\n);"}
+{"name": "FVEval-NL2SVA-Human-52", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    wr_push |-> s_eventually rd_pop\n);"}
+{"name": "FVEval-NL2SVA-Human-53", "sva": "asrt_grant_0_1_hot: assert property (@(posedge clk) disable iff (tb_reset)\n    $countones(tb_gnt) inside {0, 1}\n);"}
+{"name": "FVEval-NL2SVA-Human-54", "sva": "asrt_req_grant: assert property (@(posedge clk) disable iff (tb_reset)\n    (|tb_req && !busy) |-> |tb_gnt\n);"}
+{"name": "FVEval-NL2SVA-Human-55", "sva": "asrt_gnt_req: assert property (@(posedge clk) disable iff (tb_reset)\n    (tb_gnt & ~tb_req) == '0\n);"}
+{"name": "FVEval-NL2SVA-Human-56", "sva": "asrt_no_grant_when_busy: assert property (@(posedge clk) disable iff (tb_reset)\n    busy |-> (tb_gnt == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-57", "sva": "asrt_hold_grant: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (~busy && hold) |-> (tb_gnt == last_gnt)\n);"}
+{"name": "FVEval-NL2SVA-Human-58", "sva": "asrt_sticky_grant: assert property (@(posedge clk) disable iff (tb_reset)\n    arbiter_in_sticky |-> (tb_gnt == sticky_req)\n);"}
+{"name": "FVEval-NL2SVA-Human-59", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    $onehot0({hold, busy, cont_gnt})\n);"}
+{"name": "FVEval-NL2SVA-Human-61", "sva": "asrt_proper_gnt_id: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    ($countones(tb_gnt) == 0) |-> (gnt_id == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-62", "sva": "asrt_underflow: assert property (@(posedge clk) disable iff (tb_reset)\n    rd_pop |-> !fifo_empty\n);"}
+{"name": "FVEval-NL2SVA-Human-63", "sva": "asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)\n    !(wr_push && fifo_full)\n);"}
+{"name": "FVEval-NL2SVA-Human-64", "sva": "asrt_fifo_consistency: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    (rd_pop && (rand_packet_tracker == 1) && rand_pulse_seen) |->\n    (rd_data == free_selected_data) && (rand_packet_tracker_next == 0)\n);"}
+{"name": "FVEval-NL2SVA-Human-65", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    !fifo_empty |-> s_eventually (rd_pop)\n);"}
+{"name": "FVEval-NL2SVA-Human-66", "sva": "asrt_eventual_pop: assert property (\n    @(posedge clk) disable iff (tb_reset)\n        wr_push |-> s_eventually rd_pop\n);"}
+{"name": "FVEval-NL2SVA-Human-67", "sva": "asrt_no_underflow: assert property (@(posedge clk) disable iff (tb_reset)\n    !(rd_pop && fifo_empty && !wr_push)\n);"}
+{"name": "FVEval-NL2SVA-Human-68", "sva": "asrt_no_overflow: assert property (@(posedge clk) disable iff (tb_reset)\n    (wr_push && fifo_full) |-> rd_pop\n);"}
+{"name": "FVEval-NL2SVA-Human-69", "sva": "asrt: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    rd_pop |-> \n        if (fifo_empty && wr_push)\n            (rd_data == wr_data)\n        else\n            (rd_data == fifo_out_data)\n);"}
+{"name": "FVEval-NL2SVA-Human-70", "sva": "asrt_response_pending_popped: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    !fifo_empty |-> s_eventually (rd_pop)\n);"}
+{"name": "FVEval-NL2SVA-Human-71", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    wr_push |-> s_eventually rd_pop\n);"}
+{"name": "FVEval-NL2SVA-Human-72", "sva": "asrt_ra_in_range: assert property (\n    @(posedge clk) disable iff (tb_reset)\n    re |-> (ra < entries)\n);"}
+{"name": "FVEval-NL2SVA-Human-73", "sva": "asrt_write_addr_range: assert property (@(posedge clk) disable iff (tb_reset)\n    we |-> (wa < entries)\n);"}
+{"name": "FVEval-NL2SVA-Human-74", "sva": "asrt_write_through_violation: assert property (@(posedge clk) disable iff (tb_reset)\n    !(we && re && (wa == ra))\n);"}
+{"name": "FVEval-NL2SVA-Human-75", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    addr_aw_seen |-> !(we && (wa == symbolic_constant_a))\n);"}
+{"name": "FVEval-NL2SVA-Human-76", "sva": "asrt: assert property (@(posedge clk) disable iff (tb_reset)\n    (re && (ra == symbolic_constant_a)) |-> \n    ( (##[0:$] (re && (ra == symbolic_constant_a)) ) |-> \n        ( (##[0:$] (we && (wa == symbolic_constant_a)) ) [->1] ) \n    )\n);"}
+{"name": "FVEval-NL2SVA-Human-77", "sva": "asrt_read_before_write: assert property (@(posedge clk) disable iff (tb_reset)\n    !( (re && (ra == symbolic_constant_a)) ##[0:$] (we && (wa == symbolic_constant_a) && $rose(addr_first_aw_seen)) )\n);"}
+{"name": "FVEval-NL2SVA-Human-78", "sva": "asrt_latency: assert property (@(posedge clk) disable iff (tb_reset)\n    (wr_latency > 0) && (re && (ra == symbolic_constant_a)) |-> (latency_cnt <= wr_latency)\n);"}
