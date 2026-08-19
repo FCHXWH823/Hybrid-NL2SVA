@@ -1,0 +1,283 @@
+{"name": "FVEval-NL2SVA-Machine-0", "sva": "assert property (@(posedge clk)\n    (sig_F && sig_H) || (sig_I == '1) || sig_B\n);"}
+{"name": "FVEval-NL2SVA-Machine-1", "sva": "assert property (@(posedge clk)\n    ( ( {4{(sig_C != (~|sig_D))}} == sig_A ) != (sig_J && sig_I) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-2", "sva": "assert property (@(posedge clk)\n    (sig_G && sig_C && sig_A) |-> ##5 !sig_I\n);"}
+{"name": "FVEval-NL2SVA-Machine-3", "sva": "assert property (@(posedge clk)\n    sig_C != (sig_A && sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-4", "sva": "assert property (@(posedge clk)\n    ((sig_H == sig_F) != (|sig_J))\n);"}
+{"name": "FVEval-NL2SVA-Machine-6", "sva": "assert property (@(posedge clk)\n    (sig_F != 5'd1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-7", "sva": "assert property (@(posedge clk)\n    sig_G |-> ##[5:9] ((sig_J != sig_E) != (sig_H != sig_B))\n);"}
+{"name": "FVEval-NL2SVA-Machine-8", "sva": "assert property (@(posedge clk)\n    ( ( {8{(^sig_A)}} ^ sig_F ) == sig_H )\n    |->\n    ( ( ( {8{(|sig_C)}} ^ sig_G ) == 8'hFF ) && ( (|sig_H) || (|sig_J) ) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-9", "sva": "assert property (@(posedge clk)\n    !sig_C |-> sig_F\n);"}
+{"name": "FVEval-NL2SVA-Machine-10", "sva": "assert property (@(posedge clk)\n    (sig_J == sig_E) || sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-11", "sva": "assert property (@(posedge clk)\n    ((|sig_G) && (|sig_J)) |-> ##2 ((sig_B == 7'b1111111) && ($countones(sig_G) % 2 == 1))\n);"}
+{"name": "FVEval-NL2SVA-Machine-12", "sva": "assert property (@(posedge clk)\n    ((sig_B < sig_A) || sig_E) |=> (sig_F == sig_A)\n);"}
+{"name": "FVEval-NL2SVA-Machine-13", "sva": "assert property (@(posedge clk)\n    sig_C |=> (sig_J && (sig_B == 4'b0000))\n);"}
+{"name": "FVEval-NL2SVA-Machine-14", "sva": "assert property (@(posedge clk)\n    sig_I != sig_G && sig_C != 4'd1\n);"}
+{"name": "FVEval-NL2SVA-Machine-15", "sva": "assert property (@(posedge clk)\n    sig_C |-> ##3 (sig_B != 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-16", "sva": "assert property (@(posedge clk)\n    (sig_I != {5{~|sig_C}})\n);"}
+{"name": "FVEval-NL2SVA-Machine-17", "sva": "assert property (@(posedge clk)\n    sig_J |-> s_eventually !sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-18", "sva": "assert property (@(posedge clk)\n    (sig_G != 8'd1) |-> ##4 (sig_J == 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-19", "sva": "assert property (@(posedge clk)\n    ((sig_A || ~sig_J) ^ sig_D) == 1'b1\n);"}
+{"name": "FVEval-NL2SVA-Machine-20", "sva": "assert property (@(posedge clk)\n    sig_G |-> s_eventually ( ( |(sig_C | sig_H) ) ^ ( |(sig_C ^ sig_I) ) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-21", "sva": "assert property (@(posedge clk)\n    (sig_C || !sig_D) |=> (sig_J != sig_E)\n);"}
+{"name": "FVEval-NL2SVA-Machine-22", "sva": "assert property (@(posedge clk)\n    (sig_C && (sig_F > sig_A)) |-> (sig_F != sig_E)\n);"}
+{"name": "FVEval-NL2SVA-Machine-24", "sva": "assert property (@(posedge clk)\n    sig_E && sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-25", "sva": "assert property (@(posedge clk)\n    sig_G || (sig_D && sig_H) || sig_A || sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-26", "sva": "assert property (@(posedge clk)\n    sig_C || ((sig_G != sig_D) ^ sig_E)\n);"}
+{"name": "FVEval-NL2SVA-Machine-27", "sva": "assert property (@(posedge clk)\n    sig_H && ((sig_I & sig_F) == sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-28", "sva": "assert property (@(posedge clk)\n    (sig_E && (sig_A != 6'b111111)) |-> (sig_A != sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-29", "sva": "assert property (@(posedge clk)\n    sig_D |=> sig_F\n);"}
+{"name": "FVEval-NL2SVA-Machine-30", "sva": "assert property (@(posedge clk)\n    sig_H |-> sig_A != 5'd1\n);"}
+{"name": "FVEval-NL2SVA-Machine-31", "sva": "assert property (@(posedge clk)\n    (sig_A != sig_E) && (sig_C == sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-32", "sva": "assert property (@(posedge clk)\n    ( (sig_F && (sig_A == 6'b0)) |-> s_eventually (sig_J == 6'b111111) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-33", "sva": "assert property (@(posedge clk)\n    ((sig_F != sig_A) ^ sig_B) |-> ##2 sig_D\n);"}
+{"name": "FVEval-NL2SVA-Machine-34", "sva": "assert property (@(posedge clk)\n    sig_C != (sig_I ^ (sig_A >= sig_F))\n);"}
+{"name": "FVEval-NL2SVA-Machine-35", "sva": "assert property (\n    @(posedge clk)\n    ((sig_E ^ sig_G) == (sig_A ^ sig_J))\n    |->\n    ##1 (|~sig_C && sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-36", "sva": "assert property (@(posedge clk)\n    (sig_F != (sig_H > sig_G)) |-> (sig_C != (sig_J ^ sig_E))\n);"}
+{"name": "FVEval-NL2SVA-Machine-37", "sva": "assert property (\n    @(posedge clk)\n    (sig_G || sig_E) |-> ##4 sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-38", "sva": "assert property (@(posedge clk)\n    sig_H |=> ((sig_F || sig_J) ^ sig_E)\n);"}
+{"name": "FVEval-NL2SVA-Machine-39", "sva": "assert property (@(posedge clk)\n    (sig_C != {7{&sig_I}}) |=> sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-40", "sva": "assert property (@(posedge clk)\n    ((sig_I && (sig_B ^ sig_H)) != (sig_A && (sig_F ^ sig_B)))\n);"}
+{"name": "FVEval-NL2SVA-Machine-41", "sva": "assert property (@(posedge clk)\n    (sig_G != ~sig_F) |-> s_eventually (sig_I < sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-42", "sva": "assert property (@(posedge clk)\n    sig_J != sig_D"}
+{"name": "FVEval-NL2SVA-Machine-43", "sva": "assert property (@(posedge clk)\n    (sig_B || sig_H) |-> ##[3:7] (sig_D && (sig_A != 8'hFF))\n);"}
+{"name": "FVEval-NL2SVA-Machine-44", "sva": "assert property (@(posedge clk)\n    $fell(sig_F) |=> sig_D\n);"}
+{"name": "FVEval-NL2SVA-Machine-45", "sva": "assert property (@(posedge clk)\n    !(sig_I && sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-46", "sva": "assert property (@(posedge clk)\n    (sig_I != 7'd1) |-> (sig_F || sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-48", "sva": "assert property (@(posedge clk)\n    ((^sig_J) || sig_H) |=> (sig_A != 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-49", "sva": "assert property (@(posedge clk)\n    (sig_E || sig_F) |-> (sig_J == 4'b1111)\n);"}
+{"name": "FVEval-NL2SVA-Machine-51", "sva": "assert property (@(posedge clk)\n    (sig_H && sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-52", "sva": "assert property (@(posedge clk)\n    ((sig_B || sig_F) && (|sig_I))\n);"}
+{"name": "FVEval-NL2SVA-Machine-53", "sva": "assert property (\n    @(posedge clk)\n    (sig_C && sig_I) |=> (sig_E != sig_I)\n);"}
+{"name": "FVEval-NL2SVA-Machine-55", "sva": "assert property (@(posedge clk)\n    ( (sig_D != 6'b0) && (sig_E < sig_H) ) |-> \n    ( (sig_B ^ sig_A) && (sig_D != sig_J) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-56", "sva": "assert property (@(posedge clk)\n    ((sig_D == sig_G) || (|sig_D)) |-> (sig_F |-> |sig_C)\n);"}
+{"name": "FVEval-NL2SVA-Machine-57", "sva": "assert property (@(posedge clk)\n    sig_F == (sig_I ^ sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-58", "sva": "assert property (@(posedge clk)\n    (&sig_H) == sig_F\n);"}
+{"name": "FVEval-NL2SVA-Machine-59", "sva": "assert property (@(posedge clk)\n    sig_J || sig_B || sig_I || sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-60", "sva": "assert property (@(posedge clk)\n    (sig_G != ~sig_J) |-> sig_D\n);"}
+{"name": "FVEval-NL2SVA-Machine-61", "sva": "assert property (@(posedge clk)\n    ( (sig_D || (^sig_H)) && sig_F )\n);"}
+{"name": "FVEval-NL2SVA-Machine-62", "sva": "assert property (@(posedge clk)\n    (sig_G ^ (sig_C | sig_I)) == {5{(sig_D == sig_F)}}\n);"}
+{"name": "FVEval-NL2SVA-Machine-63", "sva": "assert property (@(posedge clk)\n    sig_F || (sig_G != 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-64", "sva": "assert property (@(posedge clk)\n    ( (sig_I != 4'b0001) && (sig_A == 4'b0001) ) || ( (sig_I == 4'b0001) && (sig_A == 4'b0000) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-65", "sva": "assert property (@(posedge clk)\n    sig_J == sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-66", "sva": "assert property (@(posedge clk)\n    (sig_E != 1'b1) |-> ##2 (sig_I || sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-67", "sva": "assert property (@(posedge clk)\n    (sig_I || (sig_D && sig_I))\n);"}
+{"name": "FVEval-NL2SVA-Machine-68", "sva": "assert property (@(posedge clk)\n    ( (sig_B > sig_H) != (^ (sig_F ^ sig_J)) ) |-> ##5 ( (sig_B > 0) || (|sig_D) || sig_C )\n);"}
+{"name": "FVEval-NL2SVA-Machine-69", "sva": "assert property (@(posedge clk)\n    (( (sig_J & sig_B) ^ (sig_F ^ sig_B) ) |=> (sig_H != sig_D))\n);"}
+{"name": "FVEval-NL2SVA-Machine-70", "sva": "assert property (@(posedge clk)\n    (sig_H == $past(sig_H)) |-> (sig_D == 6'b111111)\n);"}
+{"name": "FVEval-NL2SVA-Machine-71", "sva": "assert property (\n    @(posedge clk)\n    (sig_G || sig_A) |-> ##2 (!sig_E && sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-72", "sva": "assert property (@(posedge clk)\n    sig_G |=> sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-73", "sva": "assert property (@(posedge clk)\n    (|sig_I) == (|sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-74", "sva": "assert property (@(posedge clk)\n    sig_D |-> s_eventually(sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-75", "sva": "assert property (@(posedge clk)\n    sig_I <= (sig_D ^ (sig_G | sig_H))\n);"}
+{"name": "FVEval-NL2SVA-Machine-76", "sva": "assert property (@(posedge clk)\n    ((!sig_F) && (sig_J <= sig_H)) || \n    (sig_F && (sig_J > sig_H))\n);"}
+{"name": "FVEval-NL2SVA-Machine-77", "sva": "assert property (@(posedge clk)\n    (sig_B && sig_C) |-> ##[1:4] sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-78", "sva": "assert property (@(posedge clk)\n    (sig_C && (sig_B || sig_I)) |-> ##5 (sig_G || sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-79", "sva": "assert property (@(posedge clk)\n    ( (sig_D && (sig_E != 8'd1)) |-> s_eventually (sig_H || sig_G) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-80", "sva": "assert property (@(posedge clk)\n    ((sig_E == sig_F) || (sig_H > sig_B)) |-> (sig_A && sig_E && sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-81", "sva": "assert property (\n    @(posedge clk)\n    sig_E |=> sig_A\n);"}
+{"name": "FVEval-NL2SVA-Machine-82", "sva": "assert property (@(posedge clk)\n    (sig_C | sig_E) != (sig_A | sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-83", "sva": "assert property (@(posedge clk)\n    (sig_D > sig_C) || !sig_E || sig_F || sig_I\n);"}
+{"name": "FVEval-NL2SVA-Machine-84", "sva": "assert property (@(posedge clk)\n    sig_G |=> sig_D\n);"}
+{"name": "FVEval-NL2SVA-Machine-85", "sva": "assert property (@(posedge clk)\n    sig_H |-> (sig_D || sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-86", "sva": "assert property (@(posedge clk)\n    ( (sig_A || (sig_H ~| sig_G) ) != sig_I\n);"}
+{"name": "FVEval-NL2SVA-Machine-87", "sva": "assert property (\n    @(posedge clk)\n    (sig_C == sig_H) |=> !sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-88", "sva": "assert property (@(posedge clk)\n    (sig_A <-> (sig_F != sig_D))\n);"}
+{"name": "FVEval-NL2SVA-Machine-89", "sva": "assert property (@(posedge clk)\n    sig_C == sig_A\n);"}
+{"name": "FVEval-NL2SVA-Machine-90", "sva": "assert property (@(posedge clk)\n    (sig_A && (sig_F || sig_E || sig_H))\n);"}
+{"name": "FVEval-NL2SVA-Machine-91", "sva": "assert property (@(posedge clk)\n    ((sig_F == 1'b1) && (sig_E != sig_F)) |=> (sig_A == 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-92", "sva": "assert property (@(posedge clk)\n    (sig_B != sig_H) |-> \n        ##3 (sig_F == 0) [*5]\n);"}
+{"name": "FVEval-NL2SVA-Machine-93", "sva": "assert property (@(posedge clk) not (sig_J < (sig_I & sig_G)));"}
+{"name": "FVEval-NL2SVA-Machine-94", "sva": "assert property (@(posedge clk)\n    ((sig_H < sig_A) != sig_G) |-> ((sig_C ^ (&sig_D)) ^ (sig_B | sig_J))\n);"}
+{"name": "FVEval-NL2SVA-Machine-95", "sva": "assert property (@(posedge clk)\n    ( (sig_I != 5'd1) != (~^sig_F) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-96", "sva": "assert property (@(posedge clk)\n    sig_C |-> ##2 sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-97", "sva": "assert property (\n    @(posedge clk)\n    (sig_F != sig_C) |=> !sig_B\n);"}
+{"name": "FVEval-NL2SVA-Machine-98", "sva": "assert property (@(posedge clk)\n    ((~sig_J) != {5{~(^sig_F)}}) |-> (sig_C ^ sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-99", "sva": "assert property ( @(posedge clk)\n    ( (sig_D != 7'd1) || !sig_A ) |-> ##[5:9] sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-100", "sva": "assert property (@(posedge clk)\n    ( ( (~|sig_J) ^ (~|sig_C) ) ^ sig_G ) |-> ##4 (sig_A && sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-101", "sva": "assert property (@(posedge clk)\n    (sig_J && (sig_D == sig_C)) |-> (sig_H || (|sig_D))\n);"}
+{"name": "FVEval-NL2SVA-Machine-102", "sva": "assert property (@(posedge clk)\n    (sig_G == 0) |-> ((sig_A == sig_G) != (sig_D && sig_G))\n);"}
+{"name": "FVEval-NL2SVA-Machine-103", "sva": "assert property (@(posedge clk)\n    ((sig_A | sig_D) == (sig_F | sig_H)) |=> (sig_C < sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-104", "sva": "assert property (@(posedge clk)\n    sig_G |=> sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-106", "sva": "assert property (@(posedge clk)\n    (sig_E && (sig_H || sig_F)) |-> ##3 sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-107", "sva": "assert property (@(posedge clk)\n    sig_G |=> (sig_B != 8'hFF)\n);"}
+{"name": "FVEval-NL2SVA-Machine-108", "sva": "assert property (@(posedge clk) (\n    ((sig_C && (sig_H != sig_E)) || (!sig_C && (sig_H == sig_E))) |=> (|sig_D)\n));"}
+{"name": "FVEval-NL2SVA-Machine-109", "sva": "assert property (@(posedge clk)\n    (sig_G <= sig_H) || (~^ sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-110", "sva": "assert property (@(posedge clk)\n    ((|sig_C) && sig_J) |=> (sig_F && (|sig_C))\n);"}
+{"name": "FVEval-NL2SVA-Machine-111", "sva": "assert property (@(posedge clk)\n    ( (sig_B == sig_H) && ( ( ~(|sig_C) ^ sig_A ) == 7'd1 ) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-112", "sva": "assert property (@(posedge clk)\n    ($past(sig_A) && !sig_A) |=> (sig_I != sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-113", "sva": "assert property (@(posedge clk)\n    (sig_D != 7'd1) |-> ##[5:8] ( (sig_H && sig_E) != ( (~sig_J) && sig_F ) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-114", "sva": "assert property (@(posedge clk)\n    (sig_J <= sig_I) |-> (sig_A != (sig_H != sig_J))\n);"}
+{"name": "FVEval-NL2SVA-Machine-115", "sva": "assert property (@(posedge clk)\n    (sig_E != sig_I)\n);"}
+{"name": "FVEval-NL2SVA-Machine-116", "sva": "assert property ( @(posedge clk)\n    ( ( (sig_I < sig_A) == (sig_H == 1'b0) ) ) |=> ( $past(sig_D) == 1'b1 && sig_D == 1'b0 )\n);"}
+{"name": "FVEval-NL2SVA-Machine-117", "sva": "assert property (@(posedge clk)\n    sig_J || (sig_E < sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-118", "sva": "assert property (@(posedge clk)\n    sig_D != sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-119", "sva": "assert property (@(posedge clk)\n    (sig_J || sig_E) || (sig_B && sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-120", "sva": "assert property (@(posedge clk)\n    ( (|sig_F) || (sig_E == sig_F) ) |-> ##2 (sig_E != 4'd1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-122", "sva": "assert property (@(posedge clk)\n    sig_E |-> (sig_H || sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-123", "sva": "assert property (@(posedge clk)\n    ((^sig_B) ^ (^sig_I)) == sig_F |-> (sig_J == $past(sig_J))\n);"}
+{"name": "FVEval-NL2SVA-Machine-124", "sva": "assert property (@(posedge clk)\n    sig_E != sig_J\n);"}
+{"name": "FVEval-NL2SVA-Machine-125", "sva": "assert property (@(posedge clk)\n    sig_J |-> ( (##5 ( (sig_E <= sig_I) != sig_F )) and\n                (##6 ( (sig_E <= sig_I) != sig_F )) and\n                (##7 ( (sig_E <= sig_I) != sig_F )) and\n                (##8 ( (sig_E <= sig_I) != sig_F )) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-126", "sva": "assert property (@(posedge clk)\n    sig_E |-> ##3 ( ( (~sig_I | sig_D) ^ (sig_H ^ {8{(|~sig_J)} }) ) == 8'd1 )\n);"}
+{"name": "FVEval-NL2SVA-Machine-127", "sva": "assert property (\n    @(posedge clk)\n    ( (sig_G != 4'b0001) || (sig_D == sig_E) )\n    |-> \n    s_eventually (sig_J != 4'b1111)\n);"}
+{"name": "FVEval-NL2SVA-Machine-128", "sva": "assert property (@(posedge clk)\n    (sig_E ^ sig_B) == sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-129", "sva": "assert property (@(posedge clk)\n    (sig_H > sig_B) |=> sig_D\n);"}
+{"name": "FVEval-NL2SVA-Machine-130", "sva": "assert property (@(posedge clk)\n    sig_J || (^sig_C) || sig_A\n);"}
+{"name": "FVEval-NL2SVA-Machine-131", "sva": "assert property (@(posedge clk)\n    (sig_F && (|sig_D)) |=> sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-132", "sva": "assert property (@(posedge clk)\n    (sig_G || sig_H) |-> ##[1:6] sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-133", "sva": "assert property (@(posedge clk)\n    (sig_B == 1'b0) <-> (sig_E != 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-134", "sva": "assert property (@(posedge clk)\n    sig_D || (sig_E && sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-135", "sva": "assert property (@(posedge clk)\n    ( (sig_A == ~sig_C) |=> (sig_J == $past(sig_A)) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-136", "sva": "assert property (@(posedge clk)\n    sig_B |=> sig_F\n);"}
+{"name": "FVEval-NL2SVA-Machine-138", "sva": "assert property (@(posedge clk)\n    (sig_I || sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-139", "sva": "assert property (@(posedge clk)\n    (sig_C && (sig_A != '1)) |=> (sig_G == sig_I)\n);"}
+{"name": "FVEval-NL2SVA-Machine-140", "sva": "assert property (@(posedge clk)\n    sig_D |=> (sig_E || (sig_J <= sig_B))\n);"}
+{"name": "FVEval-NL2SVA-Machine-141", "sva": "assert property (@(posedge clk)\n    ((sig_J == 4'b0000) || (sig_D == 4'b1111) || (sig_I && sig_B))\n);"}
+{"name": "FVEval-NL2SVA-Machine-142", "sva": "assert property (@(posedge clk)\n    (sig_D ^ sig_F) != 6'b000001\n);"}
+{"name": "FVEval-NL2SVA-Machine-143", "sva": "assert property (@(posedge clk)\n    sig_F && sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-144", "sva": "assert property (@(posedge clk)\n    ( (sig_C && (|sig_F)) != ( (sig_D != 5'd1) && sig_B ) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-145", "sva": "assert property (\n    @(posedge clk)\n    sig_D |-> ##5 sig_J\n);"}
+{"name": "FVEval-NL2SVA-Machine-146", "sva": "assert property (@(posedge clk)\n    (sig_A != sig_B) |=> (sig_H == $past(sig_A))\n);"}
+{"name": "FVEval-NL2SVA-Machine-147", "sva": "assert property (@(posedge clk)\n    sig_J != 1'b1\n);"}
+{"name": "FVEval-NL2SVA-Machine-148", "sva": "assert property (@(posedge clk) (sig_C ^ sig_H));"}
+{"name": "FVEval-NL2SVA-Machine-149", "sva": "assert property (@(posedge clk)\n    ((sig_G != 5'd1) || sig_H) |=> (!sig_D && (sig_J == 5'b0))\n);"}
+{"name": "FVEval-NL2SVA-Machine-150", "sva": "assert property (@(posedge clk)\n    sig_A |-> ( (##1 ( (sig_C == 8'hFF) || sig_H )) or\n                (##2 ( (sig_C == 8'hFF) || sig_H )) or\n                (##3 ( (sig_C == 8'hFF) || sig_H )) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-151", "sva": "assert property (@(posedge clk)\n    (|( {4{(sig_H != 4'b1)}} ^ (sig_F | sig_A) )) |=> (sig_F != 4'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-152", "sva": "assert property (@(posedge clk)\n    sig_C |-> ((sig_I != 1'b1) == sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-153", "sva": "assert property (@(posedge clk)\n    (sig_D != 8'b00000001)\n);"}
+{"name": "FVEval-NL2SVA-Machine-154", "sva": "assert property (@(posedge clk)\n    sig_B == ((sig_C != sig_B) ^ sig_E)\n);"}
+{"name": "FVEval-NL2SVA-Machine-155", "sva": "assert property (@(posedge clk)\n    sig_H == ((sig_F != 1'b1) ^ (( (sig_C ^ sig_I) != 5'b0 ) && ( (~sig_E) != sig_A )))\n);"}
+{"name": "FVEval-NL2SVA-Machine-156", "sva": "assert property (@(posedge clk) sig_H |-> s_eventually (sig_A != 1'b1));"}
+{"name": "FVEval-NL2SVA-Machine-157", "sva": "assert property (@(posedge clk)\n    (sig_H || sig_J) |-> ##4 (sig_I && (sig_C <= sig_E))\n);"}
+{"name": "FVEval-NL2SVA-Machine-158", "sva": "assert property ( @(posedge clk) ( !(&sig_G) ) |-> ##2 sig_H );"}
+{"name": "FVEval-NL2SVA-Machine-159", "sva": "assert property (@(posedge clk)\n    sig_G && !sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-160", "sva": "assert property (@(posedge clk)\n    (sig_I == 1'b0) |-> ##4 !( (|sig_E) && (~(|sig_A)) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-161", "sva": "assert property (@(posedge clk)\n    sig_H |-> ##5 (sig_D != 4'd1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-162", "sva": "assert property (@(posedge clk)\n    (sig_J != 8'd1) |-> ( (##4 sig_C) or (##5 sig_C) or (##6 sig_C) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-163", "sva": "assert property (@(posedge clk)\n    sig_B != sig_D\n);"}
+{"name": "FVEval-NL2SVA-Machine-164", "sva": "assert property (@(posedge clk)\n    !sig_D |-> (sig_E || (&sig_F))\n);"}
+{"name": "FVEval-NL2SVA-Machine-165", "sva": "assert property (@(posedge clk)\n    (sig_F && sig_E && sig_J) |-> (sig_C || sig_E)\n);"}
+{"name": "FVEval-NL2SVA-Machine-166", "sva": "assert property ( @(posedge clk)\n    ( (sig_A && sig_G) |-> \n      ( (##1 (sig_E || sig_G)) or\n        (##2 (sig_E || sig_G)) or\n        (##3 (sig_E || sig_G)) or\n        (##4 (sig_E || sig_G)) or\n        (##5 (sig_E || sig_G)) or\n        (##6 (sig_E || sig_G)) )\n    )\n);"}
+{"name": "FVEval-NL2SVA-Machine-167", "sva": "assert property (@(posedge clk)\n    (^{sig_C, sig_J, sig_H})\n);"}
+{"name": "FVEval-NL2SVA-Machine-168", "sva": "assert property (@(posedge clk)\n    (sig_E != 6'd1) |-> (sig_H == 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-169", "sva": "assert property (\n    @(posedge clk)\n    (sig_E && sig_J && sig_I) |=> sig_A\n);"}
+{"name": "FVEval-NL2SVA-Machine-170", "sva": "assert property (@(posedge clk)\n    (!sig_F && !sig_H && sig_I) |-> ##3 (^sig_C)\n);"}
+{"name": "FVEval-NL2SVA-Machine-171", "sva": "assert property (@(posedge clk)\n    (sig_E != sig_C) |-> s_eventually (sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-172", "sva": "assert property (@(posedge clk)\n    $rose(sig_F) |-> ##5 sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-173", "sva": "assert property (@(posedge clk)\n    sig_D != (sig_A ^ sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-174", "sva": "assert property (@(posedge clk)\n    ((sig_J == 4'b0) && (sig_C == 1'b0)) || (sig_A == 4'b0)\n);"}
+{"name": "FVEval-NL2SVA-Machine-175", "sva": "assert property (@(posedge clk)\n    (sig_G == (& sig_F)) |-> $past(sig_E, 4)\n);"}
+{"name": "FVEval-NL2SVA-Machine-177", "sva": "assert property (@(posedge clk)\n    (sig_E != 4'b1111) |-> (sig_J > ~sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-178", "sva": "assert property (@(posedge clk)\n    (sig_G == sig_I) |=> !sig_F\n);"}
+{"name": "FVEval-NL2SVA-Machine-179", "sva": "assert property (@(posedge clk)\n    sig_J != sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-180", "sva": "assert property (@(posedge clk)\n    (sig_A && sig_F) |-> sig_B\n);"}
+{"name": "FVEval-NL2SVA-Machine-181", "sva": "assert property (@(posedge clk)\n    sig_I |-> \n        (##4 sig_A) or\n        (##5 sig_A) or\n        (##6 sig_A) or\n        (##7 sig_A) or\n        (##8 sig_A) or\n        (##9 sig_A)\n);"}
+{"name": "FVEval-NL2SVA-Machine-182", "sva": "assert property (\n    @(posedge clk)\n    (sig_H == sig_D) |-> ##1 (sig_E && sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-183", "sva": "assert property (@(posedge clk)\n    sig_B || sig_F\n);"}
+{"name": "FVEval-NL2SVA-Machine-184", "sva": "assert property (@(posedge clk)\n    sig_H == (sig_G != 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-186", "sva": "assert property (@(posedge clk)\n    (sig_I && sig_E) != 1'b1\n);"}
+{"name": "FVEval-NL2SVA-Machine-187", "sva": "assert property (@(posedge clk)\n    (sig_F != sig_C) || (sig_F == 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-188", "sva": "assert property (@(posedge clk)\n    ( (sig_B || (sig_H != sig_A)) \n      |->\n      ##1 $fell(sig_E) \n    )\n);"}
+{"name": "FVEval-NL2SVA-Machine-189", "sva": "assert property (@(posedge clk)\n    sig_B |-> ##[4:8] sig_I\n);"}
+{"name": "FVEval-NL2SVA-Machine-190", "sva": "assert property (@(posedge clk)\n    (sig_E > sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-191", "sva": "assert property (@(posedge clk)\n    !$countones(sig_H) % 2\n);"}
+{"name": "FVEval-NL2SVA-Machine-192", "sva": "assert property (@(posedge clk)\n    sig_F |-> ##[4:6] sig_A\n);"}
+{"name": "FVEval-NL2SVA-Machine-193", "sva": "assert property (@(posedge clk)\n    (sig_A != sig_B) |=> ((|sig_A) && (|sig_F))\n);"}
+{"name": "FVEval-NL2SVA-Machine-194", "sva": "assert property (@(posedge clk)\n    (sig_E != sig_D) |=> (sig_I || !sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-195", "sva": "assert property (@(posedge clk)\n    (sig_C == 7'b1111111) |-> (!sig_J && (^sig_F))\n);"}
+{"name": "FVEval-NL2SVA-Machine-196", "sva": "assert property (@(posedge clk)\n    sig_F != (sig_H == sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-197", "sva": "assert property (@(posedge clk)\n    (sig_A == sig_C) |-> ( (##1 sig_D) or (##2 sig_D) or (##3 sig_D) or (##4 sig_D) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-199", "sva": "assert property (@(posedge clk)\n    ( (sig_A || sig_C) && (sig_I && sig_D) ) |-> ##2 (sig_F || sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-200", "sva": "assert property (@(posedge clk)\n    sig_B |=> sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-201", "sva": "assert property (\n    @(posedge clk)\n    (sig_A || sig_F) |=> ##[1:5] ((sig_H != sig_J) || sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-202", "sva": "assert property (@(posedge clk)\n    (sig_C == 4'b0) |-> ((sig_J == sig_H) or s_eventually (sig_E or sig_G))\n);"}
+{"name": "FVEval-NL2SVA-Machine-203", "sva": "assert property (@(posedge clk) ( (|sig_F) && ( (|sig_F) == ~(|sig_I) ) );"}
+{"name": "FVEval-NL2SVA-Machine-204", "sva": "assert property (@(posedge clk)\n    (sig_I != 4'b0001) |-> (sig_I != (sig_B | sig_E))\n);"}
+{"name": "FVEval-NL2SVA-Machine-205", "sva": "assert property (@(posedge clk)\n    (sig_A && sig_J) |-> ##5 (sig_F || sig_I)\n);"}
+{"name": "FVEval-NL2SVA-Machine-206", "sva": "assert property (@(posedge clk)\n    (sig_I <= sig_F) == ((|(sig_B ^ sig_I)) && sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-207", "sva": "assert property (@(posedge clk)\n    ((sig_I & sig_H) != sig_C) |-> (sig_H == 5'b11111)\n);"}
+{"name": "FVEval-NL2SVA-Machine-208", "sva": "assert property ( @(posedge clk)\n    (^sig_J) == 1'b1 |=> ( (sig_F != 8'd1) || (~sig_J != 8'd1) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-209", "sva": "assert property (@(posedge clk)\n    sig_F == sig_G\n);"}
+{"name": "FVEval-NL2SVA-Machine-210", "sva": "assert property (@(posedge clk)\n    (sig_H != 4'd1) || sig_C || sig_A\n);"}
+{"name": "FVEval-NL2SVA-Machine-211", "sva": "assert property (@(posedge clk)\n    sig_C || sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-212", "sva": "assert property (@(posedge clk)\n    sig_F |-> !( ( &sig_I ) >= sig_G )\n);"}
+{"name": "FVEval-NL2SVA-Machine-213", "sva": "assert property (@(posedge clk)\n    !sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-215", "sva": "assert property (@(posedge clk)\n    (sig_F != (sig_I && sig_G)) |=> (sig_B && sig_I)\n);"}
+{"name": "FVEval-NL2SVA-Machine-216", "sva": "assert property (@(posedge clk)\n    $changed(sig_H) |=> sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-217", "sva": "assert property (@(posedge clk)\n    ($stable(sig_B)) |=> (sig_D || sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-218", "sva": "assert property (@(posedge clk)\n    ( (|sig_D) || sig_H ) |-> ( ( (sig_D & (sig_B == 4'b0000)) != {4{sig_C}} )\n);"}
+{"name": "FVEval-NL2SVA-Machine-219", "sva": "assert property (@(posedge clk)\n    (sig_D != sig_A) |-> s_eventually (sig_G == 8'b0)\n);"}
+{"name": "FVEval-NL2SVA-Machine-220", "sva": "assert property (@(posedge clk)\n    (sig_B != 5'd1) |-> ((sig_B ^ sig_I) == sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-221", "sva": "assert property ( @(posedge clk)\n    ( sig_G == ( !sig_F || !sig_B ) )\n    |->\n    ( (##5 (sig_D && sig_F)) or (##6 (sig_D && sig_F)) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-222", "sva": "assert property (@(posedge clk)\n    (sig_I != sig_D) |-> ##5 (sig_J || (sig_D && sig_F))\n);"}
+{"name": "FVEval-NL2SVA-Machine-223", "sva": "assert property (@(posedge clk)\n    (sig_B > sig_I && sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-224", "sva": "assert property (@(posedge clk)\n    ( (|sig_A) || (| (~sig_C ^ {8{&sig_A}})) ) |=> (| (sig_H ^ sig_C))\n);"}
+{"name": "FVEval-NL2SVA-Machine-225", "sva": "assert property (@(posedge clk)\n    ( (sig_A ^ sig_D) != (sig_C | ( (^sig_J) & sig_H )) \n);"}
+{"name": "FVEval-NL2SVA-Machine-226 ", "sva": "assert property (@(posedge clk)\n    (sig_E != ~sig_J) != (^ (sig_H ^ {8{~(&sig_E)}}))\n);"}
+{"name": "FVEval-NL2SVA-Machine-227", "sva": "assert property (@(posedge clk)\n    (sig_E ^ sig_I) == ((sig_E ^ sig_F) ^ sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-228", "sva": "assert property (@(posedge clk)\n    ($countones(sig_D) == 0) |-> (sig_E || sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-230", "sva": "assert property (@(posedge clk)\n    (sig_C >= ~sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-231", "sva": "assert property (@(posedge clk)\n    sig_J |-> s_eventually sig_I\n);"}
+{"name": "FVEval-NL2SVA-Machine-232", "sva": "assert property (@(posedge clk)\n    (sig_F || sig_H || sig_J) |-> ##5 (sig_I == sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-233", "sva": "assert property (@(posedge clk)\n    ((sig_J ^ sig_A) < (sig_D ^ (~(|sig_H) ^ sig_G)))\n);"}
+{"name": "FVEval-NL2SVA-Machine-234", "sva": "assert property (@(posedge clk)\n    sig_G |-> ##5 sig_I\n);"}
+{"name": "FVEval-NL2SVA-Machine-235", "sva": "assert property (@(posedge clk)\n    ( (sig_J == 4'b0) && (sig_G == 1'b1) ) |-> ( (sig_D ^ ~sig_I) == 4'd1 )\n);"}
+{"name": "FVEval-NL2SVA-Machine-236", "sva": "assert property (@(posedge clk)\n    sig_C || sig_J\n);"}
+{"name": "FVEval-NL2SVA-Machine-237", "sva": "assert property (@(posedge clk)\n    sig_F && ((sig_I ^ sig_D) == ~(sig_J & sig_A))\n);"}
+{"name": "FVEval-NL2SVA-Machine-238", "sva": "assert property ( @(posedge clk)\n    ( (sig_A >= sig_B) && sig_D ) |-> s_eventually sig_E\n);"}
+{"name": "FVEval-NL2SVA-Machine-239", "sva": "assert property (@(posedge clk)\n    ( (sig_D != sig_G) || (~sig_F != sig_G) ) || \n    ( (^sig_F) && ($countones(sig_F) > sig_C) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-240", "sva": "assert property (@(posedge clk)\n    (|sig_J) == !(|sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-241", "sva": "assert property (@(posedge clk)\n    sig_F && (sig_J == ~sig_C)\n);"}
+{"name": "FVEval-NL2SVA-Machine-242", "sva": "assert property (@(posedge clk)\n    (sig_B == 4'b1111) |-> sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-243", "sva": "assert property (@(posedge clk)\n    sig_H || (sig_G != 4'd1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-244", "sva": "assert property (@(posedge clk)\n    sig_C || sig_I\n);"}
+{"name": "FVEval-NL2SVA-Machine-245", "sva": "assert property (@(posedge clk)\n    (sig_I || sig_D) |-> (sig_A != sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-246", "sva": "assert property (@(posedge clk)\n    sig_C && (sig_F > sig_A)\n);"}
+{"name": "FVEval-NL2SVA-Machine-247", "sva": "assert property (\n    @(posedge clk)\n    (sig_B || sig_H) |-> ##[4:6] (sig_F != sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-248", "sva": "assert property (@(posedge clk)\n       (sig_A && sig_B) != 1'b1\n   );"}
+{"name": "FVEval-NL2SVA-Machine-249", "sva": "assert property (@(posedge clk)\n    (|sig_I) |=> sig_J\n);"}
+{"name": "FVEval-NL2SVA-Machine-250", "sva": "assert property (@(posedge clk)\n    ( (sig_D == 1'b1) && (sig_G == 8'hFF) ) |-> ##4 (sig_J == 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-251", "sva": "assert property (@(posedge clk)\n    sig_I |-> (sig_J && (sig_H == sig_J))\n);"}
+{"name": "FVEval-NL2SVA-Machine-253", "sva": "assert property (\n    @(posedge clk) sig_G |-> ##4 sig_J\n);"}
+{"name": "FVEval-NL2SVA-Machine-255", "sva": "assert property (@(posedge clk)\n    ((sig_A == sig_E) && (sig_D == 1'b1)) |-> ##5 (sig_C == 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-256", "sva": "assert property (@(posedge clk)\n    (sig_B == 5'b00001) && sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-257", "sva": "assert property (@(posedge clk)\n    (sig_H && (sig_G != 1'b1))\n);"}
+{"name": "FVEval-NL2SVA-Machine-258", "sva": "assert property (@(posedge clk)\n    ((sig_J || sig_A) |-> $past(sig_I, 2, 1'b0))\n);"}
+{"name": "FVEval-NL2SVA-Machine-259", "sva": "assert property (@(posedge clk)\n    sig_H |=> (sig_F && sig_E)\n);"}
+{"name": "FVEval-NL2SVA-Machine-260", "sva": "assert property (@(posedge clk)\n    ( (sig_C ^ sig_F) <= (^sig_J) )\n);"}
+{"name": "FVEval-NL2SVA-Machine-261", "sva": "assert property (@(posedge clk)\n    !(sig_A && sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-262", "sva": "assert property (@(posedge clk)\n    (sig_B || (sig_G && sig_H))\n);"}
+{"name": "FVEval-NL2SVA-Machine-263", "sva": "assert property (@(posedge clk)\n    (sig_I || sig_H || sig_A)\n);"}
+{"name": "FVEval-NL2SVA-Machine-264", "sva": "assert property (@(posedge clk)\n    ( (sig_G != sig_D) && (sig_G != {4{~(^sig_B)}}) ) |-> (sig_C != 4'b1111)\n);"}
+{"name": "FVEval-NL2SVA-Machine-265", "sva": "assert property (@(posedge clk)\n    (sig_B != 8'd1) |-> (sig_G == 1'b0 || sig_A == sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-266", "sva": "assert property (@(posedge clk)\n    (sig_F) |-> ##2 (sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-267", "sva": "assert property (@(posedge clk)\n    (( (sig_J | sig_B) & sig_A ) != {3'b0, (sig_G >= sig_A)})\n);"}
+{"name": "FVEval-NL2SVA-Machine-268", "sva": "assert property (@(posedge clk)\n       sig_J |-> (##1 (sig_I == sig_G"}
+{"name": "FVEval-NL2SVA-Machine-270", "sva": "assert property (\n    @(posedge clk)\n    (sig_H != sig_D) |=> ((^sig_J) || sig_I)\n);"}
+{"name": "FVEval-NL2SVA-Machine-271", "sva": "assert property (@(posedge clk)\n    (sig_F && sig_I) != 1'b1\n);"}
+{"name": "FVEval-NL2SVA-Machine-272", "sva": "assert property (@(posedge clk)\n    (sig_I <= sig_D) || sig_A\n);"}
+{"name": "FVEval-NL2SVA-Machine-273", "sva": "assert property (@(posedge clk)\n    sig_J |-> ((sig_D == sig_B) == (sig_E != sig_C))\n);"}
+{"name": "FVEval-NL2SVA-Machine-274", "sva": "assert property (@(posedge clk)\n    sig_J == !(sig_E < sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-275", "sva": "assert property (@(posedge clk)\n    (sig_D == 7'd1) |-> (sig_F != 7'd1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-276", "sva": "assert property (@(posedge clk)\n    (sig_E != 4'd1) || (sig_D == sig_F)\n);"}
+{"name": "FVEval-NL2SVA-Machine-277", "sva": "assert property (@(posedge clk)\n    sig_J |-> ##3 sig_B\n);"}
+{"name": "FVEval-NL2SVA-Machine-278", "sva": "assert property (@(posedge clk)\n    (sig_F < ~sig_I) |-> ##1 (sig_J != sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-279", "sva": "assert property (@(posedge clk)\n    (! (sig_J && sig_E)) && (sig_A || sig_J)\n);"}
+{"name": "FVEval-NL2SVA-Machine-280", "sva": "assert property (@(posedge clk)\n    !sig_A |=> (!sig_G || sig_I)\n);"}
+{"name": "FVEval-NL2SVA-Machine-281", "sva": "assert property (@(posedge clk)\n    (sig_J ^ ~(&sig_A)) |-> (##[0:$] sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-282", "sva": "assert property (@(posedge clk)\n    sig_G || (sig_A == (sig_I || sig_J))\n);"}
+{"name": "FVEval-NL2SVA-Machine-283", "sva": "assert property (@(posedge clk)\n    (sig_I ^ sig_D) == {6{ (sig_G ^ sig_A != sig_F) }}\n);"}
+{"name": "FVEval-NL2SVA-Machine-284", "sva": "assert property (\n    @(posedge clk)\n    ( ( (sig_A & sig_J) < (sig_C | sig_A) ) \n      |-> \n      ##[4:9] (sig_C != sig_E)\n    )\n);"}
+{"name": "FVEval-NL2SVA-Machine-285", "sva": "assert property (@(posedge clk)\n    sig_F == (sig_H || (sig_E == 8'hFF))\n);"}
+{"name": "FVEval-NL2SVA-Machine-287", "sva": "assert property (@(posedge clk)\n    ~sig_A != 7'd1\n);"}
+{"name": "FVEval-NL2SVA-Machine-288", "sva": "assert property (@(posedge clk)\n    (sig_D && sig_C) |-> (sig_D && sig_B)\n);"}
+{"name": "FVEval-NL2SVA-Machine-289", "sva": "assert property (@(posedge clk)\n    sig_D |=> sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-290", "sva": "assert property (@(posedge clk)\n    sig_B |-> ##[3:7] sig_H\n);"}
+{"name": "FVEval-NL2SVA-Machine-291", "sva": "assert property (@(posedge clk)\n    (sig_J && (sig_F != |sig_C)) |-> ((sig_B != 5'b00001) != sig_G)\n);"}
+{"name": "FVEval-NL2SVA-Machine-292", "sva": "assert property (@(posedge clk)\n    (~(&sig_F)) != (sig_A ^ sig_H)\n);"}
+{"name": "FVEval-NL2SVA-Machine-293", "sva": "assert property (@(posedge clk)\n    sig_J |=> (sig_I || (sig_D == 8'b0))\n);"}
+{"name": "FVEval-NL2SVA-Machine-294", "sva": "assert property (@(posedge clk)\n    (sig_H || sig_I || (sig_E != ~sig_I)) |=> $rose(sig_D)\n);"}
+{"name": "FVEval-NL2SVA-Machine-295", "sva": "assert property (\n    @(posedge clk)\n    (sig_H != sig_I) |=> (sig_D == 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-296", "sva": "assert property (@(posedge clk)\n    ((sig_J < sig_F) && sig_I) |-> ~(^sig_C)\n);"}
+{"name": "FVEval-NL2SVA-Machine-297", "sva": "assert property (@(posedge clk)\n    ((sig_G < sig_A) || (sig_I <= sig_G)) && \n    (|sig_B) && \n    sig_C\n);"}
+{"name": "FVEval-NL2SVA-Machine-298", "sva": "assert property (@(posedge clk)\n    sig_F |-> ##5 (sig_D != 1'b1)\n);"}
+{"name": "FVEval-NL2SVA-Machine-299", "sva": "assert property (@(posedge clk)\n    (|sig_G) |-> ##3 (sig_B != sig_G)\n);"}

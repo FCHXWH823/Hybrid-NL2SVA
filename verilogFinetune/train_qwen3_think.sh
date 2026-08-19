@@ -56,6 +56,18 @@ CUTOFF_LEN="${CUTOFF_LEN:-16384}"
 MICRO_BSZ="${MICRO_BSZ:-1}"
 GRAD_ACCUM="${GRAD_ACCUM:-2}"
 
+# Checkpointing. --save_only_model is the important one: without it a full
+# fine-tune writes the whole ZeRO-3 optimizer state (fp32 moments + master
+# weights, ~13 bytes/param on top of the model) with every checkpoint. The
+# first 8B run did exactly that and produced 10 x 107GB = 1.1TB of output for
+# a 16GB model, against a 5TB scratch quota -- and 14B checkpoints would be
+# ~195GB each. Optimizer state is only needed to RESUME training; evaluating
+# or serving the model needs weights alone, which is what the final top-level
+# save already contains. Set SAVE_ONLY_MODEL=false if you specifically need
+# resumable checkpoints, and budget the disk for it.
+SAVE_STEPS="${SAVE_STEPS:-500}"
+SAVE_TOTAL_LIMIT="${SAVE_TOTAL_LIMIT:-2}"
+
 for f in "$DS_CONFIG_PATH" "${DATASET_DIR}/dataset_info.json" "${LLAMA_FACTORY}/src/train.py"; do
     [ -f "$f" ] || { echo "ERROR: required file not found: $f" >&2; exit 1; }
 done
@@ -91,7 +103,9 @@ torchrun \
     --lr_scheduler_type cosine \
     --logging_steps 1 \
     --cutoff_len "$CUTOFF_LEN" \
-    --save_steps 200 \
+    --save_steps "$SAVE_STEPS" \
+    --save_total_limit "$SAVE_TOTAL_LIMIT" \
+    --save_only_model true \
     --plot_loss \
     --num_train_epochs "$EPOCHS" \
     --report_to none \

@@ -6,7 +6,7 @@
 #SBATCH --time=04:00:00
 #SBATCH --mem=64GB
 #SBATCH --partition=cpu_short
-#SBATCH --job-name=qwen3_env_setup --account=torch_pr_67_tandon_advanced
+#SBATCH --job-name=qwen3_env_setup --account=torch_pr_67_general
 #SBATCH --mail-type=END
 #SBATCH --mail-user=wx2356@nyu.edu
 
