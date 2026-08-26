@@ -182,7 +182,7 @@ just mislabeled at the time, and have been renamed accordingly.
 | gpt-4o | machine | 99.6% (282/283) | 84.8% (240/283) | 94.7% (268/283) |
 | DeepSeek-V4-Flash (thinking) | human | 100.0% (73/73) | 86.3% (63/73) | 94.5% (69/73) |
 | DeepSeek-V4-Flash (thinking) | machine | 100.0% (283/283) | 92.9% (263/283) | 98.6% (279/283) |
-| gpt-5 | human | not yet run | — | — |
+| gpt-5 | human | 100.0% (73/73) | 82.2% (60/73) | 91.8% (67/73) |
 | gpt-5 | machine | not yet run | — | — |
 | deepseek-chat (V4-Flash, thinking off) | human | not yet run | — | — |
 | deepseek-chat (V4-Flash, thinking off) | machine | not yet run | — | — |
