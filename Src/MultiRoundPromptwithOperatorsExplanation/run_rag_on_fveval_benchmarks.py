@@ -1121,6 +1121,17 @@ def main():
     parser.add_argument("--output", default=None,
                          help="Defaults to Results/fveval_rag_outputs/{task}_{model_name}_{dynamicrag|baseline0shot}.csv")
     parser.add_argument("--config", default="Src/Config.yml")
+    parser.add_argument("--provider", default="openai", choices=["openai", "deepseek"],
+                         help="Which API the generation/grounding/SOR chat calls go through. "
+                              "'deepseek' uses config['DeepSeek_API_Key'] against the OpenAI-compatible "
+                              "https://api.deepseek.com endpoint (model defaults to 'deepseek-reasoner', "
+                              "i.e. R1). Embeddings for HybridRetrieval's code database always use "
+                              "config['Openai_API_Key'] regardless of --provider -- DeepSeek has no "
+                              "embeddings endpoint, and the persisted Chroma DB was built with OpenAI "
+                              "embeddings already.")
+    parser.add_argument("--model-name", default=None,
+                         help="Override the chat model name from config. Defaults to config['Model_Name'] "
+                              "for --provider openai, or 'deepseek-reasoner' for --provider deepseek.")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--workers", type=int, default=6,
                          help="Number of rows processed concurrently via a thread pool (the pipeline "
@@ -1220,7 +1231,15 @@ def main():
     with open(args.config) as file:
         config = yaml.safe_load(file)
     openai_api_key = config["Openai_API_Key"]
-    model_name = config["Model_Name"]
+
+    if args.provider == "deepseek":
+        llm_api_key = config["DeepSeek_API_Key"]
+        llm_base_url = "https://api.deepseek.com"
+        model_name = args.model_name or "deepseek-reasoner"
+    else:
+        llm_api_key = openai_api_key
+        llm_base_url = None
+        model_name = args.model_name or config["Model_Name"]
 
     if args.no_rag:
         default_suffix = "baseline0shot"
@@ -1233,7 +1252,7 @@ def main():
     output_path = args.output or f"Results/fveval_rag_outputs/{args.task}_{model_name}_{default_suffix}.csv"
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
-    client = OpenAI(api_key=openai_api_key)
+    client = OpenAI(api_key=llm_api_key, base_url=llm_base_url) if llm_base_url else OpenAI(api_key=llm_api_key)
 
     rich_operator_context = None
     step1_jg_sv_dir = None
@@ -1253,7 +1272,19 @@ def main():
         code_store = build_rag_system(config["PDF_Txt"], openai_api_key)
         code_retriever = code_store.as_retriever()
 
-        llm = ChatOpenAI(model=model_name, api_key=openai_api_key)
+        # langchain_openai's ChatOpenAI defaults to temperature=0.7 unless told
+        # otherwise -- OpenAI's reasoning-model family (gpt-5/o1/o3/o4*) rejects
+        # ANY non-default temperature outright (400 "Unsupported value: 'temperature'
+        # does not support 0.7 with this model. Only the default (1) value is
+        # supported."), which silently failed every single row of a gpt-5 run
+        # (confirmed live -- 0/73 rows written, every row's HybridRetrieval rag_chain
+        # call hit this and the row was treated as failed). Passing temperature=1
+        # explicitly for those models sidesteps it; every other model (gpt-4o,
+        # deepseek-reasoner/-chat, ...) keeps the prior default=0.7 behavior
+        # unchanged, since those never rejected it.
+        llm_extra_kwargs = {"temperature": 1} if model_name.startswith(("gpt-5", "o1", "o3", "o4")) else {}
+        llm = (ChatOpenAI(model=model_name, api_key=llm_api_key, base_url=llm_base_url, **llm_extra_kwargs) if llm_base_url
+               else ChatOpenAI(model=model_name, api_key=llm_api_key, **llm_extra_kwargs))
 
         system_prompt = (
             SYSTEM_PROMPT

@@ -1,0 +1,5489 @@
+experiment_id,task_id,model_name,response,ref_solution,design_rtl,output_tb,user_prompt,cot_response,signals_for_validity
+codev8b_machine,FVEval-NL2SVA-Machine-0,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_F && sig_H) || (&sig_I) || sig_B )
+);
+```","assert property(@(posedge clk)
+	(((sig_F && sig_H) || &sig_I) || sig_B)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input sig_H,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input sig_H,
+    input sig_I
+);
+endmodule","Both sig_F and sig_H are high, or all bits of sig_I are high, or sig_B is high.",,"sig_B,sig_F,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-1,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_C != (|~sig_D)) == sig_A[0] ) != (sig_J && sig_I)
+);
+```","assert property(@(posedge clk)
+	(((sig_C !== ~|sig_D) === sig_A) !== (sig_J && sig_I))
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_I,
+    input sig_J,
+    input [3:0] sig_A,
+    input [3:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_I,
+    input sig_J,
+    input [3:0] sig_A,
+    input [3:0] sig_D
+);
+endmodule","The value of sig_C not being equal to the bitwise NOR reduction of sig_D, checked for equality with sig_A, differs from the logical AND between sig_J and sig_I",,"sig_C,sig_I,sig_J,sig_A,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-2,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G && sig_C && sig_A) |-> ##5 !sig_I
+);
+```","assert property(@(posedge clk)
+	(sig_G && (sig_C && sig_A)) |-> ##5 !sig_I
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_G,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_G,
+    input sig_I
+);
+endmodule","If both sig_G and sig_C are high and sig_A is high, then sig_I must not be high 5 clock cycles later",,"sig_A,sig_C,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-3,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C != (sig_A && sig_H)
+);
+```","assert property (@(posedge clk)
+    sig_C != (sig_A && sig_H)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_H
+);
+endmodule",It is never the case that sig_C is equal to the logical AND of sig_A and sig_H,,"sig_A,sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-4,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H == sig_F) != sig_J
+);
+```","assert property(@(posedge clk)
+	((sig_H === sig_F) !== sig_J)
+);","module testbench (
+    input clk,
+    input [4:0] sig_F,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_F,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule",The value of (sig_H being equal to sig_F) must differ from the value of sig_J,,"sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-6,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F != 5'd1
+);
+```","assert property(@(posedge clk)
+	(sig_F !== 1'b1)
+);","module testbench (
+    input clk,
+    input [4:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_F
+);
+endmodule",sig_F must not be equal to 1'b1,,sig_F
+codev8b_machine,FVEval-NL2SVA-Machine-7,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G |-> ##[5:9] ((sig_J != sig_E) ^ (sig_H != sig_B))
+);
+```","assert property(@(posedge clk)
+	sig_G |-> ##[5:9] ((sig_J !== sig_E) !== (sig_H !== sig_B))
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [3:0] sig_B,
+    input [3:0] sig_E,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [3:0] sig_B,
+    input [3:0] sig_E,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","If sig_G is high, then between 5 to 9 clock cycles later, (sig_J being different from sig_E) must not be equivalent to (sig_H being different from sig_B)",,"sig_G,sig_B,sig_E,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-8,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_F ^ ^sig_A) == sig_H) |-> 
+    ((sig_G ^ |sig_C) == 1'b1 && (sig_H || sig_J))
+);
+```","assert property (@(posedge clk)
+    ((sig_F ^ (^sig_A)) == sig_H) |-> 
+    ((sig_G ^ (|sig_C) == 1'b1) && (sig_H == 1'b1 || sig_J == 1'b1))
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_A,
+    input [7:0] sig_C,
+    input [7:0] sig_F,
+    input [7:0] sig_H,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_A,
+    input [7:0] sig_C,
+    input [7:0] sig_F,
+    input [7:0] sig_H,
+    input [7:0] sig_J
+);
+endmodule","If the bitwise XOR of sig_F and the reduction XOR of sig_A equals sig_H, then the bitwise XOR of sig_G and the reduction OR of sig_C must be 1'b1, and either sig_H or sig_J must be 1'b1",,"sig_G,sig_A,sig_C,sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-9,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !sig_C |-> sig_F
+);
+```","assert property (@(posedge clk)
+    !sig_C |-> sig_F
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_F
+);
+endmodule","If sig_C is not 1, then sig_F should be true",,"sig_C,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-10,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J == sig_E) || sig_C
+);
+```","assert property(@(posedge clk)
+	((sig_J === sig_E) || sig_C)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_E,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_E,
+    input [7:0] sig_J
+);
+endmodule",Either sig_J is equal to sig_E or sig_C is true,,"sig_C,sig_E,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-11,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_G != 7'b0) && (sig_J != 7'b0)) |-> ##2 ((^sig_G) == 1'b1 && (sig_B == 7'b1111111))
+);
+```","assert property(@(posedge clk)
+	((sig_G != 1'b0) && (sig_J != 1'b0)) |-> ##2 (^sig_G === 1'b1) && (&sig_B)
+);","module testbench (
+    input clk,
+    input [6:0] sig_B,
+    input [6:0] sig_G,
+    input [6:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_B,
+    input [6:0] sig_G,
+    input [6:0] sig_J
+);
+endmodule","If sig_G and sig_J are both nonzero, then two clock cycles later, sig_G must have an odd number of 1s and all bits of sig_B must be 1",,"sig_B,sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-12,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_B < sig_A) || sig_E) |=> (sig_F == sig_A)
+);
+```","assert property(@(posedge clk)
+	((sig_B < sig_A) || sig_E) |-> ##1 (sig_F === sig_A)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_F
+);
+endmodule","If sig_B is less than sig_A or sig_E is true, then one cycle later, sig_F must be equal to sig_A",,"sig_E,sig_A,sig_B,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-13,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C |=> (sig_J && (sig_B == 4'b0))
+);
+```","assert property(@(posedge clk)
+	sig_C |=> (sig_J && ~|sig_B)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_J,
+    input [3:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_J,
+    input [3:0] sig_B
+);
+endmodule","If sig_C is high, then sig_J will be high and sig_B will have no '1' bits in the next cycle",,"sig_C,sig_J,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-14,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I != sig_G) && (sig_C != 4'd1)
+);
+```","assert property(@(posedge clk)
+	((sig_I !== sig_G) && (sig_C !== 1'b1))
+);","module testbench (
+    input clk,
+    input [3:0] sig_C,
+    input [3:0] sig_G,
+    input [3:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_C,
+    input [3:0] sig_G,
+    input [3:0] sig_I
+);
+endmodule",sig_I is not equal to sig_G and sig_C is not 1,,"sig_C,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-15,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C |-> ##3 (sig_B != 5'b00001)
+);
+```","assert property(@(posedge clk)
+	sig_C |-> ##3 (sig_B !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [4:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [4:0] sig_B
+);
+endmodule","If sig_C is true, then after three clock cycles, sig_B must not be equal to 1'b1",,"sig_C,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-16,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I != ~sig_C)
+);
+```","assert property(@(posedge clk)
+	(sig_I !== ~|sig_C)
+);","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_I
+);
+endmodule",sig_I is not equal to the bitwise NOR reduction of sig_C,,"sig_C,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-17,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J |-> ##[0:$] !sig_G
+);
+```","assert property(@(posedge clk)
+	sig_J |-> s_eventually(!sig_G)
+);","module testbench (
+    input clk,
+    input sig_G,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input sig_J
+);
+endmodule","If sig_J is true, then sig_G must eventually become false",,"sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-18,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G != 1'b1) |-> ##4 sig_J
+);
+```","assert property(@(posedge clk)
+	(sig_G !== 1'b1) |-> ##4 sig_J
+);","module testbench (
+    input clk,
+    input sig_J,
+    input [7:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_J,
+    input [7:0] sig_G
+);
+endmodule","If sig_G is not equal to 1'b1, then four cycles later, sig_J must be true",,"sig_J,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-19,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_A || !sig_J) ^ sig_D )
+);
+```","assert property (@(posedge clk)
+    ((sig_A | ~sig_J) ^ sig_D)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input sig_J
+);
+endmodule","sig_A or the bitwise negation of sig_J, exclusive OR sig_D, is true at each rising clock edge",,"sig_A,sig_D,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-20,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G |-> ##[0:$] ( |( (| (sig_C | sig_H)) ^ (sig_C ^ sig_I) ) )
+);
+```","assert property(@(posedge clk)
+	sig_G |-> s_eventually(((|sig_C || |sig_H) ^ (sig_C ^ sig_I)))
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_C,
+    input [7:0] sig_H,
+    input [7:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_C,
+    input [7:0] sig_H,
+    input [7:0] sig_I
+);
+endmodule","If sig_G is true, then eventually ((sig_C or sig_H has at least one '1' bit) XOR (sig_C XOR sig_I)) must be true",,"sig_G,sig_C,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-21,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_C || !sig_D) |=> (sig_J != sig_E))
+);
+```","assert property(@(posedge clk)
+	(sig_C || !sig_D) |=> (sig_J ^ sig_E)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_D,
+    input [4:0] sig_E,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_D,
+    input [4:0] sig_E,
+    input [4:0] sig_J
+);
+endmodule","If sig_C is high or sig_D is low, then sig_J must be different from sig_E in the next cycle",,"sig_C,sig_D,sig_E,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-22,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C && (sig_F > sig_A)) |-> (sig_F != sig_E)
+);
+```","assert property (@(posedge clk)
+    (sig_C && (sig_F > sig_A)) |-> (sig_F != sig_E)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_A,
+    input [7:0] sig_E,
+    input [7:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_A,
+    input [7:0] sig_E,
+    input [7:0] sig_F
+);
+endmodule","If sig_C is true and sig_F is greater than sig_A, then sig_F is not equal to sig_E",,"sig_C,sig_A,sig_E,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-24,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E && sig_G)
+);
+```","assert property(@(posedge clk)
+	(sig_G && sig_E)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule",sig_G and sig_E must both be high,,"sig_E,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-25,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G || (sig_D && sig_H) || (sig_A || sig_C)
+);
+```","assert property (@(posedge clk)
+    (sig_G || (sig_D && sig_H) || sig_A || sig_C)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_D,
+    input sig_G,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_D,
+    input sig_G,
+    input sig_H
+);
+endmodule","Either sig_G is high or both sig_D and sig_H are high, or either sig_A or sig_C is high",,"sig_A,sig_C,sig_D,sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-26,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C || ((sig_G != sig_D) ^ sig_E)
+);
+```","assert property (@(posedge clk)
+    sig_C || ((sig_G != sig_D) ^ sig_E)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_E,
+    input [6:0] sig_D,
+    input [6:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_E,
+    input [6:0] sig_D,
+    input [6:0] sig_G
+);
+endmodule",sig_C is high or the exclusive OR between (sig_G not equal to sig_D) and sig_E is true,,"sig_C,sig_E,sig_D,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-27,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H && (sig_I & sig_F) == sig_B
+);
+```","assert property(@(posedge clk)
+	(sig_H && ((sig_I & sig_F) === sig_B))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [7:0] sig_B,
+    input [7:0] sig_F,
+    input [7:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [7:0] sig_B,
+    input [7:0] sig_F,
+    input [7:0] sig_I
+);
+endmodule",sig_H is high and the bitwise AND of sig_I and sig_F is equal to sig_B,,"sig_H,sig_B,sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-28,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E && !(sig_A == 6'b111111)) |-> (sig_A != sig_F)
+);
+```","assert property (@(posedge clk)
+    (sig_E && !(&sig_A)) |-> (sig_A != sig_F)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input [5:0] sig_A,
+    input [5:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input [5:0] sig_A,
+    input [5:0] sig_F
+);
+endmodule","When sig_E is high and not all bits of sig_A are high, the value of sig_A must not be equal to sig_F",,"sig_E,sig_A,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-29,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_D |=> sig_F
+);
+```","assert property(@(posedge clk)
+	sig_D |=> sig_F
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F
+);
+endmodule","When sig_D is true, sig_F must be true on the following clock cycle",,"sig_D,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-30,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H |-> sig_A != 5'd1
+);
+```","assert property(@(posedge clk)
+	sig_H |-> (sig_A !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_A
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_A
+);
+endmodule","If sig_H is true, then sig_A must not be equal to 1",,"sig_H,sig_A"
+codev8b_machine,FVEval-NL2SVA-Machine-31,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A != sig_E) && (sig_C == sig_H)
+);
+```","assert property (@(posedge clk)
+    (sig_A != sig_E) && (sig_C == sig_H)
+);","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_C,
+    input [6:0] sig_E,
+    input [6:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_C,
+    input [6:0] sig_E,
+    input [6:0] sig_H
+);
+endmodule","sig_A and sig_E are different, and sig_C is equal to sig_H",,"sig_A,sig_C,sig_E,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-32,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F && (sig_A == 6'b0)) |->
+        (s_eventually (sig_J[0] == 1'b1)) and
+        (s_eventually (sig_J[1] == 1'b1)) and
+        (s_eventually (sig_J[2] == 1'b1)) and
+        (s_eventually (sig_J[3] == 1'b1)) and
+        (s_eventually (sig_J[4] == 1'b1)) and
+        (s_eventually (sig_J[5] == 1'b1))
+);
+```","assert property(@(posedge clk)
+	(sig_F && ~|sig_A) |-> ##[0:$] (&sig_J)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_A,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_A,
+    input [5:0] sig_J
+);
+endmodule","If sig_F is true and sig_A contains all '0' bits, then every bit of sig_J must eventually be '1'",,"sig_F,sig_A,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-33,codev8b,"```systemverilog
+assert property ( @(posedge clk)
+    ( ( (sig_F != sig_A) ^ sig_B ) |-> ##2 sig_D )
+);
+```","assert property(@(posedge clk)
+	((sig_F !== sig_A) !== sig_B) |-> ##2 sig_D
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input [5:0] sig_A,
+    input [5:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input [5:0] sig_A,
+    input [5:0] sig_F
+);
+endmodule","If the inequality between sig_F and sig_A is different from sig_B, then two clock cycles later sig_D will be true",,"sig_B,sig_D,sig_A,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-34,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C != (sig_I ^ (sig_A >= sig_F))
+);
+```","assert property(@(posedge clk)
+	(sig_C !== (sig_I ^ (sig_A >= sig_F)))
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_I,
+    input [4:0] sig_A,
+    input [4:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_I,
+    input [4:0] sig_A,
+    input [4:0] sig_F
+);
+endmodule",sig_C must not be the same as the value of sig_I XORed with whether sig_A is greater than or equal to sig_F,,"sig_C,sig_I,sig_A,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-35,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_E ^ sig_G) == (sig_A ^ sig_J)) 
+    |=>
+    ((sig_C != 5'b11111) && sig_F)
+);
+```","assert property(@(posedge clk)
+	((sig_E ^ sig_G) === (sig_A ^ sig_J)) |=> (~&sig_C && sig_F)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [4:0] sig_A,
+    input [4:0] sig_C,
+    input [4:0] sig_E,
+    input [4:0] sig_G,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [4:0] sig_A,
+    input [4:0] sig_C,
+    input [4:0] sig_E,
+    input [4:0] sig_G,
+    input [4:0] sig_J
+);
+endmodule","If the exclusive OR of sig_E and sig_G is equal to the exclusive OR of sig_A and sig_J, then sig_C should at least one '0' bit and sig_F be true in the next cycle",,"sig_F,sig_A,sig_C,sig_E,sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-36,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F != (sig_H > sig_G)) |-> (sig_C != (sig_J ^ sig_E))
+);
+```","assert property(@(posedge clk)
+	(sig_F != (sig_H > sig_G)) |-> always((sig_C !== (sig_J ^ sig_E)))
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_C,
+    input [5:0] sig_E,
+    input [5:0] sig_G,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_C,
+    input [5:0] sig_E,
+    input [5:0] sig_G,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","If sig_F is different from whether sig_H is greater than sig_G, then it must always be true that sig_C is not equal to the exclusive OR of sig_J and sig_E",,"sig_F,sig_C,sig_E,sig_G,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-37,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    (sig_E || sig_G) |-> ##4 sig_G
+);
+```","assert property(@(posedge clk)
+	(sig_G || sig_E) |-> ##4 sig_G
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule","If either sig_G or sig_E is true, then sig_G must be true after 4 clock cycles",,"sig_E,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-38,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H |=> ((sig_F || sig_J) ^ sig_E)
+);
+```","assert property(@(posedge clk)
+	sig_H |=> ((sig_F | sig_J) ^ sig_E)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H,
+    input sig_J
+);
+endmodule","If sig_H is true, then the logical XOR of (sig_F OR sig_J) with sig_E must be true in the next cycle",,"sig_E,sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-39,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    ((&sig_I) != (&sig_C)) |=> sig_G
+);
+```","assert property(@(posedge clk)
+	(sig_C !== &sig_I) |=> sig_G
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [6:0] sig_C,
+    input [6:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [6:0] sig_C,
+    input [6:0] sig_I
+);
+endmodule","If sig_C is not equal to the logical AND of all bits in sig_I, then sig_G must be true in the next clock cycle",,"sig_G,sig_C,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-40,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_I && (sig_B ^ sig_H)) != (sig_A && (sig_F ^ sig_B)))
+);
+```","assert property(@(posedge clk)
+	(((sig_B ^ sig_H) && sig_I) != ((sig_F ^ sig_B) && sig_A))
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input sig_F,
+    input sig_H,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input sig_F,
+    input sig_H,
+    input sig_I
+);
+endmodule","The results of the following two logical operations are different:
+1. sig_I is true, and exactly one of sig_B and sig_H is true.
+2. sig_A is true, and exactly one of sig_F and sig_B is true.",,"sig_A,sig_B,sig_F,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-41,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G != ~sig_F) |-> s_eventually (sig_I < sig_H)
+);
+```","assert property(@(posedge clk)
+	(sig_G !== ~sig_F) |-> s_eventually((sig_I < sig_H))
+);","module testbench (
+    input clk,
+    input [5:0] sig_F,
+    input [5:0] sig_G,
+    input [5:0] sig_H,
+    input [5:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_F,
+    input [5:0] sig_G,
+    input [5:0] sig_H,
+    input [5:0] sig_I
+);
+endmodule","If sig_G is not the complement of sig_F, then sig_I must eventually be less than sig_H",,"sig_F,sig_G,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-42,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J != sig_D) |-> ((sig_G & sig_I) != 1)
+);
+```","assert property (@(posedge clk)
+    (sig_J != sig_D) |-> ((sig_G & sig_I) != 1'b1)
+);","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_G,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_G,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule","When sig_J is not equal to sig_D, the bitwise AND of sig_G and sig_I should not equal 1",,"sig_D,sig_G,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-43,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B || sig_H) |-> (##[3:7]) (sig_D && (sig_A != 8'hFF))
+);
+```","assert property(@(posedge clk)
+	(sig_B || sig_H) |-> ##[3:7] (sig_D && ~|sig_A)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input sig_H,
+    input [7:0] sig_A
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input sig_H,
+    input [7:0] sig_A
+);
+endmodule","If sig_B is high or sig_H is true, then within 3 to 7 cycles, sig_D must be high and all bits of sig_A must not be high",,"sig_B,sig_D,sig_H,sig_A"
+codev8b_machine,FVEval-NL2SVA-Machine-44,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    $fell(sig_F) |=> (sig_D == 1'b1)
+);
+```","assert property (@(posedge clk)
+    $fell(sig_F) |=> sig_D
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F
+);
+endmodule","Whenever sig_F transitions from high to low, sig_D must be high on the next clock cycle",,"sig_D,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-45,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !(sig_I && sig_F)
+);
+```","assert property (@(posedge clk)
+    (sig_I && sig_F) != 1'b1
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_I
+);
+endmodule",Either sig_I or sig_F (or both) must be false,,"sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-46,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I != 1'b1) |-> (sig_F || sig_D)
+);
+```","assert property (@(posedge clk)
+    (sig_I != 1'b1) |-> (sig_F || sig_D)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F,
+    input [6:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F,
+    input [6:0] sig_I
+);
+endmodule","If sig_I is not equal to 1'b1, then sig_F or sig_D is high",,"sig_D,sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-48,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (^sig_J) || sig_H ) |=> (sig_A != 1'b1)
+);
+```","assert property(@(posedge clk)
+	(^sig_J || sig_H) |-> ##1 (sig_A !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [7:0] sig_A,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [7:0] sig_A,
+    input [7:0] sig_J
+);
+endmodule","If sig_J has an odd number of '1' bits or sig_H is true, then on the next cycle, sig_A must not be equal to 1'b1",,"sig_H,sig_A,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-49,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E || sig_F) |-> (sig_J == 4'b1111)
+);
+```","assert property(@(posedge clk)
+	(sig_E || sig_F) |-> always((&sig_J === 1'b1))
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input [3:0] sig_J
+);
+endmodule","If either sig_E or sig_F is high, sig_J must always contain all '1' bits",,"sig_E,sig_F,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-51,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H && sig_B)
+);
+```","assert property(@(posedge clk)
+	always(sig_H && sig_B)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_H
+);
+endmodule",sig_H and sig_B must always be high,,"sig_B,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-52,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_B || sig_F) && (|sig_I))
+);
+```","assert property(@(posedge clk)
+	((sig_B || sig_F) && |sig_I)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input [3:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input [3:0] sig_I
+);
+endmodule",sig_B or sig_F is high and sig_I contains at least one '1' bit,,"sig_B,sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-53,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C && sig_I) |=> (sig_E != sig_I)
+);
+```","assert property(@(posedge clk)
+	(sig_C && sig_I) |-> ##1 (sig_E ^ sig_I)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_E,
+    input [7:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_E,
+    input [7:0] sig_I
+);
+endmodule","If sig_C and sig_I are both high, then one cycle later, sig_E and sig_I will have different values",,"sig_C,sig_E,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-55,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D && (sig_E < sig_H))
+    |->
+    ((sig_B ^ sig_A) && (sig_D != sig_J))
+);
+```","assert property (@(posedge clk)
+    (sig_D && (sig_E < sig_H)) |-> ((sig_B ^ sig_A) && (sig_D != sig_J))
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input [5:0] sig_D,
+    input [5:0] sig_E,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input [5:0] sig_D,
+    input [5:0] sig_E,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","Whenever sig_D is true and sig_E is less than sig_H, the exclusive OR of sig_B and sig_A must be true and sig_D must not be equal to sig_J",,"sig_A,sig_B,sig_D,sig_E,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-56,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( ( (sig_D == sig_G) || (|sig_D) ) |-> ( (|sig_C) || (sig_F == 0) ) )
+);
+```","assert property(@(posedge clk)
+	((sig_D === sig_G) || sig_D) |-> (sig_F !== 1'b1) until (|sig_C)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [7:0] sig_C,
+    input [7:0] sig_D,
+    input [7:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [7:0] sig_C,
+    input [7:0] sig_D,
+    input [7:0] sig_G
+);
+endmodule","If sig_D is equal to sig_G, or sig_D is true, then sig_F should not be high until at least one bit of sig_C is high",,"sig_F,sig_C,sig_D,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-57,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F == (sig_I ^ sig_B)
+);
+```","assert property(@(posedge clk)
+	(sig_F === (sig_I ^ sig_B))
+);","module testbench (
+    input clk,
+    input [5:0] sig_B,
+    input [5:0] sig_F,
+    input [5:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_B,
+    input [5:0] sig_F,
+    input [5:0] sig_I
+);
+endmodule",sig_F must always equal the bitwise XOR of sig_I and sig_B,,"sig_B,sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-58,codev8b,"```systemverilog
+assert property (@(posedge clk) (&sig_H) == sig_F);
+```","assert property(@(posedge clk)
+	(&sig_H === sig_F)
+);","module testbench (
+    input clk,
+    input [7:0] sig_F,
+    input [7:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_F,
+    input [7:0] sig_H
+);
+endmodule",The AND reduction of sig_H is equal to sig_F,,"sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-59,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J || sig_B || sig_I || sig_E
+);
+```","assert property(@(posedge clk)
+	((sig_J || (sig_B || sig_I)) || sig_E)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_E,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_E,
+    input sig_I,
+    input sig_J
+);
+endmodule","sig_J, sig_B, sig_I, or sig_E is high",,"sig_B,sig_E,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-60,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G != ~sig_J) |-> (sig_D == 1'b1)
+);
+```","assert property (@(posedge clk)
+    (sig_G != ~sig_J) |-> sig_D
+);","module testbench (
+    input clk,
+    input sig_D,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule","If sig_G is not equal to the negation of sig_J, then sig_D must be true",,"sig_D,sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-61,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_D || ($countones(sig_H) % 2 == 1'b1)) && sig_F )
+);
+```","assert property(@(posedge clk)
+	((sig_D || ^sig_H) && sig_F)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F,
+    input [3:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F,
+    input [3:0] sig_H
+);
+endmodule","Either sig_D is high or sig_H has an odd number of bits set to '1', and sig_F is also high",,"sig_D,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-62,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_G ^ (sig_C | sig_I)) == {5{(sig_D == sig_F)}} )
+);
+```","assert property(@(posedge clk)
+	(((sig_C | sig_I) ^ sig_G) === (sig_D === sig_F))
+);","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_D,
+    input [4:0] sig_F,
+    input [4:0] sig_G,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_D,
+    input [4:0] sig_F,
+    input [4:0] sig_G,
+    input [4:0] sig_I
+);
+endmodule",The bitwise-XOR of (sig_G and the bitwise-OR of sig_C and sig_I) must be equal to whether sig_D is equal to sig_F,,"sig_C,sig_D,sig_F,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-63,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F || (sig_G != 1'b1)
+);
+```","assert property(@(posedge clk)
+	(sig_F || (sig_G !== 1'b1))
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_G
+);
+endmodule","sig_F must be true, or sig_G must not be equal to 1'b1",,"sig_F,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-64,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_A == 4'b1) && (sig_I != 4'b1) ) || ( (sig_A == 4'b0) && (sig_I == 4'b1) )
+);
+```","assert property (@(posedge clk)
+    ( (sig_I != 1'b1) && (sig_A == 1'b1) ) || ( (sig_I == 1'b1) && (sig_A == 1'b0) )
+);","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_I
+);
+endmodule","sig_I is not 1 and sig_A is 1, or sig_I is 1 and sig_A is 0",,"sig_A,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-65,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J == sig_C
+);
+```","assert property(@(posedge clk)
+	(sig_J === sig_C)
+);","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_J
+);
+endmodule",sig_J must be equal sig_C,,"sig_C,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-66,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E != 1'b1) |-> ##2 (sig_I || sig_G)
+);
+```","assert property(@(posedge clk)
+	(sig_E !== 1'b1) |-> ##2 (sig_I || sig_G)
+);","module testbench (
+    input clk,
+    input sig_G,
+    input sig_I,
+    input [3:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input sig_I,
+    input [3:0] sig_E
+);
+endmodule","If sig_E is not equal to 1'b1, then two cycles later, either sig_I or sig_G must be true",,"sig_G,sig_I,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-67,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_I || (sig_D && sig_I)
+);
+```","assert property(@(posedge clk)
+	(sig_I || (sig_D && sig_I))
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_I
+);
+endmodule",Either sig_I is true or both sig_D and sig_I are true,,"sig_D,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-68,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( ( (sig_B > sig_H) != (^ (sig_F ^ sig_J)) ) |-> ##5 ( (sig_B != 0) || (|sig_D) || sig_C )
+);
+```","assert property(@(posedge clk)
+	((sig_B > sig_H) !== (sig_F ^ sig_J)) |-> ##5 ((sig_B > 0) || (|sig_D) || sig_C)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [5:0] sig_B,
+    input [5:0] sig_D,
+    input [5:0] sig_F,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [5:0] sig_B,
+    input [5:0] sig_D,
+    input [5:0] sig_F,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","If the comparison of sig_B being greater than sig_H is different from the XOR of sig_F and sig_J, then after 5 cycles, either sig_B is greater than zero or sig_D must contain at least one '1' bit or sig_C must be true",,"sig_C,sig_B,sig_D,sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-69,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    ( ( (sig_J & sig_B) != (sig_F ^ sig_B) ) |-> ##1 (sig_H != sig_D) )
+);
+```","assert property(@(posedge clk)
+	((sig_J & sig_B) ^ (sig_F ^ sig_B)) |=> (sig_H != sig_D)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input sig_J,
+    input [6:0] sig_D,
+    input [6:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input sig_J,
+    input [6:0] sig_D,
+    input [6:0] sig_H
+);
+endmodule","If (the bitwise AND of sig_J and sig_B) XORed with (the XOR of sig_F and sig_B), then sig_H is different from sig_D in the next cycle",,"sig_B,sig_F,sig_J,sig_D,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-70,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ($past(sig_H) == sig_H) |-> (sig_D == 6'b111111)
+);
+```","assert property(@(posedge clk)
+	$stable(sig_H) |-> &sig_D
+);","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_H
+);
+endmodule","If sig_H remains unchanged, then all bits of sig_D must be high",,"sig_D,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-71,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G || sig_A) |-> ##2 (!sig_E && sig_D)
+);
+```","assert property(@(posedge clk)
+	(sig_G || sig_A) |-> ##2 (!sig_E && sig_D)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input sig_E,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input sig_E,
+    input sig_G
+);
+endmodule","If either sig_G or sig_A is true, then after exactly two clock cycles, sig_E will be false and sig_D will be true",,"sig_A,sig_D,sig_E,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-72,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G |-> ##1 sig_H
+);
+```","assert property(@(posedge clk)
+	sig_G |=> sig_H
+);","module testbench (
+    input clk,
+    input sig_G,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input sig_H
+);
+endmodule","Whenever sig_G is true, sig_H must be true on the next cycle",,"sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-73,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (|sig_I) == (|sig_G)
+);
+```","assert property(@(posedge clk)
+	(|sig_I === |sig_G)
+);","module testbench (
+    input clk,
+    input [5:0] sig_G,
+    input [5:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_G,
+    input [5:0] sig_I
+);
+endmodule",The bitwise OR reduction of sig_I must be equal to the bitwise OR reduction of sig_G,,"sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-74,codev8b,"```systemverilog
+assert property ( @(posedge clk)
+    sig_D |-> ##[0:$] sig_F
+);
+```","assert property(@(posedge clk)
+	sig_D |-> s_eventually(sig_F)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_F
+);
+endmodule","If sig_D is high, then sig_F must eventually become true",,"sig_D,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-75,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I <= (sig_D ^ (sig_G | sig_H)))
+);
+```","assert property (@(posedge clk)
+    sig_I <= (sig_D ^ (sig_G | sig_H))
+);","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_G,
+    input [5:0] sig_H,
+    input [5:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_G,
+    input [5:0] sig_H,
+    input [5:0] sig_I
+);
+endmodule",sig_I must be less than or equal to the result of a bitwise XOR operation between sig_D and the bitwise OR of sig_G and sig_H,,"sig_D,sig_G,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-76,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (!sig_F && (sig_J <= sig_H)) || (sig_F && (sig_J > sig_H))
+);
+```","assert property (@(posedge clk)
+    ( (sig_F != 1'b1) && (sig_J <= sig_H) ) || ( (sig_F == 1'b1) && (sig_J > sig_H) )
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","sig_F is not 1 and sig_J is less than or equal to sig_H, or sig_F is 1 and sig_J is greater than sig_H",,"sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-77,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_B && sig_C) |-> ##[1:4] sig_H )
+);
+```","assert property(@(posedge clk)
+	(sig_B && sig_C) |-> ##[1:4] sig_H
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_H
+);
+endmodule","If sig_B and sig_C are both high, then sig_H must be high within 1 to 4 clock cycles",,"sig_B,sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-78,codev8b,"```systemverilog
+assert property (@(posedge clk)
+        (sig_A && sig_B) != 1'b1
+   );
+```","assert property(@(posedge clk)
+	(sig_C && (sig_B || sig_I)) |-> ##5 (sig_G || sig_J)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_G,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_G,
+    input sig_I,
+    input sig_J
+);
+endmodule","If sig_C is high and either sig_B or sig_I is high, then after 5 clock cycles, either sig_G or sig_J will be high",,"sig_B,sig_C,sig_G,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-79,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D && (sig_E != 8'd1)) |-> s_eventually (sig_H || sig_G)
+);
+```","assert property (@(posedge clk)
+    ( (sig_D && sig_E != 1'b1) |-> ##[0:$] (sig_H || sig_G) )
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G,
+    input sig_H,
+    input [7:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G,
+    input sig_H,
+    input [7:0] sig_E
+);
+endmodule","If sig_D is high and sig_E is not equal to 1, then either sig_H or sig_G must eventually be high",,"sig_D,sig_G,sig_H,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-80,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_E == sig_F) || (sig_H > sig_B)) |-> (sig_A && sig_E && sig_D)
+);
+```","assert property (@(posedge clk)
+    ( (sig_E == sig_F) || (sig_H > sig_B) ) |-> (sig_A && sig_E && sig_D)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input [4:0] sig_B,
+    input [4:0] sig_E,
+    input [4:0] sig_F,
+    input [4:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input [4:0] sig_B,
+    input [4:0] sig_E,
+    input [4:0] sig_F,
+    input [4:0] sig_H
+);
+endmodule","When sig_E equals sig_F or sig_H is greater than sig_B, both sig_A and sig_E are high along with sig_D being high",,"sig_A,sig_D,sig_B,sig_E,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-81,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_E |=> sig_A
+);
+```","assert property(@(posedge clk)
+	sig_E |-> ##1 sig_A
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E
+);
+endmodule","If sig_E is true, then one cycle later sig_A must be true",,"sig_A,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-82,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_C | sig_E) != (sig_A | sig_D))
+);
+```","assert property(@(posedge clk)
+	(sig_C | sig_E) !== (sig_D | sig_A)
+);","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_C,
+    input [6:0] sig_D,
+    input [6:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_C,
+    input [6:0] sig_D,
+    input [6:0] sig_E
+);
+endmodule",(Bitwise OR of sig_C and sig_E) must not be equivalent to (bitwise OR of sig_A and sig_D),,"sig_A,sig_C,sig_D,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-83,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D > sig_C) || !sig_E || sig_F || sig_I
+);
+```","assert property(@(posedge clk)
+	((sig_D > sig_C) || ((~sig_E || sig_F) || sig_I))
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_I,
+    input [6:0] sig_C,
+    input [6:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_I,
+    input [6:0] sig_C,
+    input [6:0] sig_D
+);
+endmodule","sig_D is greater than sig_C or sig_E is low or sig_F is high, or sig_I is high",,"sig_E,sig_F,sig_I,sig_C,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-84,codev8b,"```systemverilog
+assert property (
+    @(posedge clk) 
+    sig_G |=> sig_D
+);
+```","assert property(@(posedge clk)
+	sig_G |-> ##1 sig_D
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G
+);
+endmodule","If sig_G is high, then sig_D must be high on the next cycle",,"sig_D,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-85,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H |-> (sig_D || sig_G)
+);
+```","assert property(@(posedge clk)
+	sig_H |-> (sig_D || sig_G)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G,
+    input sig_H
+);
+endmodule","If sig_H is high, then either sig_D or sig_G must be true",,"sig_D,sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-86,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( {5{sig_A}} | ~(sig_H | sig_G) ) != {5{sig_I}}
+);
+```","assert property(@(posedge clk)
+	( sig_A || (~(sig_H | sig_G)) ) !== sig_I
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_I,
+    input [4:0] sig_G,
+    input [4:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_I,
+    input [4:0] sig_G,
+    input [4:0] sig_H
+);
+endmodule",(Either sig_A is true or sig_H bitwise NOR'd with sig_G) must not be exactly equal to sig_I,,"sig_A,sig_I,sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-87,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C == sig_H) |=> !sig_E
+);
+```","assert property(@(posedge clk)
+	(sig_C === sig_H) |=> (sig_E !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input [5:0] sig_C,
+    input [5:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input [5:0] sig_C,
+    input [5:0] sig_H
+);
+endmodule","If sig_C is equal to sig_H, then sig_E must not be high at the next clock cycle",,"sig_E,sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-88,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A == (sig_F != sig_D))
+);
+```","assert property(@(posedge clk)
+	((sig_F !== sig_D) === sig_A)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input [3:0] sig_D,
+    input [3:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input [3:0] sig_D,
+    input [3:0] sig_F
+);
+endmodule",sig_A must be true if and only if sig_F is not equal to sig_D,,"sig_A,sig_D,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-89,codev8b,"```systemverilog
+assert property (@(posedge clk) (sig_C == sig_A));
+```","assert property(@(posedge clk)
+	(sig_C === sig_A)
+);","module testbench (
+    input clk,
+    input [4:0] sig_A,
+    input [4:0] sig_C
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_A,
+    input [4:0] sig_C
+);
+endmodule",sig_C must be equal to sig_A,,"sig_A,sig_C"
+codev8b_machine,FVEval-NL2SVA-Machine-90,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A && (sig_F || sig_E || sig_H))
+);
+```","assert property(@(posedge clk)
+	(((sig_F || sig_E) || sig_H) && sig_A)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","Either sig_F, sig_E, or sig_H is true, and sig_A is true",,"sig_A,sig_E,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-91,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F && (sig_E != sig_F)) |=> sig_A
+);
+```","assert property(@(posedge clk)
+	(sig_F && (sig_E ^ sig_F)) |=> sig_A
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_F
+);
+endmodule","If sig_F is high and sig_E differs from sig_F, then sig_A must be true in the next cycle",,"sig_A,sig_E,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-92,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B != sig_H) |-> 
+        ( (##3 (sig_F == 0)) and
+          (##4 (sig_F == 0)) and
+          (##5 (sig_F == 0)) and
+          (##6 (sig_F == 0)) and
+          (##7 (sig_F == 0)) )
+);
+```","assert property(@(posedge clk)
+	(sig_B !== sig_H) |-> ##[3:7] ~|sig_F
+);","module testbench (
+    input clk,
+    input [6:0] sig_B,
+    input [6:0] sig_F,
+    input [6:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_B,
+    input [6:0] sig_F,
+    input [6:0] sig_H
+);
+endmodule","If sig_B are not equal to sig_H, then within 3 to 7 clock cycles, none of the bits in sig_F will be '1'",,"sig_B,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-93,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !(sig_J < (sig_I & sig_G))
+);
+```","assert property(@(posedge clk)
+	((sig_J < (sig_I & sig_G)) !== 1'b1)
+);","module testbench (
+    input clk,
+    input [5:0] sig_G,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_G,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule",The condition where sig_J is less than the bitwise AND of sig_I and sig_G must not be true,,"sig_G,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-94,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( ( (sig_H < sig_A) != sig_G ) |-> ( ( (sig_C ^ (&sig_D)) ^ (sig_B | sig_J) ) === 1'b1 )
+);
+```","assert property(@(posedge clk)
+	((sig_H < sig_A) !== sig_G) |-> always(((sig_C ^ &sig_D) ^ (sig_B || sig_J)))
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_C,
+    input [3:0] sig_D,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_C,
+    input [3:0] sig_D,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","If the value of (sig_H being less than sig_A) is not equal to sig_G, then ((sig_C XOR the AND reduction of sig_D) XOR (sig_B OR sig_J)) must always be true",,"sig_G,sig_A,sig_B,sig_C,sig_D,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-95,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I != 5'b00001) != ~(^sig_F)
+);
+```","assert property(@(posedge clk)
+	((sig_I !== 1'b1) !== ~^sig_F)
+);","module testbench (
+    input clk,
+    input [4:0] sig_F,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_F,
+    input [4:0] sig_I
+);
+endmodule",sig_I not being equal to 1 must be different from the bitwise XNOR of all bits in sig_F,,"sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-96,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C |-> ##2 sig_H
+);
+```","assert property(@(posedge clk)
+	sig_C |-> ##2 sig_H
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H
+);
+endmodule","If sig_C is true, then after two clock cycles, sig_H must be true",,"sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-97,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F != sig_C) |=> (sig_B == 1'b0)
+);
+```","assert property(@(posedge clk)
+	(sig_F !== sig_C) |-> ##1 !sig_B
+);","module testbench (
+    input clk,
+    input sig_B,
+    input [5:0] sig_C,
+    input [5:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input [5:0] sig_C,
+    input [5:0] sig_F
+);
+endmodule","When sig_F is different from sig_C, sig_B will be low on the following clock cycle",,"sig_B,sig_C,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-98,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (~sig_J) != ~(^sig_F) ) |-> (sig_C ^ sig_G)
+);
+```","assert property(@(posedge clk)
+	(~sig_J !== (~^sig_F)) |-> (sig_C ^ sig_G)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_G,
+    input [4:0] sig_F,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_G,
+    input [4:0] sig_F,
+    input [4:0] sig_J
+);
+endmodule","If the bitwise negation of sig_J is not equal to the negated XOR reduction of sig_F, then the logical XOR of sig_C and sig_G must be true",,"sig_C,sig_G,sig_F,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-99,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    ( (sig_D != 7'd1) || (sig_A == 1'b0) ) |-> (##[5:9] sig_G)
+);
+```","assert property (@(posedge clk)
+    (sig_D !== 1'b1 || !sig_A) |-> ##[5:9] sig_G
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_G,
+    input [6:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_G,
+    input [6:0] sig_D
+);
+endmodule","If sig_D is not equal to 1 or sig_A is false, then within 5 to 9 cycles, sig_G must be true",,"sig_A,sig_G,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-100,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (~|sig_J) ^ (~|sig_C) ^ sig_G |-> ##4 (sig_A && sig_B) )
+);
+```","assert property(@(posedge clk)
+	((~|sig_J ^ ~|sig_C) ^ sig_G) |-> ##4 (sig_A && sig_B)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input [6:0] sig_C,
+    input [6:0] sig_G,
+    input [6:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input [6:0] sig_C,
+    input [6:0] sig_G,
+    input [6:0] sig_J
+);
+endmodule","If the bitwise NOR reduction of sig_J XORed with the bitwise NOR reduction of sig_C, XORed with sig_G, is true, then after exactly 4 clock cycles, both sig_A and sig_B will be high",,"sig_A,sig_B,sig_C,sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-101,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J && (sig_D == sig_C)) |-> (sig_H || (sig_D != 7'b0))
+);
+```","assert property(@(posedge clk)
+	(sig_J && (sig_D === sig_C)) |-> (sig_H || (sig_D != 1'b0))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input sig_J,
+    input [6:0] sig_C,
+    input [6:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input sig_J,
+    input [6:0] sig_C,
+    input [6:0] sig_D
+);
+endmodule","Whenever sig_J is high and sig_D is equal to sig_C, then sig_H is high or sig_D is nonzero",,"sig_H,sig_J,sig_C,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-102,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G == 1'b0) |-> ((sig_A == sig_G) != (sig_D & sig_G))
+);
+```","assert property (@(posedge clk)
+    !sig_G |-> ((sig_A == sig_G) != (sig_D & sig_G))
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_D,
+    input sig_G
+);
+endmodule","When sig_G is low, it must be true that (sig_A equals sig_G) is not equal to (sig_D and sig_G)",,"sig_A,sig_D,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-103,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_A | sig_D) == (sig_F | sig_H) ) |=> (sig_C < sig_J)
+);
+```","assert property(@(posedge clk)
+	((sig_A | sig_D) === (sig_F | sig_H)) |=> (sig_C < sig_J)
+);","module testbench (
+    input clk,
+    input [5:0] sig_A,
+    input [5:0] sig_C,
+    input [5:0] sig_D,
+    input [5:0] sig_F,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_A,
+    input [5:0] sig_C,
+    input [5:0] sig_D,
+    input [5:0] sig_F,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","When (sig_A bitwise-OR sig_D) has the same value as (sig_F bitwise-OR sig_H), sig_C must be less than sig_J in the subsequent cycle",,"sig_A,sig_C,sig_D,sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-104,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G |=> sig_E
+);
+```","assert property(@(posedge clk)
+	sig_G |=> sig_E
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule","If sig_G is true, then sig_E must be true in the next cycle",,"sig_E,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-106,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E && (sig_H || sig_F)) |-> ##3 sig_E
+);
+```","assert property(@(posedge clk)
+	(sig_E && (sig_H || sig_F)) |-> ##3 sig_E
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","If sig_E is high and either sig_H or sig_F is high, then sig_E will be high three clock cycles later",,"sig_E,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-107,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G |=> !(sig_B == 8'hFF)
+);
+```","assert property(@(posedge clk)
+	sig_G |=> ~&sig_B
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_B
+);
+endmodule","If sig_G is true, then sig_B must not contain all '1' bits in the next cycle",,"sig_G,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-108,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    ((sig_C && (sig_H != sig_E)) || (!sig_C && (sig_H == sig_E)))
+    |=> (|sig_D)
+);
+```","assert property(@(posedge clk)
+	(sig_C ^ (sig_H === sig_E)) |=> |sig_D
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_D,
+    input [7:0] sig_E,
+    input [7:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_D,
+    input [7:0] sig_E,
+    input [7:0] sig_H
+);
+endmodule","If sig_C is high and sig_H is different from sig_E, or if sig_C is low and sig_H is the same as sig_E, then sig_D must contain at least one '1' bit in the next cycle",,"sig_C,sig_D,sig_E,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-109,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G <= sig_H) || (~^sig_F)
+);
+```","assert property (@(posedge clk)
+    (sig_G <= sig_H) || (~^sig_F)
+);","module testbench (
+    input clk,
+    input [5:0] sig_F,
+    input [5:0] sig_G,
+    input [5:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_F,
+    input [5:0] sig_G,
+    input [5:0] sig_H
+);
+endmodule",sig_G is less than or equal to sig_H or the exclusive NOR reduction of sig_F is true,,"sig_F,sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-110,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((|sig_C) && ((|sig_C) ^ (~sig_J))) |=> ((sig_F == 1'b1) && (sig_C == 8'hFF))
+);
+```","assert property(@(posedge clk)
+	((|sig_C ^ !sig_J) && (sig_C != 1'b0)) |-> ##1 (sig_F && sig_C)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_J,
+    input [7:0] sig_C
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_J,
+    input [7:0] sig_C
+);
+endmodule","If (the bitwise OR reduction of sig_C) XOR (NOT sig_J) is true and sig_C is nonzero, then after one cycle, sig_F and sig_C will be both high",,"sig_F,sig_J,sig_C"
+codev8b_machine,FVEval-NL2SVA-Machine-111,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_B == sig_H) && ( ( (~(|sig_C)) ^ sig_A ) == 1 ) )
+);
+```","assert property(@(posedge clk)
+	((sig_B === sig_H) & (~|sig_C ^ sig_A)) == 1'b1
+);","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_B,
+    input [6:0] sig_C,
+    input [6:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_B,
+    input [6:0] sig_C,
+    input [6:0] sig_H
+);
+endmodule",(sig_B is equal to sig_H) AND ((the bitwise NOR reduction of sig_C) XOR sig_A) equals 1,,"sig_A,sig_B,sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-112,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    $fell(sig_A) |=> (sig_I != sig_B)
+);
+```","assert property(@(posedge clk)
+	$fell(sig_A) |=> (sig_I !== sig_B)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input [7:0] sig_B,
+    input [7:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input [7:0] sig_B,
+    input [7:0] sig_I
+);
+endmodule","If sig_A transitions from high to low, then sig_I must not equal sig_B in the next cycle",,"sig_A,sig_B,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-113,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D != 7'd1) |-> (##[5:8] ((sig_H & sig_E) != (!sig_J & sig_F)))
+);
+```","assert property(@(posedge clk)
+	(sig_D !== 1'b1) |-> ##[5:8] ((sig_H && sig_E) ^ (!sig_J && sig_F))
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H,
+    input sig_J,
+    input [6:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H,
+    input sig_J,
+    input [6:0] sig_D
+);
+endmodule","If sig_D is not equal to 1, then between 5 to 8 clock cycles later, the logic AND of sig_H and sig_E must differ from the logic AND of !sig_J and sig_F",,"sig_E,sig_F,sig_H,sig_J,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-114,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J <= sig_I) |-> (sig_A != (sig_H != sig_J))
+);
+```","assert property (@(posedge clk)
+    (sig_J <= sig_I) |-> (sig_A != (sig_H != sig_J))
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_H,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_H,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule","If sig_J is less than or equal to sig_I, then sig_A must be different from the result of (sig_H not equal to sig_J)",,"sig_A,sig_H,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-115,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_E != sig_I
+);
+```","assert property(@(posedge clk)
+	always(sig_E != sig_I)
+);","module testbench (
+    input clk,
+    input [4:0] sig_E,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_E,
+    input [4:0] sig_I
+);
+endmodule",The values of sig_E and sig_I must always be different,,"sig_E,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-116,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( ( (sig_I < sig_A) <-> !sig_H ) 
+        |=> 
+        ( $past(sig_D) == 1'b1 && sig_D == 1'b0 )
+    )
+);
+```","assert property(@(posedge clk)
+	((sig_I < sig_A) === !sig_H) |=> $fell(sig_D)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_H,
+    input [4:0] sig_A,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_H,
+    input [4:0] sig_A,
+    input [4:0] sig_I
+);
+endmodule","If (the value of sig_I is less than sig_A) is logically equivalent to sig_H being low, then sig_D will transition from high to low at the next clock cycle",,"sig_D,sig_H,sig_A,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-117,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J || (sig_E < sig_B)
+);
+```","assert property(@(posedge clk)
+	(sig_J || (sig_E < sig_B))
+);","module testbench (
+    input clk,
+    input sig_J,
+    input [7:0] sig_B,
+    input [7:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_J,
+    input [7:0] sig_B,
+    input [7:0] sig_E
+);
+endmodule",sig_J is high or sig_E is less than sig_B,,"sig_J,sig_B,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-118,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_D != sig_E
+);
+```","assert property(@(posedge clk)
+	(sig_D !== sig_E)
+);","module testbench (
+    input clk,
+    input [6:0] sig_D,
+    input [6:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_D,
+    input [6:0] sig_E
+);
+endmodule",sig_D is not equal to sig_E,,"sig_D,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-119,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J || sig_E || (sig_B && sig_F))
+);
+```","assert property(@(posedge clk)
+	((sig_J || sig_E) || (sig_B && sig_F))
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_E,
+    input sig_F,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_E,
+    input sig_F,
+    input sig_J
+);
+endmodule","Either sig_J or sig_E must be high, or both sig_B and sig_F must be high",,"sig_B,sig_E,sig_F,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-120,codev8b,"```systemverilog
+assert property ( @(posedge clk)
+    ( (sig_F != 4'b0) || (sig_E == sig_F) ) |-> ##2 (sig_E != 4'd1)
+);
+```","assert property(@(posedge clk)
+	((sig_F != 1'b0) || (sig_E === sig_F)) |-> ##2 (sig_E !== 1'b1)
+);","module testbench (
+    input clk,
+    input [3:0] sig_E,
+    input [3:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_E,
+    input [3:0] sig_F
+);
+endmodule","If sig_F is nonzero or sig_E is equal to sig_F, then two cycles later, sig_E must not be 1",,"sig_E,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-122,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_E |-> (sig_H || sig_F)
+);
+```","assert property(@(posedge clk)
+	sig_E |-> always((sig_H || sig_F))
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","If sig_E is true, then it must always be that either sig_H is high or sig_F is high",,"sig_E,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-123,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( ( (^sig_B) ^ (^sig_I) ) == sig_F ) |=> $stable(sig_J)
+);
+```","assert property(@(posedge clk)
+	( ( (^sig_B) ^ (^sig_I) ) == sig_F) |-> $stable(sig_J)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [4:0] sig_B,
+    input [4:0] sig_I,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [4:0] sig_B,
+    input [4:0] sig_I,
+    input [4:0] sig_J
+);
+endmodule","If (the parity of the '1's in sig_B XORed that of sig_I) equals to sig_F, then sig_J should remain stable",,"sig_F,sig_B,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-124,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_E != sig_J
+);
+```","assert property(@(posedge clk)
+	(sig_E ^ sig_J)
+);","module testbench (
+    input clk,
+    input [4:0] sig_E,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_E,
+    input [4:0] sig_J
+);
+endmodule",sig_E is different from the value of sig_J,,"sig_E,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-125,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J |-> ( ( ##5 ( (sig_E<=sig_I) != sig_F ) ) or
+               ( ##6 ( (sig_E<=sig_I) != sig_F ) ) or
+               ( ##7 ( (sig_E<=sig_I) != sig_F ) ) or
+               ( ##8 ( (sig_E<=sig_I) != sig_F ) ) )
+);
+```","assert property(@(posedge clk)
+	sig_J |-> ##[5:8] ((sig_E <= sig_I) !== sig_F)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_J,
+    input [6:0] sig_E,
+    input [6:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_J,
+    input [6:0] sig_E,
+    input [6:0] sig_I
+);
+endmodule","If sig_J is true, then between 5 to 8 cycles later, (the value of sig_E being less than or equal to sig_I) must differ from sig_F",,"sig_F,sig_J,sig_E,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-126,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_E |-> ##3 ( ((~sig_I | sig_D) ^ (sig_H ^ ~(|sig_J))) == 8'hFF )
+);
+```","assert property (@(posedge clk)
+    sig_E |-> ##3 ( ((~sig_I | sig_D) ^ (sig_H ^ ~(|sig_J))) == 1'b1 )
+);","module testbench (
+    input clk,
+    input sig_E,
+    input [7:0] sig_D,
+    input [7:0] sig_H,
+    input [7:0] sig_I,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input [7:0] sig_D,
+    input [7:0] sig_H,
+    input [7:0] sig_I,
+    input [7:0] sig_J
+);
+endmodule","If sig_E is true, then three cycles later, the bitwise-XOR of (bitwise-NOT sig_I bitwise-OR sig_D) and (sig_H bitwise-XOR the bitwise-NOR reduction of sig_J) must be 1",,"sig_E,sig_D,sig_H,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-127,codev8b,"```systemverilog
+assert property ( @(posedge clk)
+    ( (sig_G != 4'd1) || (sig_D == sig_E) ) |-> s_eventually (sig_J != 4'b1111) );
+```","assert property(@(posedge clk)
+	((sig_G !== 1'b1) || (sig_D === sig_E)) |-> ##[0:$] (~&sig_J)
+);","module testbench (
+    input clk,
+    input [3:0] sig_D,
+    input [3:0] sig_E,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_D,
+    input [3:0] sig_E,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule","If sig_G is not equal to 1 or sig_D is equal to sig_E, then sig_J must not be all '1' bits eventually",,"sig_D,sig_E,sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-128,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E ^ sig_B) == sig_C
+);
+```","assert property(@(posedge clk)
+	((sig_E ^ sig_B) === sig_C)
+);","module testbench (
+    input clk,
+    input [6:0] sig_B,
+    input [6:0] sig_C,
+    input [6:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_B,
+    input [6:0] sig_C,
+    input [6:0] sig_E
+);
+endmodule",The XOR of sig_E and sig_B must always equal sig_C,,"sig_B,sig_C,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-129,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H > sig_B) |=> (sig_D == 1'b1)
+);
+```","assert property(@(posedge clk)
+	(sig_H > sig_B) |=> sig_D
+);","module testbench (
+    input clk,
+    input sig_D,
+    input [6:0] sig_B,
+    input [6:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input [6:0] sig_B,
+    input [6:0] sig_H
+);
+endmodule","If sig_H is greater than sig_B, then sig_D must be true on the next clock cycle",,"sig_D,sig_B,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-130,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J || (^sig_C) || sig_A
+);
+```","assert property(@(posedge clk)
+	((sig_J || ^sig_C) || sig_A)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_J,
+    input [7:0] sig_C
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_J,
+    input [7:0] sig_C
+);
+endmodule","Either sig_J is true, or sig_C has an odd number of 1's, or sig_A is true",,"sig_A,sig_J,sig_C"
+codev8b_machine,FVEval-NL2SVA-Machine-131,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F && (|sig_D)) |=> sig_E
+);
+```","assert property (@(posedge clk)
+    (sig_F && (|sig_D)) |=> sig_E
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input [6:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input [6:0] sig_D
+);
+endmodule","If sig_F is true and sig_D has at least one '1' bit, then sig_E will be true in the next cycle",,"sig_E,sig_F,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-132,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G || sig_H) |-> ##[1:6] sig_C
+);
+```","assert property(@(posedge clk)
+	(sig_G || sig_H) |-> ##[1:6] sig_C
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_G,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_G,
+    input sig_H
+);
+endmodule","If either sig_G or sig_H is true, then sig_C must become true within 1 to 6 clock cycles",,"sig_C,sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-133,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E != 6'd1) <-> !sig_B
+);
+```","assert property (@(posedge clk)
+    (sig_E != 1'b1) == (!sig_B)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input [5:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input [5:0] sig_E
+);
+endmodule",sig_E must be not equal to 1'b1 if and only if sig_B is false,,"sig_B,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-134,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_D || (sig_E && sig_J)
+);
+```","assert property(@(posedge clk)
+	(sig_D || (sig_E && sig_J))
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input sig_J
+);
+endmodule",sig_D must be high or both sig_E and sig_J must be high,,"sig_D,sig_E,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-135,codev8b,"```systemverilog
+assert property ( @(posedge clk)
+    ( (sig_A == ~sig_C) |=> (sig_J == $past(sig_A)) )
+);
+```","assert property(@(posedge clk)
+	(sig_A === !sig_C) |=> (sig_J === sig_A)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_J
+);
+endmodule","If sig_A equals to the negation of sig_C, then sig_J must equal sig_A in the next cycle",,"sig_A,sig_C,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-136,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_B |=> sig_F
+);
+```","assert property(@(posedge clk)
+	sig_B |=> sig_F
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F
+);
+endmodule","If sig_B is true, then sig_F must be true in the following cycle",,"sig_B,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-138,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_I || sig_J
+);
+```","assert property (@(posedge clk)
+    (sig_I || sig_J)
+);","module testbench (
+    input clk,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_I,
+    input sig_J
+);
+endmodule",sig_I or sig_J is true,,"sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-139,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C && (|sig_A != 1'b1)) |=> (sig_G == sig_I)
+);
+```","assert property (@(posedge clk)
+    (sig_C && !(&sig_A)) |=> (sig_G == sig_I)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_G,
+    input sig_I,
+    input [5:0] sig_A
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_G,
+    input sig_I,
+    input [5:0] sig_A
+);
+endmodule","If sig_C is high and not all bits in sig_A are high, in the next cycle, sig_G and sig_I must either both be high or both not be high",,"sig_C,sig_G,sig_I,sig_A"
+codev8b_machine,FVEval-NL2SVA-Machine-140,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_D |=> (sig_E || (sig_J <= sig_B))
+);
+```","assert property(@(posedge clk)
+	sig_D |=> (sig_E || (sig_J <= sig_B))
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input [5:0] sig_B,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input [5:0] sig_B,
+    input [5:0] sig_J
+);
+endmodule","If sig_D is true, then either sig_E must be true or sig_J must be less than or equal to sig_B in the next cycle",,"sig_D,sig_E,sig_B,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-141,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J == 4'b0000) || (sig_D == 4'b1111) || (sig_I && sig_B)
+);
+```","assert property(@(posedge clk)
+	((~|sig_J || &sig_D) || (sig_I && sig_B))
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_I,
+    input [3:0] sig_D,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_I,
+    input [3:0] sig_D,
+    input [3:0] sig_J
+);
+endmodule","sig_J is all zeroes or sig_D is all ones, or both sig_I and sig_B are true",,"sig_B,sig_I,sig_D,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-142,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D ^ sig_F) != 1
+);
+```","assert property(@(posedge clk)
+	((sig_D ^ sig_F) !== 1'b1)
+);","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_D,
+    input [5:0] sig_F
+);
+endmodule",sig_D XOR sig_F must never be equal to 1,,"sig_D,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-143,codev8b,"```systemverilog
+assert property (@(posedge clk) (sig_F && sig_G));
+```","assert property(@(posedge clk)
+	(sig_F && sig_G)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_G
+);
+endmodule",sig_F and sig_G must be high,,"sig_F,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-144,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_C && (|sig_F)) != ((sig_D != 5'b11111) && sig_B))
+);
+```","assert property (@(posedge clk)
+    ( (sig_C && |sig_F) != ( (sig_D != 1) && sig_B ) )
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input [4:0] sig_D,
+    input [4:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input [4:0] sig_D,
+    input [4:0] sig_F
+);
+endmodule",(sig_C being true and sig_F containing at least one '1' bit) must be in opposite states to (sig_D not being 1 and sig_B being true),,"sig_B,sig_C,sig_D,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-145,codev8b,"```systemverilog
+assert property (@(posedge clk) $rose(sig_D) |-> ##5 sig_J);
+```","assert property(@(posedge clk)
+	sig_D |-> ##5 sig_J
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_J
+);
+endmodule","If sig_D becomes high, then after 5 clock cycles, sig_J must be high",,"sig_D,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-146,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A != sig_B) |=> (sig_H == sig_A)
+);
+```","assert property(@(posedge clk)
+	(sig_A != sig_B) |=> (sig_H === sig_A)
+);","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_H
+);
+endmodule","If sig_A is different from sig_B, then sig_H must be equal to sig_A in the next cycle",,"sig_A,sig_B,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-147,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J != 1'b1
+);
+```","assert property(@(posedge clk)
+	(sig_J !== 1'b1)
+);","module testbench (
+    input clk,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_J
+);
+endmodule", `sig_J` is not equal to 1'b1,,sig_J
+codev8b_machine,FVEval-NL2SVA-Machine-148,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C ^ sig_H
+);
+```","assert property(@(posedge clk)
+	(sig_C ^ sig_H)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H
+);
+endmodule","Either sig_C or sig_H is high, but not both",,"sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-149,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_G != 5'd1) || sig_H) |-> ##1 (sig_D == 1'b0 && sig_J == 5'b0)
+);
+```","assert property(@(posedge clk)
+	((sig_G !== 1'b1) || sig_H) |=> (!sig_D && ~|sig_J)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_H,
+    input sig_J,
+    input [4:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_H,
+    input sig_J,
+    input [4:0] sig_G
+);
+endmodule","sig_G not equal to 1 or sig_H high implies that in the next cycle, sig_D is low and none of the bits in sig_J are high",,"sig_D,sig_H,sig_J,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-150,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_A |-> ( (##1 ( (&sig_C) || sig_H )) or
+                (##2 ( (&sig_C) || sig_H )) or
+                (##3 ( (&sig_C) || sig_H )) )
+);
+```","assert property(@(posedge clk)
+	sig_A |-> ##[1:3] (&sig_C || sig_H)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_H,
+    input [7:0] sig_C
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_H,
+    input [7:0] sig_C
+);
+endmodule","If sig_A is high, then within 1 to 3 cycles, either all bits of sig_C will be high or sig_H will be high",,"sig_A,sig_H,sig_C"
+codev8b_machine,FVEval-NL2SVA-Machine-151,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( ( {3'b0, (sig_H != 4'b1111)} ) ^ (sig_F | sig_A) ) != 4'b0 |=> (sig_F != 4'b1111)
+);
+```","assert property(@(posedge clk)
+	((sig_H !== 1'b1) ^ (sig_F | sig_A)) |=> (sig_F !== 1'b1)
+);","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_F,
+    input [3:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_F,
+    input [3:0] sig_H
+);
+endmodule","If (sig_H is not equal to '1') bitwise-XOR (sig_F bitwise-OR sig_A) is true, then sig_F must not be equal to '1' in the next cycle",,"sig_A,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-152,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C |-> ((sig_I != 1'b1) == sig_J)
+);
+```","assert property(@(posedge clk)
+	sig_C |-> ((sig_I !== 1'b1) === sig_J)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_J,
+    input [5:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_J,
+    input [5:0] sig_I
+);
+endmodule","If sig_C is true, then sig_I being not equal to 1'b1 must be the same as sig_J",,"sig_C,sig_J,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-153,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D != 1'b1)
+);
+```","assert property(@(posedge clk)
+	always(sig_D !== 1'b1)
+);","module testbench (
+    input clk,
+    input [7:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_D
+);
+endmodule",sig_D must always never be equal to 1'b1,,sig_D
+codev8b_machine,FVEval-NL2SVA-Machine-154,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_B <-> ((sig_C != sig_B) ^ sig_E)
+);
+```","assert property (@(posedge clk)
+    sig_B == ((sig_C != sig_B) ^ sig_E)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_E
+);
+endmodule",sig_B must be true if and only if the exclusive OR of (sig_C not equal to sig_B) and sig_E is true,,"sig_B,sig_C,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-155,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H == ((sig_F != 1'b1) ^ (((sig_C ^ sig_I) & (~sig_E != sig_A)))))
+);
+```","assert property (@(posedge clk)
+    sig_H == ((sig_F != 1'b1) ^ ((sig_C ^ sig_I) & ((~sig_E) != sig_A)))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_A,
+    input [4:0] sig_C,
+    input [4:0] sig_E,
+    input [4:0] sig_F,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_A,
+    input [4:0] sig_C,
+    input [4:0] sig_E,
+    input [4:0] sig_F,
+    input [4:0] sig_I
+);
+endmodule",The value of sig_H must be equal to the expression where (the inequality comparison of sig_F and 1'b1) is XORed with (the AND result of (the XOR of sig_C and sig_I) and (the inequality comparison of the bitwise negation of sig_E and sig_A)),,"sig_H,sig_A,sig_C,sig_E,sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-156,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H |-> ##[0:$] (sig_A != 1'b1)
+);
+```","assert property(@(posedge clk)
+	sig_H |-> strong(##[0:$] (sig_A !== 1'b1))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_A
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_A
+);
+endmodule","If sig_H is high, it must be followed by sig_A not being equal to 1'b1 eventually",,"sig_H,sig_A"
+codev8b_machine,FVEval-NL2SVA-Machine-157,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H || sig_J) |-> ##4 (sig_I && (sig_C <= sig_E))
+);
+```","assert property(@(posedge clk)
+	(sig_H || sig_J) |-> ##4 (sig_I && (sig_C <= sig_E))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input sig_I,
+    input sig_J,
+    input [5:0] sig_C,
+    input [5:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input sig_I,
+    input sig_J,
+    input [5:0] sig_C,
+    input [5:0] sig_E
+);
+endmodule","If either sig_H or sig_J is high, then after four clock cycles, sig_I must be high and sig_C must be less than or equal to sig_E",,"sig_H,sig_I,sig_J,sig_C,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-158,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G != 5'b11111) |-> ##2 sig_H
+);
+```","assert property(@(posedge clk)
+	~&sig_G |-> ##2 sig_H
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [4:0] sig_G
+);
+endmodule","If not all bits of sig_G are 1, then sig_H must be high after two clock cycles",,"sig_H,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-159,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G && !sig_H)
+);
+```","assert property(@(posedge clk)
+	(~sig_H && sig_G)
+);","module testbench (
+    input clk,
+    input sig_G,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input sig_H
+);
+endmodule",sig_H must be low and sig_G must be high,,"sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-160,codev8b,"```systemverilog
+assert property ( @(posedge clk)
+    (sig_I == 1'b0) |-> ##4 ( (sig_E && ~|sig_A) != 1'b1 )
+);
+```","assert property(@(posedge clk)
+	!sig_I |-> ##4 ( (sig_E != 1'b1) && (~|sig_A != 1'b1) )
+);","module testbench (
+    input clk,
+    input sig_I,
+    input [7:0] sig_A,
+    input [7:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_I,
+    input [7:0] sig_A,
+    input [7:0] sig_E
+);
+endmodule","If sig_I is low, then four cycles later, sig_E and the bitwise-NOR reduction of sig_A should not equal to 1",,"sig_I,sig_A,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-161,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H |-> ##5 (sig_D != 4'd1)
+);
+```","assert property(@(posedge clk)
+	sig_H |-> ##5 (sig_D !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [3:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [3:0] sig_D
+);
+endmodule","If sig_H is true, then five clock cycles later, sig_D must not be equal to 1",,"sig_H,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-162,codev8b,"```systemverilog
+assert property (@(posedge clk) (sig_J != 8'd1) |-> (##[4:6] sig_C));
+```","assert property(@(posedge clk)
+	(sig_J !== 1'b1) |-> ##[4:6] sig_C
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [7:0] sig_J
+);
+endmodule","If sig_J is not 1 at a given time, then sig_C must be true between 4 to 6 cycles later",,"sig_C,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-163,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_B != sig_D
+);
+```","assert property(@(posedge clk)
+	(sig_B !== sig_D)
+);","module testbench (
+    input clk,
+    input [5:0] sig_B,
+    input [5:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_B,
+    input [5:0] sig_D
+);
+endmodule",sig_B must not be equal to sig_D,,"sig_B,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-164,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !sig_D |-> (sig_E || (sig_F == 7'h7F))
+);
+```","assert property(@(posedge clk)
+	(sig_D !== 1'b1) |-> (sig_E || &sig_F)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input [6:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input [6:0] sig_F
+);
+endmodule","If sig_D is not logic high, then either sig_E must be high or all bits of sig_F must be high",,"sig_D,sig_E,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-165,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F && sig_E && sig_J) |-> (sig_C || sig_E)
+);
+```","assert property (@(posedge clk)
+    (sig_F && sig_E && sig_J) |-> (sig_C || sig_E)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_E,
+    input sig_F,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_E,
+    input sig_F,
+    input sig_J
+);
+endmodule","Whenever both sig_F and sig_E are high, and sig_J is high, either sig_C or sig_E must be high",,"sig_C,sig_E,sig_F,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-166,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A && sig_G) |-> ##[1:6] (sig_E || sig_G)
+);
+```","assert property(@(posedge clk)
+	(sig_A && sig_G) |-> ##[1:6] (sig_E || sig_G)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_G
+);
+endmodule","If sig_A and sig_G are both true, then within 1 to 6 cycles, either sig_E or sig_G will be true",,"sig_A,sig_E,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-167,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (^{sig_C, sig_J, sig_H}) == 1'b1
+);
+```","assert property(@(posedge clk)
+	(^sig_C) ^ (^sig_J) ^ (^sig_H)
+);","module testbench (
+    input clk,
+    input [5:0] sig_C,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_C,
+    input [5:0] sig_H,
+    input [5:0] sig_J
+);
+endmodule","sig_C, sig_J, and sig_H together have an odd number of '1' bits.",,"sig_C,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-168,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E != 6'd1) |-> sig_H
+);
+```","assert property (@(posedge clk)
+    (sig_E != 1'b1) |-> sig_H
+);","module testbench (
+    input clk,
+    input [5:0] sig_E,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_E,
+    input sig_H
+);
+endmodule","If sig_E is not equal to 1, then sig_H must be true",,"sig_E,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-169,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_E && sig_J && sig_I) |=> sig_A )
+);
+```","assert property(@(posedge clk)
+	((sig_E && sig_J) && sig_I) |=> sig_A
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_I,
+    input sig_J
+);
+endmodule","If sig_E, sig_J, and sig_I are all high, then sig_A must be true in the next cycle",,"sig_A,sig_E,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-170,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    (!sig_F && !sig_H && sig_I) |-> ##3 (^sig_C)
+);
+```","assert property(@(posedge clk)
+	((~sig_F && (~sig_H && sig_I)) |-> ##3 (^sig_C))
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H,
+    input sig_I,
+    input [3:0] sig_C
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H,
+    input sig_I,
+    input [3:0] sig_C
+);
+endmodule","If sig_F is low and both sig_H is low and sig_I is high, three cycles later sig_C must have an odd number of 1 bits",,"sig_F,sig_H,sig_I,sig_C"
+codev8b_machine,FVEval-NL2SVA-Machine-171,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E != sig_C) |-> s_eventually (sig_D)
+);
+```","assert property(@(posedge clk)
+	(sig_E !== sig_C) |-> s_eventually(sig_D)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input [4:0] sig_C,
+    input [4:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input [4:0] sig_C,
+    input [4:0] sig_E
+);
+endmodule","If sig_E is different from sig_C, then sig_D must eventually become true",,"sig_D,sig_C,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-172,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F |-> ##5 sig_H
+);
+```","assert property(@(posedge clk)
+	sig_F |-> ##5 sig_H
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H
+);
+endmodule","If sig_F becomes true, then sig_H must be true five cycles later",,"sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-173,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_D != (sig_A ^ sig_B)
+);
+```","assert property (@(posedge clk)
+    sig_D != (sig_A ^ sig_B)
+);","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_D
+);
+endmodule",sig_D must not be equal to the bitwise XOR of sig_A and sig_B,,"sig_A,sig_B,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-174,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_J == 4'b0000) && !sig_C) || (sig_A == 4'b0000)
+);
+```","assert property(@(posedge clk)
+	((~|sig_J && !sig_C) || ~|sig_A)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [3:0] sig_A,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [3:0] sig_A,
+    input [3:0] sig_J
+);
+endmodule","sig_J contains all '0' bits and sig_C is low, or sig_A contains all '0' bits",,"sig_C,sig_A,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-175,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    (sig_G == (&sig_F)) |-> $past(sig_E, 4)
+);
+```","assert property(@(posedge clk)
+	(sig_G === &sig_F) |-> $past(sig_E, 4)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G,
+    input [6:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G,
+    input [6:0] sig_F
+);
+endmodule","If sig_G is equal to the logical AND of all bits of sig_F, then sig_E must have been true four clock cycles ago",,"sig_E,sig_G,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-177,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (|(~sig_E)) |-> (sig_J > ~sig_G)
+);
+```","assert property(@(posedge clk)
+	~&sig_E |-> (sig_J > (~sig_G))
+);","module testbench (
+    input clk,
+    input [3:0] sig_E,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_E,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule","If not all bits of sig_E are high, then sig_J must be greater than the logical inversion of sig_G",,"sig_E,sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-178,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_G == sig_I) |=> !sig_F
+);
+```","assert property(@(posedge clk)
+	(sig_G == sig_I) |=> (sig_F !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [7:0] sig_G,
+    input [7:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [7:0] sig_G,
+    input [7:0] sig_I
+);
+endmodule","If sig_G  is the same as sig_I, then sig_F must not be high at the next clock cycle",,"sig_F,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-179,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J != sig_G)
+);
+```","assert property(@(posedge clk)
+	(sig_J != sig_G)
+);","module testbench (
+    input clk,
+    input [4:0] sig_G,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_G,
+    input [4:0] sig_J
+);
+endmodule",sig_J is not equal to sig_G,,"sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-180,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A && sig_F) |-> sig_B
+);
+```","assert property (@(posedge clk)
+    (sig_A && sig_F) |-> sig_B
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_B,
+    input sig_F
+);
+endmodule","If both sig_A and sig_F are high, then sig_B must also be high",,"sig_A,sig_B,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-181,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_I |-> ( (##4 sig_A) or (##5 sig_A) or (##6 sig_A) or (##7 sig_A) or (##8 sig_A) or (##9 sig_A) )
+);
+```","assert property(@(posedge clk)
+	sig_I |-> ##[4:9] sig_A
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_I
+);
+endmodule","If sig_I is true, then sig_A must be true between 4 and 9 cycles later",,"sig_A,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-182,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H == sig_D) |=> (sig_E && sig_J)
+);
+```","assert property(@(posedge clk)
+	(sig_H === sig_D) |=> (sig_E && sig_J)
+);","module testbench (
+    input clk,
+    input sig_H,
+    input sig_J,
+    input [7:0] sig_D,
+    input [7:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input sig_J,
+    input [7:0] sig_D,
+    input [7:0] sig_E
+);
+endmodule","If sig_H is equal to sig_D, then sig_E and sig_J will both be true on the subsequent clock cycle",,"sig_H,sig_J,sig_D,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-183,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_B || sig_F
+);
+```","assert property(@(posedge clk)
+	(sig_B || sig_F)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F
+);
+endmodule",Either sig_B or sig_F must be true,,"sig_B,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-184,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H == (sig_G != 6'b000001)
+);
+```","assert property(@(posedge clk)
+	(sig_H === (sig_G !== 1'b1))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [5:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [5:0] sig_G
+);
+endmodule",sig_H must be true when sig_G is not equal to 1'b1 and false when sig_G is equal to 1'b1,,"sig_H,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-186,codev8b,"```systemverilog
+assert property (@(posedge clk) not (sig_I && sig_E));
+```","assert property(@(posedge clk)
+	((sig_I && sig_E) !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_I
+);
+endmodule",sig_I and sig_E must never be true simultaneously,,"sig_E,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-187,codev8b,"```systemverilog
+assert property (@(posedge clk) (
+    (sig_F != sig_C) || (sig_F == 1'b1)
+));
+```","assert property(@(posedge clk)
+	((sig_F !== sig_C) || sig_F )
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_F
+);
+endmodule","sig_F is not equal to sig_C, or sig_F is high",,"sig_C,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-188,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B || (sig_H != sig_A)) |=> ($past(sig_E) && !sig_E)
+);
+```","assert property(@(posedge clk)
+	(sig_B || (sig_H != sig_A)) |=> $fell(sig_E)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_E,
+    input [6:0] sig_A,
+    input [6:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_E,
+    input [6:0] sig_A,
+    input [6:0] sig_H
+);
+endmodule","If either sig_B is true or sig_H is not equal to sig_A, then sig_E will transition from high to low in the following cycle",,"sig_B,sig_E,sig_A,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-189,codev8b,"```systemverilog
+assert property (@(posedge clk) sig_B |-> ##[4:8] sig_I);
+```","assert property(@(posedge clk)
+	sig_B |-> ##[4:8] sig_I
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_I
+);
+endmodule","If sig_B is true, then sig_I must become true between 4 to 8 cycles later",,"sig_B,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-190,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E > sig_D)
+);
+```","assert property (@(posedge clk)
+    sig_E > sig_D
+);","module testbench (
+    input clk,
+    input [7:0] sig_D,
+    input [7:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_D,
+    input [7:0] sig_E
+);
+endmodule",sig_E is greater than sig_D,,"sig_D,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-191,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (^sig_H == 1'b0)
+);
+```","assert property(@(posedge clk)
+	^sig_H !== 1'b1
+);","module testbench (
+    input clk,
+    input [4:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_H
+);
+endmodule",sig_H must have an even number of bits set to '1',,sig_H
+codev8b_machine,FVEval-NL2SVA-Machine-192,codev8b,"```systemverilog
+property p;
+    @(posedge clk)
+    sig_F |-> ( (##[4:6] sig_A) );
+endproperty
+```","assert property(@(posedge clk)
+	sig_F |-> ##[4:6] sig_A
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_F
+);
+endmodule","If sig_F is true, then sig_A must be true at a time between 4 to 6 cycles later",,"sig_A,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-193,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A != sig_B) |=> (sig_A && sig_F)
+);
+```","assert property (@(posedge clk)
+    (sig_A != sig_B) |=> (sig_A && sig_F)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [6:0] sig_A,
+    input [6:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [6:0] sig_A,
+    input [6:0] sig_B
+);
+endmodule","If sig_A is not equal to sig_B, then sig_A and sig_F must both be true in the next cycle",,"sig_F,sig_A,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-194,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    (sig_E != sig_D) |-> ##1 (sig_I || !sig_F)
+);
+```","assert property(@(posedge clk)
+	(sig_E ^ sig_D) |=> (sig_I || ~sig_F)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_I,
+    input [5:0] sig_D,
+    input [5:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_I,
+    input [5:0] sig_D,
+    input [5:0] sig_E
+);
+endmodule","If sig_E and sig_D are different, then sig_I must be high or sig_F must be low in the next cycle",,"sig_F,sig_I,sig_D,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-195,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (^sig_F == 1'b1) and ((sig_C == 7'h7F) |-> (sig_J == 1'b0))
+);
+```","assert property (@(posedge clk)
+    (&sig_C) |-> ((^sig_F) && !sig_J)
+);","module testbench (
+    input clk,
+    input sig_J,
+    input [6:0] sig_C,
+    input [6:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_J,
+    input [6:0] sig_C,
+    input [6:0] sig_F
+);
+endmodule",sig_F has an odd number of 1's and sig_J is low when all bits of sig_C are high,,"sig_J,sig_C,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-196,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F != (sig_H == sig_J)
+);
+```","assert property(@(posedge clk)
+	(sig_F !== (sig_H === sig_J))
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [7:0] sig_H,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [7:0] sig_H,
+    input [7:0] sig_J
+);
+endmodule",sig_F must not be equal to the equivalence check between sig_H and sig_J,,"sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-197,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A == sig_C) |-> ##[1:4] sig_D
+);
+```","assert property(@(posedge clk)
+	(sig_A === sig_C) |-> ##[1:4] sig_D
+);","module testbench (
+    input clk,
+    input sig_D,
+    input [6:0] sig_A,
+    input [6:0] sig_C
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input [6:0] sig_A,
+    input [6:0] sig_C
+);
+endmodule","If sig_A is equal to sig_C, then sig_D must be true within the next 1 to 4 cycles",,"sig_D,sig_A,sig_C"
+codev8b_machine,FVEval-NL2SVA-Machine-199,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_A || sig_C) && sig_I && sig_D) |-> ##2 (sig_F || sig_H)
+);
+```","assert property(@(posedge clk)
+	((sig_A || sig_C) && (sig_I && sig_D)) |-> ##2 (sig_F || sig_H)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_D,
+    input sig_F,
+    input sig_H,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input sig_D,
+    input sig_F,
+    input sig_H,
+    input sig_I
+);
+endmodule","If either sig_A or sig_C is true and both sig_I and sig_D are true, then either sig_F or sig_H must be true exactly two cycles later",,"sig_A,sig_C,sig_D,sig_F,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-200,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_B |-> ##1 sig_H
+);
+```","assert property(@(posedge clk)
+	sig_B |-> ##1 sig_H
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_H
+);
+endmodule","If sig_B is high, then sig_H will be high one cycle later",,"sig_B,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-201,codev8b,"```systemverilog
+assert property ( @(posedge clk)
+    (sig_F || sig_A) |-> (##[1:5] ( (sig_H != sig_J) || sig_F ))
+);
+```","assert property (@(posedge clk)
+    (sig_F || sig_A) |-> ##[1:5] (sig_H != sig_J || sig_F)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_F,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_F,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule","If sig_F or sig_A is true, then within 1 to 5 cycles, either sig_H is not equal to sig_J or sig_F is true",,"sig_A,sig_F,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-202,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C == 4'b0000) |-> ( (sig_J == sig_H) or (##[0:$] (sig_E || sig_G)) )
+);
+```","assert property(@(posedge clk)
+	~|sig_C |-> ((sig_J == sig_H) or s_eventually (sig_E || sig_G))
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G,
+    input [3:0] sig_C,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G,
+    input [3:0] sig_C,
+    input [3:0] sig_H,
+    input [3:0] sig_J
+);
+endmodule","If no bit in sig_C is '1', then either sig_J must equal sig_H, or (sig_E or sig_G) must eventually become true",,"sig_E,sig_G,sig_C,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-203,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F != 6'b0) && ((|sig_F) == ~(|sig_I))
+);
+```","assert property(@(posedge clk)
+	(sig_F != 1'b0) && (|sig_F === ~|sig_I)
+);","module testbench (
+    input clk,
+    input [5:0] sig_F,
+    input [5:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_F,
+    input [5:0] sig_I
+);
+endmodule",sig_F is nonzero and the bitwise OR of sig_F equals the bitwise negation of the bitwise OR of sig_I,,"sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-204,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ({4{(sig_I != 4'b0001)}} != (sig_B | sig_E))
+);
+```","assert property(@(posedge clk)
+	((sig_I !== 1'b1) != (sig_B | sig_E))
+);","module testbench (
+    input clk,
+    input [3:0] sig_B,
+    input [3:0] sig_E,
+    input [3:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_B,
+    input [3:0] sig_E,
+    input [3:0] sig_I
+);
+endmodule",sig_I not being 1'b1 should be different from the bitwise or of sig_B and sig_E,,"sig_B,sig_E,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-205,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_A && sig_J) |-> ##5 (sig_F || sig_I)
+);
+```","assert property(@(posedge clk)
+	(sig_A && sig_J) |-> ##5 (sig_F || sig_I)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_F,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_F,
+    input sig_I,
+    input sig_J
+);
+endmodule","If sig_A and sig_J are both high, then after 5 clock cycles, either sig_F or sig_I will be high",,"sig_A,sig_F,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-206,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I <= sig_F) == ((sig_B ^ sig_I) != 0 && sig_D)
+);
+```","assert property(@(posedge clk)
+	(((sig_I > sig_F) !== 1'b1) === ( ((sig_B ^ sig_I) != 1'b0) && sig_D))
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input [7:0] sig_F,
+    input [7:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input [7:0] sig_F,
+    input [7:0] sig_I
+);
+endmodule",The value of (sig_I is not greater than sig_F) must be equal to the logical AND of (the XOR of sig_B and sig_I is not zero) and sig_D,,"sig_B,sig_D,sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-207,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_I & sig_H) != sig_C) |-> (&sig_H)
+);
+```","assert property (@(posedge clk)
+     ((sig_I & sig_H) != sig_C) |-> (sig_H == 1'b1)
+);","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_H,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_C,
+    input [4:0] sig_H,
+    input [4:0] sig_I
+);
+endmodule","If the bitwise AND of sig_I and sig_H have a different value than sig_C, then sig_H is 1",,"sig_C,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-208,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (reduction_xor(sig_J) == 1'b1) |=> ((sig_F != 8'd1) || (~sig_J != 8'd1))
+);
+```","assert property (@(posedge clk)
+    (^sig_J) |=> (sig_F != 1'b1 || (~sig_J) != 1'b1)
+);","module testbench (
+    input clk,
+    input [7:0] sig_F,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_F,
+    input [7:0] sig_J
+);
+endmodule","If the XOR reduction of sig_J equals 1, then either sig_F or the inversion of sig_J must be different from 1 in the next cycle",,"sig_F,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-209,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F == sig_G)
+);
+```","assert property (@(posedge clk)
+    sig_F == sig_G
+);","module testbench (
+    input clk,
+    input [4:0] sig_F,
+    input [4:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_F,
+    input [4:0] sig_G
+);
+endmodule",sig_F must be equal to sig_G,,"sig_F,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-210,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H != 4'b0001) || sig_C || sig_A
+);
+```","assert property (@(posedge clk)
+    (sig_H != 1'b1) || sig_C || sig_A
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input [3:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_C,
+    input [3:0] sig_H
+);
+endmodule","sig_H is not 1 or sig_C is true, or sig_A is true",,"sig_A,sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-211,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C || sig_E)
+);
+```","assert property(@(posedge clk)
+	(sig_C || sig_E)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_E
+);
+endmodule",sig_C or sig_E must be true,,"sig_C,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-212,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F |-> !((&sig_I) >= sig_G)
+);
+```","assert property(@(posedge clk)
+	sig_F |-> ((&sig_I >= sig_G) !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_G,
+    input [3:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_G,
+    input [3:0] sig_I
+);
+endmodule","If sig_F is true, then the condition that the bitwise AND reduction of sig_I being greater than or equal to sig_G is false",,"sig_F,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-213,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !sig_H
+);
+```","assert property(@(posedge clk)
+	(sig_H !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H
+);
+endmodule",sig_H must never be high,,sig_H
+codev8b_machine,FVEval-NL2SVA-Machine-215,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_F != (sig_I && sig_G)) |=> (sig_B && sig_I)
+);
+```","assert property(@(posedge clk)
+	(sig_F !== (sig_I && sig_G)) |=> (sig_B && sig_I)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input sig_G,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F,
+    input sig_G,
+    input sig_I
+);
+endmodule","When sig_F is not equal to the logical AND of sig_I and sig_G, both sig_B and sig_I must be true in the subsequent cycle",,"sig_B,sig_F,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-216,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    $changed(sig_H) |=> sig_E
+);
+```","assert property (@(posedge clk)
+    $changed(sig_H) |=> sig_E
+);","module testbench (
+    input clk,
+    input sig_E,
+    input [3:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input [3:0] sig_H
+);
+endmodule","If sig_H changes, then sig_E must be true on the next clock cycle",,"sig_E,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-217,codev8b,"```systemverilog
+property stable_then_d_or_g;
+    logic [5:0] current_sig_B;
+    @(posedge clk)
+    (current_sig_B = sig_B) |=> ( (sig_B == current_sig_B) -> (sig_D || sig_G) );
+endproperty
+
+assert property (stable_then_d_or_g);
+```","assert property(@(posedge clk)
+	$stable(sig_B) |=> (sig_D || sig_G)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G,
+    input [5:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_G,
+    input [5:0] sig_B
+);
+endmodule","If sig_B remains stable, either sig_D or sig_G will be true in the next cycle",,"sig_D,sig_G,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-218,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((|sig_D) || sig_H) |-> ((sig_D & ~sig_B) != sig_C)
+);
+```","assert property(@(posedge clk)
+	(|sig_D || sig_H) |-> ((sig_D && ~|sig_B) !== sig_C)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H,
+    input [3:0] sig_B,
+    input [3:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H,
+    input [3:0] sig_B,
+    input [3:0] sig_D
+);
+endmodule","If sig_D contains at least one '1' bit or sig_H is true, then (the logic AND of sig_D and none of the bits in sig_B are '1') must not be equal to sig_C",,"sig_C,sig_H,sig_B,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-219,codev8b,"```systemverilog
+assert property ( @(posedge clk) (sig_D != sig_A) |-> (1'b1) until_with (sig_G == 8'b0) );
+```","assert property(@(posedge clk)
+	(sig_D !== sig_A) |-> s_eventually((|sig_G !== 1'b1))
+);","module testbench (
+    input clk,
+    input [7:0] sig_A,
+    input [7:0] sig_D,
+    input [7:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_A,
+    input [7:0] sig_D,
+    input [7:0] sig_G
+);
+endmodule","If sig_D is not equal to sig_A, then it must eventually be true that sig_G does not contain any '1' bits",,"sig_A,sig_D,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-220,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B != 5'd1) |-> ((sig_B ^ sig_I) == sig_G)
+);
+```","assert property (@(posedge clk)
+    (sig_B != 5'b1) |-> ((sig_B ^ sig_I) == sig_G)
+);","module testbench (
+    input clk,
+    input [4:0] sig_B,
+    input [4:0] sig_G,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_B,
+    input [4:0] sig_G,
+    input [4:0] sig_I
+);
+endmodule","Whenever sig_B is not 1, the logical XOR of sig_B and sig_I must equal sig_G",,"sig_B,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-221,codev8b,"```systemverilog
+assert property (
+    @(posedge clk)
+    (sig_G == (!sig_F || !sig_B)) |->
+        (##5 (sig_D && sig_F) or ##6 (sig_D && sig_F))
+);
+```","assert property(@(posedge clk)
+	(sig_G === (!sig_F || !sig_B)) |-> ##[5:6] (sig_D && sig_F)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input sig_F,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input sig_F,
+    input sig_G
+);
+endmodule","If sig_G is equal to the value of either sig_F or sig_B being false, then after 5 or 6 clock cycles, both sig_D and sig_F must be true",,"sig_B,sig_D,sig_F,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-222,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I != sig_D) |-> ##5 (sig_J || ((|sig_D) && sig_F))
+);
+```","assert property(@(posedge clk)
+	(sig_I != sig_D) |-> ##5 (sig_J || (sig_D && sig_F))
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_J,
+    input [6:0] sig_D,
+    input [6:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_J,
+    input [6:0] sig_D,
+    input [6:0] sig_I
+);
+endmodule","If sig_I is different from sig_D, then after 5 clock cycles, either sig_J will be true or both sig_D and sig_F will be true",,"sig_F,sig_J,sig_D,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-223,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F == 1'b1 && sig_B > sig_I
+);
+```","assert property(@(posedge clk)
+	((sig_B > sig_I) && sig_F)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [4:0] sig_B,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [4:0] sig_B,
+    input [4:0] sig_I
+);
+endmodule",sig_B must be greater than sig_I and sig_F must be true,,"sig_F,sig_B,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-224,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (|sig_A) || ~(sig_C ^ (&sig_A)) ) |=> (|(sig_H ^ sig_C))
+);
+```","assert property(@(posedge clk)
+	((sig_A != 1'b0) || (~sig_C ^ &sig_A)) |=> ((sig_H ^ sig_C) != 1'b0)
+);","module testbench (
+    input clk,
+    input [7:0] sig_A,
+    input [7:0] sig_C,
+    input [7:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_A,
+    input [7:0] sig_C,
+    input [7:0] sig_H
+);
+endmodule","If sig_A is nonzero or the bitwise NOT of sig_C XOR-ed with the bitwise AND reduction of sig_A is true, then sig_H XOR-ed with sig_C must be nonzero in the next cycle",,"sig_A,sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-225,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_A ^ sig_D) != (sig_C | ((^sig_J) & sig_H)))
+);
+```","assert property(@(posedge clk)
+	((sig_A ^ sig_D) !== (sig_C | (^sig_J & sig_H)))
+);","module testbench (
+    input clk,
+    input [4:0] sig_A,
+    input [4:0] sig_C,
+    input [4:0] sig_D,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_A,
+    input [4:0] sig_C,
+    input [4:0] sig_D,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule",sig_A bitwise-XOR sig_D must not be equal to (sig_C OR ((reduced XORed of sig_J) AND sig_H)),,"sig_A,sig_C,sig_D,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-226 ,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_E != ~sig_J) != (sig_H ^ ~(|sig_E)))
+);
+```","assert property(@(posedge clk)
+	((sig_E !== ~sig_J) !== (sig_H ^ ~&sig_E))
+);","module testbench (
+    input clk,
+    input [7:0] sig_E,
+    input [7:0] sig_H,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_E,
+    input [7:0] sig_H,
+    input [7:0] sig_J
+);
+endmodule",sig_E not being the bitwise negation of sig_J must not be equal to sig_H XOR the bitwise NAND reduction of sig_E,,"sig_E,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-227,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E ^ sig_I) == ((sig_E ^ sig_F) ^ sig_J)
+);
+```","assert property (@(posedge clk)
+    ( (sig_E ^ sig_I) == ((sig_E ^ sig_F) ^ sig_J) )
+);","module testbench (
+    input clk,
+    input [7:0] sig_E,
+    input [7:0] sig_F,
+    input [7:0] sig_I,
+    input [7:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_E,
+    input [7:0] sig_F,
+    input [7:0] sig_I,
+    input [7:0] sig_J
+);
+endmodule",sig_E XORed with sig_I must be equal to (sig_E XOR sig_F) XOR sig_J,,"sig_E,sig_F,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-228,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ($countones(sig_D) == 0) |-> (sig_E || sig_H)
+);
+```","assert property (@(posedge clk)
+    (~|sig_D) |-> (sig_E || sig_H)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_H,
+    input [6:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_H,
+    input [6:0] sig_D
+);
+endmodule","If sig_D does not contain any '1' bit, then either sig_E or sig_H is true",,"sig_E,sig_H,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-230,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C >= ~sig_H)
+);
+```","assert property(@(posedge clk)
+	(sig_C >= ~sig_H)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_H
+);
+endmodule",sig_C is greater than or equal to the bitwise negation of sig_H,,"sig_C,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-231,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J |-> ##[0:$] sig_I
+);
+```","assert property(@(posedge clk)
+	sig_J |-> strong(##[0:$] sig_I)
+);","module testbench (
+    input clk,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_I,
+    input sig_J
+);
+endmodule","If sig_J is true, then sig_I must eventually become true",,"sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-232,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H || sig_J || sig_F) |-> ##5 (sig_I == sig_G)
+);
+```","assert property(@(posedge clk)
+	((sig_H || sig_J) || sig_F) |-> ##5 (sig_I === sig_G)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H,
+    input sig_J,
+    input [6:0] sig_G,
+    input [6:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H,
+    input sig_J,
+    input [6:0] sig_G,
+    input [6:0] sig_I
+);
+endmodule","If either sig_H, sig_J, or sig_F is true, then after 5 clock cycles, sig_I must be equal to sig_G",,"sig_F,sig_H,sig_J,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-233,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J ^ sig_A) < (sig_D ^ ~(sig_H) ^ sig_G)
+);
+```","assert property(@(posedge clk)
+	((sig_J ^ sig_A) < ((sig_D ^ ~|sig_H) ^ sig_G))
+);","module testbench (
+    input clk,
+    input [4:0] sig_A,
+    input [4:0] sig_D,
+    input [4:0] sig_G,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [4:0] sig_A,
+    input [4:0] sig_D,
+    input [4:0] sig_G,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule",The exclusive OR of sig_J and sig_A must be less than the exclusive OR of sig_D with the NOR induction of sig_H and then exclusive OR with sig_G,,"sig_A,sig_D,sig_G,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-234,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G |-> ##5 sig_I
+);
+```","assert property(@(posedge clk)
+	sig_G |-> ##5 sig_I
+);","module testbench (
+    input clk,
+    input sig_G,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input sig_I
+);
+endmodule","If sig_G is high, then after five clock cycles, sig_I will be high",,"sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-235,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_J == 4'b0000) && (sig_G == 1'b1)) |-> ((sig_D ^ ~sig_I) == 1'b1)
+);
+```","assert property (@(posedge clk)
+    (sig_J == 4'b0 && sig_G) |-> ((sig_D ^ ~sig_I) == 1'b1)
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [3:0] sig_D,
+    input [3:0] sig_I,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [3:0] sig_D,
+    input [3:0] sig_I,
+    input [3:0] sig_J
+);
+endmodule","Whenever sig_J has all bits low, and sig_G is high, it is required that (sig_D XOR NOT sig_I) equals 1",,"sig_G,sig_D,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-236,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_C || sig_J)
+);
+```","assert property(@(posedge clk)
+	(sig_C || sig_J)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_J
+);
+endmodule",Either sig_C or sig_J is true,,"sig_C,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-237,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F && ((sig_I ^ sig_D) == ~(sig_J & sig_A))
+);
+```","assert property(@(posedge clk)
+	sig_F && ((sig_I ^ sig_D) === ~(sig_J & sig_A))
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_A,
+    input [5:0] sig_D,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [5:0] sig_A,
+    input [5:0] sig_D,
+    input [5:0] sig_I,
+    input [5:0] sig_J
+);
+endmodule","sig_F is true, and the bitwise XOR of sig_I and sig_D equals the bitwise negation of the AND of sig_J and sig_A",,"sig_F,sig_A,sig_D,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-238,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_A >= sig_B) && sig_D) |-> s_eventually sig_E
+);
+```","assert property(@(posedge clk)
+	((sig_A >= sig_B) && sig_D) |-> s_eventually(sig_E)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input [6:0] sig_A,
+    input [6:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_E,
+    input [6:0] sig_A,
+    input [6:0] sig_B
+);
+endmodule","If sig_A is greater than or equal to sig_B and sig_D is high, eventually sig_E is high",,"sig_D,sig_E,sig_A,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-239,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_D != sig_G) || (sig_G != ~sig_F) || 
+      ( ($countones(sig_F) % 2 == 1) && ($countones(sig_F) > sig_C) )
+);
+```","assert property (@(posedge clk)
+    ( (sig_D != sig_G) || ((~sig_F) != sig_G) ) ||
+    ( (^sig_F) && ($countones(sig_F) > sig_C) )
+);","module testbench (
+    input clk,
+    input [6:0] sig_C,
+    input [6:0] sig_D,
+    input [6:0] sig_F,
+    input [6:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_C,
+    input [6:0] sig_D,
+    input [6:0] sig_F,
+    input [6:0] sig_G
+);
+endmodule","Either sig_D or the bitwise negation of sig_F is different from sig_G, or sig_F has an odd number of bits set to '1' and the number of  '1' is greater than sig_C",,"sig_C,sig_D,sig_F,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-240,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (|sig_J) == ~(|sig_G)
+);
+```","assert property(@(posedge clk)
+	(|sig_J === ~|sig_G)
+);","module testbench (
+    input clk,
+    input [6:0] sig_G,
+    input [6:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_G,
+    input [6:0] sig_J
+);
+endmodule",The OR reduction of sig_J is equal to the inverted OR reduction of sig_G,,"sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-241,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J == ~sig_C) && sig_F
+);
+```","assert property(@(posedge clk)
+	((sig_J === ~sig_C) && sig_F)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_C,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_C,
+    input [3:0] sig_J
+);
+endmodule",sig_J is the bitwise inverse of sig_C and sig_F is true,,"sig_F,sig_C,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-242,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B == 4'b1111) |-> sig_H
+);
+```","assert property (@(posedge clk)
+    (&sig_B) |-> sig_H
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [3:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [3:0] sig_B
+);
+endmodule","For every rising edge of the clock, sig_H must be high when all bits of sig_B are high",,"sig_H,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-243,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H || (sig_G != 4'd1)
+);
+```","assert property(@(posedge clk)
+	(sig_H || (sig_G !== 1'b1))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [3:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [3:0] sig_G
+);
+endmodule","Either sig_H is true, or sig_G is not equal to 1",,"sig_H,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-244,codev8b,"```systemverilog
+assert property (@(posedge clk) (sig_C || sig_I));
+```","assert property(@(posedge clk)
+	(sig_C || sig_I)
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_I
+);
+endmodule",sig_C or sig_I must be true,,"sig_C,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-245,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I || sig_D) |-> (sig_A != sig_G)
+);
+```","assert property(@(posedge clk)
+	(sig_I || sig_D) |-> always((sig_A ^ sig_G))
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_I,
+    input [5:0] sig_A,
+    input [5:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_I,
+    input [5:0] sig_A,
+    input [5:0] sig_G
+);
+endmodule","If either sig_I or sig_D is true, then sig_A and sig_G must always be different",,"sig_D,sig_I,sig_A,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-246,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_C && (sig_F > sig_A)
+);
+```","assert property(@(posedge clk)
+	(sig_C && (sig_F > sig_A))
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [3:0] sig_A,
+    input [3:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [3:0] sig_A,
+    input [3:0] sig_F
+);
+endmodule",sig_C must be high and sig_F must be greater than sig_A,,"sig_C,sig_A,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-247,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B || sig_H) |-> ##[4:6] (sig_F != sig_D)
+);
+```","assert property(@(posedge clk)
+	(sig_B || sig_H) |-> ##[4:6] (sig_F ^ sig_D)
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input sig_F,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_D,
+    input sig_F,
+    input sig_H
+);
+endmodule","If sig_B or sig_H is high, then after 4 to 6 clock cycles, sig_F and sig_D will have opposite values",,"sig_B,sig_D,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-248,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_E && sig_G) == 1'b1
+);
+```","assert property(@(posedge clk)
+	(sig_E && sig_G)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_G
+);
+endmodule",sig_E and sig_G are both high,,"sig_E,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-249,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    |sig_I |-> ##1 sig_J
+);
+```","assert property(@(posedge clk)
+	|sig_I |=> sig_J
+);","module testbench (
+    input clk,
+    input sig_J,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_J,
+    input [4:0] sig_I
+);
+endmodule","If any bit in sig_I is high, then sig_J will be true in the next clock cycle",,"sig_J,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-250,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D && (&sig_G)) |-> ##4 sig_J
+);
+```","assert property(@(posedge clk)
+	(sig_D && (&sig_G)) |-> ##4 sig_J
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_J,
+    input [7:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_J,
+    input [7:0] sig_G
+);
+endmodule","If sig_D is high and all bits of sig_G are high, then sig_J will be high 4 clock cycles later",,"sig_D,sig_J,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-251,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_I |-> (sig_J && (sig_H == sig_J))
+);
+```","assert property (@(posedge clk)
+    sig_I |-> (sig_J && (sig_H == sig_J))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input sig_I,
+    input sig_J
+);
+endmodule","If sig_I is true, then sig_J must be true and sig_H must be equal to sig_J",,"sig_H,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-253,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G |-> ##4 sig_J
+);
+```","assert property(@(posedge clk)
+	sig_G |-> ##4 sig_J
+);","module testbench (
+    input clk,
+    input sig_G,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input sig_J
+);
+endmodule","If sig_G is true, then sig_J must be true after exactly 4 clock cycles",,"sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-255,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_A == sig_E) && sig_D) |-> ##5 sig_C
+);
+```","assert property(@(posedge clk)
+	((sig_A === sig_E) && sig_D) |-> ##5 sig_C
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_D,
+    input [6:0] sig_A,
+    input [6:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_D,
+    input [6:0] sig_A,
+    input [6:0] sig_E
+);
+endmodule","If (sig_A is equal to sig_E) and (sig_D is high), then after 5 clock cycles, sig_C will be high",,"sig_C,sig_D,sig_A,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-256,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B == 5'd1 && sig_C)
+);
+```","assert property(@(posedge clk)
+	(sig_B == 1'b1) && sig_C
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [4:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [4:0] sig_B
+);
+endmodule",sig_B is equal to 1 and sig_C is true,,"sig_C,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-257,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_H && (sig_G != 6'd1)
+);
+```","assert property(@(posedge clk)
+	(sig_H && (sig_G !== 1'b1))
+);","module testbench (
+    input clk,
+    input sig_H,
+    input [5:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input [5:0] sig_G
+);
+endmodule",sig_H is true and sig_G is not equal to 1'b1,,"sig_H,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-258,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_A || sig_J) |-> ($past(sig_I, 2) == 1'b1))
+);
+```","assert property(@(posedge clk)
+	(sig_J || sig_A) |-> $past(sig_I, 2)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_I,
+    input sig_J
+);
+endmodule","If either sig_J or sig_A is true, then sig_I must have been true two cycles ago",,"sig_A,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-259,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    $rose(sig_H) |=> (sig_F && sig_E)
+);
+```","assert property(@(posedge clk)
+	sig_H |=> (sig_F && sig_E)
+);","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_E,
+    input sig_F,
+    input sig_H
+);
+endmodule","When sig_H becomes true, both sig_F and sig_E must be true in the next cycle",,"sig_E,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-260,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_C ^ sig_F) <= 4'(^sig_J) )
+);
+```","assert property(@(posedge clk)
+	((sig_C ^ sig_F) <= ^sig_J)
+);","module testbench (
+    input clk,
+    input [3:0] sig_C,
+    input [3:0] sig_F,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_C,
+    input [3:0] sig_F,
+    input [3:0] sig_J
+);
+endmodule",The bitwise XOR of sig_C and sig_F is less than or equal to the reduction XOR of sig_J,,"sig_C,sig_F,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-261,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !(sig_A && sig_J)
+);
+```","assert property(@(posedge clk)
+	((sig_A && sig_J) !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_J
+);
+endmodule",sig_A and sig_J together should never both be true,,"sig_A,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-262,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_B || (sig_G && sig_H))
+);
+```","assert property(@(posedge clk)
+	(sig_B || (sig_G && sig_H))
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_G,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_G,
+    input sig_H
+);
+endmodule",Either sig_B is high or both sig_G and sig_H are high,,"sig_B,sig_G,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-263,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I || sig_H || sig_A)
+);
+```","assert property(@(posedge clk)
+	(sig_I || (sig_H || sig_A))
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_H,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_H,
+    input sig_I
+);
+endmodule","Either sig_I must be true, or sig_H must be true, or sig_A must be true",,"sig_A,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-264,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_G != sig_D) && (sig_G != {4{~^sig_B}})) |-> (sig_C != 4'b1111)
+);
+```","assert property(@(posedge clk)
+	((sig_G !== sig_D) && (sig_G !== ~^sig_B)) |-> (&sig_C !== 1'b1)
+);","module testbench (
+    input clk,
+    input [3:0] sig_B,
+    input [3:0] sig_C,
+    input [3:0] sig_D,
+    input [3:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_B,
+    input [3:0] sig_C,
+    input [3:0] sig_D,
+    input [3:0] sig_G
+);
+endmodule","If sig_G is not equal to sig_D and sig_G is not equal to the bitwise XNOR reduction of sig_B, then sig_C must not be all 1's",,"sig_B,sig_C,sig_D,sig_G"
+codev8b_machine,FVEval-NL2SVA-Machine-265,codev8b,"```systemverilog
+assert property (@(posedge clk) (sig_B != 8'd1) |-> (sig_G == 1'b0 || sig_A == sig_B));
+```","assert property (@(posedge clk)
+    (sig_B != 1'b1) |-> (!sig_G || (sig_A == sig_B))
+);","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_A,
+    input [7:0] sig_B
+);
+endmodule","module testbench (
+    input clk,
+    input sig_G,
+    input [7:0] sig_A,
+    input [7:0] sig_B
+);
+endmodule","If sig_B is not equal to 1, then sig_G must be low or sig_A must be equal to sig_B",,"sig_G,sig_A,sig_B"
+codev8b_machine,FVEval-NL2SVA-Machine-266,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F |-> ##2 sig_B
+);
+```","assert property (@(posedge clk)
+    sig_F |-> ##2 sig_B
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_F
+);
+endmodule","If sig_F is high, then sig_B will be true after two clock cycles",,"sig_B,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-267,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (( (sig_J | sig_B) & sig_A ) != (sig_G >= sig_A))
+);
+```","assert property(@(posedge clk)
+	((sig_J | sig_B) & sig_A) !== (sig_G >= sig_A)
+);","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_G,
+    input [3:0] sig_J
+);
+endmodule",The combination of ((sig_J bitwise-OR sig_B) bitwise-AND sig_A) must not be equal to (sig_G being greater than or equal to sig_A),,"sig_A,sig_B,sig_G,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-268,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J |-> ##[1:4] (sig_I == sig_G)
+);
+```","assert property(@(posedge clk)
+	sig_J |-> ##[1:4] (sig_I === sig_G)
+);","module testbench (
+    input clk,
+    input sig_J,
+    input [4:0] sig_G,
+    input [4:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_J,
+    input [4:0] sig_G,
+    input [4:0] sig_I
+);
+endmodule","If sig_J is true, then within 1 to 4 clock cycles, sig_I must be equal to sig_G",,"sig_J,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-270,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H != sig_D) |-> ( ($countones(sig_J) % 2 == 1) or (##1 sig_I) )
+);
+```","assert property(@(posedge clk)
+	(sig_H !== sig_D) |=> (^sig_J || sig_I)
+);","module testbench (
+    input clk,
+    input sig_I,
+    input [4:0] sig_D,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_I,
+    input [4:0] sig_D,
+    input [4:0] sig_H,
+    input [4:0] sig_J
+);
+endmodule","If sig_H is not equal to sig_D, then sig_J must have an odd number of '1' bits or sig_I must be true in the next cycle",,"sig_I,sig_D,sig_H,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-271,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !(sig_F && sig_I)
+);
+```","assert property(@(posedge clk)
+	((sig_F && sig_I) !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_I
+);
+endmodule",sig_F and sig_I cannot both be high,,"sig_F,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-272,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_I <= sig_D) || sig_A
+);
+```","assert property(@(posedge clk)
+	((sig_I <= sig_D) || sig_A)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input [6:0] sig_D,
+    input [6:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input [6:0] sig_D,
+    input [6:0] sig_I
+);
+endmodule","sig_I is less or equal to sig_D, or sig_A is true",,"sig_A,sig_D,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-273,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J |-> ((sig_B == sig_D) == (sig_E != sig_C))
+);
+```","assert property(@(posedge clk)
+	sig_J |-> ((sig_D == sig_B) === (sig_E !== sig_C))
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_D,
+    input sig_E,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_D,
+    input sig_E,
+    input sig_J
+);
+endmodule","If sig_J is true, then (the value of sig_D and sig_B being both true or both false) is equivalent to sig_E not being equal to sig_C",,"sig_B,sig_C,sig_D,sig_E,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-274,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J == !(sig_E < sig_B)
+);
+```","assert property (@(posedge clk)
+    sig_J == !(sig_E < sig_B)
+);","module testbench (
+    input clk,
+    input sig_J,
+    input [4:0] sig_B,
+    input [4:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_J,
+    input [4:0] sig_B,
+    input [4:0] sig_E
+);
+endmodule",The value of sig_J must be the inverse of whether sig_E is less than sig_B,,"sig_J,sig_B,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-275,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_D == 7'd1) |-> (sig_F != 7'd1)
+);
+```","assert property (@(posedge clk)
+    (sig_D == 1'b1) |-> (sig_F != 1'b1)
+);","module testbench (
+    input clk,
+    input [6:0] sig_D,
+    input [6:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_D,
+    input [6:0] sig_F
+);
+endmodule","If sig_D is 1, sig_F must not be 1 ",,"sig_D,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-276,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_E != 1 || sig_D == sig_F
+);
+```","assert property(@(posedge clk)
+	((sig_E !== 1'b1) || (sig_D === sig_F))
+);","module testbench (
+    input clk,
+    input [3:0] sig_D,
+    input [3:0] sig_E,
+    input [3:0] sig_F
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_D,
+    input [3:0] sig_E,
+    input [3:0] sig_F
+);
+endmodule","sig_E is not equal to 1, or sig_D must be equal to sig_F",,"sig_D,sig_E,sig_F"
+codev8b_machine,FVEval-NL2SVA-Machine-277,codev8b,"```systemverilog
+assert property (@(posedge clk) sig_J |-> ##3 sig_B);
+```","assert property(@(posedge clk)
+	sig_J |-> ##3 sig_B
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_J
+);
+endmodule","If sig_J is true, then sig_B must be true after three clock cycles",,"sig_B,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-278,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_F < ~sig_I) |-> ##1 (sig_J != sig_H) )
+);
+```","assert property(@(posedge clk)
+	(sig_F < (~sig_I)) |=> (sig_J ^ sig_H)
+);","module testbench (
+    input clk,
+    input [6:0] sig_F,
+    input [6:0] sig_H,
+    input [6:0] sig_I,
+    input [6:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_F,
+    input [6:0] sig_H,
+    input [6:0] sig_I,
+    input [6:0] sig_J
+);
+endmodule","If sig_F is less than the bitwise negation of sig_I, then sig_J must be different from sig_H in the next cycle",,"sig_F,sig_H,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-279,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !(sig_J && sig_E) && (sig_A || sig_J)
+);
+```","assert property (@(posedge clk)
+    (!(sig_J && sig_E) && (sig_A || sig_J))
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_E,
+    input sig_J
+);
+endmodule","sig_J and sig_E are not both true, and sig_A or sig_J is true",,"sig_A,sig_E,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-280,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    !sig_A |-> (!sig_G || ##1 sig_I)
+);
+```","assert property (@(posedge clk)
+    !sig_A |=> (!sig_G || sig_I)
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_G,
+    input sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_G,
+    input sig_I
+);
+endmodule","If sig_A is not high, then either sig_G should not be high or sig_I must be true after one cycle",,"sig_A,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-281,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J ^ ~(&sig_A)) |-> s_eventually (sig_H)
+);
+```","assert property(@(posedge clk)
+	(sig_J ^ ~&sig_A) |-> s_eventually(sig_H)
+);","module testbench (
+    input clk,
+    input sig_H,
+    input sig_J,
+    input [5:0] sig_A
+);
+endmodule","module testbench (
+    input clk,
+    input sig_H,
+    input sig_J,
+    input [5:0] sig_A
+);
+endmodule","If sig_J XORed with the complement of the AND reduction of sig_A is true, then sig_H must eventually be true",,"sig_H,sig_J,sig_A"
+codev8b_machine,FVEval-NL2SVA-Machine-282,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_G || (sig_A == (sig_I || sig_J))
+);
+```","assert property(@(posedge clk)
+	(sig_G || (sig_A === (sig_I || sig_J)))
+);","module testbench (
+    input clk,
+    input sig_A,
+    input sig_G,
+    input sig_I,
+    input sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_A,
+    input sig_G,
+    input sig_I,
+    input sig_J
+);
+endmodule",sig_G is high or sig_A is equal to the logical OR of sig_I and sig_J,,"sig_A,sig_G,sig_I,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-283,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_I ^ sig_D) == ( (sig_G ^ sig_A) != sig_F ) )
+);
+```","assert property (@(posedge clk)
+    ( (sig_I ^ sig_D) == ( (sig_G ^ sig_A) != sig_F ) )
+);","module testbench (
+    input clk,
+    input [5:0] sig_A,
+    input [5:0] sig_D,
+    input [5:0] sig_F,
+    input [5:0] sig_G,
+    input [5:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input [5:0] sig_A,
+    input [5:0] sig_D,
+    input [5:0] sig_F,
+    input [5:0] sig_G,
+    input [5:0] sig_I
+);
+endmodule",The value of sig_I XOR sig_D must be equal to the inequality comparison between (sig_G XOR sig_A) and sig_F,,"sig_A,sig_D,sig_F,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-284,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (( (sig_A & sig_J) < (sig_C | sig_A) ) |-> ##[4:9] (sig_C != sig_E))
+);
+```","assert property(@(posedge clk)
+	((sig_A & sig_J) < (sig_C | sig_A)) |-> ##[4:9] (sig_C ^ sig_E)
+);","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_C,
+    input [6:0] sig_E,
+    input [6:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_A,
+    input [6:0] sig_C,
+    input [6:0] sig_E,
+    input [6:0] sig_J
+);
+endmodule","If (the bitwise AND of sig_A and sig_J) is less than (the bitwise OR of sig_C and sig_A), then within 4 to 9 cycles, sig_C and sig_E must be different",,"sig_A,sig_C,sig_E,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-285,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F == (sig_H || (sig_E == 8'hFF))
+);
+```","assert property(@(posedge clk)
+	(sig_F === (sig_H || &sig_E))
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H,
+    input [7:0] sig_E
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_H,
+    input [7:0] sig_E
+);
+endmodule",sig_F must be true if and only if sig_H is true or all bits of sig_E are true,,"sig_F,sig_H,sig_E"
+codev8b_machine,FVEval-NL2SVA-Machine-287,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ~sig_A != 7'd1
+);
+```","assert property(@(posedge clk)
+	(~sig_A !== 1'b1)
+);","module testbench (
+    input clk,
+    input [6:0] sig_A
+);
+endmodule","module testbench (
+    input clk,
+    input [6:0] sig_A
+);
+endmodule",The bitwise negation of sig_A should not be equal to 1,,sig_A
+codev8b_machine,FVEval-NL2SVA-Machine-288,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ((sig_D && sig_C) |-> (sig_D && sig_B))
+);
+```","assert property(@(posedge clk)
+	((sig_D && sig_C) |-> (sig_D && sig_B))
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_C,
+    input sig_D
+);
+endmodule","Both sig_D and sig_C are high implies that both sig_D and sig_B are high,",,"sig_B,sig_C,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-289,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_D |=> sig_C
+);
+```","assert property(@(posedge clk)
+	sig_D |=> sig_C
+);","module testbench (
+    input clk,
+    input sig_C,
+    input sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input sig_D
+);
+endmodule","If sig_D is high, then sig_C must be true in the next cycle",,"sig_C,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-290,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_B |-> ##[3:7] sig_H
+);
+```","assert property(@(posedge clk)
+	sig_B |-> ##[3:7] sig_H
+);","module testbench (
+    input clk,
+    input sig_B,
+    input sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input sig_B,
+    input sig_H
+);
+endmodule","If sig_B is high, then sig_H must become high between 3 and 7 cycles later",,"sig_B,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-291,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_J && (sig_F != |sig_C)) |-> ((sig_B != 1'b1) != sig_G)
+);
+```","assert property(@(posedge clk)
+	(sig_J && (sig_F != (|sig_C))) |-> ((sig_B !== 1'b1) != sig_G)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input sig_G,
+    input sig_J,
+    input [4:0] sig_B,
+    input [4:0] sig_C
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input sig_G,
+    input sig_J,
+    input [4:0] sig_B,
+    input [4:0] sig_C
+);
+endmodule","If sig_J is high and sig_F differs from the OR reduction of sig_C, then sig_B not being equal to 1'b1 must differ from sig_G",,"sig_F,sig_G,sig_J,sig_B,sig_C"
+codev8b_machine,FVEval-NL2SVA-Machine-292,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    {4{~(&sig_F)}} != (sig_A ^ sig_H)
+);
+```","assert property (@(posedge clk)
+    (~&sig_F) != (sig_A ^ sig_H)
+);","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_F,
+    input [3:0] sig_H
+);
+endmodule","module testbench (
+    input clk,
+    input [3:0] sig_A,
+    input [3:0] sig_F,
+    input [3:0] sig_H
+);
+endmodule",The bitwise negation of the logical AND of all bits in sig_F should not be equal to the XOR of sig_A and sig_H,,"sig_A,sig_F,sig_H"
+codev8b_machine,FVEval-NL2SVA-Machine-293,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_J |=> (sig_I || (sig_D == 8'b0))
+);
+```","assert property(@(posedge clk)
+	sig_J |=> (sig_I || ~|sig_D)
+);","module testbench (
+    input clk,
+    input sig_I,
+    input sig_J,
+    input [7:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_I,
+    input sig_J,
+    input [7:0] sig_D
+);
+endmodule","If sig_J is true, then either sig_I must be true or all bits in sig_D must be low at the next clock edge",,"sig_I,sig_J,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-294,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H || sig_I || (sig_E != ~sig_I)) |=> (sig_D && !$past(sig_D))
+);
+```","assert property(@(posedge clk)
+	((sig_H || sig_I) || (sig_E != !sig_I)) |=> $rose(sig_D)
+);","module testbench (
+    input clk,
+    input sig_D,
+    input sig_H,
+    input [7:0] sig_E,
+    input [7:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input sig_H,
+    input [7:0] sig_E,
+    input [7:0] sig_I
+);
+endmodule","If either sig_H or sig_I is high, or sig_E differs from the negated value of sig_I, then sig_D will transition from low to high in the next cycle",,"sig_D,sig_H,sig_E,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-295,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (sig_H != sig_I) |=> sig_D
+);
+```","assert property(@(posedge clk)
+	(sig_H ^ sig_I) |=> sig_D
+);","module testbench (
+    input clk,
+    input sig_D,
+    input [3:0] sig_H,
+    input [3:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_D,
+    input [3:0] sig_H,
+    input [3:0] sig_I
+);
+endmodule","If sig_H and sig_I are different values, then sig_D holds in the next cycle",,"sig_D,sig_H,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-296,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_J < sig_F) && sig_I ) |-> ( ~(^sig_C) )
+);
+```","assert property (@(posedge clk)
+    ((sig_J < sig_F) && sig_I) |-> (~^sig_C)
+);","module testbench (
+    input clk,
+    input sig_I,
+    input [5:0] sig_C,
+    input [5:0] sig_F,
+    input [5:0] sig_J
+);
+endmodule","module testbench (
+    input clk,
+    input sig_I,
+    input [5:0] sig_C,
+    input [5:0] sig_F,
+    input [5:0] sig_J
+);
+endmodule","When sig_J is less than sig_F and sig_I is true, the value of the bitwise negated XOR reduction of sig_C is also true",,"sig_I,sig_C,sig_F,sig_J"
+codev8b_machine,FVEval-NL2SVA-Machine-297,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    ( (sig_G < sig_A) || (sig_I <= sig_G) ) && 
+    (|sig_B) && 
+    sig_C
+);
+```","assert property(@(posedge clk)
+	(((sig_G < sig_A) || (sig_I <= sig_G)) && (|sig_B && sig_C))
+);","module testbench (
+    input clk,
+    input sig_C,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_G,
+    input [3:0] sig_I
+);
+endmodule","module testbench (
+    input clk,
+    input sig_C,
+    input [3:0] sig_A,
+    input [3:0] sig_B,
+    input [3:0] sig_G,
+    input [3:0] sig_I
+);
+endmodule","sig_G is less than sig_A or sig_I is less than or equal to sig_G, and sig_B contains at least one '1' bit and sig_C is high",,"sig_C,sig_A,sig_B,sig_G,sig_I"
+codev8b_machine,FVEval-NL2SVA-Machine-298,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    sig_F |-> ##5 (sig_D != 4'b0001)
+);
+```","assert property(@(posedge clk)
+	sig_F |-> ##5 (sig_D !== 1'b1)
+);","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_D
+);
+endmodule","module testbench (
+    input clk,
+    input sig_F,
+    input [3:0] sig_D
+);
+endmodule","If sig_F is true, then five cycles later sig_D must not be equal to 1'b1",,"sig_F,sig_D"
+codev8b_machine,FVEval-NL2SVA-Machine-299,codev8b,"```systemverilog
+assert property (@(posedge clk)
+    (|sig_G) |-> ##3 (sig_B != sig_G)
+);
+```","assert property(@(posedge clk)
+	sig_G |-> ##3 (sig_B ^ sig_G)
+);","module testbench (
+    input clk,
+    input [7:0] sig_B,
+    input [7:0] sig_G
+);
+endmodule","module testbench (
+    input clk,
+    input [7:0] sig_B,
+    input [7:0] sig_G
+);
+endmodule","If sig_G is true, then after three clock cycles, sig_B must be different from sig_G",,"sig_B,sig_G"

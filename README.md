@@ -142,7 +142,7 @@ tested and found to not help on this dataset, unlike on `nl2sva_machine_verified
 
 | Configuration | SC | FM-strict | FM-relaxed |
 |---|---|---|---|
-| 0-shot baseline (`--no-rag`) | — | 63.0% | — |
+| 0-shot baseline (`--no-rag`) | 94.5% | 63.0% | 76.7% |
 | Full pipeline, no SOR-timing fixes | 100.0% | 71.2–74.0% | 83.6–87.7% |
 | **+ `--sor-conservative --only-overlap-implication`** | **98.6%** | **74.0%** | **87.7%** |
 
@@ -167,3 +167,57 @@ had a real, unrelated parsing bug fixed along the way: range/unbounded delays (`
 These are single-trial numbers on both datasets; per-row LLM sampling variance is non-trivial (± a few
 percentage points between otherwise-identical reruns is common), so treat exact figures as indicative
 rather than final, and prefer rerunning before drawing strong conclusions from small deltas.
+
+### Cross-model comparison — RAG+SOR pipeline
+
+Each row uses that dataset's best configuration from above. "DeepSeek-V4-Flash (thinking)" was
+originally run and labeled as "DeepSeek-R1" — DeepSeek has since silently remapped the
+`deepseek-reasoner` API alias to route to V4-Flash with thinking mode on, confirmed live via the
+`model` field an unrelated retest returned; the results themselves are real, unaffected completions,
+just mislabeled at the time, and have been renamed accordingly.
+
+| Model | Dataset | SC | FM-strict | FM-relaxed |
+|---|---|---|---|---|
+| gpt-4o | human | 98.6% (72/73) | 74.0% (54/73) | 87.7% (64/73) |
+| gpt-4o | machine | 99.6% (282/283) | 84.8% (240/283) | 94.7% (268/283) |
+| DeepSeek-V4-Flash (thinking) | human | 100.0% (73/73) | 86.3% (63/73) | 94.5% (69/73) |
+| DeepSeek-V4-Flash (thinking) | machine | 100.0% (283/283) | 92.9% (263/283) | 98.6% (279/283) |
+| gpt-5 | human | not yet run | — | — |
+| gpt-5 | machine | not yet run | — | — |
+| deepseek-chat (V4-Flash, thinking off) | human | not yet run | — | — |
+| deepseek-chat (V4-Flash, thinking off) | machine | not yet run | — | — |
+
+### Cross-model comparison — raw model output (no pipeline)
+
+Scores the model's own output directly (no RAG/OL-NL grounding/SOR), via the same JasperGold-based
+scorer (`verilogFinetune/score_nl2sva_human.py`) for an apples-to-apples comparison against the
+pipeline numbers above.
+
+| Model | Dataset | SC | FM-strict | FM-relaxed |
+|---|---|---|---|---|
+| gpt-4o (`--no-rag` 0-shot) | human | 94.5% (69/73) | 63.0% (46/73) | 76.7% (56/73) |
+| gpt-4o (`--no-rag` 0-shot) | machine | not yet run | — | — |
+| CodeV-SVA-8B | human | 97.3% (71/73) | 75.3% (55/73) | 83.6% (61/73) |
+| CodeV-SVA-14B | human | 93.2% (68/73) | 74.0% (54/73) | 80.8% (59/73) |
+| CodeV-SVA-8B | machine | 96.5% (273/283) | 83.0% (235/283) | 93.3% (264/283) |
+| CodeV-SVA-14B | machine | 97.2% (275/283) | 80.9% (229/283) | 93.3% (264/283) |
+| ours-8B (fine-tuned in this repo) | human | 97.3% (71/73) | 47.9% (35/73) | 78.1% (57/73) |
+| ours-14B (fine-tuned in this repo) | human | 95.9% (70/73) | 49.3% (36/73) | 69.9% (51/73) |
+| ours-8B (fine-tuned in this repo) | machine | 91.2% (258/283) | 69.3% (196/283) | 82.3% (233/283) |
+| ours-14B (fine-tuned in this repo) | machine | 92.6% (262/283) | 67.8% (192/283) | 85.9% (243/283) |
+| gpt-5 (0-shot) | human | not yet run | — | — |
+| gpt-5 (0-shot) | machine | not yet run | — | — |
+| DeepSeek-V4-Flash (thinking, 0-shot) | human | not yet run | — | — |
+| DeepSeek-V4-Flash (thinking, 0-shot) | machine | not yet run | — | — |
+| deepseek-chat (V4-Flash, thinking off, 0-shot) | human | not yet run | — | — |
+| deepseek-chat (V4-Flash, thinking off, 0-shot) | machine | not yet run | — | — |
+| Qwen3-8B (base model) | human/machine | unavailable — no local GPU/hosting for it here | — | — |
+| Qwen3-14B (base model) | human/machine | unavailable — no local GPU/hosting for it here | — | — |
+
+`ours-8B`/`ours-14B` lag CodeV-SVA and gpt-4o+pipeline noticeably on FM-strict despite comparable SC.
+Root-caused by diffing failure cases against CodeV-SVA's successes on the same rows: nearly every gap
+traces to operators/idioms — `##[M:N]` range delays, `s_eventually`/`strong(...)`, `~^`/`^~`,
+`$onehot0({...})`'s concatenation-argument form — that appear **zero times** in the final SVA code
+blocks across all 5,000 examples of this repo's `codev_sva_ol_dfs_5000` fine-tuning set (confirmed by
+direct regex counts over the training data), i.e. a training-data coverage gap rather than a general
+reasoning-capability gap.

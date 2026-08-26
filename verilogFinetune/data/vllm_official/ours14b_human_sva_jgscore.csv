@@ -1,0 +1,797 @@
+task_id,syntax,functionality,func_relaxed,jg_output_tail
+FVEval-NL2SVA-Human-2,1.0,0.0,0.0,"RROR (ENL034): 5 errors detected in the design file(s).
+
+ERROR: problem encountered at line 56 in file /home/wx2356/Hybrid-NL2SVA/Evaluation/FVRuleLearner/FVEval/tool_scripts/run_jg_nl2sva_human.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.591 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-0,1.0,0.0,0.0,"RROR (ENL034): 3 errors detected in the design file(s).
+
+ERROR: problem encountered at line 56 in file /home/wx2356/Hybrid-NL2SVA/Evaluation/FVRuleLearner/FVEval/tool_scripts/run_jg_nl2sva_human.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.586 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-1,1.0,0.0,0.0,"RROR (ENL034): 2 errors detected in the design file(s).
+
+ERROR: problem encountered at line 56 in file /home/wx2356/Hybrid-NL2SVA/Evaluation/FVRuleLearner/FVEval/tool_scripts/run_jg_nl2sva_human.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.569 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-3,1.0,0.0,0.0," |=> (count == $past(jump_value_d1))'
+'(jump_vld_d1 && (count !== jump_value_d1)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.580 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-4,1.0,1.0,1.0,"vld_d1 && !jump_vld_d1 && (count !== count_d1) && !tb_reset_1_cycle_pulse_shadow) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.574 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-5,1.0,1.0,1.0,"task: ""p1_prove""
+Full equivalence between
+'$onehot0(tb_gnt)'
+'!($onehot0(tb_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.574 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-6,1.0,1.0,1.0,"e between
+'(|tb_req && !busy) |-> |tb_gnt'
+'(!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-7,1.0,1.0,1.0,"""
+Full equivalence between
+'(tb_gnt != 0) |-> (tb_req >= tb_gnt)'
+'(tb_gnt & ~tb_req) == 0'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.573 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-8,1.0,1.0,1.0,"n task: ""p1_prove""
+Full equivalence between
+'busy |-> !tb_gnt'
+'(|tb_gnt && busy) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-9,1.0,0.0,0.0," !busy) |=> (tb_gnt == $past(last_gnt))'
+'(hold && !busy && (tb_gnt != last_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.576 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-10,1.0,1.0,1.0," ((~tb_gnt) & tb_req) == 0 ) )'
+'(|tb_gnt && !hold && |((tb_gnt - 'd1) & tb_req)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.570 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-11,1.0,0.0,1.0,"rove""
+'$onehot0(busy | hold | cont_gnt)'
+implies
+'!$onehot0({hold,busy,cont_gnt}) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-14,0.0,0.0,0.0,"s).
+
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/verilogFinetune/data/vllm_official/ours14b_human_sva_jgscore.csv.jgtmp/ours14b_human_FVEval-NL2SVA-Human-14_synccheck.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.566 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-13,1.0,1.0,1.0,"nce between
+'(tb_gnt == '0) |-> (gnt_id == '0)'
+'((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.576 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-16,1.0,0.0,0.0,"""p1_prove""
+No equivalence between
+'wr_push |-> fifo_full'
+'(fifo_full && wr_push) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-15,1.0,1.0,1.0,"prove""
+Full equivalence between
+'!(rd_pop && fifo_empty)'
+'(fifo_empty && rd_pop) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.576 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-17,1.0,1.0,1.0,"n
+'rd_pop |-> (rd_data == fifo_out_data)'
+'(rd_pop && (fifo_out_data != rd_data)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.592 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-18,1.0,0.0,1.0," task: ""p1_prove""
+'!fifo_empty |-> strong(##[0:$] rd_pop)'
+implies
+'!fifo_empty |-> rd_pop'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.569 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-20,1.0,0.0,1.0,"sh_cnt) |-> strong(##[0:$] |tb_pop_cnt)'
+implies
+'(tb_push_cnt != 0) |=> (tb_pop_cnt != 0)'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.576 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-19,1.0,0.0,1.0,"proof on task: ""p1_prove""
+'wr_push |-> strong(##[0:$] rd_pop)'
+implies
+'wr_push |-> rd_pop'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.591 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-21,1.0,0.0,1.0,"(tb_pop_cnt > 0))'
+implies
+'(tb_fifo_filled_cnt == max_fifo_entries) |=> (tb_pop_cnt != 0)'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-24,1.0,0.0,0.0,"RROR (ENL034): 3 errors detected in the design file(s).
+
+ERROR: problem encountered at line 56 in file /home/wx2356/Hybrid-NL2SVA/Evaluation/FVRuleLearner/FVEval/tool_scripts/run_jg_nl2sva_human.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-22,1.0,1.0,1.0,"nce between
+'tb_pop_cnt <= tb_fifo_filled_cnt'
+'(tb_pop_cnt > tb_fifo_filled_cnt) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.574 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-23,1.0,1.0,1.0,"tb_fifo_filled_cnt <= max_fifo_entries)'
+'(tb_fifo_filled_cnt > max_fifo_entries) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.576 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-25,1.0,1.0,1.0,"task: ""p1_prove""
+Full equivalence between
+'$onehot0(tb_gnt)'
+'!($onehot0(tb_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-26,1.0,1.0,1.0,"between
+'((|tb_req) && !busy) |-> |tb_gnt'
+'(!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-27,1.0,1.0,1.0,"valence between
+'(tb_gnt != 0) |-> ((tb_req & tb_gnt) == tb_gnt)'
+'(tb_gnt & ~tb_req) == 0'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.573 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-28,1.0,1.0,1.0,": ""p1_prove""
+Full equivalence between
+'busy |-> (tb_gnt == 0)'
+'(|tb_gnt && busy) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-29,1.0,0.0,0.0,"hold && !busy) |=> (tb_gnt == last_gnt)'
+'(hold && !busy && (tb_gnt != last_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.569 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-31,0.0,0.0,0.0,"s).
+
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/verilogFinetune/data/vllm_official/ours14b_human_sva_jgscore.csv.jgtmp/ours14b_human_FVEval-NL2SVA-Human-31_synccheck.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.569 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-30,1.0,0.0,0.0,"_gnt) ))'
+'(|last_gnt && |tb_gnt && !hold && (|(valid_request_mask_rr & tb_req))) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.570 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-32,1.0,0.0,1.0,"rove""
+'$onehot0(hold + busy + cont_gnt)'
+implies
+'!$onehot0({hold,busy,cont_gnt}) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.588 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-34,1.0,1.0,1.0,"lence between
+'(tb_gnt == 0) |-> (gnt_id == 0)'
+'((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.570 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-35,1.0,1.0,1.0,"ask: ""p1_prove""
+Full equivalence between
+'!tb_sequence_seen'
+'(|tb_sequence_seen) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.574 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-38,1.0,1.0,1.0," equivalence between
+'($onehot0(tb_gnt) || $onehot(tb_gnt))'
+'!($onehot0(tb_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.587 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-37,1.0,0.0,0.0," != $past(fsm_state))'
+'(fsm_state == tb_random_state) |=> (fsm_state != $past(fsm_state))'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-39,1.0,1.0,1.0," between
+'(|tb_req) |-> (busy || |tb_gnt)'
+'(!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-40,1.0,1.0,1.0," on task: ""p1_prove""
+Full equivalence between
+'tb_gnt |-> tb_req'
+'(tb_gnt & ~tb_req) == 0'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.577 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-42,1.0,0.0,0.0,"hold && !busy) |=> (tb_gnt == last_gnt)'
+'(hold && !busy && (tb_gnt != last_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-41,1.0,1.0,1.0,"n task: ""p1_prove""
+Full equivalence between
+'busy |-> !tb_gnt'
+'(|tb_gnt && busy) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.580 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-43,1.0,0.0,0.0,"b_gnt == 0)'
+'(arbiter_in_sticky && !(|(sticky_req & tb_req)) && (tb_gnt != 'd0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.592 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-44,1.0,0.0,1.0,"-> (tb_gnt == sticky_req)'
+implies
+'(arbiter_in_sticky && (tb_gnt != sticky_req)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.568 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-45,1.0,0.0,1.0,"rove""
+'$onehot0(hold + busy + cont_gnt)'
+implies
+'!$onehot0({hold,busy,cont_gnt}) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.570 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-47,1.0,1.0,1.0,"nce between
+'(tb_gnt == '0) |-> (gnt_id == '0)'
+'((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.570 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-48,1.0,1.0,1.0,"_prove""
+Full equivalence between
+'fifo_empty |-> !rd_pop'
+'(fifo_empty && rd_pop) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.566 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-49,1.0,0.0,1.0,"""p1_prove""
+'(wr_push && fifo_full) |=> fifo_full'
+implies
+'(fifo_full && wr_push) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.587 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-51,0.0,0.0,0.0,"s).
+
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/verilogFinetune/data/vllm_official/ours14b_human_sva_jgscore.csv.jgtmp/ours14b_human_FVEval-NL2SVA-Human-51_synccheck.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.568 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-52,1.0,0.0,1.0,"proof on task: ""p1_prove""
+'wr_push |-> strong(##[0:$] rd_pop)'
+implies
+'wr_push |-> rd_pop'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-53,1.0,1.0,1.0,"task: ""p1_prove""
+Full equivalence between
+'$onehot0(tb_gnt)'
+'!($onehot0(tb_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.574 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-54,1.0,1.0,1.0," between
+'(|tb_req) |-> (busy || |tb_gnt)'
+'(!busy && |tb_req && (tb_gnt == 'd0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-55,1.0,1.0,1.0," equivalence between
+'(tb_gnt != 0) |-> ((tb_req & tb_gnt) != 0)'
+'(tb_gnt & ~tb_req) == 0'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.574 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-56,1.0,1.0,1.0,"n task: ""p1_prove""
+Full equivalence between
+'busy |-> !tb_gnt'
+'(|tb_gnt && busy) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-57,1.0,0.0,1.0,"!busy) |=> (tb_gnt == last_gnt)'
+implies
+'(hold && !busy && (tb_gnt != last_gnt)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.556 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-58,1.0,0.0,0.0,"RROR (ENL034): 3 errors detected in the design file(s).
+
+ERROR: problem encountered at line 56 in file /home/wx2356/Hybrid-NL2SVA/Evaluation/FVRuleLearner/FVEval/tool_scripts/run_jg_nl2sva_human.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.575 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-59,1.0,0.0,1.0,"rove""
+'$onehot0(hold | busy | cont_gnt)'
+implies
+'!$onehot0({hold,busy,cont_gnt}) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.590 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-62,1.0,1.0,1.0,"prove""
+Full equivalence between
+'!(rd_pop && fifo_empty)'
+'(fifo_empty && rd_pop) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.574 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-63,1.0,1.0,1.0,"prove""
+Full equivalence between
+'!(wr_push && fifo_full)'
+'(fifo_full && wr_push) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.570 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-61,1.0,1.0,1.0,"nce between
+'(tb_gnt == '0) |-> (gnt_id == '0)'
+'((tb_gnt == 0) && (gnt_id != 0)) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.575 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-64,1.0,0.0,0.0,"d_packet_tracker_next == 'd0) && (rand_packet_tracker != 'd0) && rand_pulse_seen) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.590 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-66,1.0,0.0,1.0,"proof on task: ""p1_prove""
+'wr_push |-> strong(##[0:$] rd_pop)'
+implies
+'wr_push |=> rd_pop'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.588 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-65,1.0,0.0,1.0," task: ""p1_prove""
+'!fifo_empty |-> strong(##[0:$] rd_pop)'
+implies
+'!fifo_empty |-> rd_pop'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-67,1.0,0.0,0.0,"= $past(wr_data)))'
+'(fifo_empty && rd_pop && (!wr_push || (wr_data != rd_data))) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.573 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-68,1.0,1.0,1.0,"ce between
+'(wr_push && fifo_full) |-> rd_pop'
+'(fifo_full && wr_push && !rd_pop) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-69,1.0,0.0,0.0,"t_data != rd_data)) || (fifo_empty && rd_pop && wr_push && (wr_data != rd_data))) !== 1'b1'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-71,1.0,0.0,1.0,"n task: ""p1_prove""
+'wr_push |-> strong(##[0:$] rd_pop)'
+implies
+'wr_push |-> $rose(rd_pop)'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.569 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-70,1.0,0.0,0.0,"rd_pop && !fifo_empty) |=> (fifo_empty || rd_pop)'
+'!fifo_empty |-> strong(##[0:$] rd_pop)'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-72,1.0,1.0,1.0,"n task: ""p1_prove""
+Full equivalence between
+'re |-> (ra < entries)'
+'(re |-> ra < entries)'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.587 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-73,1.0,1.0,1.0,"n task: ""p1_prove""
+Full equivalence between
+'we |-> (wa < entries)'
+'(we |-> wa < entries)'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.573 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-75,1.0,0.0,0.0,"RROR (ENL034): 2 errors detected in the design file(s).
+
+ERROR: problem encountered at line 56 in file /home/wx2356/Hybrid-NL2SVA/Evaluation/FVRuleLearner/FVEval/tool_scripts/run_jg_nl2sva_human.tcl
+
+% INFO (IPL005): Received request to exit from the console.
+INFO (IPL018): The peak resident set memory use for this session was 0.582 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 1.
+INFO (IPL016): Exiting the analysis session with status 1."
+FVEval-NL2SVA-Human-74,1.0,1.0,1.0,"p1_prove""
+Full equivalence between
+'!(we && re && (wa == ra))'
+'(we && re |-> !(wa == ra))'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.584 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-76,1.0,1.0,1.0," addr_ar_seen) |-> !addr_ar_seen'
+'(addr_ar_seen |-> !(re && (ra == symbolic_constant_a)))'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.581 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-77,1.0,0.0,0.0,"a) && addr_first_aw_seen)'
+'(!addr_first_aw_seen |-> !(re && (ra == symbolic_constant_a)))'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.572 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
+FVEval-NL2SVA-Human-78,1.0,1.0,1.0,"prove""
+Full equivalence between
+'(latency_cnt <= wr_latency)'
+'(latency_cnt <= wr_latency)'
+[p1_prove] % exit -force
+[p1_prove] % INFO (IPL005): Received request to exit from the console.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.571 GB.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0."
