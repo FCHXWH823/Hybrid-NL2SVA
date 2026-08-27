@@ -1,0 +1,2563 @@
+Starting the test plan generation process...
+Step 1: Reading the PDF file(s)...
+First 5 lines of spec_text (truncated):
+UART to Bus
+Core Specifications
+Written for publication on:
+ 
+File name: UART to Bus Core Specifications
+...
+Total number of lines in spec_text: 285
+Step 2: Loading and processing the Knowledge Graph...
+Knowledge Graph loaded from /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart/output/clustered_graph.0.graphml
+Number of nodes: 76
+Number of edges: 87
+
+Example node attributes:
+  type: "SIGNAL"
+  description: "SER_IN" is a signal used for serial input in the UART interface, functioning as the UART serial input port to the core.
+  source_id: 2255f746854fd81e093f56b0e9e5292d,42cf0552ea62838a3e179276cded1703
+  cluster: 4
+  level: 0
+  degree: 2
+  human_readable_id: 48
+  id: 0180177578d145408ab936668e5fdaec
+
+Example edge attributes:
+  weight: 6.0
+  description: "The 'int_read' signal indicates a read operation in the UART to Bus Core."
+  source_id: 42cf0552ea62838a3e179276cded1703
+  id: 6ad9fd1053af411b92a2925c3fd22aee
+  human_readable_id: 17
+  level: 0
+
+Node attribute keys:
+human_readable_id, cluster, type, id, entity_type, source_id, degree, description, level
+
+Edge attribute keys:
+human_readable_id, id, source_id, description, weight, level
+Step 2b: Refining Knowledge Graph with RTL information...
+Starting Knowledge Graph refinement with RTL from /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/rtl/uart
+Initial specification KG has 76 nodes and 87 edges
+
+=== Specification KG Analysis ===
+Node types in specification KG:
+  - "DOCUMENT": 3 nodes
+  - "AUTHOR": 1 nodes
+  - "DATE": 2 nodes
+  - "MODULE": 9 nodes
+  - "PROTOCOL": 3 nodes
+  - "COMPONENT": 7 nodes
+  - "PERSON": 1 nodes
+  - "TABLE": 8 nodes
+  - "SUBMODULE": 2 nodes
+  - "SECTION": 6 nodes
+  - "SUBSECTION": 3 nodes
+  - "FIGURE": 2 nodes
+  - : 3 nodes
+  - "ORGANIZATION": 1 nodes
+  - "EVENT": 1 nodes
+  - "CONFIGURATION": 6 nodes
+  - "SIGNAL": 9 nodes
+  - "ADDRESS": 2 nodes
+  - "CLOCK": 1 nodes
+  - "OPERATION": 1 nodes
+  - "DIRECTORY": 2 nodes
+  - "FILE": 2 nodes
+  - "TOOL": 1 nodes
+Specification KG has 0 nodes with 'text' attributes for matching
+Built knowledge graph with 1371 nodes and 1620 edges
+Built RTL KG with 1371 nodes and 1620 edges
+Added 1371 RTL nodes and 1620 RTL edges to combined KG
+
+=== Link Summary ===
+Total links created: 82
+- contains_spec: 76 links
+- contains_implementation: 6 links
+
+=== Link Examples ===
+
+Examples of 'contains_spec' links:
+  1. design_root --contains_spec--> "UART TO BUS CORE SPECIFICATIONS"
+     Target node details:
+       type: "DOCUMENT"
+       description: The "UART TO BUS CORE SPECIFICATIONS" is a document that provides a comprehensive overview of the UART to Bus Core. It includes detailed information on the specifications, architecture, and operation protocols of the UART to Bus IP core. This document serves as a crucial resource for understanding the design and functionality of the core, ensuring that users have access to all necessary technical details.
+       source_id: 42cf0552ea62838a3e179276cded1703,efc7ccc0359fff1a98e899386466be62
+       cluster: 2
+       level: 0
+       degree: 23
+       human_readable_id: 0
+       id: 2f9d4bcab18c43ce876c8032a23d5b4b
+  2. design_root --contains_spec--> "MOTI LITOCHEVSKI"
+     Target node details:
+       type: "AUTHOR"
+       description: "The author of the UART to Bus Core Specifications document."
+       source_id: efc7ccc0359fff1a98e899386466be62
+       cluster: 2
+       level: 0
+       degree: 1
+       human_readable_id: 1
+       id: 9a3910c74fa24549ab4db119bfa9e78c
+  3. design_root --contains_spec--> "FEBRUARY 12, 2010"
+     Target node details:
+       type: "DATE"
+       description: "The creation date of the UART to Bus Core Specifications document."
+       source_id: efc7ccc0359fff1a98e899386466be62
+       cluster: 2
+       level: 0
+       degree: 1
+       human_readable_id: 2
+       id: 16b03a13733648109d6309374005458d
+
+Examples of 'contains_implementation' links:
+  1. design_root --contains_implementation--> rtl_0
+     Target node details:
+       type: module
+       name: uart_tx
+       original_id: module:uart_tx
+       source: rtl
+  2. design_root --contains_implementation--> rtl_1
+     Target node details:
+       type: module
+       name: uart_rx
+       original_id: module:uart_rx
+       source: rtl
+  3. design_root --contains_implementation--> rtl_2
+     Target node details:
+       type: module
+       name: uart_top
+       original_id: module:uart_top
+       source: rtl
+Created 82 links between specification and RTL nodes
+
+Attempting to link 55 RTL signals to 77 spec nodes
+Created 0 additional links based on signal name matching
+Graph is already connected
+Graph is connected
+Number of connected components: 1
+Number of bridges between RTL and spec: 6
+  Bridge 1: rtl_0 (module: uart_tx) ---> design_root (root: Design Root)
+  Bridge 2: rtl_1 (module: uart_rx) ---> design_root (root: Design Root)
+  Bridge 3: rtl_2 (module: uart_top) ---> design_root (root: Design Root)
+  Bridge 4: rtl_3 (module: uart_parser) ---> design_root (root: Design Root)
+  Bridge 5: rtl_4 (module: uart2bus_top) ---> design_root (root: Design Root)
+  Bridge 6: rtl_5 (module: baud_gen) ---> design_root (root: Design Root)
+
+=== High-Degree Nodes (Hubs) ===
+  Node: rtl_3 (module: uart_parser)
+  Degree: 245 connections
+  Source: rtl
+  Connected to:
+    - rtl_31 (port: // global signals 
+	clock)
+    - rtl_32 (port: reset)
+    - rtl_33 (port: // transmit and receive internal interface signals from uart interface 
+	rx_data)
+    - rtl_35 (port: tx_data)
+    - rtl_36 (port: new_tx_data)
+    - ... and 240 more
+
+  Node: rtl_2 (module: uart_top)
+  Degree: 232 connections
+  Source: rtl
+  Connected to:
+    - rtl_0 (module: uart_tx)
+    - rtl_19 (port: // global signals 
+	clock)
+    - rtl_20 (port: reset)
+    - rtl_21 (port: // uart serial signals 
+	ser_in)
+    - rtl_22 (port: ser_out)
+    - ... and 227 more
+
+  Node: rtl_0 (module: uart_tx)
+  Degree: 229 connections
+  Source: rtl
+  Connected to:
+    - rtl_7 (port: reset)
+    - rtl_8 (port: ce_16)
+    - rtl_11 (port: ser_out)
+    - rtl_12 (port: tx_busy)
+    - rtl_5 (module: baud_gen)
+    - ... and 224 more
+
+  Node: rtl_1 (module: uart_rx)
+  Degree: 228 connections
+  Source: rtl
+  Connected to:
+    - rtl_0 (module: uart_tx)
+    - rtl_14 (port: reset)
+    - rtl_15 (port: ce_16)
+    - rtl_17 (port: rx_data)
+    - rtl_18 (port: new_rx_data)
+    - ... and 223 more
+
+  Node: rtl_4 (module: uart2bus_top)
+  Degree: 227 connections
+  Source: rtl
+  Connected to:
+    - rtl_45 (port: // global signals 
+	clock)
+    - rtl_46 (port: reset)
+    - rtl_47 (port: // uart serial signals 
+	ser_in)
+    - rtl_48 (port: ser_out)
+    - rtl_49 (port: // internal bus to register file 
+	int_address)
+    - ... and 222 more
+
+Combined KG now has 1448 nodes and 1783 edges
+Refined Knowledge Graph now has 1448 nodes and 1783 edges
+Step 3: Initializing the language model...
+Step 4: Extracting valid signal names...
+Valid signal names: baud_clk, baud_freq, baud_limit, ce_16, int_address, int_gnt, int_rd_data, int_read, int_req, int_wr_data, int_write, new_rx_data, new_tx_data, rx_data, ser_in, ser_out, tx_busy, tx_data
+Step 5: Generating natural language test plans...
+
+=== KG Structure ===
+KG is a dictionary with keys: ['nodes', 'edges']
+  nodes: list with 1448 items
+    First item type: <class 'dict'>
+    First item keys: ['id', 'attributes']
+  edges: list with 1783 items
+    First item type: <class 'dict'>
+    First item keys: ['source', 'target', 'attributes']
+
+Building signal name to node ID mapping for 18 signals...
+
+=== Building signal to node mapping for 18 signals ===
+Valid signals: ['baud_clk', 'baud_freq', 'baud_limit', 'ce_16', 'int_address', 'int_gnt', 'int_rd_data', 'int_read', 'int_req', 'int_wr_data', 'int_write', 'new_rx_data', 'new_tx_data', 'rx_data', 'ser_in', 'ser_out', 'tx_busy', 'tx_data']
+KG structure: ['nodes', 'edges']
+Number of nodes in KG: 1448
+
+Node type distribution in KG:
+  "DOCUMENT": 3 nodes
+  "AUTHOR": 1 nodes
+  "DATE": 2 nodes
+  "MODULE": 9 nodes
+  "PROTOCOL": 3 nodes
+  "COMPONENT": 7 nodes
+  "PERSON": 1 nodes
+  "TABLE": 8 nodes
+  "SUBMODULE": 2 nodes
+  "SECTION": 6 nodes
+  "SUBSECTION": 3 nodes
+  "FIGURE": 2 nodes
+  : 3 nodes
+  "ORGANIZATION": 1 nodes
+  "EVENT": 1 nodes
+  "CONFIGURATION": 6 nodes
+  "SIGNAL": 9 nodes
+  "ADDRESS": 2 nodes
+  "CLOCK": 1 nodes
+  "OPERATION": 1 nodes
+  "DIRECTORY": 2 nodes
+  "FILE": 2 nodes
+  "TOOL": 1 nodes
+  module: 6 nodes
+  port: 55 nodes
+  fsm: 29 nodes
+  protocol_pattern: 21 nodes
+  verification_point: 12 nodes
+  assignment: 1248 nodes
+  root: 1 nodes
+
+Signal mentions by node type:
+  baud_clk: {'port': 1, 'assignment': 6}
+  baud_freq: {'port': 2, 'assignment': 6}
+  baud_limit: {'port': 2, 'assignment': 6}
+  ce_16: {'port': 3, 'assignment': 18}
+  int_address: {'port': 2, 'assignment': 24}
+  int_gnt: {'port': 2}
+  int_rd_data: {'port': 2}
+  int_read: {'port': 2, 'assignment': 18}
+  int_req: {'port': 2, 'assignment': 12}
+  int_wr_data: {'port': 2, 'assignment': 18}
+  int_write: {'port': 2, 'assignment': 18}
+  new_rx_data: {'port': 3, 'assignment': 18}
+  new_tx_data: {'port': 3, 'assignment': 72}
+  rx_data: {'port': 6, 'assignment': 30}
+  ser_in: {'port': 3}
+  ser_out: {'port': 3, 'assignment': 18}
+  tx_busy: {'port': 3, 'assignment': 30}
+  tx_data: {'port': 6, 'assignment': 114}
+
+=== Signal mapping results ===
+Signal 'baud_clk' mapped to 7 nodes: ['rtl_30', 'rtl_126', 'rtl_334', 'rtl_542', 'rtl_750', 'rtl_958', 'rtl_1166']
+Signal 'baud_freq' mapped to 13 nodes: ['rtl_59', 'rtl_130', 'rtl_327', 'rtl_338', 'rtl_535', 'rtl_546', 'rtl_743', 'rtl_754', 'rtl_951', 'rtl_962', 'rtl_1159', 'rtl_1170', 'rtl_1367']
+Signal 'baud_limit' mapped to 14 nodes: ['rtl_29', 'rtl_60', 'rtl_131', 'rtl_326', 'rtl_339', 'rtl_534', 'rtl_547', 'rtl_742', 'rtl_755', 'rtl_950', 'rtl_963', 'rtl_1158', 'rtl_1171', 'rtl_1366']
+Signal 'ce_16' mapped to 63 nodes: ['rtl_8', 'rtl_15', 'rtl_58', 'rtl_123', 'rtl_124', 'rtl_125', 'rtl_126', 'rtl_135', 'rtl_153', 'rtl_154', 'rtl_328', 'rtl_329', 'rtl_330', 'rtl_331', 'rtl_332', 'rtl_333', 'rtl_334', 'rtl_343', 'rtl_361', 'rtl_362', 'rtl_536', 'rtl_537', 'rtl_538', 'rtl_539', 'rtl_540', 'rtl_541', 'rtl_542', 'rtl_551', 'rtl_569', 'rtl_570', 'rtl_744', 'rtl_745', 'rtl_746', 'rtl_747', 'rtl_748', 'rtl_749', 'rtl_750', 'rtl_759', 'rtl_777', 'rtl_778', 'rtl_952', 'rtl_953', 'rtl_954', 'rtl_955', 'rtl_956', 'rtl_957', 'rtl_958', 'rtl_967', 'rtl_985', 'rtl_986', 'rtl_1160', 'rtl_1161', 'rtl_1162', 'rtl_1163', 'rtl_1164', 'rtl_1165', 'rtl_1166', 'rtl_1175', 'rtl_1193', 'rtl_1194', 'rtl_1368', 'rtl_1369', 'rtl_1370']
+Signal 'int_address' mapped to 24 nodes: ['rtl_249', 'rtl_250', 'rtl_251', 'rtl_252', 'rtl_457', 'rtl_458', 'rtl_459', 'rtl_460', 'rtl_665', 'rtl_666', 'rtl_667', 'rtl_668', 'rtl_873', 'rtl_874', 'rtl_875', 'rtl_876', 'rtl_1081', 'rtl_1082', 'rtl_1083', 'rtl_1084', 'rtl_1289', 'rtl_1290', 'rtl_1291', 'rtl_1292']
+Signal 'int_gnt' mapped to 2 nodes: ['rtl_44', 'rtl_55']
+Signal 'int_rd_data' mapped to 8 nodes: ['rtl_41', 'rtl_52', 'rtl_259', 'rtl_467', 'rtl_675', 'rtl_883', 'rtl_1091', 'rtl_1299']
+Signal 'int_read' mapped to 20 nodes: ['rtl_42', 'rtl_53', 'rtl_240', 'rtl_245', 'rtl_247', 'rtl_448', 'rtl_453', 'rtl_455', 'rtl_656', 'rtl_661', 'rtl_663', 'rtl_864', 'rtl_869', 'rtl_871', 'rtl_1072', 'rtl_1077', 'rtl_1079', 'rtl_1280', 'rtl_1285', 'rtl_1287']
+Signal 'int_req' mapped to 14 nodes: ['rtl_43', 'rtl_54', 'rtl_128', 'rtl_248', 'rtl_336', 'rtl_456', 'rtl_544', 'rtl_664', 'rtl_752', 'rtl_872', 'rtl_960', 'rtl_1080', 'rtl_1168', 'rtl_1288']
+Signal 'int_wr_data' mapped to 20 nodes: ['rtl_39', 'rtl_50', 'rtl_232', 'rtl_234', 'rtl_236', 'rtl_440', 'rtl_442', 'rtl_444', 'rtl_648', 'rtl_650', 'rtl_652', 'rtl_856', 'rtl_858', 'rtl_860', 'rtl_1064', 'rtl_1066', 'rtl_1068', 'rtl_1272', 'rtl_1274', 'rtl_1276']
+Signal 'int_write' mapped to 20 nodes: ['rtl_40', 'rtl_51', 'rtl_231', 'rtl_237', 'rtl_239', 'rtl_439', 'rtl_445', 'rtl_447', 'rtl_647', 'rtl_653', 'rtl_655', 'rtl_855', 'rtl_861', 'rtl_863', 'rtl_1063', 'rtl_1069', 'rtl_1071', 'rtl_1271', 'rtl_1277', 'rtl_1279']
+Signal 'new_rx_data' mapped to 21 nodes: ['rtl_18', 'rtl_24', 'rtl_34', 'rtl_164', 'rtl_166', 'rtl_167', 'rtl_372', 'rtl_374', 'rtl_375', 'rtl_580', 'rtl_582', 'rtl_583', 'rtl_788', 'rtl_790', 'rtl_791', 'rtl_996', 'rtl_998', 'rtl_999', 'rtl_1204', 'rtl_1206', 'rtl_1207']
+Signal 'new_tx_data' mapped to 75 nodes: ['rtl_10', 'rtl_26', 'rtl_36', 'rtl_262', 'rtl_264', 'rtl_267', 'rtl_269', 'rtl_270', 'rtl_273', 'rtl_274', 'rtl_277', 'rtl_278', 'rtl_281', 'rtl_282', 'rtl_284', 'rtl_470', 'rtl_472', 'rtl_475', 'rtl_477', 'rtl_478', 'rtl_481', 'rtl_482', 'rtl_485', 'rtl_486', 'rtl_489', 'rtl_490', 'rtl_492', 'rtl_678', 'rtl_680', 'rtl_683', 'rtl_685', 'rtl_686', 'rtl_689', 'rtl_690', 'rtl_693', 'rtl_694', 'rtl_697', 'rtl_698', 'rtl_700', 'rtl_886', 'rtl_888', 'rtl_891', 'rtl_893', 'rtl_894', 'rtl_897', 'rtl_898', 'rtl_901', 'rtl_902', 'rtl_905', 'rtl_906', 'rtl_908', 'rtl_1094', 'rtl_1096', 'rtl_1099', 'rtl_1101', 'rtl_1102', 'rtl_1105', 'rtl_1106', 'rtl_1109', 'rtl_1110', 'rtl_1113', 'rtl_1114', 'rtl_1116', 'rtl_1302', 'rtl_1304', 'rtl_1307', 'rtl_1309', 'rtl_1310', 'rtl_1313', 'rtl_1314', 'rtl_1317', 'rtl_1318', 'rtl_1321', 'rtl_1322', 'rtl_1324']
+Signal 'rx_data' mapped to 37 nodes: ['rtl_17', 'rtl_163', 'rtl_165', 'rtl_224', 'rtl_225', 'rtl_227', 'rtl_236', 'rtl_371', 'rtl_373', 'rtl_432', 'rtl_433', 'rtl_435', 'rtl_444', 'rtl_579', 'rtl_581', 'rtl_640', 'rtl_641', 'rtl_643', 'rtl_652', 'rtl_787', 'rtl_789', 'rtl_848', 'rtl_849', 'rtl_851', 'rtl_860', 'rtl_995', 'rtl_997', 'rtl_1056', 'rtl_1057', 'rtl_1059', 'rtl_1068', 'rtl_1203', 'rtl_1205', 'rtl_1264', 'rtl_1265', 'rtl_1267', 'rtl_1276']
+Signal 'ser_in' mapped to 7 nodes: ['rtl_16', 'rtl_149', 'rtl_357', 'rtl_565', 'rtl_773', 'rtl_981', 'rtl_1189']
+Signal 'ser_out' mapped to 21 nodes: ['rtl_11', 'rtl_22', 'rtl_48', 'rtl_145', 'rtl_146', 'rtl_147', 'rtl_353', 'rtl_354', 'rtl_355', 'rtl_561', 'rtl_562', 'rtl_563', 'rtl_769', 'rtl_770', 'rtl_771', 'rtl_977', 'rtl_978', 'rtl_979', 'rtl_1185', 'rtl_1186', 'rtl_1187']
+Signal 'tx_busy' mapped to 39 nodes: ['rtl_12', 'rtl_27', 'rtl_37', 'rtl_129', 'rtl_136', 'rtl_137', 'rtl_138', 'rtl_290', 'rtl_291', 'rtl_337', 'rtl_344', 'rtl_345', 'rtl_346', 'rtl_498', 'rtl_499', 'rtl_545', 'rtl_552', 'rtl_553', 'rtl_554', 'rtl_706', 'rtl_707', 'rtl_753', 'rtl_760', 'rtl_761', 'rtl_762', 'rtl_914', 'rtl_915', 'rtl_961', 'rtl_968', 'rtl_969', 'rtl_970', 'rtl_1122', 'rtl_1123', 'rtl_1169', 'rtl_1176', 'rtl_1177', 'rtl_1178', 'rtl_1330', 'rtl_1331']
+Signal 'tx_data' mapped to 51 nodes: ['rtl_9', 'rtl_25', 'rtl_35', 'rtl_143', 'rtl_261', 'rtl_263', 'rtl_266', 'rtl_268', 'rtl_272', 'rtl_276', 'rtl_280', 'rtl_351', 'rtl_469', 'rtl_471', 'rtl_474', 'rtl_476', 'rtl_480', 'rtl_484', 'rtl_488', 'rtl_559', 'rtl_677', 'rtl_679', 'rtl_682', 'rtl_684', 'rtl_688', 'rtl_692', 'rtl_696', 'rtl_767', 'rtl_885', 'rtl_887', 'rtl_890', 'rtl_892', 'rtl_896', 'rtl_900', 'rtl_904', 'rtl_975', 'rtl_1093', 'rtl_1095', 'rtl_1098', 'rtl_1100', 'rtl_1104', 'rtl_1108', 'rtl_1112', 'rtl_1183', 'rtl_1301', 'rtl_1303', 'rtl_1306', 'rtl_1308', 'rtl_1312', 'rtl_1316', 'rtl_1320']
+Created mappings for 18 signals
+Signal 'ce_16' mapped to 63 nodes: ['rtl_8', 'rtl_15', 'rtl_58', 'rtl_123', 'rtl_124', 'rtl_125', 'rtl_126', 'rtl_135', 'rtl_153', 'rtl_154', 'rtl_328', 'rtl_329', 'rtl_330', 'rtl_331', 'rtl_332', 'rtl_333', 'rtl_334', 'rtl_343', 'rtl_361', 'rtl_362', 'rtl_536', 'rtl_537', 'rtl_538', 'rtl_539', 'rtl_540', 'rtl_541', 'rtl_542', 'rtl_551', 'rtl_569', 'rtl_570', 'rtl_744', 'rtl_745', 'rtl_746', 'rtl_747', 'rtl_748', 'rtl_749', 'rtl_750', 'rtl_759', 'rtl_777', 'rtl_778', 'rtl_952', 'rtl_953', 'rtl_954', 'rtl_955', 'rtl_956', 'rtl_957', 'rtl_958', 'rtl_967', 'rtl_985', 'rtl_986', 'rtl_1160', 'rtl_1161', 'rtl_1162', 'rtl_1163', 'rtl_1164', 'rtl_1165', 'rtl_1166', 'rtl_1175', 'rtl_1193', 'rtl_1194', 'rtl_1368', 'rtl_1369', 'rtl_1370']
+Signal 'tx_data' mapped to 51 nodes: ['rtl_9', 'rtl_25', 'rtl_35', 'rtl_143', 'rtl_261', 'rtl_263', 'rtl_266', 'rtl_268', 'rtl_272', 'rtl_276', 'rtl_280', 'rtl_351', 'rtl_469', 'rtl_471', 'rtl_474', 'rtl_476', 'rtl_480', 'rtl_484', 'rtl_488', 'rtl_559', 'rtl_677', 'rtl_679', 'rtl_682', 'rtl_684', 'rtl_688', 'rtl_692', 'rtl_696', 'rtl_767', 'rtl_885', 'rtl_887', 'rtl_890', 'rtl_892', 'rtl_896', 'rtl_900', 'rtl_904', 'rtl_975', 'rtl_1093', 'rtl_1095', 'rtl_1098', 'rtl_1100', 'rtl_1104', 'rtl_1108', 'rtl_1112', 'rtl_1183', 'rtl_1301', 'rtl_1303', 'rtl_1306', 'rtl_1308', 'rtl_1312', 'rtl_1316', 'rtl_1320']
+Signal 'new_tx_data' mapped to 75 nodes: ['rtl_10', 'rtl_26', 'rtl_36', 'rtl_262', 'rtl_264', 'rtl_267', 'rtl_269', 'rtl_270', 'rtl_273', 'rtl_274', 'rtl_277', 'rtl_278', 'rtl_281', 'rtl_282', 'rtl_284', 'rtl_470', 'rtl_472', 'rtl_475', 'rtl_477', 'rtl_478', 'rtl_481', 'rtl_482', 'rtl_485', 'rtl_486', 'rtl_489', 'rtl_490', 'rtl_492', 'rtl_678', 'rtl_680', 'rtl_683', 'rtl_685', 'rtl_686', 'rtl_689', 'rtl_690', 'rtl_693', 'rtl_694', 'rtl_697', 'rtl_698', 'rtl_700', 'rtl_886', 'rtl_888', 'rtl_891', 'rtl_893', 'rtl_894', 'rtl_897', 'rtl_898', 'rtl_901', 'rtl_902', 'rtl_905', 'rtl_906', 'rtl_908', 'rtl_1094', 'rtl_1096', 'rtl_1099', 'rtl_1101', 'rtl_1102', 'rtl_1105', 'rtl_1106', 'rtl_1109', 'rtl_1110', 'rtl_1113', 'rtl_1114', 'rtl_1116', 'rtl_1302', 'rtl_1304', 'rtl_1307', 'rtl_1309', 'rtl_1310', 'rtl_1313', 'rtl_1314', 'rtl_1317', 'rtl_1318', 'rtl_1321', 'rtl_1322', 'rtl_1324']
+Signal 'ser_out' mapped to 21 nodes: ['rtl_11', 'rtl_22', 'rtl_48', 'rtl_145', 'rtl_146', 'rtl_147', 'rtl_353', 'rtl_354', 'rtl_355', 'rtl_561', 'rtl_562', 'rtl_563', 'rtl_769', 'rtl_770', 'rtl_771', 'rtl_977', 'rtl_978', 'rtl_979', 'rtl_1185', 'rtl_1186', 'rtl_1187']
+Signal 'tx_busy' mapped to 39 nodes: ['rtl_12', 'rtl_27', 'rtl_37', 'rtl_129', 'rtl_136', 'rtl_137', 'rtl_138', 'rtl_290', 'rtl_291', 'rtl_337', 'rtl_344', 'rtl_345', 'rtl_346', 'rtl_498', 'rtl_499', 'rtl_545', 'rtl_552', 'rtl_553', 'rtl_554', 'rtl_706', 'rtl_707', 'rtl_753', 'rtl_760', 'rtl_761', 'rtl_762', 'rtl_914', 'rtl_915', 'rtl_961', 'rtl_968', 'rtl_969', 'rtl_970', 'rtl_1122', 'rtl_1123', 'rtl_1169', 'rtl_1176', 'rtl_1177', 'rtl_1178', 'rtl_1330', 'rtl_1331']
+Signal 'ser_in' mapped to 7 nodes: ['rtl_16', 'rtl_149', 'rtl_357', 'rtl_565', 'rtl_773', 'rtl_981', 'rtl_1189']
+Signal 'rx_data' mapped to 37 nodes: ['rtl_17', 'rtl_163', 'rtl_165', 'rtl_224', 'rtl_225', 'rtl_227', 'rtl_236', 'rtl_371', 'rtl_373', 'rtl_432', 'rtl_433', 'rtl_435', 'rtl_444', 'rtl_579', 'rtl_581', 'rtl_640', 'rtl_641', 'rtl_643', 'rtl_652', 'rtl_787', 'rtl_789', 'rtl_848', 'rtl_849', 'rtl_851', 'rtl_860', 'rtl_995', 'rtl_997', 'rtl_1056', 'rtl_1057', 'rtl_1059', 'rtl_1068', 'rtl_1203', 'rtl_1205', 'rtl_1264', 'rtl_1265', 'rtl_1267', 'rtl_1276']
+Signal 'new_rx_data' mapped to 21 nodes: ['rtl_18', 'rtl_24', 'rtl_34', 'rtl_164', 'rtl_166', 'rtl_167', 'rtl_372', 'rtl_374', 'rtl_375', 'rtl_580', 'rtl_582', 'rtl_583', 'rtl_788', 'rtl_790', 'rtl_791', 'rtl_996', 'rtl_998', 'rtl_999', 'rtl_1204', 'rtl_1206', 'rtl_1207']
+Signal 'baud_limit' mapped to 14 nodes: ['rtl_29', 'rtl_60', 'rtl_131', 'rtl_326', 'rtl_339', 'rtl_534', 'rtl_547', 'rtl_742', 'rtl_755', 'rtl_950', 'rtl_963', 'rtl_1158', 'rtl_1171', 'rtl_1366']
+Signal 'baud_clk' mapped to 7 nodes: ['rtl_30', 'rtl_126', 'rtl_334', 'rtl_542', 'rtl_750', 'rtl_958', 'rtl_1166']
+Signal 'int_wr_data' mapped to 20 nodes: ['rtl_39', 'rtl_50', 'rtl_232', 'rtl_234', 'rtl_236', 'rtl_440', 'rtl_442', 'rtl_444', 'rtl_648', 'rtl_650', 'rtl_652', 'rtl_856', 'rtl_858', 'rtl_860', 'rtl_1064', 'rtl_1066', 'rtl_1068', 'rtl_1272', 'rtl_1274', 'rtl_1276']
+Signal 'int_write' mapped to 20 nodes: ['rtl_40', 'rtl_51', 'rtl_231', 'rtl_237', 'rtl_239', 'rtl_439', 'rtl_445', 'rtl_447', 'rtl_647', 'rtl_653', 'rtl_655', 'rtl_855', 'rtl_861', 'rtl_863', 'rtl_1063', 'rtl_1069', 'rtl_1071', 'rtl_1271', 'rtl_1277', 'rtl_1279']
+Signal 'int_rd_data' mapped to 8 nodes: ['rtl_41', 'rtl_52', 'rtl_259', 'rtl_467', 'rtl_675', 'rtl_883', 'rtl_1091', 'rtl_1299']
+Signal 'int_read' mapped to 20 nodes: ['rtl_42', 'rtl_53', 'rtl_240', 'rtl_245', 'rtl_247', 'rtl_448', 'rtl_453', 'rtl_455', 'rtl_656', 'rtl_661', 'rtl_663', 'rtl_864', 'rtl_869', 'rtl_871', 'rtl_1072', 'rtl_1077', 'rtl_1079', 'rtl_1280', 'rtl_1285', 'rtl_1287']
+Signal 'int_req' mapped to 14 nodes: ['rtl_43', 'rtl_54', 'rtl_128', 'rtl_248', 'rtl_336', 'rtl_456', 'rtl_544', 'rtl_664', 'rtl_752', 'rtl_872', 'rtl_960', 'rtl_1080', 'rtl_1168', 'rtl_1288']
+Signal 'int_gnt' mapped to 2 nodes: ['rtl_44', 'rtl_55']
+Signal 'baud_freq' mapped to 13 nodes: ['rtl_59', 'rtl_130', 'rtl_327', 'rtl_338', 'rtl_535', 'rtl_546', 'rtl_743', 'rtl_754', 'rtl_951', 'rtl_962', 'rtl_1159', 'rtl_1170', 'rtl_1367']
+Signal 'int_address' mapped to 24 nodes: ['rtl_249', 'rtl_250', 'rtl_251', 'rtl_252', 'rtl_457', 'rtl_458', 'rtl_459', 'rtl_460', 'rtl_665', 'rtl_666', 'rtl_667', 'rtl_668', 'rtl_873', 'rtl_874', 'rtl_875', 'rtl_876', 'rtl_1081', 'rtl_1082', 'rtl_1083', 'rtl_1084', 'rtl_1289', 'rtl_1290', 'rtl_1291', 'rtl_1292']
+Using LLM-based context pruning
+Processing signal 1/18: baud_clk
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['baud_clk']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: wire			baud_clk;
+
+//---------------------------------------------------------------------------------------
+// module implementation 
+// uart top module instance 
+uart_top uart1
+(
+	.clock(clock), .reset(reset),
+	.ser_in(ser_in), .ser_out(ser_out),
+	.rx_data(rx_data), .new_rx_data(new_rx_data), 
+	.tx_data(tx_data), .new_tx_data(new_tx_data), .tx_busy(tx_busy), 
+	.baud_freq(baud_freq), .baud_limit(baud_limit),
+	.baud_clk(baud_clk) 
+);
+
+// assign baud rate default values 
+assign baud_freq = `D_BAUD_FREQ;
+assign baud_limit = `D_BAUD_LIMIT;
+
+// uart parser instance 
+uart_parser #(16) uart_parser1
+(
+
+Processing generator: path
+Mapped signal 'baud_clk' to 7 nodes
+Using 7/7 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_542
+Found 417 significant paths for node rtl_542
+  Found 30 potential endpoints for rtl_334
+Found 522 significant paths for node rtl_334
+  Found 30 potential endpoints for rtl_750
+Found 223 significant paths for node rtl_750
+  Found 30 potential endpoints for rtl_958
+Found 91 significant paths for node rtl_958
+  Found 30 potential endpoints for rtl_30
+Found 591 significant paths for node rtl_30
+  Found 30 potential endpoints for rtl_126
+Found 619 significant paths for node rtl_126
+  Found 30 potential endpoints for rtl_1166
+Found 494 significant paths for node rtl_1166
+Generated 2957 path-based contexts
+path generator returned 2957 contexts
+Added 2957 contexts from path, total now: 2967
+Sample path context: PATH ANALYSIS FROM baud_clk_assignment TO ce_16_assignment
+Path length: 3 nodes with clustering 0.00
+Source: baud_clk_assignment (assignment) in module uart_top
+Target: ce_16_assignment (assignment) in module uart_top
+
+Relationship chain:
+  baud_clk_assignment (assignment in uart_top) part_of uart_top (module)
+  uart_top (module) part_of ce_16_assignment (assignment in uart_top)
+
+Analysis:
+  • Cross-module path connecting: uart_top
+
+Pruning 2967 contexts...
+Using LLM-based context pruning
+Pruning 2967 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7644 chars -> response=28 chars
+LLM evaluation for rag took 1.01 seconds
+Selected context 0 of type rag
+Selected context 2 of type rag
+Selected context 3 of type rag
+Evaluating 2957 contexts of type 'path'
+Pre-filtering 2957 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13086 chars -> response=32 chars
+LLM evaluation for path took 1.14 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 5 of type path
+Selected context 16 of type path
+Final selection: 7 contexts
+After pruning: 7 contexts remain
+Selected contexts by type: {'rag': 3, 'path': 4}
+Context distribution plan: {'rag': [1, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 3 contexts, 443 tokens
+Prompt 2: 2 contexts, 293 tokens
+Prompt 3: 2 contexts, 293 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal baud_clk
+Processing dynamic context 1/3 for baud_clk
+[llm_inference:NL_Plans_baud_clk_1] prompt=4141 chars -> response=1118 chars
+Generated 7 plans from context 1 for signal baud_clk
+Processing dynamic context 2/3 for baud_clk
+[llm_inference:NL_Plans_baud_clk_2] prompt=3560 chars -> response=1606 chars
+Generated 10 plans from context 2 for signal baud_clk
+Processing dynamic context 3/3 for baud_clk
+[llm_inference:NL_Plans_baud_clk_3] prompt=3560 chars -> response=1043 chars
+Generated 5 plans from context 3 for signal baud_clk
+Generated 22 unique plans for signal baud_clk from 22 total plans
+Processing signal 2/18: baud_freq
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['baud_freq']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'baud_freq' to 13 nodes
+Using 13/13 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_535
+Found 210 significant paths for node rtl_535
+  Found 30 potential endpoints for rtl_754
+Found 295 significant paths for node rtl_754
+  Found 30 potential endpoints for rtl_338
+Found 131 significant paths for node rtl_338
+  Found 30 potential endpoints for rtl_130
+Found 173 significant paths for node rtl_130
+  Found 30 potential endpoints for rtl_546
+Found 143 significant paths for node rtl_546
+  Found 30 potential endpoints for rtl_327
+Found 157 significant paths for node rtl_327
+  Found 30 potential endpoints for rtl_743
+Found 170 significant paths for node rtl_743
+  Found 30 potential endpoints for rtl_1367
+Found 219 significant paths for node rtl_1367
+  Found 30 potential endpoints for rtl_951
+Found 189 significant paths for node rtl_951
+  Found 30 potential endpoints for rtl_1170
+Found 198 significant paths for node rtl_1170
+  Found 30 potential endpoints for rtl_1159
+Found 42 significant paths for node rtl_1159
+  Found 30 potential endpoints for rtl_962
+Found 64 significant paths for node rtl_962
+  Found 30 potential endpoints for rtl_59
+Found 191 significant paths for node rtl_59
+Generated 2182 path-based contexts
+path generator returned 2182 contexts
+Added 2182 contexts from path, total now: 2192
+Sample path context: PATH ANALYSIS FROM counter_assignment TO data_nibble_assignment
+Path length: 3 nodes with clustering 0.00
+Source: counter_assignment (assignment) in module uart_rx
+Target: data_nibble_assignment (assignment) in module uart_rx
+
+Relationship chain:
+  counter_assignment (assignment in uart_rx) part_of uart_rx (module)
+  uart_rx (module) part_of data_nibble_assignment (assignment in uart_rx)
+
+Analysis:
+  • Cross-module path connecting: uart_rx
+
+Pruning 2192 contexts...
+Using LLM-based context pruning
+Pruning 2192 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7546 chars -> response=31 chars
+LLM evaluation for rag took 0.80 seconds
+Selected context 1 of type rag
+Selected context 2 of type rag
+Selected context 5 of type rag
+Selected context 6 of type rag
+Evaluating 2182 contexts of type 'path'
+Pre-filtering 2182 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12141 chars -> response=35 chars
+LLM evaluation for path took 1.26 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 2 of type path
+Selected context 5 of type path
+Selected context 19 of type path
+Final selection: 9 contexts
+After pruning: 9 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 5}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 2, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 4 contexts, 533 tokens
+Prompt 2: 3 contexts, 375 tokens
+Prompt 3: 2 contexts, 230 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal baud_freq
+Processing dynamic context 1/3 for baud_freq
+[llm_inference:NL_Plans_baud_freq_1] prompt=4587 chars -> response=867 chars
+Generated 5 plans from context 1 for signal baud_freq
+Processing dynamic context 2/3 for baud_freq
+[llm_inference:NL_Plans_baud_freq_2] prompt=3996 chars -> response=989 chars
+Generated 4 plans from context 2 for signal baud_freq
+Processing dynamic context 3/3 for baud_freq
+[llm_inference:NL_Plans_baud_freq_3] prompt=3428 chars -> response=843 chars
+Generated 5 plans from context 3 for signal baud_freq
+Generated 14 unique plans for signal baud_freq from 14 total plans
+Processing signal 3/18: baud_limit
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['baud_limit']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'baud_limit' to 14 nodes
+Using 14/14 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_963
+Found 82 significant paths for node rtl_963
+  Found 30 potential endpoints for rtl_131
+Found 167 significant paths for node rtl_131
+  Found 30 potential endpoints for rtl_547
+Found 256 significant paths for node rtl_547
+  Found 30 potential endpoints for rtl_1366
+Found 155 significant paths for node rtl_1366
+  Found 30 potential endpoints for rtl_326
+Found 248 significant paths for node rtl_326
+  Found 30 potential endpoints for rtl_29
+Found 540 significant paths for node rtl_29
+  Found 30 potential endpoints for rtl_339
+Found 173 significant paths for node rtl_339
+  Found 30 potential endpoints for rtl_755
+Found 98 significant paths for node rtl_755
+  Found 30 potential endpoints for rtl_950
+Found 140 significant paths for node rtl_950
+  Found 30 potential endpoints for rtl_60
+Found 402 significant paths for node rtl_60
+  Found 30 potential endpoints for rtl_534
+Found 111 significant paths for node rtl_534
+  Found 30 potential endpoints for rtl_1158
+Found 60 significant paths for node rtl_1158
+  Found 30 potential endpoints for rtl_1171
+Found 225 significant paths for node rtl_1171
+  Found 30 potential endpoints for rtl_742
+Found 561 significant paths for node rtl_742
+Generated 3218 path-based contexts
+path generator returned 3218 contexts
+Added 3218 contexts from path, total now: 3228
+Sample path context: PATH ANALYSIS FROM baud_limit_assignment TO main_sm_assignment
+Path length: 3 nodes with clustering 0.00
+Source: baud_limit_assignment (assignment) in module uart2bus_top
+Target: main_sm_assignment (assignment) in module uart2bus_top
+
+Relationship chain:
+  baud_limit_assignment (assignment in uart2bus_top) part_of uart2bus_top (module)
+  uart2bus_top (module) part_of main_sm_assignment (assignment in uart2bus_top)
+
+Analysis:
+  • Cross-module path connecting: uart2bus_top
+
+Pruning 3228 contexts...
+Using LLM-based context pruning
+Pruning 3228 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7608 chars -> response=31 chars
+LLM evaluation for rag took 0.80 seconds
+Selected context 1 of type rag
+Selected context 2 of type rag
+Selected context 6 of type rag
+Selected context 9 of type rag
+Evaluating 3218 contexts of type 'path'
+Pre-filtering 3218 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12285 chars -> response=33 chars
+LLM evaluation for path took 1.03 seconds
+Selected context 0 of type path
+Selected context 5 of type path
+Selected context 14 of type path
+Selected context 16 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 4}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 4 contexts, 586 tokens
+Prompt 2: 2 contexts, 310 tokens
+Prompt 3: 2 contexts, 310 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal baud_limit
+Processing dynamic context 1/3 for baud_limit
+[llm_inference:NL_Plans_baud_limit_1] prompt=4694 chars -> response=711 chars
+Generated 5 plans from context 1 for signal baud_limit
+Processing dynamic context 2/3 for baud_limit
+[llm_inference:NL_Plans_baud_limit_2] prompt=3677 chars -> response=1267 chars
+Generated 7 plans from context 2 for signal baud_limit
+Processing dynamic context 3/3 for baud_limit
+[llm_inference:NL_Plans_baud_limit_3] prompt=3677 chars -> response=1310 chars
+Generated 7 plans from context 3 for signal baud_limit
+Generated 19 unique plans for signal baud_limit from 19 total plans
+Processing signal 4/18: ce_16
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['ce_16']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: input	[15:0]	baud_limit;
+output			baud_clk;
+
+// internal wires 
+wire ce_16;		// clock enable at bit rate 
+
+assign baud_clk = ce_16;
+//---------------------------------------------------------------------------------------
+// module implementation 
+// baud rate generator module 
+baud_gen baud_gen_1
+(
+	.clock(clock), .reset(reset), 
+	.ce_16(ce_16), .baud_freq(baud_freq), .baud_limit(baud_limit)
+);
+
+// uart receiver 
+uart_rx uart_rx_1 
+(
+	.clock(clock), .reset(reset), 
+	.ce_16(ce_16), .ser_in(ser_in), 
+	.rx_data(rx_data), .new_rx_data(new_rx_data) 
+
+Processing generator: path
+Mapped signal 'ce_16' to 63 nodes
+Using 63/63 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_361
+Found 504 significant paths for node rtl_361
+  Found 30 potential endpoints for rtl_746
+Found 73 significant paths for node rtl_746
+  Found 30 potential endpoints for rtl_15
+Found 996 significant paths for node rtl_15
+  Found 30 potential endpoints for rtl_153
+Found 927 significant paths for node rtl_153
+  Found 30 potential endpoints for rtl_744
+Found 232 significant paths for node rtl_744
+  Found 30 potential endpoints for rtl_1161
+Found 54 significant paths for node rtl_1161
+  Found 30 potential endpoints for rtl_124
+Found 849 significant paths for node rtl_124
+  Found 30 potential endpoints for rtl_967
+Found 62 significant paths for node rtl_967
+  Found 30 potential endpoints for rtl_1193
+Found 397 significant paths for node rtl_1193
+  Found 30 potential endpoints for rtl_986
+Found 47 significant paths for node rtl_986
+  Found 30 potential endpoints for rtl_778
+Found 153 significant paths for node rtl_778
+  Found 30 potential endpoints for rtl_952
+Found 94 significant paths for node rtl_952
+  Found 30 potential endpoints for rtl_1164
+Found 421 significant paths for node rtl_1164
+  Found 30 potential endpoints for rtl_1370
+Found 371 significant paths for node rtl_1370
+  Found 30 potential endpoints for rtl_330
+Found 840 significant paths for node rtl_330
+  Found 30 potential endpoints for rtl_537
+Found 563 significant paths for node rtl_537
+  Found 30 potential endpoints for rtl_777
+Found 270 significant paths for node rtl_777
+  Found 30 potential endpoints for rtl_1175
+Found 507 significant paths for node rtl_1175
+  Found 30 potential endpoints for rtl_328
+Found 606 significant paths for node rtl_328
+  Found 30 potential endpoints for rtl_747
+Found 144 significant paths for node rtl_747
+  Found 30 potential endpoints for rtl_536
+Found 585 significant paths for node rtl_536
+  Found 30 potential endpoints for rtl_343
+Found 456 significant paths for node rtl_343
+  Found 30 potential endpoints for rtl_123
+Found 718 significant paths for node rtl_123
+  Found 30 potential endpoints for rtl_332
+Found 525 significant paths for node rtl_332
+  Found 30 potential endpoints for rtl_539
+Found 257 significant paths for node rtl_539
+  Found 30 potential endpoints for rtl_570
+Found 179 significant paths for node rtl_570
+  Found 30 potential endpoints for rtl_362
+Found 409 significant paths for node rtl_362
+  Found 30 potential endpoints for rtl_541
+Found 143 significant paths for node rtl_541
+  Found 30 potential endpoints for rtl_569
+Found 264 significant paths for node rtl_569
+  Found 30 potential endpoints for rtl_953
+Found 186 significant paths for node rtl_953
+  Found 30 potential endpoints for rtl_956
+Found 51 significant paths for node rtl_956
+  Found 30 potential endpoints for rtl_551
+Found 303 significant paths for node rtl_551
+  Found 30 potential endpoints for rtl_1165
+Found 406 significant paths for node rtl_1165
+  Found 30 potential endpoints for rtl_329
+Found 692 significant paths for node rtl_329
+  Found 30 potential endpoints for rtl_154
+Found 634 significant paths for node rtl_154
+  Found 30 potential endpoints for rtl_1368
+Found 421 significant paths for node rtl_1368
+  Found 30 potential endpoints for rtl_1162
+Found 79 significant paths for node rtl_1162
+  Found 30 potential endpoints for rtl_955
+Found 64 significant paths for node rtl_955
+  Found 30 potential endpoints for rtl_58
+Found 815 significant paths for node rtl_58
+  Found 30 potential endpoints for rtl_1163
+Found 402 significant paths for node rtl_1163
+  Found 30 potential endpoints for rtl_540
+Found 221 significant paths for node rtl_540
+  Found 30 potential endpoints for rtl_1194
+Found 535 significant paths for node rtl_1194
+  Found 30 potential endpoints for rtl_542
+Found 476 significant paths for node rtl_542
+  Found 30 potential endpoints for rtl_8
+Found 1845 significant paths for node rtl_8
+  Found 30 potential endpoints for rtl_1160
+Found 52 significant paths for node rtl_1160
+  Found 30 potential endpoints for rtl_333
+Found 561 significant paths for node rtl_333
+  Found 30 potential endpoints for rtl_1166
+Found 512 significant paths for node rtl_1166
+  Found 30 potential endpoints for rtl_954
+Found 136 significant paths for node rtl_954
+  Found 30 potential endpoints for rtl_749
+Found 181 significant paths for node rtl_749
+  Found 30 potential endpoints for rtl_957
+Found 54 significant paths for node rtl_957
+  Found 30 potential endpoints for rtl_748
+Found 355 significant paths for node rtl_748
+  Found 30 potential endpoints for rtl_331
+Found 482 significant paths for node rtl_331
+  Found 30 potential endpoints for rtl_745
+Found 218 significant paths for node rtl_745
+  Found 30 potential endpoints for rtl_985
+Found 78 significant paths for node rtl_985
+  Found 30 potential endpoints for rtl_334
+Found 493 significant paths for node rtl_334
+  Found 30 potential endpoints for rtl_750
+Found 201 significant paths for node rtl_750
+  Found 30 potential endpoints for rtl_958
+Found 78 significant paths for node rtl_958
+  Found 30 potential endpoints for rtl_135
+Found 702 significant paths for node rtl_135
+  Found 30 potential endpoints for rtl_538
+Found 409 significant paths for node rtl_538
+  Found 30 potential endpoints for rtl_125
+Found 845 significant paths for node rtl_125
+  Found 30 potential endpoints for rtl_126
+Found 582 significant paths for node rtl_126
+  Found 30 potential endpoints for rtl_1369
+Found 427 significant paths for node rtl_1369
+  Found 30 potential endpoints for rtl_759
+Found 214 significant paths for node rtl_759
+Generated 25356 path-based contexts
+path generator returned 25356 contexts
+Added 25356 contexts from path, total now: 25366
+Sample path context: PATH ANALYSIS FROM ce_1_assignment TO tx_char_assignment
+Path length: 3 nodes with clustering 0.00
+Source: ce_1_assignment (assignment) in module uart_rx
+Target: tx_char_assignment (assignment) in module uart_rx
+
+Relationship chain:
+  ce_1_assignment (assignment in uart_rx) part_of uart_rx (module)
+  uart_rx (module) part_of tx_char_assignment (assignment in uart_rx)
+
+Analysis:
+  • Cross-module path connecting: uart_rx
+
+Pruning 25366 contexts...
+Using LLM-based context pruning
+Pruning 25366 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7434 chars -> response=31 chars
+LLM evaluation for rag took 0.92 seconds
+Selected context 0 of type rag
+Selected context 1 of type rag
+Selected context 4 of type rag
+Selected context 8 of type rag
+Evaluating 25356 contexts of type 'path'
+Pre-filtering 25356 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12812 chars -> response=31 chars
+LLM evaluation for path took 0.62 seconds
+Selected context 0 of type path
+Selected context 3 of type path
+Selected context 4 of type path
+Selected context 6 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 4}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 4 contexts, 614 tokens
+Prompt 2: 2 contexts, 298 tokens
+Prompt 3: 2 contexts, 298 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal ce_16
+Processing dynamic context 1/3 for ce_16
+[llm_inference:NL_Plans_ce_16_1] prompt=4595 chars -> response=835 chars
+Generated 6 plans from context 1 for signal ce_16
+Processing dynamic context 2/3 for ce_16
+[llm_inference:NL_Plans_ce_16_2] prompt=3478 chars -> response=933 chars
+Generated 5 plans from context 2 for signal ce_16
+Processing dynamic context 3/3 for ce_16
+[llm_inference:NL_Plans_ce_16_3] prompt=3478 chars -> response=1324 chars
+Generated 8 plans from context 3 for signal ce_16
+Generated 19 unique plans for signal ce_16 from 19 total plans
+Processing signal 5/18: int_address
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['int_address']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'int_address' to 24 nodes
+Using 24/24 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_249
+Found 151 significant paths for node rtl_249
+  Found 30 potential endpoints for rtl_1083
+Found 47 significant paths for node rtl_1083
+  Found 30 potential endpoints for rtl_1082
+Found 46 significant paths for node rtl_1082
+  Found 30 potential endpoints for rtl_250
+Found 169 significant paths for node rtl_250
+  Found 30 potential endpoints for rtl_1291
+Found 116 significant paths for node rtl_1291
+  Found 30 potential endpoints for rtl_667
+Found 154 significant paths for node rtl_667
+  Found 30 potential endpoints for rtl_252
+Found 324 significant paths for node rtl_252
+  Found 30 potential endpoints for rtl_251
+Found 141 significant paths for node rtl_251
+  Found 30 potential endpoints for rtl_458
+Found 128 significant paths for node rtl_458
+  Found 30 potential endpoints for rtl_668
+Found 198 significant paths for node rtl_668
+  Found 30 potential endpoints for rtl_1084
+Found 66 significant paths for node rtl_1084
+  Found 30 potential endpoints for rtl_874
+Found 196 significant paths for node rtl_874
+  Found 30 potential endpoints for rtl_1289
+Found 55 significant paths for node rtl_1289
+  Found 30 potential endpoints for rtl_460
+Found 89 significant paths for node rtl_460
+  Found 30 potential endpoints for rtl_459
+Found 158 significant paths for node rtl_459
+  Found 30 potential endpoints for rtl_457
+Found 140 significant paths for node rtl_457
+  Found 30 potential endpoints for rtl_665
+Found 314 significant paths for node rtl_665
+  Found 30 potential endpoints for rtl_875
+Found 243 significant paths for node rtl_875
+  Found 30 potential endpoints for rtl_666
+Found 274 significant paths for node rtl_666
+  Found 30 potential endpoints for rtl_873
+Found 274 significant paths for node rtl_873
+  Found 30 potential endpoints for rtl_1292
+Found 140 significant paths for node rtl_1292
+  Found 30 potential endpoints for rtl_1081
+Found 50 significant paths for node rtl_1081
+  Found 30 potential endpoints for rtl_876
+Found 224 significant paths for node rtl_876
+  Found 30 potential endpoints for rtl_1290
+Found 75 significant paths for node rtl_1290
+Generated 3772 path-based contexts
+path generator returned 3772 contexts
+Added 3772 contexts from path, total now: 3782
+Sample path context: PATH ANALYSIS FROM int_address_assignment TO main_sm_assignment
+Path length: 3 nodes with clustering 0.00
+Source: int_address_assignment (assignment) in module uart_tx
+Target: main_sm_assignment (assignment) in module uart_tx
+
+Relationship chain:
+  int_address_assignment (assignment in uart_tx) part_of uart_tx (module)
+  uart_tx (module) part_of main_sm_assignment (assignment in uart_tx)
+
+Analysis:
+  • Cross-module path connecting: uart_tx
+
+Pruning 3782 contexts...
+Using LLM-based context pruning
+Pruning 3782 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7405 chars -> response=28 chars
+LLM evaluation for rag took 0.66 seconds
+Selected context 3 of type rag
+Selected context 4 of type rag
+Selected context 5 of type rag
+Evaluating 3772 contexts of type 'path'
+Pre-filtering 3772 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12335 chars -> response=33 chars
+LLM evaluation for path took 0.62 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 16 of type path
+Selected context 17 of type path
+Final selection: 7 contexts
+After pruning: 7 contexts remain
+Selected contexts by type: {'rag': 3, 'path': 4}
+Context distribution plan: {'rag': [1, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 3 contexts, 374 tokens
+Prompt 2: 2 contexts, 249 tokens
+Prompt 3: 2 contexts, 249 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal int_address
+Processing dynamic context 1/3 for int_address
+[llm_inference:NL_Plans_int_address_1] prompt=3873 chars -> response=1661 chars
+Generated 7 plans from context 1 for signal int_address
+Processing dynamic context 2/3 for int_address
+[llm_inference:NL_Plans_int_address_2] prompt=3366 chars -> response=976 chars
+Generated 5 plans from context 2 for signal int_address
+Processing dynamic context 3/3 for int_address
+[llm_inference:NL_Plans_int_address_3] prompt=3366 chars -> response=806 chars
+Generated 5 plans from context 3 for signal int_address
+Generated 17 unique plans for signal int_address from 17 total plans
+Processing signal 6/18: int_gnt
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['int_gnt']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'int_gnt' to 2 nodes
+Using 2/2 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_55
+Found 101 significant paths for node rtl_55
+  Found 30 potential endpoints for rtl_44
+Found 254 significant paths for node rtl_44
+Generated 355 path-based contexts
+path generator returned 355 contexts
+Added 355 contexts from path, total now: 365
+Sample path context: PATH ANALYSIS FROM int_gnt TO bin_read_op_assignment
+Path length: 3 nodes with clustering 0.00
+Source: int_gnt (port) in module uart2bus_top
+Target: bin_read_op_assignment (assignment) in module uart2bus_top
+
+Relationship chain:
+  int_gnt (port in uart2bus_top) input_to uart2bus_top (module)
+  uart2bus_top (module) part_of bin_read_op_assignment (assignment in uart2bus_top)
+
+Analysis:
+  • Signal flow path with 1 ports and 1 assignments
+  • Cross-module path connecting: uart2bus_top
+
+Pruning 365 contexts...
+Using LLM-based context pruning
+Pruning 365 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7863 chars -> response=31 chars
+LLM evaluation for rag took 0.86 seconds
+Selected context 1 of type rag
+Selected context 2 of type rag
+Selected context 6 of type rag
+Selected context 9 of type rag
+Evaluating 355 contexts of type 'path'
+Pre-filtering 355 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13310 chars -> response=35 chars
+LLM evaluation for path took 1.37 seconds
+Selected context 0 of type path
+Selected context 2 of type path
+Selected context 6 of type path
+Selected context 8 of type path
+Selected context 13 of type path
+Final selection: 9 contexts
+After pruning: 9 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 5}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 2, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 4 contexts, 620 tokens
+Prompt 2: 3 contexts, 450 tokens
+Prompt 3: 2 contexts, 316 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal int_gnt
+Processing dynamic context 1/3 for int_gnt
+[llm_inference:NL_Plans_int_gnt_1] prompt=5130 chars -> response=1266 chars
+Generated 0 plans from context 1 for signal int_gnt
+Processing dynamic context 2/3 for int_gnt
+[llm_inference:NL_Plans_int_gnt_2] prompt=4389 chars -> response=1031 chars
+Generated 5 plans from context 2 for signal int_gnt
+Processing dynamic context 3/3 for int_gnt
+[llm_inference:NL_Plans_int_gnt_3] prompt=3855 chars -> response=891 chars
+Generated 5 plans from context 3 for signal int_gnt
+Generated 10 unique plans for signal int_gnt from 10 total plans
+Processing signal 7/18: int_rd_data
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['int_rd_data']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: int_rd_data 8 clock resetint_req int_gntFebruary 25, 2012 4.Operation This section describes the protocols used to access the internal bus from the UART interface. As mentioned above the parser supports two modes of operation: text & binary commands. To distinguish between the two protocols all binary commands start with a value of zero which will not be sent when using the text protocol. The following drawing depicts a simplified state machine of the parser. The figure does not include some transitions used to abort illegal command sequences. Figure 2: Parser State Diagram In the state diagram above the states on the
+
+Processing generator: path
+Mapped signal 'int_rd_data' to 8 nodes
+Using 8/8 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_259
+Found 145 significant paths for node rtl_259
+  Found 30 potential endpoints for rtl_52
+Found 488 significant paths for node rtl_52
+  Found 30 potential endpoints for rtl_41
+Found 2766 significant paths for node rtl_41
+  Found 30 potential endpoints for rtl_675
+Found 249 significant paths for node rtl_675
+  Found 30 potential endpoints for rtl_1091
+Found 283 significant paths for node rtl_1091
+  Found 30 potential endpoints for rtl_883
+Found 661 significant paths for node rtl_883
+  Found 30 potential endpoints for rtl_467
+Found 87 significant paths for node rtl_467
+  Found 30 potential endpoints for rtl_1299
+Found 59 significant paths for node rtl_1299
+Generated 4738 path-based contexts
+path generator returned 4738 contexts
+Added 4738 contexts from path, total now: 4748
+Sample path context: PATH ANALYSIS FROM read_data_s_assignment TO main_sm_assignment
+Path length: 3 nodes with clustering 0.00
+Source: read_data_s_assignment (assignment) in module uart_tx
+Target: main_sm_assignment (assignment) in module uart_tx
+
+Relationship chain:
+  read_data_s_assignment (assignment in uart_tx) part_of uart_tx (module)
+  uart_tx (module) part_of main_sm_assignment (assignment in uart_tx)
+
+Analysis:
+  • Cross-module path connecting: uart_tx
+
+Pruning 4748 contexts...
+Using LLM-based context pruning
+Pruning 4748 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=8324 chars -> response=31 chars
+LLM evaluation for rag took 0.72 seconds
+Selected context 0 of type rag
+Selected context 2 of type rag
+Selected context 4 of type rag
+Selected context 5 of type rag
+Evaluating 4738 contexts of type 'path'
+Pre-filtering 4738 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12460 chars -> response=32 chars
+LLM evaluation for path took 0.56 seconds
+Selected context 1 of type path
+Selected context 4 of type path
+Selected context 5 of type path
+Selected context 19 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 4}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 4 contexts, 560 tokens
+Prompt 2: 2 contexts, 252 tokens
+Prompt 3: 2 contexts, 252 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal int_rd_data
+Processing dynamic context 1/3 for int_rd_data
+[llm_inference:NL_Plans_int_rd_data_1] prompt=4878 chars -> response=957 chars
+Generated 5 plans from context 1 for signal int_rd_data
+Processing dynamic context 2/3 for int_rd_data
+[llm_inference:NL_Plans_int_rd_data_2] prompt=3573 chars -> response=1791 chars
+Generated 10 plans from context 2 for signal int_rd_data
+Processing dynamic context 3/3 for int_rd_data
+[llm_inference:NL_Plans_int_rd_data_3] prompt=3573 chars -> response=887 chars
+Generated 5 plans from context 3 for signal int_rd_data
+Generated 20 unique plans for signal int_rd_data from 20 total plans
+Processing signal 8/18: int_read
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['int_read']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Scilab script which calculates the above parameters is added under the “scilab” directory with the core files. The interface between the “uart_parser.v” module and the “uart_top.v” is very simple and uses only five signals. For cases where the UART interface is not possible or another interface is preferred, the “uart_parser.v” module can be used as is with a different interface implementation. UART to Bus Core Specifications Page 5 of 10 uart_tx.v uart_rx.v baud_gen.vuart_top.v uart_parser.vuart2bus_top.v ser_out ser_inint_address int_wr_data16 8 int_write int_read int_rd_data 8 clock resetint_req int_gntFebruary 25, 2012 4.Operation This section describes the protocols used to access the internal bus from
+
+Processing generator: path
+Mapped signal 'int_read' to 20 nodes
+Using 20/20 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_1077
+Found 215 significant paths for node rtl_1077
+  Found 30 potential endpoints for rtl_53
+Found 228 significant paths for node rtl_53
+  Found 30 potential endpoints for rtl_1287
+Found 48 significant paths for node rtl_1287
+  Found 30 potential endpoints for rtl_1280
+Found 84 significant paths for node rtl_1280
+  Found 30 potential endpoints for rtl_656
+Found 197 significant paths for node rtl_656
+  Found 30 potential endpoints for rtl_240
+Found 187 significant paths for node rtl_240
+  Found 30 potential endpoints for rtl_455
+Found 99 significant paths for node rtl_455
+  Found 30 potential endpoints for rtl_245
+Found 131 significant paths for node rtl_245
+  Found 30 potential endpoints for rtl_448
+Found 105 significant paths for node rtl_448
+  Found 30 potential endpoints for rtl_453
+Found 144 significant paths for node rtl_453
+  Found 30 potential endpoints for rtl_864
+Found 377 significant paths for node rtl_864
+  Found 30 potential endpoints for rtl_42
+Found 360 significant paths for node rtl_42
+  Found 30 potential endpoints for rtl_247
+Found 145 significant paths for node rtl_247
+  Found 30 potential endpoints for rtl_1285
+Found 113 significant paths for node rtl_1285
+  Found 30 potential endpoints for rtl_1079
+Found 141 significant paths for node rtl_1079
+  Found 30 potential endpoints for rtl_661
+Found 161 significant paths for node rtl_661
+  Found 30 potential endpoints for rtl_663
+Found 231 significant paths for node rtl_663
+  Found 30 potential endpoints for rtl_871
+Found 453 significant paths for node rtl_871
+  Found 30 potential endpoints for rtl_1072
+Found 156 significant paths for node rtl_1072
+  Found 30 potential endpoints for rtl_869
+Found 330 significant paths for node rtl_869
+Generated 3905 path-based contexts
+path generator returned 3905 contexts
+Added 3905 contexts from path, total now: 3915
+Sample path context: PATH ANALYSIS FROM int_read_assignment TO data_param_assignment
+Path length: 3 nodes with clustering 0.00
+Source: int_read_assignment (assignment) in module uart2bus_top
+Target: data_param_assignment (assignment) in module uart2bus_top
+
+Relationship chain:
+  int_read_assignment (assignment in uart2bus_top) part_of uart2bus_top (module)
+  uart2bus_top (module) part_of data_param_assignment (assignment in uart2bus_top)
+
+Analysis:
+  • Cross-module path connecting: uart2bus_top
+
+Pruning 3915 contexts...
+Using LLM-based context pruning
+Pruning 3915 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=6842 chars -> response=34 chars
+LLM evaluation for rag took 0.85 seconds
+Selected context 0 of type rag
+Selected context 2 of type rag
+Selected context 4 of type rag
+Selected context 5 of type rag
+Selected context 8 of type rag
+Evaluating 3905 contexts of type 'path'
+Pre-filtering 3905 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13641 chars -> response=28 chars
+LLM evaluation for path took 0.74 seconds
+Selected context 0 of type path
+Selected context 4 of type path
+Selected context 9 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 5, 'path': 3}
+Context distribution plan: {'rag': [2, 2, 1], 'path': [1, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 3 contexts, 433 tokens
+Prompt 2: 3 contexts, 433 tokens
+Prompt 3: 2 contexts, 304 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal int_read
+Processing dynamic context 1/3 for int_read
+[llm_inference:NL_Plans_int_read_1] prompt=4336 chars -> response=811 chars
+Generated 5 plans from context 1 for signal int_read
+Processing dynamic context 2/3 for int_read
+[llm_inference:NL_Plans_int_read_2] prompt=4336 chars -> response=1172 chars
+Generated 7 plans from context 2 for signal int_read
+Processing dynamic context 3/3 for int_read
+[llm_inference:NL_Plans_int_read_3] prompt=3705 chars -> response=774 chars
+Generated 5 plans from context 3 for signal int_read
+Generated 17 unique plans for signal int_read from 17 total plans
+Processing signal 9/18: int_req
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['int_req']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'int_req' to 14 nodes
+Using 14/14 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_456
+Found 161 significant paths for node rtl_456
+  Found 30 potential endpoints for rtl_336
+Found 85 significant paths for node rtl_336
+  Found 30 potential endpoints for rtl_1080
+Found 162 significant paths for node rtl_1080
+  Found 30 potential endpoints for rtl_872
+Found 229 significant paths for node rtl_872
+  Found 30 potential endpoints for rtl_1288
+Found 54 significant paths for node rtl_1288
+  Found 30 potential endpoints for rtl_664
+Found 185 significant paths for node rtl_664
+  Found 30 potential endpoints for rtl_1168
+Found 46 significant paths for node rtl_1168
+  Found 30 potential endpoints for rtl_248
+Found 242 significant paths for node rtl_248
+  Found 30 potential endpoints for rtl_544
+Found 236 significant paths for node rtl_544
+  Found 30 potential endpoints for rtl_128
+Found 74 significant paths for node rtl_128
+  Found 30 potential endpoints for rtl_960
+Found 186 significant paths for node rtl_960
+  Found 30 potential endpoints for rtl_752
+Found 444 significant paths for node rtl_752
+  Found 30 potential endpoints for rtl_54
+Found 215 significant paths for node rtl_54
+  Found 30 potential endpoints for rtl_43
+Found 649 significant paths for node rtl_43
+Generated 2968 path-based contexts
+path generator returned 2968 contexts
+Added 2968 contexts from path, total now: 2978
+Sample path context: PATH ANALYSIS FROM int_req_assignment TO main_sm_assignment
+Path length: 6 nodes with clustering 0.28
+Source: int_req_assignment (assignment) in module uart_rx
+Target: main_sm_assignment (assignment) in module uart2bus_top
+
+Relationship chain:
+  int_req_assignment (assignment in uart_rx) part_of uart_rx (module)
+  uart_rx (module) instantiates uart_tx (module)
+  uart_tx (module) instantiates uart_top (module)
+  uart_top (module) instantiates uart2bus_top (module)
+  uart2bus_top (module) part_of main_sm_assignment (assignment in uart2bus_top)
+
+Analysis:
+  • Cross-module path connecting: uart_rx, uart_tx, uart_top, uart2bus_top
+
+Pruning 2978 contexts...
+Using LLM-based context pruning
+Pruning 2978 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=8495 chars -> response=31 chars
+LLM evaluation for rag took 0.68 seconds
+Selected context 1 of type rag
+Selected context 2 of type rag
+Selected context 5 of type rag
+Selected context 6 of type rag
+Evaluating 2968 contexts of type 'path'
+Pre-filtering 2968 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12350 chars -> response=33 chars
+LLM evaluation for path took 0.53 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 16 of type path
+Selected context 17 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 4}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 4 contexts, 628 tokens
+Prompt 2: 2 contexts, 311 tokens
+Prompt 3: 2 contexts, 311 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal int_req
+Processing dynamic context 1/3 for int_req
+[llm_inference:NL_Plans_int_req_1] prompt=5202 chars -> response=948 chars
+Generated 5 plans from context 1 for signal int_req
+Processing dynamic context 2/3 for int_req
+[llm_inference:NL_Plans_int_req_2] prompt=3857 chars -> response=935 chars
+Generated 7 plans from context 2 for signal int_req
+Processing dynamic context 3/3 for int_req
+[llm_inference:NL_Plans_int_req_3] prompt=3857 chars -> response=1050 chars
+Generated 8 plans from context 3 for signal int_req
+Generated 20 unique plans for signal int_req from 20 total plans
+Processing signal 10/18: int_wr_data
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['int_wr_data']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: 		write_req <= 1'b0;
+		int_write <= 1'b0;
+		int_wr_data <= 0;
+	end 
+	else if (write_op && (main_sm == `MAIN_ADDR) && new_rx_data && !data_in_hex_range)
+	begin 
+		write_req <= 1'b1;
+		int_wr_data <= data_param;
+	end 
+	// binary extension mode 
+	else if (bin_write_op && (main_sm == `MAIN_BIN_DATA) && new_rx_data) 
+	begin 
+		write_req <= 1'b1;
+		int_wr_data <= rx_data;
+	end 
+
+Processing generator: path
+Mapped signal 'int_wr_data' to 20 nodes
+Using 20/20 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_652
+Found 243 significant paths for node rtl_652
+  Found 30 potential endpoints for rtl_1274
+Found 56 significant paths for node rtl_1274
+  Found 30 potential endpoints for rtl_1064
+Found 290 significant paths for node rtl_1064
+  Found 30 potential endpoints for rtl_650
+Found 248 significant paths for node rtl_650
+  Found 30 potential endpoints for rtl_236
+Found 164 significant paths for node rtl_236
+  Found 30 potential endpoints for rtl_1272
+Found 123 significant paths for node rtl_1272
+  Found 30 potential endpoints for rtl_648
+Found 186 significant paths for node rtl_648
+  Found 30 potential endpoints for rtl_856
+Found 754 significant paths for node rtl_856
+  Found 30 potential endpoints for rtl_440
+Found 85 significant paths for node rtl_440
+  Found 30 potential endpoints for rtl_232
+Found 121 significant paths for node rtl_232
+  Found 30 potential endpoints for rtl_442
+Found 135 significant paths for node rtl_442
+  Found 30 potential endpoints for rtl_444
+Found 535 significant paths for node rtl_444
+  Found 30 potential endpoints for rtl_860
+Found 648 significant paths for node rtl_860
+  Found 30 potential endpoints for rtl_1066
+Found 297 significant paths for node rtl_1066
+  Found 30 potential endpoints for rtl_50
+Found 461 significant paths for node rtl_50
+  Found 30 potential endpoints for rtl_858
+Found 609 significant paths for node rtl_858
+  Found 30 potential endpoints for rtl_39
+Found 2714 significant paths for node rtl_39
+  Found 30 potential endpoints for rtl_1276
+Found 65 significant paths for node rtl_1276
+  Found 30 potential endpoints for rtl_234
+Found 258 significant paths for node rtl_234
+  Found 30 potential endpoints for rtl_1068
+Found 351 significant paths for node rtl_1068
+Generated 8343 path-based contexts
+path generator returned 8343 contexts
+Added 8343 contexts from path, total now: 8353
+Sample path context: PATH ANALYSIS FROM int_wr_data_assignment TO main_sm_assignment
+Path length: 3 nodes with clustering 0.00
+Source: int_wr_data_assignment (assignment) in module uart_top
+Target: main_sm_assignment (assignment) in module uart_top
+
+Relationship chain:
+  int_wr_data_assignment (assignment in uart_top) part_of uart_top (module)
+  uart_top (module) part_of main_sm_assignment (assignment in uart_top)
+
+Analysis:
+  • Cross-module path connecting: uart_top
+
+Pruning 8353 contexts...
+Using LLM-based context pruning
+Pruning 8353 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7264 chars -> response=28 chars
+LLM evaluation for rag took 0.55 seconds
+Selected context 0 of type rag
+Selected context 1 of type rag
+Selected context 7 of type rag
+Evaluating 8343 contexts of type 'path'
+Pre-filtering 8343 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=15939 chars -> response=31 chars
+LLM evaluation for path took 1.37 seconds
+Selected context 0 of type path
+Selected context 3 of type path
+Selected context 4 of type path
+Selected context 7 of type path
+Final selection: 7 contexts
+After pruning: 7 contexts remain
+Selected contexts by type: {'rag': 3, 'path': 4}
+Context distribution plan: {'rag': [1, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 3 contexts, 446 tokens
+Prompt 2: 2 contexts, 285 tokens
+Prompt 3: 2 contexts, 285 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal int_wr_data
+Processing dynamic context 1/3 for int_wr_data
+[llm_inference:NL_Plans_int_wr_data_1] prompt=4108 chars -> response=1228 chars
+Generated 8 plans from context 1 for signal int_wr_data
+Processing dynamic context 2/3 for int_wr_data
+[llm_inference:NL_Plans_int_wr_data_2] prompt=3477 chars -> response=953 chars
+Generated 6 plans from context 2 for signal int_wr_data
+Processing dynamic context 3/3 for int_wr_data
+[llm_inference:NL_Plans_int_wr_data_3] prompt=3477 chars -> response=860 chars
+Generated 5 plans from context 3 for signal int_wr_data
+Generated 19 unique plans for signal int_wr_data from 19 total plans
+Processing signal 11/18: int_write
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['int_write']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: 	else if (int_gnt && write_req) 
+	begin 
+		// set internal bus write and clear the write request flag 
+		int_write <= 1'b1;
+		write_req <= 1'b0;
+	end 
+	else 
+		int_write <= 1'b0;
+end 
+
+// internal read control 
+always @ (posedge clock or posedge reset)
+begin 
+	if (reset)
+	begin 
+		int_read <= 1'b0;
+		read_req <= 1'b0;
+
+Processing generator: path
+Mapped signal 'int_write' to 20 nodes
+Using 20/20 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_231
+Found 116 significant paths for node rtl_231
+  Found 30 potential endpoints for rtl_1071
+Found 183 significant paths for node rtl_1071
+  Found 30 potential endpoints for rtl_51
+Found 201 significant paths for node rtl_51
+  Found 30 potential endpoints for rtl_653
+Found 166 significant paths for node rtl_653
+  Found 30 potential endpoints for rtl_439
+Found 142 significant paths for node rtl_439
+  Found 30 potential endpoints for rtl_445
+Found 94 significant paths for node rtl_445
+  Found 30 potential endpoints for rtl_863
+Found 394 significant paths for node rtl_863
+  Found 30 potential endpoints for rtl_1277
+Found 109 significant paths for node rtl_1277
+  Found 30 potential endpoints for rtl_447
+Found 73 significant paths for node rtl_447
+  Found 30 potential endpoints for rtl_239
+Found 137 significant paths for node rtl_239
+  Found 30 potential endpoints for rtl_1271
+Found 81 significant paths for node rtl_1271
+  Found 30 potential endpoints for rtl_655
+Found 135 significant paths for node rtl_655
+  Found 30 potential endpoints for rtl_855
+Found 250 significant paths for node rtl_855
+  Found 30 potential endpoints for rtl_40
+Found 504 significant paths for node rtl_40
+  Found 30 potential endpoints for rtl_647
+Found 172 significant paths for node rtl_647
+  Found 30 potential endpoints for rtl_1063
+Found 225 significant paths for node rtl_1063
+  Found 30 potential endpoints for rtl_1279
+Found 48 significant paths for node rtl_1279
+  Found 30 potential endpoints for rtl_861
+Found 341 significant paths for node rtl_861
+  Found 30 potential endpoints for rtl_237
+Found 168 significant paths for node rtl_237
+  Found 30 potential endpoints for rtl_1069
+Found 147 significant paths for node rtl_1069
+Generated 3686 path-based contexts
+path generator returned 3686 contexts
+Added 3686 contexts from path, total now: 3696
+Sample path context: PATH ANALYSIS FROM int_write_assignment TO ce_1_assignment
+Path length: 4 nodes with clustering 0.58
+Source: int_write_assignment (assignment) in module uart_tx
+Target: ce_1_assignment (assignment) in module uart_tx
+
+Relationship chain:
+  int_write_assignment (assignment in uart_tx) part_of uart_tx (module)
+  uart_tx (module) outputs ce_16 (port in uart_tx)
+  ce_16 (port in uart_tx) used_in ce_1_assignment (assignment in uart_tx)
+
+Analysis:
+  • Signal flow path with 1 ports and 2 assignments
+  • Cross-module path connecting: uart_tx
+
+Pruning 3696 contexts...
+Using LLM-based context pruning
+Pruning 3696 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=6640 chars -> response=31 chars
+LLM evaluation for rag took 0.67 seconds
+Selected context 0 of type rag
+Selected context 3 of type rag
+Selected context 4 of type rag
+Selected context 6 of type rag
+Evaluating 3686 contexts of type 'path'
+Pre-filtering 3686 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12369 chars -> response=32 chars
+LLM evaluation for path took 0.51 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 5 of type path
+Selected context 12 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 4}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 4 contexts, 557 tokens
+Prompt 2: 2 contexts, 269 tokens
+Prompt 3: 2 contexts, 269 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal int_write
+Processing dynamic context 1/3 for int_write
+[llm_inference:NL_Plans_int_write_1] prompt=4481 chars -> response=997 chars
+Generated 6 plans from context 1 for signal int_write
+Processing dynamic context 2/3 for int_write
+[llm_inference:NL_Plans_int_write_2] prompt=3408 chars -> response=699 chars
+Generated 5 plans from context 2 for signal int_write
+Processing dynamic context 3/3 for int_write
+[llm_inference:NL_Plans_int_write_3] prompt=3408 chars -> response=1007 chars
+Generated 5 plans from context 3 for signal int_write
+Generated 16 unique plans for signal int_write from 16 total plans
+Processing signal 12/18: new_rx_data
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['new_rx_data']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: 		data_buf <= {in_sync[1], data_buf[7:1]};
+end 
+
+// data output and flag 
+always @ (posedge clock or posedge reset)
+begin 
+	if (reset) 
+	begin 
+		rx_data <= 8'h0;
+		new_rx_data <= 1'b0;
+	end 
+	else if (rx_busy & (bit_count == 4'h8) & ce_1)
+	begin 
+		rx_data <= data_buf;
+		new_rx_data <= 1'b1;
+	end 
+	else 
+		new_rx_data <= 1'b0;
+end 
+
+endmodule
+
+Processing generator: path
+Mapped signal 'new_rx_data' to 21 nodes
+Using 21/21 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_790
+Found 564 significant paths for node rtl_790
+  Found 30 potential endpoints for rtl_164
+Found 151 significant paths for node rtl_164
+  Found 30 potential endpoints for rtl_583
+Found 742 significant paths for node rtl_583
+  Found 30 potential endpoints for rtl_1204
+Found 87 significant paths for node rtl_1204
+  Found 30 potential endpoints for rtl_167
+Found 222 significant paths for node rtl_167
+  Found 30 potential endpoints for rtl_791
+Found 787 significant paths for node rtl_791
+  Found 30 potential endpoints for rtl_374
+Found 355 significant paths for node rtl_374
+  Found 30 potential endpoints for rtl_999
+Found 51 significant paths for node rtl_999
+  Found 30 potential endpoints for rtl_372
+Found 398 significant paths for node rtl_372
+  Found 30 potential endpoints for rtl_375
+Found 486 significant paths for node rtl_375
+  Found 30 potential endpoints for rtl_788
+Found 944 significant paths for node rtl_788
+  Found 30 potential endpoints for rtl_582
+Found 545 significant paths for node rtl_582
+  Found 30 potential endpoints for rtl_998
+Found 45 significant paths for node rtl_998
+  Found 30 potential endpoints for rtl_34
+Found 2670 significant paths for node rtl_34
+  Found 30 potential endpoints for rtl_18
+Found 1227 significant paths for node rtl_18
+  Found 30 potential endpoints for rtl_166
+Found 105 significant paths for node rtl_166
+  Found 30 potential endpoints for rtl_996
+Found 43 significant paths for node rtl_996
+  Found 30 potential endpoints for rtl_1206
+Found 39 significant paths for node rtl_1206
+  Found 30 potential endpoints for rtl_1207
+Found 113 significant paths for node rtl_1207
+  Found 30 potential endpoints for rtl_580
+Found 712 significant paths for node rtl_580
+  Found 30 potential endpoints for rtl_24
+Found 2605 significant paths for node rtl_24
+Generated 12891 path-based contexts
+path generator returned 12891 contexts
+Added 12891 contexts from path, total now: 12901
+Sample path context: PATH ANALYSIS FROM new_rx_data_assignment TO data_nibble_assignment
+Path length: 3 nodes with clustering 0.00
+Source: new_rx_data_assignment (assignment) in module uart_parser
+Target: data_nibble_assignment (assignment) in module uart_parser
+
+Relationship chain:
+  new_rx_data_assignment (assignment in uart_parser) part_of uart_parser (module)
+  uart_parser (module) part_of data_nibble_assignment (assignment in uart_parser)
+
+Analysis:
+  • Cross-module path connecting: uart_parser
+
+Pruning 12901 contexts...
+Using LLM-based context pruning
+Pruning 12901 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=6919 chars -> response=28 chars
+LLM evaluation for rag took 0.70 seconds
+Selected context 0 of type rag
+Selected context 5 of type rag
+Selected context 7 of type rag
+Evaluating 12891 contexts of type 'path'
+Pre-filtering 12891 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=14170 chars -> response=34 chars
+LLM evaluation for path took 0.81 seconds
+Selected context 0 of type path
+Selected context 2 of type path
+Selected context 5 of type path
+Selected context 6 of type path
+Selected context 7 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 3, 'path': 5}
+Context distribution plan: {'rag': [1, 1, 1], 'path': [2, 2, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 3 contexts, 420 tokens
+Prompt 2: 3 contexts, 420 tokens
+Prompt 3: 2 contexts, 272 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal new_rx_data
+Processing dynamic context 1/3 for new_rx_data
+[llm_inference:NL_Plans_new_rx_data_1] prompt=3993 chars -> response=1054 chars
+Generated 5 plans from context 1 for signal new_rx_data
+Processing dynamic context 2/3 for new_rx_data
+[llm_inference:NL_Plans_new_rx_data_2] prompt=3993 chars -> response=1099 chars
+Generated 6 plans from context 2 for signal new_rx_data
+Processing dynamic context 3/3 for new_rx_data
+[llm_inference:NL_Plans_new_rx_data_3] prompt=3368 chars -> response=1103 chars
+Generated 5 plans from context 3 for signal new_rx_data
+Generated 16 unique plans for signal new_rx_data from 16 total plans
+Processing signal 13/18: new_tx_data
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['new_tx_data']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'new_tx_data' to 75 nodes
+Using 75/75 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_490
+Found 51 significant paths for node rtl_490
+  Found 30 potential endpoints for rtl_1106
+Found 61 significant paths for node rtl_1106
+  Found 30 potential endpoints for rtl_482
+Found 167 significant paths for node rtl_482
+  Found 30 potential endpoints for rtl_1309
+Found 132 significant paths for node rtl_1309
+  Found 30 potential endpoints for rtl_685
+Found 1093 significant paths for node rtl_685
+  Found 30 potential endpoints for rtl_1322
+Found 134 significant paths for node rtl_1322
+  Found 30 potential endpoints for rtl_897
+Found 1187 significant paths for node rtl_897
+  Found 30 potential endpoints for rtl_1321
+Found 53 significant paths for node rtl_1321
+  Found 30 potential endpoints for rtl_1313
+Found 177 significant paths for node rtl_1313
+  Found 30 potential endpoints for rtl_1324
+Found 60 significant paths for node rtl_1324
+  Found 30 potential endpoints for rtl_1096
+Found 64 significant paths for node rtl_1096
+  Found 30 potential endpoints for rtl_1307
+Found 88 significant paths for node rtl_1307
+  Found 30 potential endpoints for rtl_893
+Found 1058 significant paths for node rtl_893
+  Found 30 potential endpoints for rtl_26
+Found 3147 significant paths for node rtl_26
+  Found 30 potential endpoints for rtl_1101
+Found 92 significant paths for node rtl_1101
+  Found 30 potential endpoints for rtl_477
+Found 83 significant paths for node rtl_477
+  Found 30 potential endpoints for rtl_680
+Found 869 significant paths for node rtl_680
+  Found 30 potential endpoints for rtl_678
+Found 1192 significant paths for node rtl_678
+  Found 30 potential endpoints for rtl_698
+Found 1009 significant paths for node rtl_698
+  Found 30 potential endpoints for rtl_470
+Found 59 significant paths for node rtl_470
+  Found 30 potential endpoints for rtl_486
+Found 137 significant paths for node rtl_486
+  Found 30 potential endpoints for rtl_492
+Found 93 significant paths for node rtl_492
+  Found 30 potential endpoints for rtl_478
+Found 71 significant paths for node rtl_478
+  Found 30 potential endpoints for rtl_1304
+Found 71 significant paths for node rtl_1304
+  Found 30 potential endpoints for rtl_278
+Found 1091 significant paths for node rtl_278
+  Found 30 potential endpoints for rtl_10
+Found 2130 significant paths for node rtl_10
+  Found 30 potential endpoints for rtl_481
+Found 88 significant paths for node rtl_481
+  Found 30 potential endpoints for rtl_489
+Found 86 significant paths for node rtl_489
+  Found 30 potential endpoints for rtl_36
+Found 2175 significant paths for node rtl_36
+  Found 30 potential endpoints for rtl_284
+Found 761 significant paths for node rtl_284
+  Found 30 potential endpoints for rtl_888
+Found 962 significant paths for node rtl_888
+  Found 30 potential endpoints for rtl_901
+Found 1346 significant paths for node rtl_901
+  Found 30 potential endpoints for rtl_906
+Found 1063 significant paths for node rtl_906
+  Found 30 potential endpoints for rtl_1110
+Found 103 significant paths for node rtl_1110
+  Found 30 potential endpoints for rtl_697
+Found 974 significant paths for node rtl_697
+  Found 30 potential endpoints for rtl_905
+Found 995 significant paths for node rtl_905
+  Found 30 potential endpoints for rtl_264
+Found 1105 significant paths for node rtl_264
+  Found 30 potential endpoints for rtl_274
+Found 803 significant paths for node rtl_274
+  Found 30 potential endpoints for rtl_902
+Found 1088 significant paths for node rtl_902
+  Found 30 potential endpoints for rtl_1105
+Found 133 significant paths for node rtl_1105
+  Found 30 potential endpoints for rtl_700
+Found 1081 significant paths for node rtl_700
+  Found 30 potential endpoints for rtl_1113
+Found 54 significant paths for node rtl_1113
+  Found 30 potential endpoints for rtl_281
+Found 783 significant paths for node rtl_281
+  Found 30 potential endpoints for rtl_690
+Found 771 significant paths for node rtl_690
+  Found 30 potential endpoints for rtl_1318
+Found 141 significant paths for node rtl_1318
+  Found 30 potential endpoints for rtl_485
+Found 112 significant paths for node rtl_485
+  Found 30 potential endpoints for rtl_475
+Found 91 significant paths for node rtl_475
+  Found 30 potential endpoints for rtl_686
+Found 908 significant paths for node rtl_686
+  Found 30 potential endpoints for rtl_891
+Found 919 significant paths for node rtl_891
+  Found 30 potential endpoints for rtl_1314
+Found 95 significant paths for node rtl_1314
+  Found 30 potential endpoints for rtl_269
+Found 906 significant paths for node rtl_269
+  Found 30 potential endpoints for rtl_1094
+Found 68 significant paths for node rtl_1094
+  Found 30 potential endpoints for rtl_898
+Found 832 significant paths for node rtl_898
+  Found 30 potential endpoints for rtl_1317
+Found 96 significant paths for node rtl_1317
+  Found 30 potential endpoints for rtl_273
+Found 767 significant paths for node rtl_273
+  Found 30 potential endpoints for rtl_1102
+Found 59 significant paths for node rtl_1102
+  Found 30 potential endpoints for rtl_1099
+Found 97 significant paths for node rtl_1099
+  Found 30 potential endpoints for rtl_282
+Found 665 significant paths for node rtl_282
+  Found 30 potential endpoints for rtl_1302
+Found 115 significant paths for node rtl_1302
+  Found 30 potential endpoints for rtl_689
+Found 1087 significant paths for node rtl_689
+  Found 30 potential endpoints for rtl_1116
+Found 42 significant paths for node rtl_1116
+  Found 30 potential endpoints for rtl_262
+Found 882 significant paths for node rtl_262
+  Found 30 potential endpoints for rtl_472
+Found 82 significant paths for node rtl_472
+  Found 30 potential endpoints for rtl_683
+Found 868 significant paths for node rtl_683
+  Found 30 potential endpoints for rtl_693
+Found 1101 significant paths for node rtl_693
+  Found 30 potential endpoints for rtl_894
+Found 1216 significant paths for node rtl_894
+  Found 30 potential endpoints for rtl_908
+Found 896 significant paths for node rtl_908
+  Found 30 potential endpoints for rtl_277
+Found 798 significant paths for node rtl_277
+  Found 30 potential endpoints for rtl_694
+Found 958 significant paths for node rtl_694
+  Found 30 potential endpoints for rtl_1114
+Found 99 significant paths for node rtl_1114
+  Found 30 potential endpoints for rtl_267
+Found 973 significant paths for node rtl_267
+  Found 30 potential endpoints for rtl_1310
+Found 101 significant paths for node rtl_1310
+  Found 30 potential endpoints for rtl_270
+Found 766 significant paths for node rtl_270
+  Found 30 potential endpoints for rtl_1109
+Found 83 significant paths for node rtl_1109
+  Found 30 potential endpoints for rtl_886
+Found 1301 significant paths for node rtl_886
+Generated 45864 path-based contexts
+path generator returned 45864 contexts
+Added 45864 contexts from path, total now: 45874
+Sample path context: PATH ANALYSIS FROM new_tx_data_assignment TO tx_char_assignment
+Path length: 3 nodes with clustering 0.00
+Source: new_tx_data_assignment (assignment) in module uart_rx
+Target: tx_char_assignment (assignment) in module uart_rx
+
+Relationship chain:
+  new_tx_data_assignment (assignment in uart_rx) part_of uart_rx (module)
+  uart_rx (module) part_of tx_char_assignment (assignment in uart_rx)
+
+Analysis:
+  • Cross-module path connecting: uart_rx
+
+Pruning 45874 contexts...
+Using LLM-based context pruning
+Pruning 45874 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=6590 chars -> response=31 chars
+LLM evaluation for rag took 0.79 seconds
+Selected context 1 of type rag
+Selected context 2 of type rag
+Selected context 4 of type rag
+Selected context 8 of type rag
+Evaluating 45864 contexts of type 'path'
+Pre-filtering 45864 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12431 chars -> response=33 chars
+LLM evaluation for path took 0.69 seconds
+Selected context 0 of type path
+Selected context 2 of type path
+Selected context 17 of type path
+Selected context 18 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 4}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 4 contexts, 564 tokens
+Prompt 2: 2 contexts, 277 tokens
+Prompt 3: 2 contexts, 277 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal new_tx_data
+Processing dynamic context 1/3 for new_tx_data
+[llm_inference:NL_Plans_new_tx_data_1] prompt=4405 chars -> response=895 chars
+Generated 5 plans from context 1 for signal new_tx_data
+Processing dynamic context 2/3 for new_tx_data
+[llm_inference:NL_Plans_new_tx_data_2] prompt=3378 chars -> response=1233 chars
+Generated 5 plans from context 2 for signal new_tx_data
+Processing dynamic context 3/3 for new_tx_data
+[llm_inference:NL_Plans_new_tx_data_3] prompt=3378 chars -> response=1731 chars
+Generated 8 plans from context 3 for signal new_tx_data
+Generated 18 unique plans for signal new_tx_data from 18 total plans
+Processing signal 14/18: rx_data
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['rx_data']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: always @ (rx_data)
+begin 
+	if (((rx_data >= `CHAR_0   ) && (rx_data <= `CHAR_9   )) || 
+	    ((rx_data >= `CHAR_A_UP) && (rx_data <= `CHAR_F_UP)) || 
+	    ((rx_data >= `CHAR_a_LO) && (rx_data <= `CHAR_f_LO)))
+		data_in_hex_range <= 1'b1;
+	else 
+		data_in_hex_range <= 1'b0;
+end 
+
+// read operation flag 
+always @ (posedge clock or posedge reset)
+begin 
+
+Processing generator: path
+Mapped signal 'rx_data' to 37 nodes
+Using 37/37 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_995
+Found 47 significant paths for node rtl_995
+  Found 30 potential endpoints for rtl_1203
+Found 72 significant paths for node rtl_1203
+  Found 30 potential endpoints for rtl_652
+Found 208 significant paths for node rtl_652
+  Found 30 potential endpoints for rtl_641
+Found 183 significant paths for node rtl_641
+  Found 30 potential endpoints for rtl_1265
+Found 51 significant paths for node rtl_1265
+  Found 30 potential endpoints for rtl_640
+Found 97 significant paths for node rtl_640
+  Found 30 potential endpoints for rtl_851
+Found 191 significant paths for node rtl_851
+  Found 30 potential endpoints for rtl_581
+Found 145 significant paths for node rtl_581
+  Found 30 potential endpoints for rtl_224
+Found 133 significant paths for node rtl_224
+  Found 30 potential endpoints for rtl_643
+Found 201 significant paths for node rtl_643
+  Found 30 potential endpoints for rtl_433
+Found 503 significant paths for node rtl_433
+  Found 30 potential endpoints for rtl_787
+Found 128 significant paths for node rtl_787
+  Found 30 potential endpoints for rtl_849
+Found 145 significant paths for node rtl_849
+  Found 30 potential endpoints for rtl_236
+Found 217 significant paths for node rtl_236
+  Found 30 potential endpoints for rtl_1057
+Found 48 significant paths for node rtl_1057
+  Found 30 potential endpoints for rtl_1267
+Found 57 significant paths for node rtl_1267
+  Found 30 potential endpoints for rtl_997
+Found 72 significant paths for node rtl_997
+  Found 30 potential endpoints for rtl_163
+Found 254 significant paths for node rtl_163
+  Found 30 potential endpoints for rtl_371
+Found 526 significant paths for node rtl_371
+  Found 30 potential endpoints for rtl_1056
+Found 41 significant paths for node rtl_1056
+  Found 30 potential endpoints for rtl_1264
+Found 141 significant paths for node rtl_1264
+  Found 30 potential endpoints for rtl_17
+Found 1109 significant paths for node rtl_17
+  Found 30 potential endpoints for rtl_165
+Found 171 significant paths for node rtl_165
+  Found 30 potential endpoints for rtl_1205
+Found 67 significant paths for node rtl_1205
+  Found 30 potential endpoints for rtl_1059
+Found 78 significant paths for node rtl_1059
+  Found 30 potential endpoints for rtl_444
+Found 356 significant paths for node rtl_444
+  Found 30 potential endpoints for rtl_860
+Found 733 significant paths for node rtl_860
+  Found 30 potential endpoints for rtl_227
+Found 235 significant paths for node rtl_227
+  Found 30 potential endpoints for rtl_435
+Found 430 significant paths for node rtl_435
+  Found 30 potential endpoints for rtl_225
+Found 208 significant paths for node rtl_225
+  Found 30 potential endpoints for rtl_1276
+Found 85 significant paths for node rtl_1276
+  Found 30 potential endpoints for rtl_789
+Found 174 significant paths for node rtl_789
+  Found 30 potential endpoints for rtl_1068
+Found 322 significant paths for node rtl_1068
+  Found 30 potential endpoints for rtl_579
+Found 213 significant paths for node rtl_579
+  Found 30 potential endpoints for rtl_848
+Found 170 significant paths for node rtl_848
+  Found 30 potential endpoints for rtl_373
+Found 489 significant paths for node rtl_373
+  Found 30 potential endpoints for rtl_432
+Found 673 significant paths for node rtl_432
+Generated 8973 path-based contexts
+path generator returned 8973 contexts
+Added 8973 contexts from path, total now: 8983
+Sample path context: PATH ANALYSIS FROM rx_data_assignment TO main_sm_assignment
+Path length: 3 nodes with clustering 0.00
+Source: rx_data_assignment (assignment) in module uart2bus_top
+Target: main_sm_assignment (assignment) in module uart2bus_top
+
+Relationship chain:
+  rx_data_assignment (assignment in uart2bus_top) part_of uart2bus_top (module)
+  uart2bus_top (module) part_of main_sm_assignment (assignment in uart2bus_top)
+
+Analysis:
+  • Cross-module path connecting: uart2bus_top
+
+Pruning 8983 contexts...
+Using LLM-based context pruning
+Pruning 8983 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=6848 chars -> response=31 chars
+LLM evaluation for rag took 0.57 seconds
+Selected context 0 of type rag
+Selected context 4 of type rag
+Selected context 6 of type rag
+Selected context 9 of type rag
+Evaluating 8973 contexts of type 'path'
+Pre-filtering 8973 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13144 chars -> response=43 chars
+LLM evaluation for path took 0.91 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 2 of type path
+Selected context 3 of type path
+Selected context 5 of type path
+Selected context 6 of type path
+Selected context 8 of type path
+Selected context 9 of type path
+Final selection: 12 contexts
+After pruning: 12 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 8}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [3, 3, 2], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 5 contexts, 651 tokens
+Prompt 2: 4 contexts, 542 tokens
+Prompt 3: 3 contexts, 416 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal rx_data
+Processing dynamic context 1/3 for rx_data
+[llm_inference:NL_Plans_rx_data_1] prompt=4661 chars -> response=1757 chars
+Generated 9 plans from context 1 for signal rx_data
+Processing dynamic context 2/3 for rx_data
+[llm_inference:NL_Plans_rx_data_2] prompt=4325 chars -> response=1131 chars
+Generated 6 plans from context 2 for signal rx_data
+Processing dynamic context 3/3 for rx_data
+[llm_inference:NL_Plans_rx_data_3] prompt=3836 chars -> response=1171 chars
+Generated 7 plans from context 3 for signal rx_data
+Generated 22 unique plans for signal rx_data from 22 total plans
+Processing signal 15/18: ser_in
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['ser_in']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: 	clock, reset,
+	ce_16, ser_in, 
+	rx_data, new_rx_data 
+);
+//---------------------------------------------------------------------------------------
+// modules inputs and outputs 
+input 			clock;			// global clock input 
+input 			reset;			// global reset input 
+input			ce_16;			// baud rate multiplyed by 16 - generated by baud module 
+input			ser_in;			// serial data input 
+output	[7:0]	rx_data;		// data byte received 
+
+Processing generator: path
+Mapped signal 'ser_in' to 7 nodes
+Using 7/7 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_565
+Found 285 significant paths for node rtl_565
+  Found 30 potential endpoints for rtl_981
+Found 70 significant paths for node rtl_981
+  Found 30 potential endpoints for rtl_357
+Found 114 significant paths for node rtl_357
+  Found 30 potential endpoints for rtl_773
+Found 74 significant paths for node rtl_773
+  Found 30 potential endpoints for rtl_1189
+Found 140 significant paths for node rtl_1189
+  Found 30 potential endpoints for rtl_16
+Found 134 significant paths for node rtl_16
+  Found 30 potential endpoints for rtl_149
+Found 253 significant paths for node rtl_149
+Generated 1070 path-based contexts
+path generator returned 1070 contexts
+Added 1070 contexts from path, total now: 1080
+Sample path context: PATH ANALYSIS FROM in_sync_assignment TO send_stat_flag_assignment
+Path length: 3 nodes with clustering 0.00
+Source: in_sync_assignment (assignment) in module uart_top
+Target: send_stat_flag_assignment (assignment) in module uart_top
+
+Relationship chain:
+  in_sync_assignment (assignment in uart_top) part_of uart_top (module)
+  uart_top (module) part_of send_stat_flag_assignment (assignment in uart_top)
+
+Analysis:
+  • Cross-module path connecting: uart_top
+
+Pruning 1080 contexts...
+Using LLM-based context pruning
+Pruning 1080 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7636 chars -> response=31 chars
+LLM evaluation for rag took 0.62 seconds
+Selected context 0 of type rag
+Selected context 1 of type rag
+Selected context 6 of type rag
+Selected context 9 of type rag
+Evaluating 1070 contexts of type 'path'
+Pre-filtering 1070 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13041 chars -> response=25 chars
+LLM evaluation for path took 0.84 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Final selection: 6 contexts
+After pruning: 6 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 2}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [1, 1, 0], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 3 contexts, 344 tokens
+Prompt 2: 2 contexts, 244 tokens
+Prompt 3: 1 contexts, 120 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal ser_in
+Processing dynamic context 1/3 for ser_in
+[llm_inference:NL_Plans_ser_in_1] prompt=3809 chars -> response=856 chars
+Generated 5 plans from context 1 for signal ser_in
+Processing dynamic context 2/3 for ser_in
+[llm_inference:NL_Plans_ser_in_2] prompt=3365 chars -> response=1088 chars
+Generated 5 plans from context 2 for signal ser_in
+Processing dynamic context 3/3 for ser_in
+[llm_inference:NL_Plans_ser_in_3] prompt=2874 chars -> response=1457 chars
+Generated 8 plans from context 3 for signal ser_in
+Generated 18 unique plans for signal ser_in from 18 total plans
+Processing signal 16/18: ser_out
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['ser_out']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Scilab script which calculates the above parameters is added under the “scilab” directory with the core files. The interface between the “uart_parser.v” module and the “uart_top.v” is very simple and uses only five signals. For cases where the UART interface is not possible or another interface is preferred, the “uart_parser.v” module can be used as is with a different interface implementation. UART to Bus Core Specifications Page 5 of 10 uart_tx.v uart_rx.v baud_gen.vuart_top.v uart_parser.vuart2bus_top.v ser_out ser_inint_address int_wr_data16 8 int_write int_read int_rd_data 8 clock resetint_req int_gntFebruary 25, 2012 4.Operation This section describes the protocols used to access the internal bus from
+
+Processing generator: path
+Mapped signal 'ser_out' to 21 nodes
+Using 21/21 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_562
+Found 415 significant paths for node rtl_562
+  Found 30 potential endpoints for rtl_561
+Found 596 significant paths for node rtl_561
+  Found 30 potential endpoints for rtl_48
+Found 418 significant paths for node rtl_48
+  Found 30 potential endpoints for rtl_22
+Found 912 significant paths for node rtl_22
+  Found 30 potential endpoints for rtl_355
+Found 85 significant paths for node rtl_355
+  Found 30 potential endpoints for rtl_354
+Found 110 significant paths for node rtl_354
+  Found 30 potential endpoints for rtl_1186
+Found 97 significant paths for node rtl_1186
+  Found 30 potential endpoints for rtl_563
+Found 494 significant paths for node rtl_563
+  Found 30 potential endpoints for rtl_769
+Found 165 significant paths for node rtl_769
+  Found 30 potential endpoints for rtl_770
+Found 197 significant paths for node rtl_770
+  Found 30 potential endpoints for rtl_146
+Found 440 significant paths for node rtl_146
+  Found 30 potential endpoints for rtl_1185
+Found 90 significant paths for node rtl_1185
+  Found 30 potential endpoints for rtl_11
+Found 910 significant paths for node rtl_11
+  Found 30 potential endpoints for rtl_145
+Found 298 significant paths for node rtl_145
+  Found 30 potential endpoints for rtl_977
+Found 228 significant paths for node rtl_977
+  Found 30 potential endpoints for rtl_979
+Found 222 significant paths for node rtl_979
+  Found 30 potential endpoints for rtl_353
+Found 93 significant paths for node rtl_353
+  Found 30 potential endpoints for rtl_147
+Found 582 significant paths for node rtl_147
+  Found 30 potential endpoints for rtl_978
+Found 242 significant paths for node rtl_978
+  Found 30 potential endpoints for rtl_1187
+Found 101 significant paths for node rtl_1187
+  Found 30 potential endpoints for rtl_771
+Found 252 significant paths for node rtl_771
+Generated 6947 path-based contexts
+path generator returned 6947 contexts
+Added 6947 contexts from path, total now: 6957
+Sample path context: PATH ANALYSIS FROM ser_out_assignment TO new_tx_data_assignment
+Path length: 6 nodes with clustering 0.25
+Source: ser_out_assignment (assignment) in module uart_top
+Target: new_tx_data_assignment (assignment) in module uart_top
+
+Relationship chain:
+  ser_out_assignment (assignment in uart_top) part_of uart_top (module)
+  uart_top (module) instantiates uart_tx (module)
+  uart_tx (module) input_to new_tx_data (port in uart_tx)
+  new_tx_data (port in uart_tx) drives new_tx_data (port in uart_top)
+  new_tx_data (port in uart_top) assigns_to new_tx_data_assignment (assignment in uart_top)
+
+Analysis:
+  • Signal flow path with 2 ports and 2 assignments
+  • Cross-module path connecting: uart_top, uart_tx
+
+Pruning 6957 contexts...
+Using LLM-based context pruning
+Pruning 6957 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=8115 chars -> response=28 chars
+LLM evaluation for rag took 0.51 seconds
+Selected context 0 of type rag
+Selected context 2 of type rag
+Selected context 3 of type rag
+Evaluating 6947 contexts of type 'path'
+Pre-filtering 6947 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13123 chars -> response=36 chars
+LLM evaluation for path took 0.80 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 2 of type path
+Selected context 11 of type path
+Selected context 15 of type path
+Final selection: 8 contexts
+After pruning: 8 contexts remain
+Selected contexts by type: {'rag': 3, 'path': 5}
+Context distribution plan: {'rag': [1, 1, 1], 'path': [2, 2, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 3 contexts, 457 tokens
+Prompt 2: 3 contexts, 457 tokens
+Prompt 3: 2 contexts, 318 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal ser_out
+Processing dynamic context 1/3 for ser_out
+[llm_inference:NL_Plans_ser_out_1] prompt=4321 chars -> response=805 chars
+Generated 5 plans from context 1 for signal ser_out
+Processing dynamic context 2/3 for ser_out
+[llm_inference:NL_Plans_ser_out_2] prompt=4321 chars -> response=1074 chars
+Generated 7 plans from context 2 for signal ser_out
+Processing dynamic context 3/3 for ser_out
+[llm_inference:NL_Plans_ser_out_3] prompt=3757 chars -> response=684 chars
+Generated 5 plans from context 3 for signal ser_out
+Generated 17 unique plans for signal ser_out from 17 total plans
+Processing signal 17/18: tx_busy
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['tx_busy']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'tx_busy' to 39 nodes
+Using 39/39 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_12
+Found 1110 significant paths for node rtl_12
+  Found 30 potential endpoints for rtl_136
+Found 556 significant paths for node rtl_136
+  Found 30 potential endpoints for rtl_970
+Found 60 significant paths for node rtl_970
+  Found 30 potential endpoints for rtl_345
+Found 90 significant paths for node rtl_345
+  Found 30 potential endpoints for rtl_553
+Found 550 significant paths for node rtl_553
+  Found 30 potential endpoints for rtl_760
+Found 440 significant paths for node rtl_760
+  Found 30 potential endpoints for rtl_499
+Found 136 significant paths for node rtl_499
+  Found 30 potential endpoints for rtl_1178
+Found 60 significant paths for node rtl_1178
+  Found 30 potential endpoints for rtl_138
+Found 510 significant paths for node rtl_138
+  Found 30 potential endpoints for rtl_1331
+Found 61 significant paths for node rtl_1331
+  Found 30 potential endpoints for rtl_915
+Found 830 significant paths for node rtl_915
+  Found 30 potential endpoints for rtl_337
+Found 102 significant paths for node rtl_337
+  Found 30 potential endpoints for rtl_706
+Found 398 significant paths for node rtl_706
+  Found 30 potential endpoints for rtl_707
+Found 671 significant paths for node rtl_707
+  Found 30 potential endpoints for rtl_961
+Found 57 significant paths for node rtl_961
+  Found 30 potential endpoints for rtl_129
+Found 621 significant paths for node rtl_129
+  Found 30 potential endpoints for rtl_753
+Found 521 significant paths for node rtl_753
+  Found 30 potential endpoints for rtl_761
+Found 448 significant paths for node rtl_761
+  Found 30 potential endpoints for rtl_27
+Found 993 significant paths for node rtl_27
+  Found 30 potential endpoints for rtl_346
+Found 103 significant paths for node rtl_346
+  Found 30 potential endpoints for rtl_37
+Found 1017 significant paths for node rtl_37
+  Found 30 potential endpoints for rtl_291
+Found 398 significant paths for node rtl_291
+  Found 30 potential endpoints for rtl_1169
+Found 37 significant paths for node rtl_1169
+  Found 30 potential endpoints for rtl_1123
+Found 42 significant paths for node rtl_1123
+  Found 30 potential endpoints for rtl_290
+Found 523 significant paths for node rtl_290
+  Found 30 potential endpoints for rtl_545
+Found 451 significant paths for node rtl_545
+  Found 30 potential endpoints for rtl_552
+Found 740 significant paths for node rtl_552
+  Found 30 potential endpoints for rtl_1177
+Found 159 significant paths for node rtl_1177
+  Found 30 potential endpoints for rtl_1330
+Found 58 significant paths for node rtl_1330
+  Found 30 potential endpoints for rtl_762
+Found 529 significant paths for node rtl_762
+  Found 30 potential endpoints for rtl_137
+Found 358 significant paths for node rtl_137
+  Found 30 potential endpoints for rtl_968
+Found 68 significant paths for node rtl_968
+  Found 30 potential endpoints for rtl_914
+Found 455 significant paths for node rtl_914
+  Found 30 potential endpoints for rtl_969
+Found 49 significant paths for node rtl_969
+  Found 30 potential endpoints for rtl_344
+Found 81 significant paths for node rtl_344
+  Found 30 potential endpoints for rtl_498
+Found 80 significant paths for node rtl_498
+  Found 30 potential endpoints for rtl_554
+Found 440 significant paths for node rtl_554
+  Found 30 potential endpoints for rtl_1176
+Found 73 significant paths for node rtl_1176
+  Found 30 potential endpoints for rtl_1122
+Found 55 significant paths for node rtl_1122
+Generated 13930 path-based contexts
+path generator returned 13930 contexts
+Added 13930 contexts from path, total now: 13940
+Sample path context: PATH ANALYSIS FROM tx_busy TO tx_nibble_assignment
+Path length: 3 nodes with clustering 0.00
+Source: tx_busy (port) in module uart_tx
+Target: tx_nibble_assignment (assignment) in module uart_tx
+
+Relationship chain:
+  tx_busy (port in uart_tx) outputs uart_tx (module)
+  uart_tx (module) part_of tx_nibble_assignment (assignment in uart_tx)
+
+Analysis:
+  • Signal flow path with 1 ports and 1 assignments
+  • Cross-module path connecting: uart_tx
+
+Pruning 13940 contexts...
+Using LLM-based context pruning
+Pruning 13940 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7165 chars -> response=28 chars
+LLM evaluation for rag took 0.74 seconds
+Selected context 1 of type rag
+Selected context 6 of type rag
+Selected context 9 of type rag
+Evaluating 13930 contexts of type 'path'
+Pre-filtering 13930 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=14000 chars -> response=31 chars
+LLM evaluation for path took 0.67 seconds
+Selected context 0 of type path
+Selected context 3 of type path
+Selected context 5 of type path
+Selected context 6 of type path
+Final selection: 7 contexts
+After pruning: 7 contexts remain
+Selected contexts by type: {'rag': 3, 'path': 4}
+Context distribution plan: {'rag': [1, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 3 contexts, 385 tokens
+Prompt 2: 2 contexts, 246 tokens
+Prompt 3: 2 contexts, 246 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal tx_busy
+Processing dynamic context 1/3 for tx_busy
+[llm_inference:NL_Plans_tx_busy_1] prompt=3847 chars -> response=823 chars
+Generated 5 plans from context 1 for signal tx_busy
+Processing dynamic context 2/3 for tx_busy
+[llm_inference:NL_Plans_tx_busy_2] prompt=3283 chars -> response=865 chars
+Generated 5 plans from context 2 for signal tx_busy
+Processing dynamic context 3/3 for tx_busy
+[llm_inference:NL_Plans_tx_busy_3] prompt=3283 chars -> response=730 chars
+Generated 5 plans from context 3 for signal tx_busy
+Generated 15 unique plans for signal tx_busy from 15 total plans
+Processing signal 18/18: tx_data
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['tx_data']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: // uart top module instance 
+uart_top uart1
+(
+	.clock(clock), .reset(reset),
+	.ser_in(ser_in), .ser_out(ser_out),
+	.rx_data(rx_data), .new_rx_data(new_rx_data), 
+	.tx_data(tx_data), .new_tx_data(new_tx_data), .tx_busy(tx_busy), 
+	.baud_freq(baud_freq), .baud_limit(baud_limit),
+	.baud_clk(baud_clk) 
+);
+
+// assign baud rate default values 
+assign baud_freq = `D_BAUD_FREQ;
+assign baud_limit = `D_BAUD_LIMIT;
+
+// uart parser instance 
+uart_parser #(16) uart_parser1
+(
+	.clock(clock), .reset(reset),
+	.rx_data(rx_data), .new_rx_data(new_rx_data), 
+	.tx_data(tx_data), .new_tx_data(new_tx_data), .tx_busy(tx_busy), 
+
+Processing generator: path
+Mapped signal 'tx_data' to 51 nodes
+Using 51/51 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_272
+Found 655 significant paths for node rtl_272
+  Found 30 potential endpoints for rtl_896
+Found 783 significant paths for node rtl_896
+  Found 30 potential endpoints for rtl_1183
+Found 118 significant paths for node rtl_1183
+  Found 30 potential endpoints for rtl_696
+Found 926 significant paths for node rtl_696
+  Found 30 potential endpoints for rtl_885
+Found 1037 significant paths for node rtl_885
+  Found 30 potential endpoints for rtl_1306
+Found 89 significant paths for node rtl_1306
+  Found 30 potential endpoints for rtl_1320
+Found 60 significant paths for node rtl_1320
+  Found 30 potential endpoints for rtl_9
+Found 2576 significant paths for node rtl_9
+  Found 30 potential endpoints for rtl_677
+Found 1060 significant paths for node rtl_677
+  Found 30 potential endpoints for rtl_682
+Found 970 significant paths for node rtl_682
+  Found 30 potential endpoints for rtl_280
+Found 689 significant paths for node rtl_280
+  Found 30 potential endpoints for rtl_1301
+Found 107 significant paths for node rtl_1301
+  Found 30 potential endpoints for rtl_688
+Found 687 significant paths for node rtl_688
+  Found 30 potential endpoints for rtl_484
+Found 120 significant paths for node rtl_484
+  Found 30 potential endpoints for rtl_679
+Found 792 significant paths for node rtl_679
+  Found 30 potential endpoints for rtl_1312
+Found 80 significant paths for node rtl_1312
+  Found 30 potential endpoints for rtl_266
+Found 721 significant paths for node rtl_266
+  Found 30 potential endpoints for rtl_559
+Found 1216 significant paths for node rtl_559
+  Found 30 potential endpoints for rtl_471
+Found 85 significant paths for node rtl_471
+  Found 30 potential endpoints for rtl_263
+Found 681 significant paths for node rtl_263
+  Found 30 potential endpoints for rtl_351
+Found 74 significant paths for node rtl_351
+  Found 30 potential endpoints for rtl_25
+Found 2642 significant paths for node rtl_25
+  Found 30 potential endpoints for rtl_1098
+Found 66 significant paths for node rtl_1098
+  Found 30 potential endpoints for rtl_975
+Found 80 significant paths for node rtl_975
+  Found 30 potential endpoints for rtl_1095
+Found 119 significant paths for node rtl_1095
+  Found 30 potential endpoints for rtl_143
+Found 548 significant paths for node rtl_143
+  Found 30 potential endpoints for rtl_261
+Found 804 significant paths for node rtl_261
+  Found 30 potential endpoints for rtl_892
+Found 711 significant paths for node rtl_892
+  Found 30 potential endpoints for rtl_684
+Found 895 significant paths for node rtl_684
+  Found 30 potential endpoints for rtl_268
+Found 658 significant paths for node rtl_268
+  Found 30 potential endpoints for rtl_887
+Found 1390 significant paths for node rtl_887
+  Found 30 potential endpoints for rtl_1316
+Found 66 significant paths for node rtl_1316
+  Found 30 potential endpoints for rtl_480
+Found 89 significant paths for node rtl_480
+  Found 30 potential endpoints for rtl_767
+Found 1190 significant paths for node rtl_767
+  Found 30 potential endpoints for rtl_1100
+Found 44 significant paths for node rtl_1100
+  Found 30 potential endpoints for rtl_469
+Found 159 significant paths for node rtl_469
+  Found 30 potential endpoints for rtl_476
+Found 87 significant paths for node rtl_476
+  Found 30 potential endpoints for rtl_1303
+Found 85 significant paths for node rtl_1303
+  Found 30 potential endpoints for rtl_1104
+Found 65 significant paths for node rtl_1104
+  Found 30 potential endpoints for rtl_276
+Found 997 significant paths for node rtl_276
+  Found 30 potential endpoints for rtl_900
+Found 1097 significant paths for node rtl_900
+  Found 30 potential endpoints for rtl_1108
+Found 53 significant paths for node rtl_1108
+  Found 30 potential endpoints for rtl_35
+Found 2870 significant paths for node rtl_35
+  Found 30 potential endpoints for rtl_1093
+Found 91 significant paths for node rtl_1093
+  Found 30 potential endpoints for rtl_474
+Found 138 significant paths for node rtl_474
+  Found 30 potential endpoints for rtl_692
+Found 947 significant paths for node rtl_692
+  Found 30 potential endpoints for rtl_1308
+Found 105 significant paths for node rtl_1308
+  Found 30 potential endpoints for rtl_890
+Found 836 significant paths for node rtl_890
+  Found 30 potential endpoints for rtl_1112
+Found 59 significant paths for node rtl_1112
+  Found 30 potential endpoints for rtl_904
+Found 1150 significant paths for node rtl_904
+  Found 30 potential endpoints for rtl_488
+Found 113 significant paths for node rtl_488
+Generated 31680 path-based contexts
+path generator returned 31680 contexts
+Added 31680 contexts from path, total now: 31690
+Sample path context: PATH ANALYSIS FROM tx_data_assignment TO bin_last_byte_assignment
+Path length: 3 nodes with clustering 0.00
+Source: tx_data_assignment (assignment) in module uart_tx
+Target: bin_last_byte_assignment (assignment) in module uart_tx
+
+Relationship chain:
+  tx_data_assignment (assignment in uart_tx) part_of uart_tx (module)
+  uart_tx (module) part_of bin_last_byte_assignment (assignment in uart_tx)
+
+Analysis:
+  • Cross-module path connecting: uart_tx
+
+Pruning 31690 contexts...
+Using LLM-based context pruning
+Pruning 31690 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7329 chars -> response=34 chars
+LLM evaluation for rag took 1.09 seconds
+Selected context 0 of type rag
+Selected context 1 of type rag
+Selected context 3 of type rag
+Selected context 6 of type rag
+Selected context 9 of type rag
+Evaluating 31680 contexts of type 'path'
+Pre-filtering 31680 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13119 chars -> response=35 chars
+LLM evaluation for path took 1.53 seconds
+Selected context 0 of type path
+Selected context 2 of type path
+Selected context 5 of type path
+Selected context 7 of type path
+Selected context 15 of type path
+Final selection: 10 contexts
+After pruning: 10 contexts remain
+Selected contexts by type: {'rag': 5, 'path': 5}
+Context distribution plan: {'rag': [2, 2, 1], 'path': [2, 2, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 14
+Prompt 1: 4 contexts, 675 tokens
+Prompt 2: 4 contexts, 675 tokens
+Prompt 3: 2 contexts, 323 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal tx_data
+Processing dynamic context 1/3 for tx_data
+[llm_inference:NL_Plans_tx_data_1] prompt=4912 chars -> response=1215 chars
+Generated 8 plans from context 1 for signal tx_data
+Processing dynamic context 2/3 for tx_data
+[llm_inference:NL_Plans_tx_data_2] prompt=4912 chars -> response=1555 chars
+Generated 8 plans from context 2 for signal tx_data
+Processing dynamic context 3/3 for tx_data
+[llm_inference:NL_Plans_tx_data_3] prompt=3606 chars -> response=1519 chars
+Generated 8 plans from context 3 for signal tx_data
+Generated 24 unique plans for signal tx_data from 24 total plans
+Timer log ***********************************************************
+Total duration 18.000 mins
+Read PDF              : 247.695 msecs (0.02%)
+Load and process KG   : 6.880 msecs (0.00%)
+Refine KG with RTL    : 1.997 secs (0.18%)
+Initialize LLM        : 19.258 msecs (0.00%)
+Extract valid signals : 0.082 msecs (0.00%)
+Generate NL plans     : 17.000 mins, 58.241 secs (99.79%)
+Timer log ***********************************************************
+Total time: 18.000 mins; Total number of files: 5; Total folder size: 194.58 KiB
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/logs/gen_plan_2026-08-26T20-11-17.848986_hansolo.poly.edu_wx2356
+gen_plan_2026-08-26T20-11-17.848986_hansolo.poly.edu_wx2356

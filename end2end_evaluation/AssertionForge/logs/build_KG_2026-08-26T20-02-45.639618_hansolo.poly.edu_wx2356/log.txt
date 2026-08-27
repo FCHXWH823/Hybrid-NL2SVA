@@ -1,0 +1,367 @@
+Derived base directory: /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec
+Step 1: Processing input file(s)
+Cleaned up input folder: /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart/input
+PDF Statistics for uart.pdf:
+  Pages: 10
+  File size: 0.22 MB
+  Word count: 1944
+  Token count: 3103
+Step 2: Initializing GraphRAG
+export PYTHONPATH='/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/graphrag' && python -m graphrag.index --init --root /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart
+GraphRAG Initialization Output:
+Initializing project at 
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad
+/AssertLLM/spec/graph_rag_uart
+
+Step 3: Updating .env file
+Copied .env from /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/rag_template/.env to /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart
+Step 4: Updating settings.yaml file
+Copied settings.yaml from /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/rag_template/settings.yaml to /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart
+Step 5: Copying entity extraction prompt
+Copied entity extraction prompt from /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/entity_extraction.txt to /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart/prompts/entity_extraction.txt
+Step 6: Running GraphRAG indexing
+export PYTHONPATH='/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/graphrag:$PYTHONPATH' && python -m graphrag.index --root /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart
+GraphRAG Indexing Output:
+Logging enabled at
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad
+/AssertLLM/spec/graph_rag_uart/output/indexing-engine.log
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+🚀 create_base_text_units
+                                 id  ... n_tokens
+0  efc7ccc0359fff1a98e899386466be62  ...     1200
+1  42cf0552ea62838a3e179276cded1703  ...     1200
+2  2255f746854fd81e093f56b0e9e5292d  ...      903
+
+[3 rows x 5 columns]
+🚀 create_base_extracted_entities
+                                        entity_graph
+0  <graphml xmlns="http://graphml.graphdrawing.or...
+🚀 create_summarized_entities
+                                        entity_graph
+0  <graphml xmlns="http://graphml.graphdrawing.or...
+🚀 create_base_entity_graph
+   level                                    clustered_graph
+0      0  <graphml xmlns="http://graphml.graphdrawing.or...
+1      1  <graphml xmlns="http://graphml.graphdrawing.or...
+2      2  <graphml xmlns="http://graphml.graphdrawing.or...
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+🚀 create_final_entities
+                                  id  ...
+description_embedding
+0   1000290759e6469ea0ce1397ffa63d38  ...  [-0.036224365234375,
+0.01593017578125, 0.03479...
+1   e24f8aa6f6d94d1a9420e9e5ef68553b  ...  [-0.0139007568359375,
+-0.035919189453125, -0.0...
+2   17e410cd200b4720abb0b00bb7aa7737  ...  [-0.01218414306640625,
+-0.006893157958984375, ...
+3   61201e33134e4b32bc8daa0425cb471a  ...  [-0.0120086669921875,
+-0.031707763671875, 0.01...
+4   1f957adb83424dd8b92c1dc3262383fc  ...  [-0.07568359375, 0.0085906982421875,
+0.0002477...
+..                               ...  ...
+...
+71  31d7a0432435495f9385ec2b2088891c  ...  [-0.004268646240234375,
+0.0137481689453125, 0....
+72  25d456c03d3a4839af9b2e4e171f52be  ...  [0.048065185546875,
+-0.0209503173828125, -0.00...
+73  6ce44c8263f54df28e55d606cce6d424  ...  [0.058868408203125,
+0.033294677734375, 0.03338...
+74  64f232cffbd14011b55f3a9ffcd5c9e5  ...  [-0.043914794921875,
+0.002651214599609375, 0.0...
+75  aafbc88a68224f0cb06a0aeb69f28a19  ...  [0.0237579345703125,
+0.004062652587890625, 0.0...
+
+[76 rows x 8 columns]
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/datashaper/engine/verbs/convert.py:72: FutureWarning: errors='ignore' is deprecated and will raise in a future version. Use to_datetime without passing `errors` and catch exceptions explicitly instead
+  datetime_column = pd.to_datetime(column, errors="ignore")
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/datashaper/engine/verbs/convert.py:72: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+  datetime_column = pd.to_datetime(column, errors="ignore")
+🚀 create_final_nodes
+     level                              title  ...  x  y
+0        0  "UART TO BUS CORE SPECIFICATIONS"  ...  0  0
+1        0                 "MOTI LITOCHEVSKI"  ...  0  0
+2        0                "FEBRUARY 12, 2010"  ...  0  0
+3        0                "FEBRUARY 25, 2012"  ...  0  0
+4        0              "UART TO BUS IP CORE"  ...  0  0
+..     ...                                ...  ... .. ..
+223      2                 "ADDRESS LOW BYTE"  ...  0  0
+224      2                           "LENGTH"  ...  0  0
+225      2                             "DATA"  ...  0  0
+226      2                       "TEST BENCH"  ...  0  0
+227      2                "ADDRESS HIGH BYTE"  ...  0  0
+
+[228 rows x 15 columns]
+🚀 create_final_communities
+    id  ...                                      text_unit_ids
+0    2  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+1    6  ...  [efc7ccc0359fff1a98e899386466be62, 2255f746854...
+2    5  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+3    3  ...  [efc7ccc0359fff1a98e899386466be62, 42cf0552ea6...
+4    0  ...
+5    4  ...  [2255f746854fd81e093f56b0e9e5292d,42cf0552ea62...
+6    1  ...                 [2255f746854fd81e093f56b0e9e5292d]
+7    7  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+8   10  ...
+9    9  ...  [2255f746854fd81e093f56b0e9e5292d,efc7ccc0359f...
+10   8  ...  [2255f746854fd81e093f56b0e9e5292d,efc7ccc0359f...
+11  12  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+12  11  ...  [2255f746854fd81e093f56b0e9e5292d,efc7ccc0359f...
+
+[13 rows x 5 columns]
+🚀 create_final_relationships
+                               source  ... rank
+0   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+1   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+2   "UART TO BUS CORE SPECIFICATIONS"  ...   25
+3   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+4   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+..                                ...  ...  ...
+82          "BUS CORE SPECIFICATIONS"  ...    6
+83   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+84   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+85   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+86   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+
+[87 rows x 10 columns]
+🚀 create_final_text_units
+                                 id  ...
+relationship_ids
+0  efc7ccc0359fff1a98e899386466be62  ...  [eb9c69f4b42c4f96bea5f3d1deb8567a,
+edab65c288c...
+1  42cf0552ea62838a3e179276cded1703  ...  [0b25d1326850417c89a738966c6bc7cb,
+2cbec63b692...
+2  2255f746854fd81e093f56b0e9e5292d  ...  [601e86ae932a4b4e9440be15fdc212dd,
+c50c262d45f...
+
+[3 rows x 6 columns]
+🚀 create_final_community_reports
+   community  ...                                    id
+0         11  ...  0a68960d-c8af-4c4f-b356-be427b3ad19d
+1         12  ...  976e5dcb-f1ed-4b73-9282-9d1211bb33b6
+2         10  ...  718cb35c-6e56-4f66-87b5-4d2d291c872c
+3          7  ...  7cef7aed-43dd-4472-bb59-db9bacd17f8f
+4          8  ...  321f8077-c2b6-44e5-91d9-248211cf0e5c
+5          9  ...  b08372b4-0923-4ea6-87f1-12810d7be0e4
+6          0  ...  5954f2ac-f115-4710-9edf-3ed85b86d141
+7          1  ...  78d3ecc8-dd15-4ef2-97b4-fc5c08f198de
+8          2  ...  59d98eb4-1ef0-43da-b32c-477058943e0a
+9          3  ...  b00c15af-3204-48bb-809a-2995881751ea
+10         4  ...  d4eb38e1-c72a-42fe-b2f8-d5a6274925d2
+11         5  ...  f70c138b-759a-4b99-8b46-a7f749921ea2
+12         6  ...  d37b0ae8-0f05-40d4-bb81-d9ed7fd4f5a7
+
+[13 rows x 10 columns]
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/datashaper/engine/verbs/convert.py:72: FutureWarning: errors='ignore' is deprecated and will raise in a future version. Use to_datetime without passing `errors` and catch exceptions explicitly instead
+  datetime_column = pd.to_datetime(column, errors="ignore")
+🚀 create_base_documents
+                                 id  ...     title
+0  3538a1339eead1833412e05cbba18c96  ...  uart.txt
+
+[1 rows x 4 columns]
+🚀 create_final_documents
+                                 id  ...     title
+0  3538a1339eead1833412e05cbba18c96  ...  uart.txt
+
+[1 rows x 4 columns]
+⠋ GraphRAG Indexer
+├── Loading Input (InputFileType.text) - 1 files loaded (0 filtered) ━ 100% … 0…
+├── create_base_text_units
+├── create_base_extracted_entities
+├── create_summarized_entities
+├── create_base_entity_graph
+├── create_final_entities
+├── create_final_nodes
+├── create_final_communities
+├── create_final_relationships
+├── create_final_text_units
+├── create_final_community_reports
+├── create_base_documents
+└── create_final_documents🚀 All workflows completed successfully.
+GraphRAG indexing completed successfully
+Step 7: Detecting GraphRAG log folder
+export PYTHONPATH='/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/graphrag:$PYTHONPATH' && python -m graphrag.index --root /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart
+GraphRAG Indexing Output:
+Logging enabled at
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad
+/AssertLLM/spec/graph_rag_uart/output/indexing-engine.log
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+🚀 create_base_text_units
+                                 id  ... n_tokens
+0  efc7ccc0359fff1a98e899386466be62  ...     1200
+1  42cf0552ea62838a3e179276cded1703  ...     1200
+2  2255f746854fd81e093f56b0e9e5292d  ...      903
+
+[3 rows x 5 columns]
+🚀 create_base_extracted_entities
+                                        entity_graph
+0  <graphml xmlns="http://graphml.graphdrawing.or...
+🚀 create_summarized_entities
+                                        entity_graph
+0  <graphml xmlns="http://graphml.graphdrawing.or...
+🚀 create_base_entity_graph
+   level                                    clustered_graph
+0      0  <graphml xmlns="http://graphml.graphdrawing.or...
+1      1  <graphml xmlns="http://graphml.graphdrawing.or...
+2      2  <graphml xmlns="http://graphml.graphdrawing.or...
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+🚀 create_final_entities
+                                  id  ...
+description_embedding
+0   2f9d4bcab18c43ce876c8032a23d5b4b  ...  [-0.036224365234375,
+0.01593017578125, 0.03479...
+1   9a3910c74fa24549ab4db119bfa9e78c  ...  [-0.0139007568359375,
+-0.035919189453125, -0.0...
+2   16b03a13733648109d6309374005458d  ...  [-0.01218414306640625,
+-0.006893157958984375, ...
+3   b4a3ff32e72a45a5a952038d3e608aa2  ...  [-0.0120086669921875,
+-0.031707763671875, 0.01...
+4   8a3a4a4921944c198e0fe608216c2a79  ...  [-0.07568359375, 0.0085906982421875,
+0.0002477...
+..                               ...  ...
+...
+71  01ea869948ce42fca8196bb2b2c9d603  ...  [-0.004283905029296875,
+0.01372528076171875, 0...
+72  e9876b3e1ec44b6289bc38ff31bbbdbd  ...  [0.048065185546875,
+-0.02093505859375, -0.0033...
+73  b5d43aa46dfd48d68efcae3d7e350f7a  ...  [0.058868408203125,
+0.033294677734375, 0.03338...
+74  dfc83695599c412ab21cb499c1f05931  ...  [-0.043914794921875,
+0.0026569366455078125, 0....
+75  ef1a608453c449528d0cb672444f6514  ...  [0.023773193359375,
+0.004058837890625, 0.04043...
+
+[76 rows x 8 columns]
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/numpy/core/fromnumeric.py:59: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/datashaper/engine/verbs/convert.py:72: FutureWarning: errors='ignore' is deprecated and will raise in a future version. Use to_datetime without passing `errors` and catch exceptions explicitly instead
+  datetime_column = pd.to_datetime(column, errors="ignore")
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/datashaper/engine/verbs/convert.py:72: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+  datetime_column = pd.to_datetime(column, errors="ignore")
+🚀 create_final_nodes
+     level                              title  ...  x  y
+0        0  "UART TO BUS CORE SPECIFICATIONS"  ...  0  0
+1        0                 "MOTI LITOCHEVSKI"  ...  0  0
+2        0                "FEBRUARY 12, 2010"  ...  0  0
+3        0                "FEBRUARY 25, 2012"  ...  0  0
+4        0              "UART TO BUS IP CORE"  ...  0  0
+..     ...                                ...  ... .. ..
+223      2                 "ADDRESS LOW BYTE"  ...  0  0
+224      2                           "LENGTH"  ...  0  0
+225      2                             "DATA"  ...  0  0
+226      2                       "TEST BENCH"  ...  0  0
+227      2                "ADDRESS HIGH BYTE"  ...  0  0
+
+[228 rows x 15 columns]
+🚀 create_final_communities
+    id  ...                                      text_unit_ids
+0    2  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+1    6  ...  [efc7ccc0359fff1a98e899386466be62, 2255f746854...
+2    5  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+3    3  ...  [efc7ccc0359fff1a98e899386466be62, 42cf0552ea6...
+4    0  ...
+5    4  ...  [2255f746854fd81e093f56b0e9e5292d,42cf0552ea62...
+6    1  ...                 [2255f746854fd81e093f56b0e9e5292d]
+7    7  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+8   10  ...
+9    9  ...  [2255f746854fd81e093f56b0e9e5292d,efc7ccc0359f...
+10   8  ...  [2255f746854fd81e093f56b0e9e5292d,efc7ccc0359f...
+11  12  ...  [42cf0552ea62838a3e179276cded1703,efc7ccc0359f...
+12  11  ...  [2255f746854fd81e093f56b0e9e5292d,efc7ccc0359f...
+
+[13 rows x 5 columns]
+🚀 create_final_relationships
+                               source  ... rank
+0   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+1   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+2   "UART TO BUS CORE SPECIFICATIONS"  ...   25
+3   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+4   "UART TO BUS CORE SPECIFICATIONS"  ...   24
+..                                ...  ...  ...
+82          "BUS CORE SPECIFICATIONS"  ...    6
+83   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+84   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+85   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+86   "BINARY PROTOCOL COMMAND FORMAT"  ...    6
+
+[87 rows x 10 columns]
+🚀 create_final_text_units
+                                 id  ...
+relationship_ids
+0  efc7ccc0359fff1a98e899386466be62  ...  [33537c423e734eb5918e974698438c3a,
+171ff8f74f5...
+1  42cf0552ea62838a3e179276cded1703  ...  [21f7444f946a4e76969f70847545a15e,
+8d96a959eec...
+2  2255f746854fd81e093f56b0e9e5292d  ...  [7405187f81f04173af215fe6108d5659,
+40399b8cef4...
+
+[3 rows x 6 columns]
+🚀 create_final_community_reports
+   community  ...                                    id
+0         11  ...  337ea656-59df-4ac8-bc54-e28abdd0973c
+1         12  ...  62145fbc-7ccc-4570-bd64-bc5ac2436406
+2         10  ...  1ff46f75-a899-44be-8816-a5e378040fff
+3          7  ...  2816b11c-94a1-463d-85bd-8769931a352d
+4          8  ...  fb8c7d03-8261-4151-a724-a8adf74bcdca
+5          9  ...  99a9de45-4dda-48b8-b777-18c53b06c993
+6          0  ...  889be32c-a012-4361-af76-00e0f99217be
+7          1  ...  37e4bd87-d1b2-4060-84c0-8a886150916a
+8          2  ...  a00d9dd1-3f14-43eb-acbe-83ca13ac1315
+9          3  ...  b2a71a3d-62f3-44c2-9646-7e02b4b0d1f8
+10         4  ...  cf7c4a24-a58d-46d2-8a01-b9ad68c51537
+11         5  ...  3b183fad-6d85-4db8-b8f4-9bb7c556b422
+12         6  ...  727ef7da-bec5-4411-bdbf-dd4ca3745291
+
+[13 rows x 10 columns]
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/.venv/lib64/python3.11/site-packages/datashaper/engine/verbs/convert.py:72: FutureWarning: errors='ignore' is deprecated and will raise in a future version. Use to_datetime without passing `errors` and catch exceptions explicitly instead
+  datetime_column = pd.to_datetime(column, errors="ignore")
+🚀 create_base_documents
+                                 id  ...     title
+0  3538a1339eead1833412e05cbba18c96  ...  uart.txt
+
+[1 rows x 4 columns]
+🚀 create_final_documents
+                                 id  ...     title
+0  3538a1339eead1833412e05cbba18c96  ...  uart.txt
+
+[1 rows x 4 columns]
+⠋ GraphRAG Indexer
+├── Loading Input (InputFileType.text) - 1 files loaded (0 filtered) ━ 100% … 0…
+├── create_base_text_units
+├── create_base_extracted_entities
+├── create_summarized_entities
+├── create_base_entity_graph
+├── create_final_entities
+├── create_final_nodes
+├── create_final_communities
+├── create_final_relationships
+├── create_final_text_units
+├── create_final_community_reports
+├── create_base_documents
+└── create_final_documents🚀 All workflows completed successfully.
+GraphRAG indexing completed successfully
+No new GraphRAG log folder detected
+Process completed successfully
+Timer log ***********************************************************
+Total duration 1.000 min, 47.514 secs
+create_directory_structure       : 0.291 msecs (0.00%)
+clean_input_folder               : 0.047 msecs (0.00%)
+process_files                    : 492.421 msecs (0.46%)
+initialize_graphrag              : 12.533 secs (11.66%)
+Updating .env file               : 0.797 msecs (0.00%)
+Updating settings.yaml file      : 0.341 msecs (0.00%)
+Copying entity extraction prompt : 0.367 msecs (0.00%)
+run_graphrag_index               : 1.000 min, 34.487 secs (87.88%)
+Timer log ***********************************************************
+Total time: 1.000 min, 47.515 secs; Total number of files: 4; Total folder size: 35.79 KiB
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/logs/build_KG_2026-08-26T20-02-45.639618_hansolo.poly.edu_wx2356
+build_KG_2026-08-26T20-02-45.639618_hansolo.poly.edu_wx2356

@@ -1,0 +1,37 @@
+task                       : gen_plan
+subtask                    : actual_gen
+DEBUG                      : False
+design_name                : uart
+file_path                  : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/uart.pdf
+design_dir                 : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/rtl/uart
+KG_path                    : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart/output/clustered_graph.0.graphml
+llm_engine_type            : <llm_engine_type>
+llm_model                  : gpt-4o
+llm_args                   : {}
+max_tokens_per_prompt      : 8000
+use_KG                     : True
+prompt_builder             : dynamic
+enable_context_enhancement : False
+max_num_signals_process    : inf
+max_prompts_per_signal     : 3
+doc_retriever              : True
+kg_retriever               : True
+chunk_size                 : 100
+overlap                    : 20
+doc_k                      : 3
+dynamic_prompt_settings    : {'rag': {'enabled': True, 'baseline_full_spec_RTL': False, 'chunk_sizes': [50, 100, 200, 800, 3200], 'overlap_ratios': [0.2, 0.4], 'k': 20, 'enable_rtl': True}, 'path_based': {'enabled': True, 'max_depth': 5, 'representation_style': 'standard'}, 'motif': {'enabled': False, 'patterns': {'handshake': True, 'pipeline': True, 'star': True}, 'min_star_degree': 3, 'max_motifs_per_type': 2}, 'community': {'enabled': False, 'max_communities': 20, 'min_community_size': 3}, 'local_expansion': {'enabled': False, 'max_depth': 2, 'max_subgraph_size': 20, 'min_subgraph_size': 5}, 'guided_random_walk': {'enabled': False, 'num_walks': 70, 'walk_budget': 100, 'teleport_probability': 0.1, 'local_importance_weight': 0.3, 'direction_weight': 0.5, 'discovery_weight': 0.2, 'max_targets_per_walk': 10, 'max_contexts_per_signal': 50}, 'pruning': {'enabled': True, 'use_llm_pruning': True, 'max_contexts_per_type': 50, 'max_total_contexts': 100, 'min_similarity_threshold': 0.3}}
+kg_k                       : 3
+traversal_max_depth        : 1
+retrieve_edge              : True
+refine_with_rtl            : True
+gen_plan_sva_using_valid_signals : True
+valid_signals              : ['baud_clk', 'baud_freq', 'baud_limit', 'ce_16', 'int_address', 'int_gnt', 'int_rd_data', 'int_read', 'int_req', 'int_wr_data', 'int_write', 'new_rx_data', 'new_tx_data', 'rx_data', 'ser_in', 'ser_out', 'tx_busy', 'tx_data']
+generate_SVAs              : False
+graphrag_local_dir         : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/graphrag
+user                       : wx2356
+hostname                   : hansolo.poly.edu
+repo_name                  : AssertionForge
+local_branch_name          : main
+commit_sha                 : f00fcf96919349d20ea8c7e31f651ef6b7d57f09
+ts                         : 2026-08-26T20-11-17.848986
+

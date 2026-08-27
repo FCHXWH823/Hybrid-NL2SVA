@@ -1,0 +1,478 @@
+Starting the test plan generation process...
+Step 1: Reading the PDF file(s)...
+First 5 lines of spec_text (truncated):
+UART to Bus
+Core Specifications
+Written for publication on:
+ 
+File name: UART to Bus Core Specifications
+...
+Total number of lines in spec_text: 285
+Step 2: Loading and processing the Knowledge Graph...
+Knowledge Graph loaded from /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/graph_rag_uart/output/clustered_graph.0.graphml
+Number of nodes: 76
+Number of edges: 87
+
+Example node attributes:
+  type: "COMPONENT"
+  description: ICARUS VERILOG is a simulator utilized to verify the UART to Bus IP Core with the aid of test benches. It serves as a tool for simulating the core, and includes compilation batch files located in the 'verilog\\sim\\icarus' directory.
+  source_id: 2255f746854fd81e093f56b0e9e5292d,efc7ccc0359fff1a98e899386466be62
+  cluster: 6
+  level: 0
+  degree: 2
+  human_readable_id: 7
+  id: 11ff8c0f45b0471cb0cc1d8b6d71cd29
+
+Example edge attributes:
+  weight: 1.0
+  description: "Table 4 details the command format for the Binary Mode Protocol."
+  source_id: 42cf0552ea62838a3e179276cded1703
+  id: 02a2514d34014d3c849feae05b5ac545
+  human_readable_id: 40
+  level: 0
+
+Node attribute keys:
+description, level, id, human_readable_id, source_id, entity_type, cluster, degree, type
+
+Edge attribute keys:
+description, human_readable_id, source_id, weight, level, id
+Step 2b: Refining Knowledge Graph with RTL information...
+Starting Knowledge Graph refinement with RTL from /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/rtl/uart
+Initial specification KG has 76 nodes and 87 edges
+
+=== Specification KG Analysis ===
+Node types in specification KG:
+  - "DOCUMENT": 3 nodes
+  - "AUTHOR": 1 nodes
+  - "DATE": 2 nodes
+  - "MODULE": 9 nodes
+  - "PROTOCOL": 3 nodes
+  - "COMPONENT": 7 nodes
+  - "PERSON": 1 nodes
+  - "TABLE": 8 nodes
+  - "SUBMODULE": 2 nodes
+  - "SECTION": 6 nodes
+  - "SUBSECTION": 3 nodes
+  - "FIGURE": 2 nodes
+  - : 3 nodes
+  - "ORGANIZATION": 1 nodes
+  - "EVENT": 1 nodes
+  - "CONFIGURATION": 6 nodes
+  - "SIGNAL": 9 nodes
+  - "ADDRESS": 2 nodes
+  - "CLOCK": 1 nodes
+  - "OPERATION": 1 nodes
+  - "DIRECTORY": 2 nodes
+  - "FILE": 2 nodes
+  - "TOOL": 1 nodes
+Specification KG has 0 nodes with 'text' attributes for matching
+Built knowledge graph with 1371 nodes and 1620 edges
+Built RTL KG with 1371 nodes and 1620 edges
+Added 1371 RTL nodes and 1620 RTL edges to combined KG
+
+=== Link Summary ===
+Total links created: 82
+- contains_spec: 76 links
+- contains_implementation: 6 links
+
+=== Link Examples ===
+
+Examples of 'contains_spec' links:
+  1. design_root --contains_spec--> "UART TO BUS CORE SPECIFICATIONS"
+     Target node details:
+       type: "DOCUMENT"
+       description: The "UART TO BUS CORE SPECIFICATIONS" is a document that provides a comprehensive overview of the UART to Bus Core. It includes detailed information on the specifications, architecture, and operation protocols of the UART to Bus IP core. This document serves as a crucial resource for understanding the design and functionality of the core, ensuring that users have access to all necessary technical details.
+       source_id: 42cf0552ea62838a3e179276cded1703,efc7ccc0359fff1a98e899386466be62
+       cluster: 2
+       level: 0
+       degree: 23
+       human_readable_id: 0
+       id: 2f9d4bcab18c43ce876c8032a23d5b4b
+  2. design_root --contains_spec--> "MOTI LITOCHEVSKI"
+     Target node details:
+       type: "AUTHOR"
+       description: "The author of the UART to Bus Core Specifications document."
+       source_id: efc7ccc0359fff1a98e899386466be62
+       cluster: 2
+       level: 0
+       degree: 1
+       human_readable_id: 1
+       id: 9a3910c74fa24549ab4db119bfa9e78c
+  3. design_root --contains_spec--> "FEBRUARY 12, 2010"
+     Target node details:
+       type: "DATE"
+       description: "The creation date of the UART to Bus Core Specifications document."
+       source_id: efc7ccc0359fff1a98e899386466be62
+       cluster: 2
+       level: 0
+       degree: 1
+       human_readable_id: 2
+       id: 16b03a13733648109d6309374005458d
+
+Examples of 'contains_implementation' links:
+  1. design_root --contains_implementation--> rtl_0
+     Target node details:
+       type: module
+       name: uart_tx
+       original_id: module:uart_tx
+       source: rtl
+  2. design_root --contains_implementation--> rtl_1
+     Target node details:
+       type: module
+       name: uart_rx
+       original_id: module:uart_rx
+       source: rtl
+  3. design_root --contains_implementation--> rtl_2
+     Target node details:
+       type: module
+       name: uart_top
+       original_id: module:uart_top
+       source: rtl
+Created 82 links between specification and RTL nodes
+
+Attempting to link 55 RTL signals to 77 spec nodes
+Created 0 additional links based on signal name matching
+Graph is already connected
+Graph is connected
+Number of connected components: 1
+Number of bridges between RTL and spec: 6
+  Bridge 1: rtl_0 (module: uart_tx) ---> design_root (root: Design Root)
+  Bridge 2: rtl_1 (module: uart_rx) ---> design_root (root: Design Root)
+  Bridge 3: rtl_2 (module: uart_top) ---> design_root (root: Design Root)
+  Bridge 4: rtl_3 (module: uart_parser) ---> design_root (root: Design Root)
+  Bridge 5: rtl_4 (module: uart2bus_top) ---> design_root (root: Design Root)
+  Bridge 6: rtl_5 (module: baud_gen) ---> design_root (root: Design Root)
+
+=== High-Degree Nodes (Hubs) ===
+  Node: rtl_3 (module: uart_parser)
+  Degree: 245 connections
+  Source: rtl
+  Connected to:
+    - rtl_31 (port: // global signals 
+	clock)
+    - rtl_32 (port: reset)
+    - rtl_33 (port: // transmit and receive internal interface signals from uart interface 
+	rx_data)
+    - rtl_35 (port: tx_data)
+    - rtl_36 (port: new_tx_data)
+    - ... and 240 more
+
+  Node: rtl_2 (module: uart_top)
+  Degree: 232 connections
+  Source: rtl
+  Connected to:
+    - rtl_0 (module: uart_tx)
+    - rtl_19 (port: // global signals 
+	clock)
+    - rtl_20 (port: reset)
+    - rtl_21 (port: // uart serial signals 
+	ser_in)
+    - rtl_22 (port: ser_out)
+    - ... and 227 more
+
+  Node: rtl_0 (module: uart_tx)
+  Degree: 229 connections
+  Source: rtl
+  Connected to:
+    - rtl_7 (port: reset)
+    - rtl_8 (port: ce_16)
+    - rtl_11 (port: ser_out)
+    - rtl_12 (port: tx_busy)
+    - rtl_5 (module: baud_gen)
+    - ... and 224 more
+
+  Node: rtl_1 (module: uart_rx)
+  Degree: 228 connections
+  Source: rtl
+  Connected to:
+    - rtl_0 (module: uart_tx)
+    - rtl_14 (port: reset)
+    - rtl_15 (port: ce_16)
+    - rtl_17 (port: rx_data)
+    - rtl_18 (port: new_rx_data)
+    - ... and 223 more
+
+  Node: rtl_4 (module: uart2bus_top)
+  Degree: 227 connections
+  Source: rtl
+  Connected to:
+    - rtl_45 (port: // global signals 
+	clock)
+    - rtl_46 (port: reset)
+    - rtl_47 (port: // uart serial signals 
+	ser_in)
+    - rtl_48 (port: ser_out)
+    - rtl_49 (port: // internal bus to register file 
+	int_address)
+    - ... and 222 more
+
+Combined KG now has 1448 nodes and 1783 edges
+Refined Knowledge Graph now has 1448 nodes and 1783 edges
+Step 3: Initializing the language model...
+Step 4: Extracting valid signal names...
+Valid signal names: baud_clk, baud_freq
+Step 5: Generating natural language test plans...
+
+=== KG Structure ===
+KG is a dictionary with keys: ['nodes', 'edges']
+  nodes: list with 1448 items
+    First item type: <class 'dict'>
+    First item keys: ['id', 'attributes']
+  edges: list with 1783 items
+    First item type: <class 'dict'>
+    First item keys: ['source', 'target', 'attributes']
+
+Building signal name to node ID mapping for 2 signals...
+
+=== Building signal to node mapping for 2 signals ===
+Valid signals: ['baud_clk', 'baud_freq']
+KG structure: ['nodes', 'edges']
+Number of nodes in KG: 1448
+
+Node type distribution in KG:
+  "DOCUMENT": 3 nodes
+  "AUTHOR": 1 nodes
+  "DATE": 2 nodes
+  "MODULE": 9 nodes
+  "PROTOCOL": 3 nodes
+  "COMPONENT": 7 nodes
+  "PERSON": 1 nodes
+  "TABLE": 8 nodes
+  "SUBMODULE": 2 nodes
+  "SECTION": 6 nodes
+  "SUBSECTION": 3 nodes
+  "FIGURE": 2 nodes
+  : 3 nodes
+  "ORGANIZATION": 1 nodes
+  "EVENT": 1 nodes
+  "CONFIGURATION": 6 nodes
+  "SIGNAL": 9 nodes
+  "ADDRESS": 2 nodes
+  "CLOCK": 1 nodes
+  "OPERATION": 1 nodes
+  "DIRECTORY": 2 nodes
+  "FILE": 2 nodes
+  "TOOL": 1 nodes
+  module: 6 nodes
+  port: 55 nodes
+  fsm: 29 nodes
+  protocol_pattern: 21 nodes
+  verification_point: 12 nodes
+  assignment: 1248 nodes
+  root: 1 nodes
+
+Signal mentions by node type:
+  baud_clk: {'port': 1, 'assignment': 6}
+  baud_freq: {'port': 2, 'assignment': 6}
+
+=== Signal mapping results ===
+Signal 'baud_clk' mapped to 7 nodes: ['rtl_30', 'rtl_126', 'rtl_334', 'rtl_542', 'rtl_750', 'rtl_958', 'rtl_1166']
+Signal 'baud_freq' mapped to 13 nodes: ['rtl_59', 'rtl_130', 'rtl_327', 'rtl_338', 'rtl_535', 'rtl_546', 'rtl_743', 'rtl_754', 'rtl_951', 'rtl_962', 'rtl_1159', 'rtl_1170', 'rtl_1367']
+Created mappings for 2 signals
+Signal 'baud_clk' mapped to 7 nodes: ['rtl_30', 'rtl_126', 'rtl_334', 'rtl_542', 'rtl_750', 'rtl_958', 'rtl_1166']
+Signal 'baud_freq' mapped to 13 nodes: ['rtl_59', 'rtl_130', 'rtl_327', 'rtl_338', 'rtl_535', 'rtl_546', 'rtl_743', 'rtl_754', 'rtl_951', 'rtl_962', 'rtl_1159', 'rtl_1170', 'rtl_1367']
+Using LLM-based context pruning
+Processing signal 1/2: baud_clk
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['baud_clk']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: wire			baud_clk;
+
+//---------------------------------------------------------------------------------------
+// module implementation 
+// uart top module instance 
+uart_top uart1
+(
+	.clock(clock), .reset(reset),
+	.ser_in(ser_in), .ser_out(ser_out),
+	.rx_data(rx_data), .new_rx_data(new_rx_data), 
+	.tx_data(tx_data), .new_tx_data(new_tx_data), .tx_busy(tx_busy), 
+	.baud_freq(baud_freq), .baud_limit(baud_limit),
+	.baud_clk(baud_clk) 
+);
+
+// assign baud rate default values 
+assign baud_freq = `D_BAUD_FREQ;
+assign baud_limit = `D_BAUD_LIMIT;
+
+// uart parser instance 
+uart_parser #(16) uart_parser1
+(
+
+Processing generator: path
+Mapped signal 'baud_clk' to 7 nodes
+Using 7/7 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_30
+Found 624 significant paths for node rtl_30
+  Found 30 potential endpoints for rtl_958
+Found 64 significant paths for node rtl_958
+  Found 30 potential endpoints for rtl_334
+Found 505 significant paths for node rtl_334
+  Found 30 potential endpoints for rtl_1166
+Found 508 significant paths for node rtl_1166
+  Found 30 potential endpoints for rtl_126
+Found 637 significant paths for node rtl_126
+  Found 30 potential endpoints for rtl_542
+Found 369 significant paths for node rtl_542
+  Found 30 potential endpoints for rtl_750
+Found 324 significant paths for node rtl_750
+Generated 3031 path-based contexts
+path generator returned 3031 contexts
+Added 3031 contexts from path, total now: 3041
+Sample path context: PATH ANALYSIS FROM baud_clk TO read_op_assignment
+Path length: 3 nodes with clustering 0.00
+Source: baud_clk (port) in module uart_top
+Target: read_op_assignment (assignment) in module uart_top
+
+Relationship chain:
+  baud_clk (port in uart_top) outputs uart_top (module)
+  uart_top (module) part_of read_op_assignment (assignment in uart_top)
+
+Analysis:
+  • Signal flow path with 1 ports and 1 assignments
+  • Cross-module path connecting: uart_top
+
+Pruning 3041 contexts...
+Using LLM-based context pruning
+Pruning 3041 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7644 chars -> response=28 chars
+LLM evaluation for rag took 1.20 seconds
+Selected context 0 of type rag
+Selected context 2 of type rag
+Selected context 3 of type rag
+Evaluating 3031 contexts of type 'path'
+Pre-filtering 3031 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=12905 chars -> response=33 chars
+LLM evaluation for path took 0.95 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 18 of type path
+Selected context 19 of type path
+Final selection: 7 contexts
+After pruning: 7 contexts remain
+Selected contexts by type: {'rag': 3, 'path': 4}
+Context distribution plan: {'rag': [1, 1, 1], 'path': [2, 1, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 3 contexts, 443 tokens
+Prompt 2: 2 contexts, 293 tokens
+Prompt 3: 2 contexts, 293 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal baud_clk
+Processing dynamic context 1/3 for baud_clk
+[llm_inference:NL_Plans_baud_clk_1] prompt=3974 chars -> response=766 chars
+Generated 5 plans from context 1 for signal baud_clk
+Processing dynamic context 2/3 for baud_clk
+[llm_inference:NL_Plans_baud_clk_2] prompt=3393 chars -> response=665 chars
+Generated 4 plans from context 2 for signal baud_clk
+Processing dynamic context 3/3 for baud_clk
+[llm_inference:NL_Plans_baud_clk_3] prompt=3393 chars -> response=1423 chars
+Generated 8 plans from context 3 for signal baud_clk
+Generated 17 unique plans for signal baud_clk from 17 total plans
+Processing signal 2/2: baud_freq
+Building up to 3 prompts with max 6000 tokens each
+start_nodes=['baud_freq']
+
+Processing generator: rag
+RAG generator returned 10 contexts
+Added 10 contexts from rag, total now: 10
+Sample rag context: Compilation batch files are included in the 'verilog\sim\icarus' directory used to simulate the core using Icarus Verilog. The directory inclues two compilation batch files: one for binary mode protocol simulation and the second for text mode protocol simulation. The directory also includes batch file to run the simulation, 'run.bat', and another to call gtkwave to view the simulation VCD output file. Note that for binary mode protocol simulation the test bench reads the commands from 'test.bin' file also included in the directory. The file structure is straight forward and is explained in the respective test bench file. UART to Bus
+
+Processing generator: path
+Mapped signal 'baud_freq' to 13 nodes
+Using 13/13 valid nodes for path context generation
+  Found 30 potential endpoints for rtl_130
+Found 183 significant paths for node rtl_130
+  Found 30 potential endpoints for rtl_338
+Found 64 significant paths for node rtl_338
+  Found 30 potential endpoints for rtl_951
+Found 123 significant paths for node rtl_951
+  Found 30 potential endpoints for rtl_1367
+Found 217 significant paths for node rtl_1367
+  Found 30 potential endpoints for rtl_535
+Found 184 significant paths for node rtl_535
+  Found 30 potential endpoints for rtl_1159
+Found 69 significant paths for node rtl_1159
+  Found 30 potential endpoints for rtl_546
+Found 72 significant paths for node rtl_546
+  Found 30 potential endpoints for rtl_1170
+Found 142 significant paths for node rtl_1170
+  Found 30 potential endpoints for rtl_59
+Found 189 significant paths for node rtl_59
+  Found 30 potential endpoints for rtl_743
+Found 171 significant paths for node rtl_743
+  Found 30 potential endpoints for rtl_754
+Found 157 significant paths for node rtl_754
+  Found 30 potential endpoints for rtl_962
+Found 74 significant paths for node rtl_962
+  Found 30 potential endpoints for rtl_327
+Found 192 significant paths for node rtl_327
+Generated 1837 path-based contexts
+path generator returned 1837 contexts
+Added 1837 contexts from path, total now: 1847
+Sample path context: PATH ANALYSIS FROM baud_freq_assignment TO data_nibble_assignment
+Path length: 3 nodes with clustering 0.00
+Source: baud_freq_assignment (assignment) in module uart_tx
+Target: data_nibble_assignment (assignment) in module uart_tx
+
+Relationship chain:
+  baud_freq_assignment (assignment in uart_tx) part_of uart_tx (module)
+  uart_tx (module) part_of data_nibble_assignment (assignment in uart_tx)
+
+Analysis:
+  • Cross-module path connecting: uart_tx
+
+Pruning 1847 contexts...
+Using LLM-based context pruning
+Pruning 1847 contexts using tolerant LLM pruner
+Evaluating 10 contexts of type 'rag'
+[llm_inference:context_eval_rag] prompt=7546 chars -> response=31 chars
+LLM evaluation for rag took 0.66 seconds
+Selected context 1 of type rag
+Selected context 2 of type rag
+Selected context 5 of type rag
+Selected context 6 of type rag
+Evaluating 1837 contexts of type 'path'
+Pre-filtering 1837 contexts of type 'path' based on score
+[llm_inference:context_eval_path] prompt=13023 chars -> response=35 chars
+LLM evaluation for path took 0.67 seconds
+Selected context 0 of type path
+Selected context 1 of type path
+Selected context 2 of type path
+Selected context 6 of type path
+Selected context 10 of type path
+Final selection: 9 contexts
+After pruning: 9 contexts remain
+Selected contexts by type: {'rag': 4, 'path': 5}
+Context distribution plan: {'rag': [2, 1, 1], 'path': [2, 2, 1], 'motif': [0, 0, 0], 'community': [0, 0, 0], 'local_expansion': [0, 0, 0], 'guided_random_walk': [0, 0, 0]}
+Base prompt token count: 15
+Prompt 1: 4 contexts, 546 tokens
+Prompt 2: 3 contexts, 388 tokens
+Prompt 3: 2 contexts, 242 tokens
+Created 3 final prompts out of maximum 3
+Generated 3 dynamic contexts for signal baud_freq
+Processing dynamic context 1/3 for baud_freq
+[llm_inference:NL_Plans_baud_freq_1] prompt=4528 chars -> response=943 chars
+Generated 5 plans from context 1 for signal baud_freq
+Processing dynamic context 2/3 for baud_freq
+[llm_inference:NL_Plans_baud_freq_2] prompt=3937 chars -> response=837 chars
+Generated 5 plans from context 2 for signal baud_freq
+Processing dynamic context 3/3 for baud_freq
+[llm_inference:NL_Plans_baud_freq_3] prompt=3345 chars -> response=846 chars
+Generated 5 plans from context 3 for signal baud_freq
+Generated 15 unique plans for signal baud_freq from 15 total plans
+Timer log ***********************************************************
+Total duration 1.000 min, 5.855 secs
+Read PDF              : 249.119 msecs (0.38%)
+Load and process KG   : 7.078 msecs (0.01%)
+Refine KG with RTL    : 2.064 secs (3.13%)
+Initialize LLM        : 18.311 msecs (0.03%)
+Extract valid signals : 0.063 msecs (0.00%)
+Generate NL plans     : 1.000 min, 3.517 secs (96.45%)
+Timer log ***********************************************************
+Total time: 1.000 min, 5.857 secs; Total number of files: 5; Total folder size: 41.54 KiB
+/tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/logs/gen_plan_2026-08-26T20-06-26.215900_hansolo.poly.edu_wx2356
+gen_plan_2026-08-26T20-06-26.215900_hansolo.poly.edu_wx2356

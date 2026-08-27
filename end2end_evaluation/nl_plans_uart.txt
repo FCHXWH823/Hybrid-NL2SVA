@@ -1,0 +1,284 @@
+Signal baud_clk:
+Plan 1: that when 'baud_clk' is active, 'tx_data' must be transmitted when 'new_tx_data' is high and 'tx_busy' is low, ensuring proper data transmission.
+Plan 2: that the signal 'baud_clk' toggles correctly within one 'baud_limit' period when 'baud_freq' is set to its default value, indicating proper baud rate operation.
+Plan 3: that if 'baud_clk' rises, then within three clock cycles 'ser_in' data is available on 'rx_data', provided 'new_rx_data' is asserted, confirming that data is being received correctly.
+Plan 4: that when 'baud_clk' is active, no 'int_req' is generated unless 'ce_16' is asserted in 'uart_rx', maintaining proper control signal sequencing.
+Plan 5: that 'baud_clk' continuity is maintained across 'uart_rx' and 'uart_tx' modules without interruption to ensure synchronized communication.
+Plan 6: that a transition in 'baud_clk' triggers a 'tx_busy' indication when data is being sent, verifying that the transmitter is correctly reporting its busy state.
+Plan 7: that any change in 'baud_limit' results in a corresponding adjustment in 'baud_clk' frequency to confirm adaptive baud rate management.
+Plan 8: baud_clk: that the signal 'baud_clk' toggles every 16 clock cycles when 'baud_freq' is set to `D_BAUD_FREQ` and 'baud_limit' is set to `D_BAUD_LIMIT`.
+Plan 9: baud_clk: that when 'baud_clk' is active, the signal 'new_tx_data' becomes high within the next 2 clock cycles, provided 'tx_busy' is low.
+Plan 10: baud_clk: that during the assertion of 'reset', 'baud_clk' is held low regardless of the values of 'baud_freq' and 'baud_limit'.
+Plan 11: baud_clk: that if 'new_rx_data' is high, indicating data reception, 'baud_clk' should have completed a full cycle within the subsequent 4 clock cycles.
+Plan 12: baud_clk: that the 'baud_clk' signal accurately generates a clock enable at the 'ce_16' port, evidenced by consecutive toggling every 16 clock cycles.
+Plan 13: baud_clk: that when 'ser_in' experiences an edge transition, the 'baud_clk' should reflect this change in phase alignment within the next full baud cycle.
+Plan 14: baud_clk: that 'baud_clk' remains consistent in its frequency and phase when both 'baud_limit' and 'baud_freq' are held constant.
+Plan 15: baud_clk: that on a rising edge of 'baud_clk', the 'tx_data' signal exhibits transfer of the data value actively engaged in serial communication.
+Plan 16: baud_clk: that after a change in 'baud_limit', 'baud_clk' adjusts its cycle length within 8 clock cycles while maintaining logical consistency in data transmission.
+Plan 17: baud_clk: that following a configuration change of 'baud_freq', the 'baud_clk' signal adapts immediately, but stabilizes its initial frequency modulation by the end of a complete transmission frame defined by 'ser_in'.
+Plan 18: baud_clk: that when baud_clk is generated with a frequency determined by baud_freq and baud_limit, the data transmission signals ser_in and ser_out must correctly reflect this timing in synchronization with baud_clk.
+Plan 19: baud_clk: that baud_clk remains stable and consistent when there are no changes to baud_freq or baud_limit, ensuring that ce_16 does not cause unintended changes in the baud_clk generation.
+Plan 20: baud_clk: that when reset is asserted, baud_clk is deactivated, and upon deassertion of reset, baud_clk resumes its operation taking into account the current values of baud_freq and baud_limit.
+Plan 21: baud_clk: that during periods of tx_busy being high, baud_clk continues to generate pulses that allow tx_data to be sent correctly without causing new_tx_data to be flagged when not intended.
+Plan 22: baud_clk: that upon initialization, baud_clk begins operating correctly with the specified frequency from baud_freq and baud_limit values, ensuring synchrony with the module's ser_in and ser_out communication paths.
+
+Signal baud_freq:
+Plan 23: baud_freq: that when baud_freq is set to a default value, it correctly corresponds to the calculated value using the formula 16*baud_rate / gcd(global_clock_freq, 16*baud_rate).
+Plan 24: baud_freq: that after the reset signal, baud_freq is initialized to a default value and remains consistent with the expected calculation until the next state change.
+Plan 25: baud_freq: that if baud_freq is modified externally, it will reset to the calculated default value of 16*baud_rate / gcd(global_clock_freq, 16*baud_rate) immediately after a reset.
+Plan 26: baud_freq: that during normal operation without reset, baud_freq remains stable and correctly outputs the value following the calculation rules specified.
+Plan 27: baud_freq: that when baud_freq achieves a specific threshold, baud_clk toggles in accordance with the expected baud_rate settings derived from baud_freq.
+Plan 28: baud_freq: that when 'baud_freq' is within a range determined by the gcd algorithm calculation, on the next clock cycle, 'baud_freq' should stay consistent with the calculated baud rate divided by the greatest common divisor of 'global_clock_freq' and '16*baud_rate'.
+Plan 29: baud_freq: that after the 'reset' signal is deasserted, 'baud_freq' must be initialized correctly based on the calculation '16*baud_rate / gcd(global_clock_freq, 16*baud_rate)' before 'ce_16' becomes active.
+Plan 30: baud_freq: that when 'ce_16' is active, the frequency represented by 'baud_freq' should accurately reflect the current clock division calculations according to the formula involving gcd(global_clock_freq, 16*baud_rate).
+Plan 31: baud_freq: that when 'baud_freq' is used in conjunction with 'baud_limit', the signal values should align such that 'baud_limit' equals 'global_clock_freq / gcd(global_clock_freq, 16*baud_rate) - baud_freq', maintaining the consistency of their derived relationship.
+Plan 32: baud_freq: that when baud_freq is calculated as per the specified formula, it remains constant as long as the inputs 'global_clock_freq' and 'baud_rate' remain unchanged.
+Plan 33: ce_16: that ce_16 becomes active every time baud_freq matches the calculated frequency based on the clock and baud settings.
+Plan 34: baud_freq: that in scenarios where 'global_clock_freq' divides evenly into '16*baud_rate', baud_freq should equal 1 and remain stable unless there are changes in the frequency settings.
+Plan 35: baud_freq: that after a reset event, baud_freq is recalculated and updated correctly based on the inputs provided, particularly focusing on the gcd calculation's impact on the baud frequency.
+Plan 36: baud_freq: that any change in 'global_clock_freq' results in a corresponding adjustment in baud_freq within the subsequent clock cycle.
+
+Signal baud_limit:
+Plan 37: baud_limit: that when baud_limit is set to a value above 256, baud_clk should be enabled in the next cycle.
+Plan 38: baud_limit: that if baud_limit is between 0 and 255, baud_clk should remain disabled during this cycle.
+Plan 39: baud_limit: that after a change in baud_limit, baud_clk should reflect this change within two clock cycles.
+Plan 40: baud_limit: that when baud_limit reaches a maximum threshold of 65535, subsequent cycles ensure baud_clk maintains a specific frequency derived from this maximum limit.
+Plan 41: baud_limit: that when baud_limit is modified during active data transmission indicated by tx_busy being high, baud_clk should not fluctuate unexpectedly and maintain an accurate baud rate.
+Plan 42: baud_limit: that when baud_limit is set to a specific value, the baud_clk should toggle at a rate dictated by the baud_freq.
+Plan 43: baud_limit: that if baud_limit is provided a value within a specified operational range, the uart_top module correctly limits data transmission speed without data loss, observable through ser_out.
+Plan 44: baud_limit: that when baud_limit changes, the new_rx_data should only be flagged true if rx_data remains consistent within the expected timeframe defined by baud_freq.
+Plan 45: baud_limit: that if baud_limit is altered while tx_busy is high, the transmission process is halted and restarted correctly, ensuring tx_data integrity.
+Plan 46: baud_limit: that baud_limit operates within assigned default parameters when reset is triggered, confirmed through observing unchanged behavior in ser_in and ser_out.
+Plan 47: baud_limit: that when baud_limit is assigned any value, the counter_assignment within uart_top adheres to the changes, observable through indirect dependencies and expected system performance.
+Plan 48: baud_limit: that at every transition of the baud_clk, data flow indicated by tx_data and rx_data is appropriately conditioned by baud_limit, with new_tx_data and new_rx_data flags aligning correctly to these changes.
+Plan 49: baud_limit: that when baud_limit is set to a specific value, it remains constant unless explicitly changed by subsequent operations.
+Plan 50: baud_limit: that if baud_limit is within the range of 1000 to 1200 inclusive, baud_clk should toggle at least once within the next cycle, ensuring the baud rate configuration is active.
+Plan 51: baud_limit: that after reset, the value of baud_limit is set to its default configuration `D_BAUD_LIMIT` and remains within system parameters unless otherwise specified.
+Plan 52: baud_limit: that when baud_limit equals `D_BAUD_LIMIT`, the signal new_tx_data should only be asserted if tx_data is not currently busy, ensuring synchronization and proper data flow.
+Plan 53: baud_limit: that if baud_limit is greater than a specific threshold (e.g., 1500), tx_busy remains high until baud_limit configuration completes a full cycle before being allowed to change to ensure data integrity.
+Plan 54: baud_limit: that modifications to baud_limit should cause a corresponding reaction in baud_clk within two cycles, verifying the correct timing adjustments are applied to baud configurations.
+Plan 55: baud_limit: that the system should prevent baud_limit changes during active data transmission (indicated by tx_busy being high) to avoid transmission interruptions or data corruption.
+
+Signal int_address:
+Plan 75: int_address: that when reset is active, int_address is set to 0 on the next clock cycle and remains 0 until reset is deasserted, using the signals 'reset' and 'clock'.
+Plan 76: int_address: that when main_sm is `MAIN_ADDR` and new_rx_data is true while data_in_hex_range is false, int_address is updated to addr_param in the same clock cycle, using the signals 'clock', 'main_sm', 'new_rx_data', and 'int_address'.
+Plan 77: int_address: that during the state `MAIN_BIN_LEN` when new_rx_data is received, int_address is immediately updated to addr_param, using the signals 'clock', 'main_sm', 'new_rx_data', and 'int_address'.
+Plan 78: int_address: that if int_address is updated based on addr_param, it retains its value in the following cycles unless a reset occurs or a new address update condition is met, using the signals 'int_address', 'reset', and 'clock'.
+Plan 79: int_address: that upon entry to the state `MAIN_ADDR` with the conditions new_rx_data true and data_in_hex_range false, int_address is immediately sampled and updated accordingly, using 'main_sm', 'new_rx_data', 'data_in_hex_range', and 'int_address'.
+Plan 80: int_address: that after returning from a reset condition, int_address remains 0 until a valid address update condition occurs in the state machine, using the signals 'reset', 'main_sm', 'new_rx_data', and 'int_address'.
+Plan 81: int_address: that during consecutive clock cycles, if no new_rx_data is received or main_sm is not in `MAIN_ADDR` or `MAIN_BIN_LEN`, int_address maintains its current value, using the signals 'clock', 'main_sm', 'new_rx_data', and 'int_address'.
+Plan 82: int_address: that when reset is active, int_address is set to 0 at the next rising edge of the clock signal 'baud_clk'.
+Plan 83: int_address: that if 'main_sm' equals `MAIN_ADDR` and 'new_rx_data' is true, while 'data_in_hex_range' is false, int_address is updated to 'addr_param[AW-1:0]' at the next rising edge of 'baud_clk'.
+Plan 84: int_address: that when 'main_sm' equals `MAIN_BIN_LEN` and 'new_rx_data' is true, int_address is updated to 'addr_param[AW-1:0]' in response to a length byte received at the next rising edge of 'baud_clk'.
+Plan 85: int_address: that during the condition when 'new_rx_data' is true, int_address is only changed if 'main_sm' equals either `MAIN_ADDR` or `MAIN_BIN_LEN` at the next rising edge of 'baud_clk'.
+Plan 86: int_address: that after a reset signal and with 'new_rx_data' true, if 'main_sm' equals `MAIN_ADDR` and 'data_in_hex_range' is false, int_address captures 'addr_param[AW-1:0]' on the subsequent clock cycle of 'baud_clk'.
+Plan 87: int_address: that when reset is asserted, int_address is immediately reset to 0 in the following clock cycle.
+Plan 88: int_address: that when new_rx_data is received and main_sm equals `MAIN_ADDR`, int_address is updated to match the lower bits of addr_param, given that data_in_hex_range is false.
+Plan 89: int_address: that upon receiving new_rx_data and main_sm being `MAIN_BIN_LEN`, int_address gets updated to match the lower bits of addr_param within the same clock cycle.
+Plan 90: int_address: that int_address does not change its value when new_rx_data is not present, irrespective of the main_sm state, provided reset is not asserted.
+Plan 91: int_address: that during continuous clock cycles, if reset is deasserted and no new_rx_data is received, int_address retains its previously assigned value.
+
+Signal int_read:
+Plan 122: int_read: that when int_read is active, the int_rd_data signal will reflect the correct data value read from the address in the next clock cycle.
+Plan 123: int_read: that once the int_read signal is asserted, it remains active for only a single clock cycle per address, ensuring no repeated reads at the same clock edge.
+Plan 124: int_read: that when the int_read signal is asserted, it will cause the int_req signal to follow in the subsequent cycles until int_gnt is received.
+Plan 125: int_read: that when int_read is deasserted, the int_rd_data is not updated in the next cycle, thereby ensuring it only updates following a valid read operation.
+Plan 126: int_read: that int_read is activated only after int_req is asserted and continues until int_gnt is granted, indicating correct bus access protocol adherence.
+Plan 127: int_read: that when int_read is asserted, the signal int_rd_data is sampled on the next clock cycle with a stable value that reflects the data read from the specified address.
+Plan 128: int_read: that the int_read signal is valid and asserted only for a single clock cycle per address read operation.
+Plan 129: int_read: that on the activation of int_read, the int_req signal is asserted to request bus access and remains asserted until the int_gnt signal is received, allowing the bus access to occur.
+Plan 130: int_read: that the int_rd_data value received following an int_read activation provides accurate data corresponding to the int_address provided during the read operation.
+Plan 131: int_read: that after the int_read signal is activated, it immediately causes the uart_parser module to execute the data sampling routine for int_rd_data in the subsequent clock cycle without delay.
+Plan 132: int_read: that if int_read remains deasserted, the int_rd_data signal does not change state and remains stable.
+Plan 133: int_read: that int_read is not asserted more than once for the same int_address until a new int_gnt signal has been received, completing the previous operation.
+Plan 134: int_read: that when int_read is asserted, int_rd_data should provide valid data within 3 clock cycles, using 'clock' and 'int_rd_data'.
+Plan 135: int_read: that after int_req is asserted, int_read should be de-asserted within 2 clock cycles, using 'clock', 'int_req', and 'int_read'.
+Plan 136: int_read: that when int_gnt is positive, int_read should only assert if int_req is asserted, using 'int_gnt', 'int_req', and 'int_read'.
+Plan 137: int_read: that if int_read is asserted during an active clock cycle, rx_data should reflect new_rx_data values within the same cycle, using 'clock', 'rx_data', and 'new_rx_data'.
+Plan 138: int_read: that if int_wr_data is between 10 and 20, inclusive, int_read must remain de-asserted during that cycle, using 'int_wr_data' and 'int_read'.
+
+Signal int_req:
+Plan 139: int_req: that when int_req is asserted, the signal int_gnt should be asserted within 2 clock cycles while the system is not in reset. Use the signals 'clock', 'reset', 'int_gnt', and 'int_req'.
+Plan 140: int_req: that int_req becomes deasserted one clock cycle after int_gnt is asserted. Use the signals 'clock', 'int_req', and 'int_gnt'.
+Plan 141: int_req: that if int_req is asserted and int_gnt is not granted within 3 clock cycles, int_req remains asserted until int_gnt is granted. Use the signals 'clock', 'int_req', and 'int_gnt'.
+Plan 142: int_req: that int_req is deasserted within one clock cycle after the signal int_write transitions from low to high. Use the signals 'clock', 'int_req', and 'int_write'.
+Plan 143: int_req: that if int_req is asserted when new_rx_data is high, int_req remains asserted until new_rx_data is low and int_gnt is asserted in the following cycle. Use the signals 'clock', 'int_req', 'new_rx_data', and 'int_gnt'.
+Plan 144: int_req: that when int_req is asserted, the signal int_gnt will also be asserted within two clock cycles of baud_clk.
+Plan 145: int_req: that if int_req is deasserted, subsequent cycles of baud_clk will not see an assertion of int_gnt until int_req is reasserted.
+Plan 146: int_req: that when rx_data equals 1 and new_rx_data is asserted, int_req should be asserted within the next two cycles of baud_clk.
+Plan 147: int_req: that during reset (reset asserted), int_req will remain deasserted irrespective of other signals' states.
+Plan 148: int_req: that if int_gnt is deasserted for two continuous cycles of baud_clk after int_req is asserted, int_req should be maintained asserted.
+Plan 149: int_req: that when int_write is active, and tx_data changes, int_req should be deasserted by the next cycle of baud_clk.
+Plan 150: int_req: that upon the deassertion of load by int_read, int_req should assert within three cycles if int_rd_data is valid.
+Plan 151: int_req: that when int_req is asserted, rx_data should have been received without new_rx_data triggering for at least two consecutive cycles.
+Plan 152: int_req: that if int_req is asserted while tx_busy is high, then int_req should remain high for at least three cycles after tx_busy becomes low.
+Plan 153: int_req: that when the system is not in reset, the int_req signal is deasserted immediately after int_gnt is asserted for at least one cycle.
+Plan 154: int_req: that if int_req is high, it will be followed by int_gnt being asserted within the next two clock cycles.
+Plan 155: int_req: that int_req remains deasserted while int_read is active and int_rd_data is valid.
+Plan 156: int_req: that int_req is only asserted when int_wr_data is valid and int_write is high in the same cycle.
+Plan 157: int_req: that the assertion of int_req triggers int_gnt within one cycle unless reset is active.
+Plan 158: int_req: that if int_req is deasserted for two consecutive cycles, it should not assert for at least one more subsequent cycle unless int_write becomes high.
+
+Signal int_wr_data:
+Plan 159: int_wr_data: that when new_rx_data is asserted and write_op is active, int_wr_data should match data_param on the next clock cycle when in the state `MAIN_ADDR`.
+Plan 160: int_wr_data: that the value of int_wr_data correctly reflects rx_data within one cycle when bin_write_op is active and in the state `MAIN_BIN_DATA`.
+Plan 161: int_wr_data: that when write_req is deasserted, int_wr_data is reset to 0 in the subsequent cycle.
+Plan 162: int_wr_data: that when the new_rx_data and data_in_hex_range are not valid during a write_op, int_wr_data remains unchanged in the subsequent cycle.
+Plan 163: int_wr_data: that when the main_sm is not in the state `MAIN_ADDR` or `MAIN_BIN_DATA`, int_wr_data retains its previous value regardless of new_rx_data status.
+Plan 164: int_wr_data: that after the assertion of int_write coinciding with a valid write_op, int_wr_data aligns with rx_data within 2 clock cycles.
+Plan 165: int_wr_data: that int_wr_data mirrors data_param only when new_rx_data is high, write_op is true, and the main_sm is in the state `MAIN_ADDR`.
+Plan 166: int_wr_data: that during the active phase of bin_write_op, int_wr_data reflects rx_data while ensuring new_rx_data is also active during the `MAIN_BIN_DATA` state.
+Plan 167: int_wr_data: that when write_req is asserted and int_write is deasserted, int_wr_data should be assigned the value of data_param on the next clock cycle.
+Plan 168: int_wr_data: if bin_write_op is active and main_sm equals MAIN_BIN_DATA, int_wr_data should echo the value of rx_data when new_rx_data is observed.
+Plan 169: int_wr_data: ensure that int_wr_data is set to 0 whenever both int_write and write_req are deasserted.
+Plan 170: int_wr_data: verify that if write_op is true while main_sm is MAIN_ADDR, and new_rx_data is true without data_in_hex_range, int_wr_data should take the value of data_param in the immediate next cycle.
+Plan 171: int_wr_data: confirm that in scenarios where neither write_op nor bin_write_op are active, int_wr_data remains unchanged in subsequent cycles.
+Plan 172: int_wr_data: validate that in binary extension mode, if new_rx_data is detected under the condition of bin_write_op, int_wr_data mirrors rx_data in the same cycle.
+Plan 173: int_wr_data: that when the write_op signal is high, and main_sm is `MAIN_ADDR` with new_rx_data signal active, int_wr_data is set to the data_param value in the next cycle.
+Plan 174: int_wr_data: that when the bin_write_op signal is high and main_sm is `MAIN_BIN_DATA` while new_rx_data is active, int_wr_data captures the rx_data value in the subsequent cycle.
+Plan 175: int_wr_data: that in the absence of new_rx_data, int_wr_data retains its previous value regardless of other signals.
+Plan 176: int_wr_data: that with write_req being asserted and main_sm in `MAIN_ADDR` state, int_wr_data is updated to the latest data_param value when new_rx_data is high.
+Plan 177: int_wr_data: that during the binary extension mode when bin_write_op is active, and main_sm is `MAIN_BIN_DATA`, int_wr_data changes to reflect rx_data with each cycle new_rx_data is active.
+
+Signal int_write:
+Plan 178: int_write: that when reset is active, int_write will be held low regardless of other signal states.
+Plan 179: int_write: that if int_gnt is high and write_req is high, int_write will be set to 1 in the next cycle and write_req will be cleared to 0.
+Plan 180: int_write: that after a reset, if bin_write_op becomes true and main_sm is MAIN_BIN_DATA and new_rx_data is high, write_req will become 1 and int_write will remain 0 until int_gnt is also high.
+Plan 181: int_write: that when int_gnt and write_req are both high, int_write will be set high, and if int_gnt or write_req changes, int_write will be cleared to 0 in the subsequent cycle.
+Plan 182: int_write: that under conditions where int_gnt is not asserted and write_req is high, int_write remains 0, waiting for int_gnt to be asserted for int_write to activate.
+Plan 183: int_write: that during cycles where neither int_gnt is high nor write_req is asserted, int_write will remain low, ensuring that data write operations do not mistakenly occur.
+Plan 184: int_write: that when int_gnt is asserted and write_req is high, int_write will be set to 1'b1, and write_req will become 1'b0.
+Plan 185: int_write: that when int_gnt is not asserted, regardless of the state of write_req, int_write will be set to 1'b0.
+Plan 186: int_write: that after a reset condition, int_write will remain at 1'b0 unless int_gnt is asserted and write_req is high.
+Plan 187: int_write: that when int_write becomes 1'b1 due to int_gnt and write_req being high, it remains 1'b1 until the write_req is cleared to 1'b0.
+Plan 188: int_write: that if int_write is 1'b0 in the current cycle, it must remain 1'b0 in the next cycle unless triggered by int_gnt being high and write_req being high.
+Plan 189: int_write: that whenever int_gnt is asserted and write_req is high, int_write will be set to 1'b1 in the next cycle and write_req will be deasserted to 1'b0.
+Plan 190: int_write: that when a reset occurs, int_write is immediately set to 1'b0, ensuring that no write operation is performed during reset.
+Plan 191: int_write: that if int_gnt is not asserted, int_write will remain at 1'b0, regardless of the state of write_req, in the next cycle.
+Plan 192: int_write: that while int_write is high, it remains so until the write_req is cleared or int_gnt is deasserted, ensuring a continuous write state.
+Plan 193: int_write: that when ce_16 is toggled without changing int_gnt or write_req, int_write remains unchanged, maintaining its prior state.
+
+Signal new_rx_data:
+Plan 194: new_rx_data: that when the signal 'new_rx_data' is asserted to 1'b1 due to 'rx_busy' being high and 'bit_count' equals 4'h8 with 'ce_1' true, in the next cycle the signal 'rx_data' reflects the content of 'data_buf'.
+Plan 195: new_rx_data: that when the system is in reset, the signal 'new_rx_data' is held low (1'b0) and resets properly on the rising edge of 'clock' until reset is deasserted.
+Plan 196: new_rx_data: that when 'new_rx_data' becomes 1'b1 due to a complete data receive operation (i.e., 'bit_count' reaches 4'h8), it transitions back to 1'b0 if 'rx_busy' goes low in the subsequent cycle.
+Plan 197: new_rx_data: that 'new_rx_data' goes high for exactly one clock cycle after 'rx_data' is updated with new data and 'rx_busy' with 'ce_1' are true while maintaining the correct sequence of operation.
+Plan 198: new_rx_data: that when 'new_rx_data' is set to 1'b1 as a result of valid data being received, it does not transition back to 1'b1 again until the next valid data packet is assembled completely, even if intermediate signals change state.
+Plan 199: new_rx_data: that when the system is not in reset and 'rx_busy' is high with 'bit_count' equal to 8 and 'ce_1' is active, 'new_rx_data' should be set to 1 in the next clock cycle.
+Plan 200: new_rx_data: that when the system is in reset, 'new_rx_data' will always be 0 regardless of other signal conditions.
+Plan 201: new_rx_data: that upon exiting the reset state, 'new_rx_data' should transition from 1 to 0 within one clock cycle if the conditions for setting 'new_rx_data' to 1 are not met (i.e., 'rx_busy' is low or 'bit_count' is not 8 or 'ce_1' is inactive).
+Plan 202: new_rx_data: that when 'rx_busy' is low or 'bit_count' is not 8 or 'ce_1' is inactive, 'new_rx_data' will remain 0 in the subsequent cycle.
+Plan 203: new_rx_data: that after 'new_rx_data' is set to 1, it should reset to 0 in the following cycle unless 'rx_busy' is high, 'bit_count' is 8, and 'ce_1' continues to be active.
+Plan 204: new_rx_data: ensure that 'new_rx_data' is always low when the system is in reset, affirming that no unintentional data flags occur during reset.
+Plan 205: new_rx_data: that when 'new_rx_data' is set to 1'b1, in the next cycle the signal 'rx_data' should reflect the complete data as parsed, contingent upon the 'rx_busy' signal being active, 'bit_count' equating to 4'h8, and 'ce_1' being high.
+Plan 206: new_rx_data: that if 'new_rx_data' transitions to 1'b1, during subsequent clock cycles, it should revert to 1'b0 unless 'rx_busy' remains active with 'bit_count' at 4'h8 and 'ce_1' remaining true.
+Plan 207: new_rx_data: that whenever 'reset' is activated, 'new_rx_data' must immediately be set to 1'b0 and remain there until 'reset' is de-asserted and conditions for setting it high again are met, irrespective of the 'rx_busy', 'bit_count', and 'ce_1' signals.
+Plan 208: new_rx_data: that in the absence of 'rx_busy', or if 'bit_count' is not 4'h8, or when 'ce_1' is low, 'new_rx_data' should remain at 1'b0 across all clock cycles.
+Plan 209: new_rx_data: that, following a reset, the interaction of 'rx_busy', 'bit_count', and 'ce_1' can set 'new_rx_data' to 1'b1 after the precise conditions are first met post-reset, ensuring precise timed data readiness.
+
+Signal new_tx_data:
+Plan 210: new_tx_data: that when tx_end_p is high in the `TX_LO_NIB` state, new_tx_data is set to 1'b1 in the next cycle to initiate transmission of the carriage return character.
+Plan 211: new_tx_data: that when tx_end_p is high in the `TX_CHAR_CR` state, new_tx_data is set to 1'b1 in the next cycle to initiate transmission of the line feed character.
+Plan 212: new_tx_data: that in the `MAIN_BIN_CMD` state, when new_rx_data is high and rx_data[5:4] equals `BIN_CMD_NOP`, new_tx_data is set to 1'b1 and sends the status byte 8'h5a in the next cycle.
+Plan 213: new_tx_data: that during the `TX_HI_NIB` state, when tx_end_p is high, new_tx_data is set to 1'b1 in the next cycle to transition to the `TX_LO_NIB` state and transmit the next character.
+Plan 214: new_tx_data: that new_tx_data remains 1'b0 when no specific conditions are met in the current state, ensuring no unintended data transmissions occur.
+Plan 215: new_tx_data: that when new_tx_data is asserted with a value of 1'b1, indicating new transmission data is available, the tx_data signal will subsequently be updated with the corresponding character data, either `CHAR_CR` or `CHAR_LF`, in the next cycle.
+Plan 216: new_tx_data: that if tx_end_p condition is met, new_tx_data should assert to 1'b1, ensuring that a new transmission cycle is initiated resulting in a transition in tx_sm from `TX_LO_NIB` to `TX_CHAR_CR` or from `TX_CHAR_CR` to `TX_CHAR_LF`.
+Plan 217: new_tx_data: that when new_tx_data is deasserted with a value of 1'b0 during the current cycle, it indicates no new data is available for transmission, and the tx_data should hold the previous value unless the tx_end_p condition changes.
+Plan 218: new_tx_data: that once new_tx_data is asserted at the same moment that tx_end_p is true, it indicates successful transmission completion, prompting a state transition in the tx_sm state machine and readiness to handle new characters, `CHAR_CR` or `CHAR_LF`.
+Plan 219: new_tx_data: that the assertion of new_tx_data synchronizes with the baud_clk edge, ensuring that the newly available transmission data is processed in accordance with the baud rate-defined timing constraints.
+Plan 220: new_tx_data: that when new_tx_data is asserted (1'b1) due to tx_end_p being true and the state machine transitioning from `TX_LO_NIB to `TX_CHAR_CR, new_tx_data will be deasserted (1'b0) in the subsequent cycle unless another condition for asserting it is met.
+Plan 221: new_tx_data: that when tx_end_p is true and the state machine transitions from `TX_CHAR_CR to `TX_CHAR_LF, new_tx_data is asserted (1'b1), and then new_tx_data remains deasserted (1'b0) in the following cycle until the end of another transmission.
+Plan 222: new_tx_data: that in scenarios where tx_end_p is continuously false, new_tx_data remains deasserted (1'b0) throughout the state machine transitions.
+Plan 223: new_tx_data: that if new_tx_data is asserted (1'b1) in a given cycle, ce_16 is simultaneously asserted, ensuring data transmission alignment with the clock enable signal.
+Plan 224: new_tx_data: that during the operation of the uart_parser module, whenever new_tx_data is asserted (1'b1), the data_stability verification point inside the uart_parser will confirm no data corruption occurred during this assertion period.
+Plan 225: new_tx_data: that when tx_busy is low (indicating no active transmission), new_tx_data remains deasserted (1'b0) to reflect the idle state of the transmitter.
+Plan 226: new_tx_data: that new_tx_data is asserted (1'b1) at least once every transmission cycle when the state machine completes a transmission indicated by tx_end_p being true, ensuring data readiness for the next transmission stage.
+Plan 227: new_tx_data: that when ce_16 is toggled alongside the state transition from `TX_LO_NIB to `TX_CHAR_CR, new_tx_data transitions from deasserted (1'b0) to asserted (1'b1), confirming synchronization with the control signals.
+
+Signal rx_data:
+Plan 228: rx_data: that when rx_data is within the range of characters '0' to '9', 'A' to 'F', or 'a' to 'f', the signal 'data_in_hex_range' will be set to 1'b1 during the next clock cycle.
+Plan 229: rx_data: that when rx_data falls outside the range of characters '0' to '9', 'A' to 'F', and 'a' to 'f', the signal 'data_in_hex_range' will be set to 1'b0 during the next clock cycle.
+Plan 230: rx_data: that if rx_data is between `CHAR_0 and `CHAR_9, in the subsequent cycle, 'data_in_hex_range' continues to be 1'b1, indicating that the data is still in the valid hex digit range.
+Plan 231: rx_data: that if there is a reset event (assuming the presence of such a signal), the signal 'data_in_hex_range' will reset to 1'b0, regardless of the rx_data value.
+Plan 232: rx_data: that when rx_data is changed to a value of `CHAR_A_UP or higher, but not exceeding `CHAR_F_UP, 'data_in_hex_range' is immediately set to 1'b1, confirming it's within a valid hexadecimal range.
+Plan 233: rx_data: that a transition of rx_data from a non-hex character to a hex character ('0'-'9', 'A'-'F', 'a'-'f') results in a change in 'data_in_hex_range' to 1'b1 within the same cycle.
+Plan 234: rx_data: that within four cycles after the signal rx_data is set to a character within the range 'a' to 'f', the 'data_in_hex_range' should be confirmed as 1'b1.
+Plan 235: rx_data: that the output of uart_rx remains consistent with the flow path ensuring rx_data is correctly assigned in addr_param[7:0]_assignment and int_wr_data_assignment according to the signal's defined path analysis.
+Plan 236: rx_data: that on a positive clock edge following the assignment of a hex character to rx_data, the cross-module path verifies the correct function of uart_rx in terms of signal flow and assignment completion.
+Plan 237: rx_data: that when rx_data is within the range specified by `CHAR_0 to `CHAR_9`, `CHAR_A_UP to `CHAR_F_UP`, or `CHAR_a_LO to `CHAR_f_LO, the signal data_in_hex_range is set to 1'b1 in the next cycle.
+Plan 238: rx_data: that rx_data, when below `CHAR_0`, results in the signal data_in_hex_range being set to 1'b0 in the next cycle, indicating the data is not a valid hexadecimal character.
+Plan 239: rx_data: that if rx_data is greater than `CHAR_f_LO`, then in the subsequent cycle, the signal data_in_hex_range should correctly reflect a value of 1'b0.
+Plan 240: rx_data: that when rx_data transitions from a non-hexadecimal range to a valid hexadecimal range between sequential clock cycles, the data_in_hex_range signal is updated to 1'b1 on the next clock edge.
+Plan 241: rx_data: that upon reset, when rx_data is received, it should correctly determine if it falls within the valid hexadecimal range using only the `clock` and `reset` signals.
+Plan 242: rx_data: that when rx_data enters a valid hex range and then transitions out, the signal data_in_hex_range accurately tracks these changes by reverting to 1'b0 in subsequent cycles.
+Plan 243: rx_data: that if rx_data is within the range of 48 to 57, 65 to 70, or 97 to 102, then data_in_hex_range will be set to 1'b1.
+Plan 244: rx_data: that when rx_data is outside the range of 48 to 57, 65 to 70, and 97 to 102, then data_in_hex_range will be set to 1'b0.
+Plan 245: rx_data: that upon a positive edge of clock, if rx_data is within the valid hex range, data_in_hex_range should be updated accordingly without being reset-active.
+Plan 246: rx_data: that if rx_data consistently reads values within the valid hex ranges for three consecutive clock cycles, data_in_hex_range remains consistently 1'b1 within those cycles.
+Plan 247: rx_data: that when rx_data fluctuates between a valid hex character and an invalid character every cycle, data_in_hex_range toggles correspondingly between 1'b1 and 1'b0.
+Plan 248: rx_data: that immediately after reset is deasserted and new_rx_data is asserted, rx_data begins with a value within the valid hex range, initializing data_in_hex_range to 1'b1.
+Plan 249: rx_data: that if new_rx_data is asserted and rx_data receives a valid hex character, data_in_hex_range reflects the correct status before any subsequent clock cycle alteration.
+
+Signal ser_out:
+Plan 268: ser_out: that when 'ser_out' transitions from low to high, 'tx_busy' must also assert in the same cycle, using the signal 'baud_clk' to synchronize the timing.
+Plan 269: ser_out: that the data on 'ser_out' must change only when 'ce_16' is high, ensuring data synchronization with the internal clock.
+Plan 270: ser_out: that when 'ser_out' begins a new transmission, 'new_tx_data' must be available prior to the start of the first cycle, checked using 'baud_clk'.
+Plan 271: ser_out: that the 'ser_out' signal must return to low within two clock cycles when transmission is completed, indicated by the deassertion of 'tx_busy', using 'baud_clk' for clocking.
+Plan 272: ser_out: that if 'ser_out' remains high for more than five 'baud_clk' cycles, 'int_req' must be set to assert that an interruption occurred.
+Plan 273: ser_out: that when 'ser_out' is asserted, the subsequent cycle 'ser_out' remains asserted until 'tx_busy' is deasserted.
+Plan 274: ser_out: that 'ser_out' correctly reflects 'tx_data' when 'new_tx_data' is asserted and 'tx_busy' is low on the next 'baud_clk' rising edge.
+Plan 275: ser_out: that 'ser_out' transitions from low to high one clock cycle after 'new_rx_data' is valid and 'ser_in' is high.
+Plan 276: ser_out: that if 'int_write' and 'int_req' are both high, 'ser_out' will remain low until 'int_gnt' is received and evaluated on a 'baud_clk' cycle.
+Plan 277: ser_out: that during reset, 'ser_out' is continuously low and becomes valid 3 cycles after 'reset' is released provided 'int_read' is high.
+Plan 278: ser_out: that if 'int_rd_data' becomes valid, 'ser_out' must reflect correct bus data by the next 'baud_clk' edge with 'ce_16' enabled.
+Plan 279: ser_out: that under an active condition of 'baud_limit', 'ser_out' toggles corresponding to 'int_wr_data' changes on 'baud_clk' edges if 'int_write' is asserted.
+Plan 280: ser_out: that when ser_out is assigned a high value, in the subsequent cycle, it maintains a high state until the int_write signal is asserted.
+Plan 281: ser_out: that after the reset signal is deasserted, ser_out transitions from low to high within three clock cycles if int_req is asserted.
+Plan 282: ser_out: that ser_out outputs a valid high signal when new_tx_data is received, provided tx_busy is low.
+Plan 283: ser_out: that ser_out remains at its current state when the baud_clk signal is toggling, and no new_rx_data is available.
+Plan 284: ser_out: that whenever int_gnt is asserted, ser_out switches to high within the next two clock cycles, ensuring reliable data transmission.
+
+Signal tx_busy:
+Plan 285: tx_busy: that when the system is in reset, the signal tx_busy should be 1'b0 on the next clock edge when reset is deasserted.
+Plan 286: tx_busy: that when new_tx_data is asserted and tx_busy is deasserted, the signal tx_busy should be set to 1'b1 on the next clock edge.
+Plan 287: tx_busy: that if tx_busy is asserted and bit_count reaches 4'h9 and ce_1 is asserted, the signal tx_busy should transition to 1'b0 on the following clock edge.
+Plan 288: tx_busy: that when the reset is deasserted and no new_tx_data is present, the signal tx_busy should remain at its current state on the subsequent clock cycle.
+Plan 289: tx_busy: that when bit_count is not equal to 4'h9, regardless of the state of ce_1, the signal tx_busy should continue to reflect its current state unless new_tx_data is asserted without tx_busy being active.
+Plan 290: tx_busy: that if 'reset' is high, 'tx_busy' is immediately set to 0, ensuring that the transmission process is halted as per the reset condition.
+Plan 291: tx_busy: that when 'tx_busy' is 0 and 'new_tx_data' is high, 'tx_busy' will be set to 1 in the next cycle, indicating the start of a new transmission.
+Plan 292: tx_busy: that if 'tx_busy' is 1 and 'bit_count' reaches 9 while 'ce_1' is high, 'tx_busy' transitions to 0 in the subsequent cycle, marking the completion of the current transmission process.
+Plan 293: tx_busy: that 'tx_busy' remains unchanged in the absence of a reset or the absence of conditions that trigger its toggling, ensuring stability during standard operations.
+Plan 294: tx_busy: that when the system is initialized with 'reset' and 'new_tx_data' is low, 'tx_busy' remains 0 to verify that no unintended transmission processes are initiated.
+Plan 295: tx_busy: that when reset is asserted, tx_busy becomes 1'b0 on the next rising edge of baud_clk.
+Plan 296: tx_busy: that when tx_busy is 1'b0 and new_tx_data is asserted, tx_busy becomes 1'b1 on the next rising edge of baud_clk.
+Plan 297: tx_busy: that if tx_busy is 1'b1 and bit_count reaches 4'h9 while ce_1 is asserted, tx_busy transitions to 1'b0 on the next rising edge of baud_clk.
+Plan 298: tx_busy: that tx_busy retains its value of 1'b1 until bit_count reaches 4'h9 and ce_1 is asserted, unless reset is asserted.
+Plan 299: tx_busy: that on asserting reset, regardless of other conditions, tx_busy is immediately driven to 1'b0 on the next edge of baud_clk.
+
+Signal tx_data:
+Plan 300: tx_data: that when tx_data is initially set to a known value, in the subsequent cycle, tx_data reflects the same value as long as tx_busy remains deasserted.
+Plan 301: tx_data: that the tx_data value correctly transforms to its intended state 4 clock cycles after baud_clk goes high, ensuring baud rate stability.
+Plan 302: tx_data: that tx_data updates within 2 cycles after new_tx_data is asserted, confirming new data is ready for transmission.
+Plan 303: tx_data: that when reset is deasserted, tx_data initializes to zero and remains stable until new_tx_data is asserted.
+Plan 304: tx_data: that tx_data maintains its current value during periods when tx_busy is asserted, preventing data corruption during active transmission.
+Plan 305: tx_data: that tx_data remains unchanged if rx_data and new_rx_data do not assert any change signal, confirming independence of tx_data from receive path signals.
+Plan 306: tx_data: that when int_write transitions high, tx_data captures the value of int_wr_data appropriately within 3 baud_clk cycles.
+Plan 307: tx_data: that after baud_limit reaches a predefined threshold, tx_data reflects an accurate byte based on previous int_rd_data and int_address within 2 baud_clk cycles.
+Plan 308: tx_data: that when new_tx_data is asserted in the presence of a non-busy tx_busy signal, tx_data will transmit the expected data value synchronized with the baud_clk.
+Plan 309: tx_data: that during periods where new_tx_data is continuously asserted, tx_data must continuously transmit the data until tx_busy transitions from low to high, indicating that transmission can initiate.
+Plan 310: tx_data: that immediately following four clock cycles after reset is deasserted, tx_data will correctly output the intended data if new_tx_data is asserted and tx_busy is low, ensuring proper initialization.
+Plan 311: tx_data: that when the tx_busy signal transitions from high to low, indicating readiness, the next tx_data will be available corresponding to the asserted new_tx_data under the control of baud_clk.
+Plan 312: tx_data: that tx_data transmits in alignment with the baud_limit when new_tx_data is toggled, and this behavior persists in successive transmissions whenever the baud_clk allows data transmission.
+Plan 313: tx_data: that when tx_busy is deasserted, tx_data begins transmission as soon as new_tx_data becomes active, ensuring the internal state correctly reflects data initiation.
+Plan 314: tx_data: that upon each baud_clk pulse, tx_data accurately represents the value present in rx_data under conditions where new_tx_data is asserted and tx_busy permits transmission.
+Plan 315: tx_data: that upon asserting new_tx_data while resetting indicates readiness by maintaining tx_busy low, tx_data outputs correctly in accordance with baud_freq restrictions.
+Plan 316: tx_data: that when new_tx_data is asserted, tx_data should reflect the correct output within two cycles, ensuring it correlates with the input data rx_data during the presence of baud_clk.
+Plan 317: tx_data: that after a reset cycle, with reset deasserted and tx_busy low, tx_data should correctly capture the value of rx_data within five clock cycles driven by baud_clk.
+Plan 318: tx_data: that if tx_busy becomes high, tx_data should hold its current value until tx_busy is deasserted, ensuring no premature data change occurs before the transaction completes.
+Plan 319: tx_data: that when new_rx_data is high and the clock cycles at baud_clk frequency, tx_data should remain stable within the current cycle unless new data is loaded.
+Plan 320: tx_data: that when baud_limit is configured to a specific value, tx_data transitions should occur according to the adjusted baud rate, confirming the relationship between baud_limit and data transmission timing.
+Plan 321: tx_data: that in the absence of tx_busy, subsequent assertion of new_tx_data should update tx_data with the most recent rx_data within two baud_clk cycles.
+Plan 322: tx_data: that if rx_data changes when tx_busy is low and new_tx_data is not asserted, tx_data should ignore such changes, ensuring its stability until the next transfer initiation.
+Plan 323: tx_data: that when baud_clk is active and baud_freq is set correctly, tx_data transmission events should align with expected timing derived from these configurations, validating proper module synchronization.
+

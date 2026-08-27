@@ -1,0 +1,36 @@
+Signal baud_clk:
+Plan 1: baud_clk: that when baud_freq is set to a specific value, baud_clk will toggle at half of the baud_freq rate.
+Plan 2: baud_clk: that baud_clk will not change its state when baud_freq remains constant over two consecutive cycles.
+Plan 3: baud_clk: that after a reset condition, baud_clk will resume toggling without skipping cycles based on the previously set value of baud_freq.
+Plan 4: baud_clk: that during the transition of baud_freq from a lower to a higher value, baud_clk adjusts its toggling rate within two cycles to match the new frequency.
+Plan 5: baud_clk: that when baud_freq is below a certain threshold value, baud_clk will not toggle, indicating the circuit is in a low-power state.
+Plan 6: baud_clk: that when baud_clk is toggling at a fixed frequency, it maintains stability across five consecutive clock cycles of baud_freq without any deviation in frequency.
+Plan 7: baud_clk: that the rising edge of baud_clk occurs consistently every 'n' cycles of baud_freq, ensuring consistent data transfer timing.
+Plan 8: baud_clk: that after three consecutive rising edges of baud_clk, there is no phase shift or glitch observable, confirming signal integrity over prolonged operation.
+Plan 9: baud_clk: that for every distinct rising edge of baud_clk, a corresponding consistent baud_freq is observed, ensuring the synchronization of the transmission signal.
+Plan 10: that when the baud_clk signal transitions from low to high, the baud_freq signal remains stable and unchanged for the duration of two baud_clk cycles.
+Plan 11: that if baud_clk is high for three consecutive cycles, then baud_freq should maintain its value for at least these three cycles without any changes.
+Plan 12: that whenever baud_clk experiences a leading-edge change, baud_freq should be checked to ensure it remains constant and within its expected range for the entirety of that baud_clk cycle.
+Plan 13: that during a stable low state of baud_clk over four continuous cycles, the accompanying baud_freq value should not exceed its predefined limits.
+Plan 14: that after baud_clk has experienced two consecutive rising edges, the baud_freq signal should exhibit consistent behavior and maintain its stability to ensure accurate data transmission.
+Plan 15: that upon the detection of a falling edge in baud_clk, baud_freq should immediately respond without any delay to maintain signal integrity across interconnected modules.
+Plan 16: that baud_clk consistently shows a predictable pattern of high and low cycles, the baud_freq should adjust its value accordingly to remain synchronized with baud_clk's operational regime.
+Plan 17: that after initializing system parameters, baud_clk should provide a stable frequency signal which ensures that baud_freq transitions smoothly without experiencing irregular spikes or drops.
+
+Signal baud_freq:
+Plan 18: baud_freq: that when baud_freq is initially set to a value calculated by `baud_freq = 16*baud_rate / gcd(global_clock_freq, 16*baud_rate)`, it remains consistent with the expected calculation results across 10 consecutive clock cycles.
+Plan 19: baud_freq: that if a change is introduced to the `global_clock_freq`, the value of baud_freq should update accordingly in the next two clock cycles, reflecting the new calculated value.
+Plan 20: baud_freq: that baud_freq maintains a constant value when the `global_clock_freq` and `baud_rate` inputs remain unchanged over 20 clock cycles.
+Plan 21: baud_freq: that when baud_freq is within a specified range, determined by system design constraints, it stays within this range for a sequence of 5 clock cycles under stable input conditions.
+Plan 22: baud_freq: that any unexpected reset of the module triggers a recalculation of baud_freq to its initial default value on the next rising edge of clock.
+Plan 23: baud_freq: that when baud_freq is within the range of 50 to 100, it stays in that range in the subsequent clock cycles until reset.
+Plan 24: baud_freq: that the baud_freq remains stable within its calculated value immediately after clock cycle when not in a reset state.
+Plan 25: baud_freq: that if reset occurs, the baud_freq should reinitialize to zero and compute correctly based on the new baud_rate and global_clock_freq values after reset is deasserted.
+Plan 26: baud_freq: that baud_freq correctly follows the formula 16*baud_rate / gcd(global_clock_freq, 16*baud_rate) after initialization, maintaining the calculated values throughout operation.
+Plan 27: baud_freq: that during the first clock cycle after reset, baud_freq is recalculated and updated in the next cycle to reflect any changes in baud_rate or global_clock_freq.
+Plan 28: baud_freq: that when the global clock frequency and 16 times the baud rate are both even numbers, baud_freq is accurately calculated as per the formula 16*baud_rate / gcd(global_clock_freq, 16*baud_rate).
+Plan 29: baud_freq: that if the baud rate is an even number, baud_freq reflects the correct calculated value when reset is deasserted.
+Plan 30: baud_freq: that in scenarios where the baud rate is doubled, baud_freq should reflect the increase by recalculating according to the formula.
+Plan 31: baud_freq: that when there is a change in the global clock frequency, baud_freq updates in the next cycle to reflect this change according to the gcd calculation.
+Plan 32: baud_freq: that upon module reset, the value of baud_freq resets to a predefined state before recalculating based on the current values of global clock frequency and baud rate.
+

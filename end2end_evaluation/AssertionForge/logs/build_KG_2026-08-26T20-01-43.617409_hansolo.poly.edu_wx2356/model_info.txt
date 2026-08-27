@@ -1,0 +1,14 @@
+task                       : build_KG
+design_name                : uart
+input_file_path            : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertLLM/spec/uart.pdf
+env_source_path            : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/rag_template/.env
+settings_source_path       : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/rag_template/settings.yaml
+entity_extraction_prompt_source_path : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/AssertionForge/entity_extraction.txt
+graphrag_local_dir         : /tmp/claude-4479046/-home-wx2356/ad92df64-1dd8-491b-840c-3fdf42feccac/scratchpad/graphrag
+user                       : wx2356
+hostname                   : hansolo.poly.edu
+repo_name                  : AssertionForge
+local_branch_name          : main
+commit_sha                 : f00fcf96919349d20ea8c7e31f651ef6b7d57f09
+ts                         : 2026-08-26T20-01-43.617409
+

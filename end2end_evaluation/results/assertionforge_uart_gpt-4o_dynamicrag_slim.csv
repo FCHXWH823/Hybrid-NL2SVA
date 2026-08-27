@@ -1,0 +1,1616 @@
+task_id,signal,nl_property,response,signals_for_validity
+AssertionForge-UART-5-baud_clk,baud_clk,"that a transition in 'baud_clk' triggers a 'tx_busy' indication when data is being sent, verifying that the transmitter is correctly reporting its busy state.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(baud_clk) |-> tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-0-baud_clk,baud_clk,"that when 'baud_clk' is active, 'tx_data' must be transmitted when 'new_tx_data' is high and 'tx_busy' is low, ensuring proper data transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ##1 tx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-2-baud_clk,baud_clk,"that if 'baud_clk' rises, then within three clock cycles 'ser_in' data is available on 'rx_data', provided 'new_rx_data' is asserted, confirming that data is being received correctly.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(baud_clk) |-> ##[1:3] (new_rx_data && (ser_in == rx_data))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-4-baud_clk,baud_clk,that 'baud_clk' continuity is maintained across 'uart_rx' and 'uart_tx' modules without interruption to ensure synchronized communication.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    (uart_rx_inst.rx_busy && uart_tx_inst.tx_busy) |-> (baud_clk throughout (uart_rx_inst.rx_busy && uart_tx_inst.tx_busy))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-3-baud_clk,baud_clk,"that when 'baud_clk' is active, no 'int_req' is generated unless 'ce_16' is asserted in 'uart_rx', maintaining proper control signal sequencing.","```systemverilog
+asrt: assert property (@(posedge clock)
+    baud_clk |-> int_req |-> 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-6-baud_clk,baud_clk,that any change in 'baud_limit' results in a corresponding adjustment in 'baud_clk' frequency to confirm adaptive baud rate management.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_limit) |-> ##1 $changed(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-1-baud_clk,baud_clk,"that the signal 'baud_clk' toggles correctly within one 'baud_limit' period when 'baud_freq' is set to its default value, indicating proper baud rate operation.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $stable(baud_clk) |-> ##[1:$] $changed(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-8-baud_clk,baud_clk,"baud_clk: that when 'baud_clk' is active, the signal 'new_tx_data' becomes high within the next 2 clock cycles, provided 'tx_busy' is low.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_clk && !tx_busy) |-> ##[1:2] new_tx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-9-baud_clk,baud_clk,"baud_clk: that during the assertion of 'reset', 'baud_clk' is held low regardless of the values of 'baud_freq' and 'baud_limit'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> (baud_clk == 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-10-baud_clk,baud_clk,"baud_clk: that if 'new_rx_data' is high, indicating data reception, 'baud_clk' should have completed a full cycle within the subsequent 4 clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data |-> ##[1:4] $rose(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-7-baud_clk,baud_clk,baud_clk: that the signal 'baud_clk' toggles every 16 clock cycles when 'baud_freq' is set to `D_BAUD_FREQ` and 'baud_limit' is set to `D_BAUD_LIMIT`.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_freq == `D_BAUD_FREQ && baud_limit == `D_BAUD_LIMIT) |-> (##16 baud_clk != $past(baud_clk, 16))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-12-baud_clk,baud_clk,"baud_clk: that when 'ser_in' experiences an edge transition, the 'baud_clk' should reflect this change in phase alignment within the next full baud cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ser_in) |-> s_nexttime baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-14-baud_clk,baud_clk,"baud_clk: that on a rising edge of 'baud_clk', the 'tx_data' signal exhibits transfer of the data value actively engaged in serial communication.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(baud_clk) |-> tx_busy && $changed(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-15-baud_clk,baud_clk,"baud_clk: that after a change in 'baud_limit', 'baud_clk' adjusts its cycle length within 8 clock cycles while maintaining logical consistency in data transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_limit) |-> ##[1:8] $stable(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-13-baud_clk,baud_clk,baud_clk: that 'baud_clk' remains consistent in its frequency and phase when both 'baud_limit' and 'baud_freq' are held constant.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    ($stable(baud_limit) and $stable(baud_freq)) |-> $stable(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-16-baud_clk,baud_clk,"baud_clk: that following a configuration change of 'baud_freq', the 'baud_clk' signal adapts immediately, but stabilizes its initial frequency modulation by the end of a complete transmission frame defined by 'ser_in'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_freq) |-> ##0 $changed(baud_clk) throughout (!$changed(baud_clk) [*] ##0 (ser_in == 0))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-17-baud_clk,baud_clk,"baud_clk: that when baud_clk is generated with a frequency determined by baud_freq and baud_limit, the data transmission signals ser_in and ser_out must correctly reflect this timing in synchronization with baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    baud_clk |-> $stable(ser_in) && $stable(ser_out)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-18-baud_clk,baud_clk,"baud_clk: that baud_clk remains stable and consistent when there are no changes to baud_freq or baud_limit, ensuring that ce_16 does not cause unintended changes in the baud_clk generation.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $stable(baud_freq) and $stable(baud_limit) |-> $stable(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-20-baud_clk,baud_clk,"baud_clk: that during periods of tx_busy being high, baud_clk continues to generate pulses that allow tx_data to be sent correctly without causing new_tx_data to be flagged when not intended.","```systemverilog
+asrt: assert property (@(posedge clock)
+    tx_busy |-> (baud_clk throughout 1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-21-baud_clk,baud_clk,"baud_clk: that upon initialization, baud_clk begins operating correctly with the specified frequency from baud_freq and baud_limit values, ensuring synchrony with the module's ser_in and ser_out communication paths.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ##1 (baud_clk == baud_freq && baud_clk != $isunknown(baud_clk) && ser_in && ser_out)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-22-baud_freq,baud_freq,"baud_freq: that when baud_freq is set to a default value, it correctly corresponds to the calculated value using the formula 16*baud_rate / gcd(global_clock_freq, 16*baud_rate).","```systemverilog
+asrt: assert property (@(posedge clock)
+    `ifdef DEFAULT_BAUD_RATE  `ifdef GLOBAL_CLOCK_FREQ    (`D_BAUD_FREQ == (16 * `DEFAULT_BAUD_RATE) / gcd(`GLOBAL_CLOCK_FREQ, 16 * `DEFAULT_BAUD_RATE))  `else    0  `endif`else  0`endif
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-23-baud_freq,baud_freq,"baud_freq: that after the reset signal, baud_freq is initialized to a default value and remains consistent with the expected calculation until the next state change.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset |-> (baud_freq == `D_BAUD_FREQ) until (!$rose(state_change_valid))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-19-baud_clk,baud_clk,"baud_clk: that when reset is asserted, baud_clk is deactivated, and upon deassertion of reset, baud_clk resumes its operation taking into account the current values of baud_freq and baud_limit.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (reset && baud_clk) |-> !baud_clk && (!reset && ($isunknown(some_declared_counter) || (some_declared_counter < baud_limit))) |-> ##1 baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-24-baud_freq,baud_freq,"baud_freq: that if baud_freq is modified externally, it will reset to the calculated default value of 16*baud_rate / gcd(global_clock_freq, 16*baud_rate) immediately after a reset.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_freq) |-> (baud_freq == `D_BAUD_FREQ)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-25-baud_freq,baud_freq,"baud_freq: that during normal operation without reset, baud_freq remains stable and correctly outputs the value following the calculation rules specified.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset |-> always $stable(baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-26-baud_freq,baud_freq,"baud_freq: that when baud_freq achieves a specific threshold, baud_clk toggles in accordance with the expected baud_rate settings derived from baud_freq.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_freq == 'h200) |-> $changed(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-27-baud_freq,baud_freq,"baud_freq: that when 'baud_freq' is within a range determined by the gcd algorithm calculation, on the next clock cycle, 'baud_freq' should stay consistent with the calculated baud rate divided by the greatest common divisor of 'global_clock_freq' and '16*baud_rate'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    baud_freq |-> ##1 (baud_freq == (uart_calculated_baud_rate_decl / gcd(uart_global_clock_freq_decl, 16 * uart_baud_rate_decl))) and $isunknown(uart_calculated_baud_rate_decl) == 0 and $isunknown(uart_global_clock_freq_decl) == 0 and $isunknown(uart_baud_rate_decl) == 0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-29-baud_freq,baud_freq,"baud_freq: that when 'ce_16' is active, the frequency represented by 'baud_freq' should accurately reflect the current clock division calculations according to the formula involving gcd(global_clock_freq, 16*baud_rate).","```systemverilog
+asrt: assert property (@(posedge clock)
+    ce_16 |-> (baud_freq == expected_baud_freq_value)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-28-baud_freq,baud_freq,"baud_freq: that after the 'reset' signal is deasserted, 'baud_freq' must be initialized correctly based on the calculation '16*baud_rate / gcd(global_clock_freq, 16*baud_rate)' before 'ce_16' becomes active.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (reset == 0) |-> (baud_freq == (16 * 9600 / gcd(50000000, 16 * 9600))) until ($isunknown(ce_16) || (ce_16 == 1))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-30-baud_freq,baud_freq,"baud_freq: that when 'baud_freq' is used in conjunction with 'baud_limit', the signal values should align such that 'baud_limit' equals 'global_clock_freq / gcd(global_clock_freq, 16*baud_rate) - baud_freq', maintaining the consistency of their derived relationship.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ('bx == ($isunknown(local_global_clock_freq) || $isunknown(local_baud_rate)) ? 'bx : ((local_global_clock_freq / gcd(local_global_clock_freq, 16*local_baud_rate)) - local_baud_freq))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-31-baud_freq,baud_freq,"baud_freq: that when baud_freq is calculated as per the specified formula, it remains constant as long as the inputs 'global_clock_freq' and 'baud_rate' remain unchanged.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ($stable($past(1'b0, 1)) && $stable($past(1'b0, 1))) |-> $stable(baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-36-baud_limit,baud_limit,"baud_limit: that when baud_limit is set to a value above 256, baud_clk should be enabled in the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    baud_limit > 16'd256 |-> ##1 baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-32-baud_freq,baud_freq,ce_16: that ce_16 becomes active every time baud_freq matches the calculated frequency based on the clock and baud settings.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    baud_freq == (16 * `D_BAUD_FREQ) |-> $isunknown(`ce_16) == 0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-37-baud_limit,baud_limit,"baud_limit: that if baud_limit is between 0 and 255, baud_clk should remain disabled during this cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit >= 0 && baud_limit <= 255) |-> !baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-33-baud_freq,baud_freq,"baud_freq: that in scenarios where 'global_clock_freq' divides evenly into '16*baud_rate', baud_freq should equal 1 and remain stable unless there are changes in the frequency settings.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (global_clock_freq_defined_u && baud_rate_defined_u && global_clock_freq_u % (16 * baud_rate_u) == 0 && baud_freq == 1) |-> always $stable(baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-35-baud_freq,baud_freq,baud_freq: that any change in 'global_clock_freq' results in a corresponding adjustment in baud_freq within the subsequent clock cycle.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(global_clock_freq_wire) && global_clock_freq_wire !== 1'bx && global_clock_freq_wire !== 1'bz |-> ##1 $changed(baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-34-baud_freq,baud_freq,"baud_freq: that after a reset event, baud_freq is recalculated and updated correctly based on the inputs provided, particularly focusing on the gcd calculation's impact on the baud frequency.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset ##1 !$stable(baud_freq) |-> (baud_freq == (16 * DESIRED_BAUD_RATE) / gcd(GLOBAL_CLOCK_FREQ, 16 * DESIRED_BAUD_RATE))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-38-baud_limit,baud_limit,"baud_limit: that after a change in baud_limit, baud_clk should reflect this change within two clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_limit) |-> ##[1:2] $changed(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-40-baud_limit,baud_limit,"baud_limit: that when baud_limit is modified during active data transmission indicated by tx_busy being high, baud_clk should not fluctuate unexpectedly and maintain an accurate baud rate.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_busy && $changed(baud_limit)) |-> $stable(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-39-baud_limit,baud_limit,"baud_limit: that when baud_limit reaches a maximum threshold of 65535, subsequent cycles ensure baud_clk maintains a specific frequency derived from this maximum limit.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit == 16'hFFFF) |-> (##1 (baud_clk == $past(baud_clk)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-43-baud_limit,baud_limit,"baud_limit: that when baud_limit changes, the new_rx_data should only be flagged true if rx_data remains consistent within the expected timeframe defined by baud_freq.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_limit) |-> $stable(rx_data) ##[0:$] new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-11-baud_clk,baud_clk,"baud_clk: that the 'baud_clk' signal accurately generates a clock enable at the 'ce_16' port, evidenced by consecutive toggling every 16 clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b1[*80] |-> (baud_clk ##15 !baud_clk)[*5]
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-42-baud_limit,baud_limit,"baud_limit: that if baud_limit is provided a value within a specified operational range, the uart_top module correctly limits data transmission speed without data loss, observable through ser_out.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit >= 'd9600 && baud_limit <= 'd115200 && new_tx_data) |-> (ser_out == 'd0 ##1 !tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-41-baud_limit,baud_limit,"baud_limit: that when baud_limit is set to a specific value, the baud_clk should toggle at a rate dictated by the baud_freq.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit == 16'hSPECIFIC_VALUE) |-> ($fell(baud_clk) ##1 $rose(baud_clk))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-44-baud_limit,baud_limit,"baud_limit: that if baud_limit is altered while tx_busy is high, the transmission process is halted and restarted correctly, ensuring tx_data integrity.","```systemverilog
+asrt: assert property (@(posedge clock)
+    tx_busy |-> $changed(baud_limit) |-> $stable(baud_limit) ##1 (!tx_busy ##[1:$] tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-45-baud_limit,baud_limit,"baud_limit: that baud_limit operates within assigned default parameters when reset is triggered, confirmed through observing unchanged behavior in ser_in and ser_out.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ($stable(baud_limit) && $stable(ser_in) && $stable(ser_out))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-48-baud_limit,baud_limit,"baud_limit: that when baud_limit is set to a specific value, it remains constant unless explicitly changed by subsequent operations.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $stable(baud_limit)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-49-baud_limit,baud_limit,"baud_limit: that if baud_limit is within the range of 1000 to 1200 inclusive, baud_clk should toggle at least once within the next cycle, ensuring the baud rate configuration is active.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit >= 16'd1000 && baud_limit <= 16'd1200) |-> ##1 $changed(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-50-baud_limit,baud_limit,"baud_limit: that after reset, the value of baud_limit is set to its default configuration `D_BAUD_LIMIT` and remains within system parameters unless otherwise specified.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ##1 baud_limit == `D_BAUD_LIMIT
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-51-baud_limit,baud_limit,"baud_limit: that when baud_limit equals `D_BAUD_LIMIT`, the signal new_tx_data should only be asserted if tx_data is not currently busy, ensuring synchronization and proper data flow.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit == `D_BAUD_LIMIT) |-> (!tx_busy |-> (new_tx_data == 1'b0))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-47-baud_limit,baud_limit,"baud_limit: that at every transition of the baud_clk, data flow indicated by tx_data and rx_data is appropriately conditioned by baud_limit, with new_tx_data and new_rx_data flags aligning correctly to these changes.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(baud_clk) |-> ##1 ((new_tx_data == 1'b1) && (tx_data == baud_limit)) && ##2 ((new_rx_data == 1'b1) && (rx_data == baud_limit))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-53-baud_limit,baud_limit,"baud_limit: that modifications to baud_limit should cause a corresponding reaction in baud_clk within two cycles, verifying the correct timing adjustments are applied to baud configurations.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_limit) |-> ##[0:1] $changed(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-54-baud_limit,baud_limit,baud_limit: that the system should prevent baud_limit changes during active data transmission (indicated by tx_busy being high) to avoid transmission interruptions or data corruption.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_busy |-> (tx_busy throughout $stable(baud_limit)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-46-baud_limit,baud_limit,"baud_limit: that when baud_limit is assigned any value, the counter_assignment within uart_top adheres to the changes, observable through indirect dependencies and expected system performance.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_limit) |-> ##[1:$] (counter_declared !== 1'bx && ce_16_declared !== 1'bx && (ce_16_declared == ((counter_declared >= baud_limit) ? 1'b1 : 1'b0)) && (ce_16_declared === 1'b0 || ce_16_declared === 1'b1))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-52-baud_limit,baud_limit,"baud_limit: that if baud_limit is greater than a specific threshold (e.g., 1500), tx_busy remains high until baud_limit configuration completes a full cycle before being allowed to change to ensure data integrity.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit > 1500) |-> (tx_busy until $rose(tx_complete) ##1 !tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-55-ce_16,ce_16,"ce_16: that when ce_16 goes high, the baud_clk must also become high within the same clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ce_16 |-> (ce_16 !== 1'bx && baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-56-ce_16,ce_16,"ce_16: that if ce_16 remains high for two consecutive cycles, then the new_tx_data status should be checked for any updates within three cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ce_16) |-> ##[0:3] $rose(new_tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-57-ce_16,ce_16,"ce_16: that when ce_16 is asserted while reset is not asserted, the baud_freq should be updated according to the baud_limit in the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (logic_ce_16 && !reset && $isunknown($past(logic_ce_16)) == 0 && $isunknown($past(logic_counter)) == 0) |-> ##1 (baud_limit ? ($past(logic_counter) - baud_limit == baud_freq) : ($past(logic_counter) + baud_freq == baud_freq))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-59-ce_16,ce_16,ce_16: that ce_16 is synchronized with the clock signal such that any transition on ce_16 should cause a corresponding change in baud_clk state in the same clock cycle.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_clk) or 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-58-ce_16,ce_16,"ce_16: that if ce_16 is deasserted, the uart_rx should not register new_rx_data until ce_16 is asserted again.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !ce_16 |-> !new_rx_data until ce_16
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-60-ce_16,ce_16,"ce_16: that once ce_16 is asserted, the signal new_rx_data must reflect any new serial input within the next four cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $past(ce_16_wire, 1, ce_16_valid_wire) |-> ##[1:4] new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-61-ce_16,ce_16,"ce_16: that when ce_16 is asserted, baud_clk must also be asserted in the same cycle, ensuring synchronization between clock enable and baud clock signal.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b0 |-> baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-62-ce_16,ce_16,"ce_16: that if ce_16 is deasserted, the 'new_rx_data' signal should not indicate new data reception in the following cycle, verifying correct operation during inactive clock enable.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $past(!ce_16_wire_exists, 1, 1'b1) |-> ##1 !new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-63-ce_16,ce_16,"ce_16: that when ce_16 transitions from low to high, the internal data flow starting from 'ser_in' and leading to 'rx_data' is correctly initiated in the uart_rx module within the subsequent cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ce_16) |-> ($isunknown(ce_16) || $isunknown(rx_busy) || $isunknown(in_sync) ? 1'b0 : (rx_busy ##1 (in_sync ##[1:$] (ser_in ##1 rx_data))))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-66-ce_16,ce_16,"ce_16: that when ce_16 is asserted, the output baud_clk must also be asserted within the same clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b0 |-> baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-64-ce_16,ce_16,"ce_16: that if ce_16 is asserted continuously for five consecutive clock cycles, 'baud_clk' should maintain its assertion throughout, testing sustained clock enable conditions.","```systemverilog
+asrt: assert property (@(posedge clock)
+    unknown_sequence[*5] |-> (baud_clk throughout unknown_sequence)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-65-ce_16,ce_16,"ce_16: that after the system reset signal is deasserted, 'ce_16' becomes active within three clock cycles across all modules making use of it, ensuring correct initialization post-reset.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset |-> ##[1:3] $past($isunknown(ce_16) ? 0 : '0, 1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-67-ce_16,ce_16,"ce_16: that if ce_16 remains deasserted for two consecutive clock cycles, then baud_clk must remain deasserted for those cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (ce_16_int_wire === 1'b0 && $past(ce_16_int_wire, 1) === 1'b0) |-> (!baud_clk && $past(baud_clk, 1) === 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-68-ce_16,ce_16,"ce_16: that upon reset, ce_16 must become deasserted within the next three clock cycles if it was previously asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset && $past(ce_16, 1) |-> ##[0:3] !$isunknown(ce_16) && !($past(ce_16))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-71-ce_16,ce_16,"ce_16: that if ce_16 is asserted and baud_limit changes to half its maximum value, baud_clk should follow the ce_16 state within two clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ('ce_16' && $changed(baud_limit) && (baud_limit == (16'hFFFF >> 1))) |-> ##[0:2] (baud_clk == 'ce_16')
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-69-ce_16,ce_16,"ce_16: that ce_16 is deasserted whenever the input baud_limit reaches its maximum value, and baud_clk reflects this within the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (counter == baud_limit) |-> ##1 (!ce_16 && !baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-70-ce_16,ce_16,"ce_16: that ce_16 toggles its state every time the baud_freq changes, and this change is reflected in the baud_clk signal within the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(baud_freq) |-> ##1 (baud_clk == 'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-72-ce_16,ce_16,"ce_16: that whenever ce_16 is deasserted, the uart_rx module does not generate new_rx_data in the subsequent three clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !$isunknown(ce_16) && (!$isunknown(new_rx_data) && (!ce_16 |-> ##[1:3] !$isunknown(new_rx_data)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-74-int_address,int_address,"int_address: that when reset is active, int_address is set to 0 on the next clock cycle and remains 0 until reset is deasserted, using the signals 'reset' and 'clock'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> s_nexttime (int_address == 0) [*1:$] until (!reset)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-73-ce_16,ce_16,"ce_16: that when ce_16 is asserted, the ser_in signal must be correctly sampled into rx_data within the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b0 |-> ##1 (rx_data == 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-76-int_address,int_address,"int_address: that during the state `MAIN_BIN_LEN` when new_rx_data is received, int_address is immediately updated to addr_param, using the signals 'clock', 'main_sm', 'new_rx_data', and 'int_address'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (main_sm == 'd0) && new_rx_data |-> int_address == addr_param[$bits(addr_param)-1:0]
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-77-int_address,int_address,"int_address: that if int_address is updated based on addr_param, it retains its value in the following cycles unless a reset occurs or a new address update condition is met, using the signals 'int_address', 'reset', and 'clock'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_address != $past(int_address) && !$rose(reset)) |-> ##1 (int_address == $past(int_address)) until ($rose(reset) || int_address != $past(int_address))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-75-int_address,int_address,"int_address: that when main_sm is `MAIN_ADDR` and new_rx_data is true while data_in_hex_range is false, int_address is updated to addr_param in the same clock cycle, using the signals 'clock', 'main_sm', 'new_rx_data', and 'int_address'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (main_sm == 'hMAIN_ADDR && new_rx_data && !data_in_hex_range) |-> (int_address == 'haddr_param)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-78-int_address,int_address,"int_address: that upon entry to the state `MAIN_ADDR` with the conditions new_rx_data true and data_in_hex_range false, int_address is immediately sampled and updated accordingly, using 'main_sm', 'new_rx_data', 'data_in_hex_range', and 'int_address'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (main_sm == 'hMAIN_ADDR) && new_rx_data && !data_in_hex_range |-> $changed(int_address)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-81-int_address,int_address,"int_address: that when reset is active, int_address is set to 0 at the next rising edge of the clock signal 'baud_clk'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> s_nexttime (int_address == 0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-80-int_address,int_address,"int_address: that during consecutive clock cycles, if no new_rx_data is received or main_sm is not in `MAIN_ADDR` or `MAIN_BIN_LEN`, int_address maintains its current value, using the signals 'clock', 'main_sm', 'new_rx_data', and 'int_address'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !new_rx_data || !((main_sm == 'hMAIN_ADDR) || (main_sm == 'hMAIN_BIN_LEN)) |-> $stable(int_address)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-79-int_address,int_address,"int_address: that after returning from a reset condition, int_address remains 0 until a valid address update condition occurs in the state machine, using the signals 'reset', 'main_sm', 'new_rx_data', and 'int_address'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (reset && int_address == 0) |-> (int_address == 0) until (main_sm == 'h""MAIN_ADDR"" && new_rx_data && !data_in_hex_range)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-82-int_address,int_address,"int_address: that if 'main_sm' equals `MAIN_ADDR` and 'new_rx_data' is true, while 'data_in_hex_range' is false, int_address is updated to 'addr_param[AW-1:0]' at the next rising edge of 'baud_clk'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (main_sm == 'hMAIN_ADDR && new_rx_data && !data_in_hex_range) |-> ##1 (int_address == addr_param['hAW-1:0])
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-86-int_address,int_address,"int_address: that when reset is asserted, int_address is immediately reset to 0 in the following clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ##1 (int_address == 0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-83-int_address,int_address,"int_address: that when 'main_sm' equals `MAIN_BIN_LEN` and 'new_rx_data' is true, int_address is updated to 'addr_param[AW-1:0]' in response to a length byte received at the next rising edge of 'baud_clk'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && (main_sm === 'd0)) |-> ##1 (int_address == 'd0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-84-int_address,int_address,"int_address: that during the condition when 'new_rx_data' is true, int_address is only changed if 'main_sm' equals either `MAIN_ADDR` or `MAIN_BIN_LEN` at the next rising edge of 'baud_clk'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data |-> ##1 (((main_sm == `MAIN_ADDR) || (main_sm == `MAIN_BIN_LEN)) |-> $changed(int_address))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-89-int_address,int_address,"int_address: that int_address does not change its value when new_rx_data is not present, irrespective of the main_sm state, provided reset is not asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $past(!new_rx_data && !reset) |-> $stable(int_address)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-87-int_address,int_address,"int_address: that when new_rx_data is received and main_sm equals `MAIN_ADDR`, int_address is updated to match the lower bits of addr_param, given that data_in_hex_range is false.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && `ifdef MAIN_ADDR main_sm == MAIN_ADDR `else 1'b0 `endif && !`ifdef DATA_IN_HEX_RANGE data_in_hex_range `else 1'b0 `endif) |-> (int_address == {`ifdef ADDR_PARAM `ADDR_PARAM{1'b0} `else {1'b0} `endif})
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-85-int_address,int_address,"int_address: that after a reset signal and with 'new_rx_data' true, if 'main_sm' equals `MAIN_ADDR` and 'data_in_hex_range' is false, int_address captures 'addr_param[AW-1:0]' on the subsequent clock cycle of 'baud_clk'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && `ifdef MAIN_SM_DEFINED main_sm == 2'b01 `else 1'b0 `endif && !`ifdef DATA_IN_HEX_RANGE_DEFINED data_in_hex_range `else 1'b0 `endif) |-> ##1 (int_address == `ifdef ADDR_PARAM_DEFINED addr_param[7:0] `else 8'b0 `endif)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-91-int_gnt,int_gnt,"int_gnt: that when int_gnt is asserted, the signal int_req should also be asserted in the subsequent cycle, indicating a request has been granted. Use the signals 'baud_clk', 'int_gnt', and 'int_req'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> ##1 int_req
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-92-int_gnt,int_gnt,"int_gnt: that if int_gnt is deasserted, then in the next three cycles int_rd_data remains stable to ensure no read operations occur. Use the signals 'baud_clk', 'int_gnt', and 'int_rd_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt == 0 |-> $stable(int_rd_data) [*3]
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-88-int_address,int_address,"int_address: that upon receiving new_rx_data and main_sm being `MAIN_BIN_LEN`, int_address gets updated to match the lower bits of addr_param within the same clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data && (main_sm == 'dMAIN_BIN_LEN) |-> (int_address == addr_param[0])
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-90-int_address,int_address,"int_address: that during continuous clock cycles, if reset is deasserted and no new_rx_data is received, int_address retains its previously assigned value.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset |-> (!new_rx_data throughout $stable(int_address))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-93-int_gnt,int_gnt,"int_gnt: that when int_gnt is high, the new_tx_data must transition to active within two cycles, confirming that a grant leads to data transmission preparation. Use the signals 'baud_clk', 'int_gnt', and 'new_tx_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> ##[0:2] $rose(new_tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-95-int_gnt,int_gnt,"int_gnt: that int_gnt and int_write should never be asserted simultaneously as it signifies conflicting operations on shared resources. Use the signals 'baud_clk', 'int_gnt', and 'int_write'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $onehot0({int_gnt, int_write})
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-94-int_gnt,int_gnt,"int_gnt: that int_gnt goes low at least one cycle before tx_busy becomes high, ensuring no new grants are issued while transmission is busy. Use the signals 'baud_clk', 'int_gnt', and 'tx_busy'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !int_gnt |-> ##1 tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-96-int_gnt,int_gnt,"int_gnt: that when the signal 'int_gnt' is asserted, within three clock cycles, 'new_tx_data' should also be asserted, indicating that the grant signal leads to new transmission data output.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> ##[0:2] new_tx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-97-int_gnt,int_gnt,"int_gnt: that if 'int_gnt' is high, the 'int_req' signal must have been previously asserted in at least the last two clock cycles, ensuring the integrity of the request-grant process.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> (int_req || $past(int_req) || $past(int_req, 2))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-98-int_gnt,int_gnt,"int_gnt: that after 'reset' is deasserted, the 'int_gnt' signal should not be asserted for the next five clock cycles, ensuring stable initialization.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset |-> always[1:5] !int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-99-int_gnt,int_gnt,"int_gnt: that once the 'int_gnt' becomes high, 'tx_busy' should transition to low within two clock cycles, showing that there is no transmission conflict when grant is given.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(int_gnt) |-> ##[1:2] $fell(tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-100-int_gnt,int_gnt,"int_gnt: that when 'int_gnt' is low, the 'int_read' and 'int_write' signals must also remain low, indicating no read/write operations occur without a grant.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt == 0 |-> (int_read == 0 && int_write == 0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-102-int_rd_data,int_rd_data,int_rd_data: that the input data int_rd_data maintains a value between 0 and 100 when the reset signal is deasserted. Use the signals 'reset' and 'clock'.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset |-> (int_rd_data >= 0 && int_rd_data <= 100)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-105-int_rd_data,int_rd_data,"int_rd_data: that int_rd_data holds a value between 5 and 55 inclusive, starting from five clock cycles after the reset signal 'reset' becomes deasserted. Use the signals 'reset' and 'clock'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $fell(reset) ##5 (int_rd_data >= 5 && int_rd_data <= 55)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-104-int_rd_data,int_rd_data,"int_rd_data: that the input data signal int_rd_data settles between 30 and 90, inclusive, 2 clock cycles after the reset signal 'reset' is deasserted. Use the signals 'reset' and 'clock'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset |-> ##2 (int_rd_data >= 8'd30 && int_rd_data <= 8'd90)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-101-int_rd_data,int_rd_data,"int_rd_data: that when int_rd_data is within the range of 10 to 50, in the next clock cycle, int_rd_data will continue to be within the range of 10 to 60. Use the signal 'clock' for the clock edge.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_rd_data >= 10 && int_rd_data <= 50) |-> ##1 (int_rd_data >= 10 && int_rd_data <= 60)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-103-int_rd_data,int_rd_data,"int_rd_data: that if int_rd_data is within the range of 20 to 70 inclusive, then in the subsequent cycles, int_rd_data must be within the range of 15 to 80 inclusive. Use the signal 'clock'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_rd_data >= 20 && int_rd_data <= 70 |-> ##1 (int_rd_data >= 15 && int_rd_data <= 80)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-106-int_rd_data,int_rd_data,"int_rd_data: that when int_rd_data is a value of zero, the binary command protocol is being used, as text commands do not send a zero value.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_rd_data == 0) |-> (dummy_bin_read_op_valid || dummy_bin_write_op_valid)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-109-int_rd_data,int_rd_data,"int_rd_data: that when int_gnt is asserted, int_rd_data maintains stability between state transitions, ensuring data_stability is achieved as per the uart_parser module's verification point.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> $stable(int_rd_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-110-int_rd_data,int_rd_data,"int_rd_data: that immediately after a reset signal, int_rd_data outputs valid data in accordance with the internal bus access protocols described.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b1 |-> int_rd_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-111-int_rd_data,int_rd_data,"int_rd_data: that during consecutive baud_clk cycles, int_rd_data remains consistent until a new valid int_address is issued following the uart_parser rules.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_rd_data[*] |-> $stable(int_rd_data) until int_address != $past(int_address)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-108-int_rd_data,int_rd_data,"int_rd_data: that when int_req is asserted, int_rd_data correctly represents the expected data from the internal bus interface, synchronized with baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> ##1 int_rd_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-113-int_rd_data,int_rd_data,"int_rd_data: that while int_req is held high and baud_clk is cycling, int_rd_data does not deviate from expected data ranges within the internal bus access protocol.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> (baud_clk throughout (!$changed(int_rd_data)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-114-int_rd_data,int_rd_data,"int_rd_data: that after a successful data read indicated by int_gnt, int_rd_data maintains its value until the next valid read request comes through int_req.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> $stable(int_rd_data) s_until int_req
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-107-int_rd_data,int_rd_data,"int_rd_data: that int_rd_data transitions from one valid state to another according to the parser state diagram, without entering an illegal command sequence.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ($past(int_rd_data) == `VALID_STATE) && (/* valid transition logic or state check */ 1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-112-int_rd_data,int_rd_data,"int_rd_data: that when int_read is activated, int_rd_data reflects the correct data retrieved from the internal bus within the path length constraints specified from int_rd_data to data_stability.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> $stable(int_rd_data)[*4] ##[*] $isunknown(data_stability) == 1'b0 && $isunknown(data_stability) == 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-115-int_rd_data,int_rd_data,int_rd_data: that synchronization with baud_clk ensures int_rd_data represents accurate data values during transmission through ser_out from the uart_parser module.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    tx_busy |-> $stable(int_rd_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-116-int_rd_data,int_rd_data,"int_rd_data: that when int_rd_data is within the range of 10 to 100, in the next cycle int_rd_data will remain within the range of 5 to 105 when clock edge from 'baud_clk' is observed.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_rd_data >= 10 && int_rd_data <= 100) |-> ##1 (int_rd_data >= 5 && int_rd_data <= 105)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-117-int_rd_data,int_rd_data,int_rd_data: that the input data int_rd_data is valid and stable when reset signal is deasserted and int_gnt is active.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset && $stable(int_rd_data) && int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-119-int_rd_data,int_rd_data,"int_rd_data: that the input data int_rd_data changes its state only when int_req switches from low to high, ensuring no abrupt changes without corresponding request signals.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req && $rose(int_req) |-> $changed(int_rd_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-118-int_rd_data,int_rd_data,"int_rd_data: that if the input data int_rd_data is within the range of 0 to 50 inclusive when int_req is asserted, then in the subsequent cycle int_rd_data remains within the same range.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req && (int_rd_data >= 0 && int_rd_data <= 50) |-> ##1 (int_rd_data >= 0 && int_rd_data <= 50)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-122-int_read,int_read,"int_read: that once the int_read signal is asserted, it remains active for only a single clock cycle per address, ensuring no repeated reads at the same clock edge.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> !$stable(int_read)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-120-int_rd_data,int_rd_data,int_rd_data: that the value of int_rd_data stabilizes to a threshold value of 25 within two clock cycles from when the signal int_gnt switches to active high and int_read is also active.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(int_gnt) && $rose(int_read) |-> ##[1:2] (int_rd_data == 8'd25)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-121-int_read,int_read,"int_read: that when int_read is active, the int_rd_data signal will reflect the correct data value read from the address in the next clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> ##1 (int_rd_data == 'h0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-123-int_read,int_read,"int_read: that when the int_read signal is asserted, it will cause the int_req signal to follow in the subsequent cycles until int_gnt is received.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> int_req until_with int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-124-int_read,int_read,"int_read: that when int_read is deasserted, the int_rd_data is not updated in the next cycle, thereby ensuring it only updates following a valid read operation.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read == 0 |-> ##1 $stable(int_rd_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-126-int_read,int_read,"int_read: that when int_read is asserted, the signal int_rd_data is sampled on the next clock cycle with a stable value that reflects the data read from the specified address.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> ##1 $stable(int_rd_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-125-int_read,int_read,"int_read: that int_read is activated only after int_req is asserted and continues until int_gnt is granted, indicating correct bus access protocol adherence.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> int_read until int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-127-int_read,int_read,int_read: that the int_read signal is valid and asserted only for a single clock cycle per address read operation.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> ##1 !int_read [*0:$]
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-128-int_read,int_read,"int_read: that on the activation of int_read, the int_req signal is asserted to request bus access and remains asserted until the int_gnt signal is received, allowing the bus access to occur.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> (int_req until_with int_gnt)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-129-int_read,int_read,int_read: that the int_rd_data value received following an int_read activation provides accurate data corresponding to the int_address provided during the read operation.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> ##1 (int_rd_data == int_address)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-132-int_read,int_read,"int_read: that int_read is not asserted more than once for the same int_address until a new int_gnt signal has been received, completing the previous operation.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> (!$past(int_read) || $past(int_gnt)) until int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-131-int_read,int_read,"int_read: that if int_read remains deasserted, the int_rd_data signal does not change state and remains stable.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !int_read |-> $stable(int_rd_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-130-int_read,int_read,"int_read: that after the int_read signal is activated, it immediately causes the uart_parser module to execute the data sampling routine for int_rd_data in the subsequent clock cycle without delay.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> ##1 int_rd_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-134-int_read,int_read,"int_read: that after int_req is asserted, int_read should be de-asserted within 2 clock cycles, using 'clock', 'int_req', and 'int_read'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> ##[1:2] !int_read
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-135-int_read,int_read,"int_read: that when int_gnt is positive, int_read should only assert if int_req is asserted, using 'int_gnt', 'int_req', and 'int_read'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> (int_read -> int_req)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-133-int_read,int_read,"int_read: that when int_read is asserted, int_rd_data should provide valid data within 3 clock cycles, using 'clock' and 'int_rd_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> ##[1:3] (!$isunknown(int_rd_data))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-137-int_read,int_read,"int_read: that if int_wr_data is between 10 and 20, inclusive, int_read must remain de-asserted during that cycle, using 'int_wr_data' and 'int_read'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_wr_data >= 8'd10 && int_wr_data <= 8'd20 |-> ##0 !int_read
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-136-int_read,int_read,"int_read: that if int_read is asserted during an active clock cycle, rx_data should reflect new_rx_data values within the same cycle, using 'clock', 'rx_data', and 'new_rx_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read |-> (rx_data == new_rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-139-int_req,int_req,"int_req: that int_req becomes deasserted one clock cycle after int_gnt is asserted. Use the signals 'clock', 'int_req', and 'int_gnt'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_gnt |-> ##1 !int_req)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-138-int_req,int_req,"int_req: that when int_req is asserted, the signal int_gnt should be asserted within 2 clock cycles while the system is not in reset. Use the signals 'clock', 'reset', 'int_gnt', and 'int_req'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_req && !reset) |-> ##[0:2] int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-141-int_req,int_req,"int_req: that int_req is deasserted within one clock cycle after the signal int_write transitions from low to high. Use the signals 'clock', 'int_req', and 'int_write'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(int_write) |-> ##1 ~int_req
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-143-int_req,int_req,"int_req: that when int_req is asserted, the signal int_gnt will also be asserted within two clock cycles of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> ##[1:2] int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-140-int_req,int_req,"int_req: that if int_req is asserted and int_gnt is not granted within 3 clock cycles, int_req remains asserted until int_gnt is granted. Use the signals 'clock', 'int_req', and 'int_gnt'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> (##[0:2] int_gnt || int_req ##1 int_gnt)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-142-int_req,int_req,"int_req: that if int_req is asserted when new_rx_data is high, int_req remains asserted until new_rx_data is low and int_gnt is asserted in the following cycle. Use the signals 'clock', 'int_req', 'new_rx_data', and 'int_gnt'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req && new_rx_data |-> int_req until (new_rx_data == 1'b0 ##1 int_gnt)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-145-int_req,int_req,"int_req: that when rx_data equals 1 and new_rx_data is asserted, int_req should be asserted within the next two cycles of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && (rx_data == 8'h01)) |-> ##[1:2] int_req
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-144-int_req,int_req,"int_req: that if int_req is deasserted, subsequent cycles of baud_clk will not see an assertion of int_gnt until int_req is reasserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> (!$fell(int_req) ##1 !int_gnt[*] ##1 int_req)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-147-int_req,int_req,"int_req: that if int_gnt is deasserted for two continuous cycles of baud_clk after int_req is asserted, int_req should be maintained asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> int_req throughout !int_gnt[*2]
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-148-int_req,int_req,"int_req: that when int_write is active, and tx_data changes, int_req should be deasserted by the next cycle of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_write && $changed(tx_data) |-> ##1 !int_req
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-146-int_req,int_req,"int_req: that during reset (reset asserted), int_req will remain deasserted irrespective of other signals' states.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> (1'b1 throughout !int_req)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-150-int_req,int_req,"int_req: that when int_req is asserted, rx_data should have been received without new_rx_data triggering for at least two consecutive cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> rx_data and !new_rx_data[*2]
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-152-int_req,int_req,"int_req: that when the system is not in reset, the int_req signal is deasserted immediately after int_gnt is asserted for at least one cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt |-> ##1 !int_req
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-149-int_req,int_req,"int_req: that upon the deassertion of load by int_read, int_req should assert within three cycles if int_rd_data is valid.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_read ##0 !$int_read |-> ##[1:3] (int_req && (!($isunknown(dummy_int_rd_data_valid) || dummy_int_rd_data_valid)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-153-int_req,int_req,"int_req: that if int_req is high, it will be followed by int_gnt being asserted within the next two clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> ##[1:2] int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-155-int_req,int_req,int_req: that int_req is only asserted when int_wr_data is valid and int_write is high in the same cycle.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    `ifdef int_req int_req `else 1'b0 `endif |-> (int_wr_data !== 8'hXX && int_write)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-156-int_req,int_req,int_req: that the assertion of int_req triggers int_gnt within one cycle unless reset is active.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req |-> ##1 (!reset && int_gnt)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-151-int_req,int_req,"int_req: that if int_req is asserted while tx_busy is high, then int_req should remain high for at least three cycles after tx_busy becomes low.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_req && tx_busy) |-> (!tx_busy ##1 int_req ##1 int_req ##1 int_req)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-154-int_req,int_req,int_req: that int_req remains deasserted while int_read is active and int_rd_data is valid.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    !int_req until (!int_read && !int_rd_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-157-int_req,int_req,"int_req: that if int_req is deasserted for two consecutive cycles, it should not assert for at least one more subsequent cycle unless int_write becomes high.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_req == 0 ##1 int_req == 0 |-> ##1 (int_req == 0 || int_write)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-159-int_wr_data,int_wr_data,int_wr_data: that the value of int_wr_data correctly reflects rx_data within one cycle when bin_write_op is active and in the state `MAIN_BIN_DATA`.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    bin_write_op && (main_sm == 4'hMAIN_BIN_DATA) |-> ##1 (int_wr_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-158-int_wr_data,int_wr_data,"int_wr_data: that when new_rx_data is asserted and write_op is active, int_wr_data should match data_param on the next clock cycle when in the state `MAIN_ADDR`.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data && (write_op !== 'bx) && ((main_sm) === MAIN_ADDR) |-> ##1 (int_wr_data === data_param)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-160-int_wr_data,int_wr_data,"int_wr_data: that when write_req is deasserted, int_wr_data is reset to 0 in the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !write_req_valid |-> ##1 (int_wr_data == 8'h00)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-161-int_wr_data,int_wr_data,"int_wr_data: that when the new_rx_data and data_in_hex_range are not valid during a write_op, int_wr_data remains unchanged in the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    `ifdef write_op write_op `else 0 `endif && (!new_rx_data && !$isunknown(defined_data_in_hex_range_signal_dummy)) |-> ##1 $stable(int_wr_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-162-int_wr_data,int_wr_data,"int_wr_data: that when the main_sm is not in the state `MAIN_ADDR` or `MAIN_BIN_DATA`, int_wr_data retains its previous value regardless of new_rx_data status.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !(uart2bus_top.main_sm == 5'b00001 || uart2bus_top.main_sm == 5'b00010) |-> $stable(int_wr_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-163-int_wr_data,int_wr_data,"int_wr_data: that after the assertion of int_write coinciding with a valid write_op, int_wr_data aligns with rx_data within 2 clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_write && $past(int_write) |-> ##[0:2] (int_wr_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-167-int_wr_data,int_wr_data,"int_wr_data: if bin_write_op is active and main_sm equals MAIN_BIN_DATA, int_wr_data should echo the value of rx_data when new_rx_data is observed.","```systemverilog
+asrt: assert property (@(posedge clock)
+    bin_write_op && (main_sm == 4'hA) && new_rx_data |-> (int_wr_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-166-int_wr_data,int_wr_data,"int_wr_data: that when write_req is asserted and int_write is deasserted, int_wr_data should be assigned the value of data_param on the next clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_write || !($isunknown(write_req_declared) || write_req_declared) || (int_wr_data == $isunknown(data_param_declared) ? 'bx : data_param_declared))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-164-int_wr_data,int_wr_data,"int_wr_data: that int_wr_data mirrors data_param only when new_rx_data is high, write_op is true, and the main_sm is in the state `MAIN_ADDR`.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data && `WRITE_OP && (`MAIN_SM == `MAIN_ADDR) |-> (int_wr_data == `DATA_PARAM)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-165-int_wr_data,int_wr_data,"int_wr_data: that during the active phase of bin_write_op, int_wr_data reflects rx_data while ensuring new_rx_data is also active during the `MAIN_BIN_DATA` state.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (`main_sm` == 'h0) |-> (new_rx_data & (int_wr_data == rx_data))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-168-int_wr_data,int_wr_data,int_wr_data: ensure that int_wr_data is set to 0 whenever both int_write and write_req are deasserted.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    (!(int_write == 1'b0 && $isunknown(write_req))) || (int_wr_data == 8'h00)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-169-int_wr_data,int_wr_data,"int_wr_data: verify that if write_op is true while main_sm is MAIN_ADDR, and new_rx_data is true without data_in_hex_range, int_wr_data should take the value of data_param in the immediate next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && !(data_in_hex_range) && (main_sm == MAIN_ADDR) && write_op) |-> ##1 (int_wr_data == data_param)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-174-int_wr_data,int_wr_data,"int_wr_data: that in the absence of new_rx_data, int_wr_data retains its previous value regardless of other signals.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data == 0 |-> $stable(int_wr_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-172-int_wr_data,int_wr_data,"int_wr_data: that when the write_op signal is high, and main_sm is `MAIN_ADDR` with new_rx_data signal active, int_wr_data is set to the data_param value in the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    `ifdef WRITE_OP_DEFINED  write_op`else  0`endif&&`ifdef MAIN_SM_DEFINED  (main_sm == MAIN_ADDR)`else  0`endif&& new_rx_data |-> ##1 (`ifdef INT_WR_DATA_DEFINED  int_wr_data`else  0`endif== `ifdef DATA_PARAM_DEFINED  data_param`else  0`endif)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-170-int_wr_data,int_wr_data,"int_wr_data: confirm that in scenarios where neither write_op nor bin_write_op are active, int_wr_data remains unchanged in subsequent cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !(undeclared_signal1 || undeclared_signal2) |-> $stable(int_wr_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-177-int_write,int_write,"int_write: that when reset is active, int_write will be held low regardless of other signal states.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> !int_write
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-171-int_wr_data,int_wr_data,"int_wr_data: validate that in binary extension mode, if new_rx_data is detected under the condition of bin_write_op, int_wr_data mirrors rx_data in the same cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && !$isunknown($past(bin_write_op, 1))) |-> (int_wr_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-180-int_write,int_write,"int_write: that when int_gnt and write_req are both high, int_write will be set high, and if int_gnt or write_req changes, int_write will be cleared to 0 in the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_gnt && write_req) |-> (int_write && (($changed(int_gnt) || $changed(write_req)) ##1 |=> !int_write))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-175-int_wr_data,int_wr_data,"int_wr_data: that with write_req being asserted and main_sm in `MAIN_ADDR` state, int_wr_data is updated to the latest data_param value when new_rx_data is high.","```systemverilog
+asrt: assert property (@(posedge clock)
+    write_req && (main_sm == 'MAIN_ADDR) && new_rx_data |-> (int_wr_data == $past(data_param))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-176-int_wr_data,int_wr_data,"int_wr_data: that during the binary extension mode when bin_write_op is active, and main_sm is `MAIN_BIN_DATA`, int_wr_data changes to reflect rx_data with each cycle new_rx_data is active.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b0 |-> always (new_rx_data |-> ##1 $changed(int_wr_data))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-173-int_wr_data,int_wr_data,"int_wr_data: that when the bin_write_op signal is high and main_sm is `MAIN_BIN_DATA` while new_rx_data is active, int_wr_data captures the rx_data value in the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_wr_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-179-int_write,int_write,"int_write: that after a reset, if bin_write_op becomes true and main_sm is MAIN_BIN_DATA and new_rx_data is high, write_req will become 1 and int_write will remain 0 until int_gnt is also high.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (bin_write_op && (main_sm == MAIN_BIN_DATA) && new_rx_data) |-> (write_req == 1 && (int_write[*0:$] ##1 int_gnt))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-178-int_write,int_write,"int_write: that if int_gnt is high and write_req is high, int_write will be set to 1 in the next cycle and write_req will be cleared to 0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt && !$isunknown(write_req) |-> ##1 (int_write && (write_req == 0))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-184-int_write,int_write,"int_write: that when int_gnt is not asserted, regardless of the state of write_req, int_write will be set to 1'b0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !(int_gnt) |-> (int_write == 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-181-int_write,int_write,"int_write: that under conditions where int_gnt is not asserted and write_req is high, int_write remains 0, waiting for int_gnt to be asserted for int_write to activate.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_write & !int_gnt |-> !int_write)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-182-int_write,int_write,"int_write: that during cycles where neither int_gnt is high nor write_req is asserted, int_write will remain low, ensuring that data write operations do not mistakenly occur.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !(~int_gnt && !(`ifdef WRITE_REQ_DEFINED write_req `else 1'b0 `endif)) |-> !int_write
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-189-int_write,int_write,"int_write: that when a reset occurs, int_write is immediately set to 1'b0, ensuring that no write operation is performed during reset.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> int_write == 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-183-int_write,int_write,"int_write: that when int_gnt is asserted and write_req is high, int_write will be set to 1'b1, and write_req will become 1'b0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt && !$isunknown(some_declared_signal) |-> ##1 (int_write && !$isunknown(some_declared_signal))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-185-int_write,int_write,"int_write: that after a reset condition, int_write will remain at 1'b0 unless int_gnt is asserted and write_req is high.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_write == 1'b0 or (int_write == 1'b1 and int_gnt and $isunknown(int_write_req))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-186-int_write,int_write,"int_write: that when int_write becomes 1'b1 due to int_gnt and write_req being high, it remains 1'b1 until the write_req is cleared to 1'b0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(int_write) |-> (int_write until (!write_req) or !$isunknown(write_req))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-188-int_write,int_write,"int_write: that whenever int_gnt is asserted and write_req is high, int_write will be set to 1'b1 in the next cycle and write_req will be deasserted to 1'b0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_gnt && $isunknown(write_req_signal) == 0 && write_req_signal) |-> ##1 (int_write && !$isunknown(write_req_signal))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-190-int_write,int_write,"int_write: that if int_gnt is not asserted, int_write will remain at 1'b0, regardless of the state of write_req, in the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_gnt == 1'b0 |-> ##1 int_write == 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-187-int_write,int_write,"int_write: that if int_write is 1'b0 in the current cycle, it must remain 1'b0 in the next cycle unless triggered by int_gnt being high and write_req being high.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_write == 1'b0 |-> ##1 (int_write === 1'b0 || (int_gnt && $isunknown(int_write)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-191-int_write,int_write,"int_write: that while int_write is high, it remains so until the write_req is cleared or int_gnt is deasserted, ensuring a continuous write state.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_write |-> int_write until (int_gnt == 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-192-int_write,int_write,"int_write: that when ce_16 is toggled without changing int_gnt or write_req, int_write remains unchanged, maintaining its prior state.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (($changed(known_signal1) && $stable({int_gnt, known_signal2})) |-> $stable(int_write))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-197-new_rx_data,new_rx_data,"new_rx_data: that when 'new_rx_data' is set to 1'b1 as a result of valid data being received, it does not transition back to 1'b1 again until the next valid data packet is assembled completely, even if intermediate signals change state.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data |-> !new_rx_data until_with new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-193-new_rx_data,new_rx_data,"new_rx_data: that when the signal 'new_rx_data' is asserted to 1'b1 due to 'rx_busy' being high and 'bit_count' equals 4'h8 with 'ce_1' true, in the next cycle the signal 'rx_data' reflects the content of 'data_buf'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && $isunknown(rx_busy) && $isunknown(bit_count) && $isunknown(ce_1)) |-> ##1 ($isunknown(rx_data) == $isunknown(data_buf))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-194-new_rx_data,new_rx_data,"new_rx_data: that when the system is in reset, the signal 'new_rx_data' is held low (1'b0) and resets properly on the rising edge of 'clock' until reset is deasserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b0 |-> !new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-196-new_rx_data,new_rx_data,new_rx_data: that 'new_rx_data' goes high for exactly one clock cycle after 'rx_data' is updated with new data and 'rx_busy' with 'ce_1' are true while maintaining the correct sequence of operation.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    (rx_data && $isunknown($past(rx_busy, 1'b0)) && $isunknown($past(ce_1, 1'b0))) |-> ##0 (new_rx_data && !$past(new_rx_data, 1'b0))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-199-new_rx_data,new_rx_data,"new_rx_data: that when the system is in reset, 'new_rx_data' will always be 0 regardless of other signal conditions.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> always (!new_rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-195-new_rx_data,new_rx_data,"new_rx_data: that when 'new_rx_data' becomes 1'b1 due to a complete data receive operation (i.e., 'bit_count' reaches 4'h8), it transitions back to 1'b0 if 'rx_busy' goes low in the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data && (bit_count == 4'h8) && (!$isunknown(rx_busy) && rx_busy === 1'b0) |-> ##1 (!$isunknown(rx_busy) && !rx_busy && (new_rx_data == 1'b0))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-203-new_rx_data,new_rx_data,"new_rx_data: ensure that 'new_rx_data' is always low when the system is in reset, affirming that no unintentional data flags occur during reset.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> always (!new_rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-201-new_rx_data,new_rx_data,"new_rx_data: that when 'rx_busy' is low or 'bit_count' is not 8 or 'ce_1' is inactive, 'new_rx_data' will remain 0 in the subsequent cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (!uart_rx.rx_busy || uart_rx.bit_count != 8 || !uart_rx.ce_1) |-> ##1 (new_rx_data == 0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-198-new_rx_data,new_rx_data,"new_rx_data: that when the system is not in reset and 'rx_busy' is high with 'bit_count' equal to 8 and 'ce_1' is active, 'new_rx_data' should be set to 1 in the next clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset && $isunknown(rx_busy) && $isunknown(bit_count) && $isunknown(ce_1) && (bit_count === 4'h8) && ce_1 |-> ##1 new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-200-new_rx_data,new_rx_data,"new_rx_data: that upon exiting the reset state, 'new_rx_data' should transition from 1 to 0 within one clock cycle if the conditions for setting 'new_rx_data' to 1 are not met (i.e., 'rx_busy' is low or 'bit_count' is not 8 or 'ce_1' is inactive).","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset && new_rx_data && (uart2bus_top_correct.rx_busy == 1'b0 || uart2bus_top_correct.bit_count != 4'h8 || !uart2bus_top_correct.ce_1) |-> ##1 !new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-202-new_rx_data,new_rx_data,"new_rx_data: that after 'new_rx_data' is set to 1, it should reset to 0 in the following cycle unless 'rx_busy' is high, 'bit_count' is 8, and 'ce_1' continues to be active.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data |-> ##1 (!(new_rx_data) || ($isunknown(rx_busy) && ($isunknown(bit_count) == 4'h8) && $isunknown(ce_1)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-206-new_rx_data,new_rx_data,"new_rx_data: that whenever 'reset' is activated, 'new_rx_data' must immediately be set to 1'b0 and remain there until 'reset' is de-asserted and conditions for setting it high again are met, irrespective of the 'rx_busy', 'bit_count', and 'ce_1' signals.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> !new_rx_data until !reset
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-204-new_rx_data,new_rx_data,"new_rx_data: that when 'new_rx_data' is set to 1'b1, in the next cycle the signal 'rx_data' should reflect the complete data as parsed, contingent upon the 'rx_busy' signal being active, 'bit_count' equating to 4'h8, and 'ce_1' being high.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data |-> ##1 ($isunknown(ce_1) && $isunknown(rx_data) && $isunknown($sampled(rx_busy, 1'b0)) && $isunknown($sampled(bit_count, 1'b0)) && $isunknown($sampled(valid_data, 1'b0)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-207-new_rx_data,new_rx_data,"new_rx_data: that in the absence of 'rx_busy', or if 'bit_count' is not 4'h8, or when 'ce_1' is low, 'new_rx_data' should remain at 1'b0 across all clock cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !($isunknown(rx_busy) || $isunknown(bit_count == 4'h8) || $isunknown(ce_1)) |-> new_rx_data == 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-208-new_rx_data,new_rx_data,"new_rx_data: that, following a reset, the interaction of 'rx_busy', 'bit_count', and 'ce_1' can set 'new_rx_data' to 1'b1 after the precise conditions are first met post-reset, ensuring precise timed data readiness.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ((uart_rx.rx_busy && (uart_rx.bit_count == 4'h8) && uart_rx.ce_1) |-> new_rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-205-new_rx_data,new_rx_data,"new_rx_data: that if 'new_rx_data' transitions to 1'b1, during subsequent clock cycles, it should revert to 1'b0 unless 'rx_busy' remains active with 'bit_count' at 4'h8 and 'ce_1' remaining true.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data |-> ##1 (!new_rx_data || (1'b0 && (1'b0 == 4'h8) && 1'b0))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-213-new_tx_data,new_tx_data,"new_tx_data: that new_tx_data remains 1'b0 when no specific conditions are met in the current state, ensuring no unintended data transmissions occur.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data == 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-209-new_tx_data,new_tx_data,"new_tx_data: that when tx_end_p is high in the `TX_LO_NIB` state, new_tx_data is set to 1'b1 in the next cycle to initiate transmission of the carriage return character.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ((uart2bus_top.state == uart2bus_top.TX_LO_NIB) && uart2bus_top.tx_end_p) |-> ##1 (uart2bus_top.new_tx_data == 1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-211-new_tx_data,new_tx_data,"new_tx_data: that in the `MAIN_BIN_CMD` state, when new_rx_data is high and rx_data[5:4] equals `BIN_CMD_NOP`, new_tx_data is set to 1'b1 and sends the status byte 8'h5a in the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && rx_data[5:4] == 2'b00) |-> ##1 (new_tx_data && tx_data == 8'h5a)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-210-new_tx_data,new_tx_data,"new_tx_data: that when tx_end_p is high in the `TX_CHAR_CR` state, new_tx_data is set to 1'b1 in the next cycle to initiate transmission of the line feed character.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_end_p && (tx_sm == TX_CHAR_CR)) |-> ##1 (new_tx_data == 1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-212-new_tx_data,new_tx_data,"new_tx_data: that during the `TX_HI_NIB` state, when tx_end_p is high, new_tx_data is set to 1'b1 in the next cycle to transition to the `TX_LO_NIB` state and transmit the next character.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_sm == 'TX_HI_NIB) && tx_end_p |-> ##1 (new_tx_data == 1'b1 && (tx_sm == 'TX_LO_NIB))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-218-new_tx_data,new_tx_data,"new_tx_data: that the assertion of new_tx_data synchronizes with the baud_clk edge, ensuring that the newly available transmission data is processed in accordance with the baud rate-defined timing constraints.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> ##0 baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-214-new_tx_data,new_tx_data,"new_tx_data: that when new_tx_data is asserted with a value of 1'b1, indicating new transmission data is available, the tx_data signal will subsequently be updated with the corresponding character data, either `CHAR_CR` or `CHAR_LF`, in the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    defined(new_tx_data) && (new_tx_data == 1'b1) |-> ##1 ((defined(CHAR_CR) && (tx_data == 8'h0D)) || (defined(CHAR_LF) && (tx_data == 8'h0A)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-216-new_tx_data,new_tx_data,"new_tx_data: that when new_tx_data is deasserted with a value of 1'b0 during the current cycle, it indicates no new data is available for transmission, and the tx_data should hold the previous value unless the tx_end_p condition changes.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_tx_data == 1'b0) |-> $stable(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-215-new_tx_data,new_tx_data,"new_tx_data: that if tx_end_p condition is met, new_tx_data should assert to 1'b1, ensuring that a new transmission cycle is initiated resulting in a transition in tx_sm from `TX_LO_NIB` to `TX_CHAR_CR` or from `TX_CHAR_CR` to `TX_CHAR_LF`.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_sm == 3'b001 || tx_sm == 3'b010) && tx_end_p ##1 (new_tx_data && (tx_sm == 3'b010 || tx_sm == 3'b011))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-219-new_tx_data,new_tx_data,"new_tx_data: that when new_tx_data is asserted (1'b1) due to tx_end_p being true and the state machine transitioning from `TX_LO_NIB to `TX_CHAR_CR, new_tx_data will be deasserted (1'b0) in the subsequent cycle unless another condition for asserting it is met.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_sm_reg == 4'b0000 && tx_end_p_reg) |-> ##1 (new_tx_data == 1'b0 || new_tx_data == 1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-217-new_tx_data,new_tx_data,"new_tx_data: that once new_tx_data is asserted at the same moment that tx_end_p is true, it indicates successful transmission completion, prompting a state transition in the tx_sm state machine and readiness to handle new characters, `CHAR_CR` or `CHAR_LF`.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && tx_end_p |-> (1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-220-new_tx_data,new_tx_data,"new_tx_data: that when tx_end_p is true and the state machine transitions from `TX_CHAR_CR to `TX_CHAR_LF, new_tx_data is asserted (1'b1), and then new_tx_data remains deasserted (1'b0) in the following cycle until the end of another transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_end_p && tx_sm == 8'hXX && $past(tx_sm) == 8'hYY) |-> ##1 (new_tx_data && ##1 (!new_tx_data[*0:$]))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-223-new_tx_data,new_tx_data,"new_tx_data: that during the operation of the uart_parser module, whenever new_tx_data is asserted (1'b1), the data_stability verification point inside the uart_parser will confirm no data corruption occurred during this assertion period.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> (new_tx_data throughout $stable(tx_data))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-221-new_tx_data,new_tx_data,"new_tx_data: that in scenarios where tx_end_p is continuously false, new_tx_data remains deasserted (1'b0) throughout the state machine transitions.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_tx_data !== 1'bx && new_tx_data !== 1'bz) |-> always (!new_tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-224-new_tx_data,new_tx_data,"new_tx_data: that when tx_busy is low (indicating no active transmission), new_tx_data remains deasserted (1'b0) to reflect the idle state of the transmitter.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !tx_busy |-> !new_tx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-222-new_tx_data,new_tx_data,"new_tx_data: that if new_tx_data is asserted (1'b1) in a given cycle, ce_16 is simultaneously asserted, ensuring data transmission alignment with the clock enable signal.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> (ce_16 !== 1'bx) && $isunknown(ce_16)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-225-new_tx_data,new_tx_data,"new_tx_data: that new_tx_data is asserted (1'b1) at least once every transmission cycle when the state machine completes a transmission indicated by tx_end_p being true, ensuring data readiness for the next transmission stage.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_tx_data !== 1'bx && new_tx_data !== 1'bz) |-> s_eventually new_tx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-226-new_tx_data,new_tx_data,"new_tx_data: that when ce_16 is toggled alongside the state transition from `TX_LO_NIB to `TX_CHAR_CR, new_tx_data transitions from deasserted (1'b0) to asserted (1'b1), confirming synchronization with the control signals.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_sm == 8'h0 && ce_16) |-> ##1 (tx_sm == 8'h1 && new_tx_data == 1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-227-rx_data,rx_data,"rx_data: that when rx_data is within the range of characters '0' to '9', 'A' to 'F', or 'a' to 'f', the signal 'data_in_hex_range' will be set to 1'b1 during the next clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (rx_data >= 8'h30 && rx_data <= 8'h39) || (rx_data >= 8'h41 && rx_data <= 8'h46) || (rx_data >= 8'h61 && rx_data <= 8'h66) |-> ##1 ($isunknown(data_in_hex_range) ? 1'b0 : (data_in_hex_range == 1'b1))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-228-rx_data,rx_data,"rx_data: that when rx_data falls outside the range of characters '0' to '9', 'A' to 'F', and 'a' to 'f', the signal 'data_in_hex_range' will be set to 1'b0 during the next clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !(rx_data >= 8'h30 && rx_data <= 8'h39 || rx_data >= 8'h41 && rx_data <= 8'h46 || rx_data >= 8'h61 && rx_data <= 8'h66) |-> ##1 (1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-229-rx_data,rx_data,"rx_data: that if rx_data is between `CHAR_0 and `CHAR_9, in the subsequent cycle, 'data_in_hex_range' continues to be 1'b1, indicating that the data is still in the valid hex digit range.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (rx_data >= 8'h30 && rx_data <= 8'h39) |-> ##1 ($isunknown(rx_data) == 1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-230-rx_data,rx_data,"rx_data: that if there is a reset event (assuming the presence of such a signal), the signal 'data_in_hex_range' will reset to 1'b0, regardless of the rx_data value.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ($isunknown(data_in_hex_range) && data_in_hex_range == 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-231-rx_data,rx_data,"rx_data: that when rx_data is changed to a value of `CHAR_A_UP or higher, but not exceeding `CHAR_F_UP, 'data_in_hex_range' is immediately set to 1'b1, confirming it's within a valid hexadecimal range.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && (rx_data >= 8'h41) && (rx_data <= 8'h46)) |-> (1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-235-rx_data,rx_data,"rx_data: that on a positive clock edge following the assignment of a hex character to rx_data, the cross-module path verifies the correct function of uart_rx in terms of signal flow and assignment completion.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data |-> ##1 (rx_data == {4{rx_data[3:0]}})
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-233-rx_data,rx_data,"rx_data: that within four cycles after the signal rx_data is set to a character within the range 'a' to 'f', the 'data_in_hex_range' should be confirmed as 1'b1.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (rx_data >= 8'h61 && rx_data <= 8'h66) |-> ##[1:4] (!rx_data[7] && !rx_data[6] && !rx_data[5] && !rx_data[4] && !rx_data[3] && !rx_data[2] && !rx_data[1] && !rx_data[0])
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-232-rx_data,rx_data,"rx_data: that a transition of rx_data from a non-hex character to a hex character ('0'-'9', 'A'-'F', 'a'-'f') results in a change in 'data_in_hex_range' to 1'b1 within the same cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ($changed(rx_data) && ((rx_data >= 'h30 && rx_data <= 'h39) || (rx_data >= 'h41 && rx_data <= 'h46) || (rx_data >= 'h61 && rx_data <= 'h66))) |-> (! $isunknown(data_in_hex_range))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-238-rx_data,rx_data,"rx_data: that if rx_data is greater than `CHAR_f_LO`, then in the subsequent cycle, the signal data_in_hex_range should correctly reflect a value of 1'b0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    rx_data > 8'h66 |-> ##1 (1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-237-rx_data,rx_data,"rx_data: that rx_data, when below `CHAR_0`, results in the signal data_in_hex_range being set to 1'b0 in the next cycle, indicating the data is not a valid hexadecimal character.","```systemverilog
+asrt: assert property (@(posedge clock)
+    rx_data < 'h30 |-> ##1 (1'b0 || 1'b1)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-236-rx_data,rx_data,"rx_data: that when rx_data is within the range specified by `CHAR_0 to `CHAR_9`, `CHAR_A_UP to `CHAR_F_UP`, or `CHAR_a_LO to `CHAR_f_LO, the signal data_in_hex_range is set to 1'b1 in the next cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (rx_data >= 8'h30 && rx_data <= 8'h39 || rx_data >= 8'h41 && rx_data <= 8'h46 || rx_data >= 8'h61 && rx_data <= 8'h66) |-> ##1 ($isunknown(rx_data) == 0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-234-rx_data,rx_data,rx_data: that the output of uart_rx remains consistent with the flow path ensuring rx_data is correctly assigned in addr_param[7:0]_assignment and int_wr_data_assignment according to the signal's defined path analysis.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && main_sm == 'MAIN_BIN_ADRL && rx_data == addr_param[7:0]) |-> ##1((write_op && main_sm == 'MAIN_ADDR && new_rx_data && !data_in_hex_range) || (bin_write_op && main_sm == 'MAIN_BIN_DATA && new_rx_data)) |-> ##1(int_wr_data == data_param || int_wr_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-240-rx_data,rx_data,"rx_data: that upon reset, when rx_data is received, it should correctly determine if it falls within the valid hexadecimal range using only the `clock` and `reset` signals.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(rx_data) |-> ((rx_data >= 8'h30 && rx_data <= 8'h39) || (rx_data >= 8'h41 && rx_data <= 8'h46) || (rx_data >= 8'h61 && rx_data <= 8'h66))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-243-rx_data,rx_data,"rx_data: that when rx_data is outside the range of 48 to 57, 65 to 70, and 97 to 102, then data_in_hex_range will be set to 1'b0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (!(rx_data >= 8'd48 && rx_data <= 8'd57) && !(rx_data >= 8'd65 && rx_data <= 8'd70) && !(rx_data >= 8'd97 && rx_data <= 8'd102)) |-> 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-239-rx_data,rx_data,"rx_data: that when rx_data transitions from a non-hexadecimal range to a valid hexadecimal range between sequential clock cycles, the data_in_hex_range signal is updated to 1'b1 on the next clock edge.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (!($past(rx_data) >= 8'h30 && $past(rx_data) <= 8'h39 || $past(rx_data) >= 8'h41 && $past(rx_data) <= 8'h46 || $past(rx_data) >= 8'h61 && $past(rx_data) <= 8'h66) && (($past(rx_data) < 8'h30) || (($past(rx_data) > 8'h39) && ($past(rx_data) < 8'h41)) || (($past(rx_data) > 8'h46) && ($past(rx_data) < 8'h61)) || ($past(rx_data) > 8'h66)) && ((rx_data >= 8'h30 && rx_data <= 8'h39) || (rx_data >= 8'h41 && rx_data <= 8'h46) || (rx_data >= 8'h61 && rx_data <= 8'h66))) |-> ##1 $past(rx_data >= 8'h30 && rx_data <= 8'h39 || rx_data >= 8'h41 && rx_data <= 8'h46 || rx_data >= 8'h61 && rx_data <= 8'h66)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-244-rx_data,rx_data,"rx_data: that upon a positive edge of clock, if rx_data is within the valid hex range, data_in_hex_range should be updated accordingly without being reset-active.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (rx_data inside {8'h00, 8'h01, 8'h02, default: 8'hFF}) |-> (!$rose(reset) && (rx_data inside {8'h00, 8'h01, 8'h02, default: 8'hFF}))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-242-rx_data,rx_data,"rx_data: that if rx_data is within the range of 48 to 57, 65 to 70, or 97 to 102, then data_in_hex_range will be set to 1'b1.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (rx_data >= 8'd48 && rx_data <= 8'd57) || (rx_data >= 8'd65 && rx_data <= 8'd70) || (rx_data >= 8'd97 && rx_data <= 8'd102) |-> $past(rx_data >= 8'd48 && rx_data <= 8'd57 || rx_data >= 8'd65 && rx_data <= 8'd70 || rx_data >= 8'd97 && rx_data <= 8'd102, 1) == 1'b1
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-245-rx_data,rx_data,"rx_data: that if rx_data consistently reads values within the valid hex ranges for three consecutive clock cycles, data_in_hex_range remains consistently 1'b1 within those cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ((rx_data >= 8'h30 && rx_data <= 8'h39) || (rx_data >= 8'h41 && rx_data <= 8'h46) || (rx_data >= 8'h61 && rx_data <= 8'h66))[*3] |-> (rx_data[*3])
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-241-rx_data,rx_data,"rx_data: that when rx_data enters a valid hex range and then transitions out, the signal data_in_hex_range accurately tracks these changes by reverting to 1'b0 in subsequent cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ((rx_data >= 8'h30 && rx_data <= 8'h39) || (rx_data >= 8'h41 && rx_data <= 8'h46) || (rx_data >= 8'h61 && rx_data <= 8'h66)) |-> ##1 !$fell(data_in_hex_range_signal)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-249-ser_in,ser_in,"ser_in: that when ser_in has been received successfully, new_rx_data becomes true on the next clock cycle, indicating a complete byte has been detected. Use 'ce_16' to verify the baud rate condition.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ser_in |-> ##1 new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-246-rx_data,rx_data,"rx_data: that when rx_data fluctuates between a valid hex character and an invalid character every cycle, data_in_hex_range toggles correspondingly between 1'b1 and 1'b0.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(rx_data) |-> ##1 $changed(rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-247-rx_data,rx_data,"rx_data: that immediately after reset is deasserted and new_rx_data is asserted, rx_data begins with a value within the valid hex range, initializing data_in_hex_range to 1'b1.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset && new_rx_data |-> ((rx_data >= 8'h30 && rx_data <= 8'h39) || (rx_data >= 8'h41 && rx_data <= 8'h46) || (rx_data >= 8'h61 && rx_data <= 8'h66))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-251-ser_in,ser_in,"ser_in: that during reset (when 'reset' is active), ser_in does not affect the output 'rx_data' and new_rx_data remains false, confirming the system is in a reset state.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> (!ser_in && rx_data == 8'h0 && !new_rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-248-rx_data,rx_data,"rx_data: that if new_rx_data is asserted and rx_data receives a valid hex character, data_in_hex_range reflects the correct status before any subsequent clock cycle alteration.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && (((rx_data >= 8'h30) && (rx_data <= 8'h39)) || ((rx_data >= 8'h41) && (rx_data <= 8'h46)) || ((rx_data >= 8'h61) && (rx_data <= 8'h66)))) |-> ##1 (rx_data >= 8'h30) && (rx_data <= 8'h39) || (rx_data >= 8'h41) && (rx_data <= 8'h46) || (rx_data >= 8'h61) && (rx_data <= 8'h66)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-253-ser_in,ser_in,ser_in: that ser_in is held stable for at least one clock cycle of 'ce_16' to ensure accurate sampling and avoid glitches in the data capture process.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    $stable(ser_in) [*1:$]
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-255-ser_in,ser_in,"ser_in: that when the reset signal 'reset' is deasserted, the ser_in input begins correctly influencing the new_rx_data output by the next applicable baud clock cycle. Use the signals 'reset', 'ce_16', 'ser_in', and 'new_rx_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset && ser_in |-> ##1 new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-250-ser_in,ser_in,"ser_in: that the signal ser_in is sampled at every 16th clock edge of 'ce_16', ensuring proper synchronization with the incoming baud rate.","```systemverilog
+asrt: assert property (@(posedge clock)
+    always (1'b1) |-> ser_in == $past(ser_in, 16)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-252-ser_in,ser_in,"ser_in: that when ser_in corresponds to a start bit, 'rx_data' starts capturing the subsequent bits and new_rx_data is flagged true when a full byte is captured.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ser_in == 1'b0 |-> ##8 new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-254-ser_in,ser_in,"ser_in: that when ser_in is active during the receipt of serial data, in the next clock cycle, it is correctly processed and reflected on the rx_data output. Use the signals 'clock', 'ser_in', and 'rx_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ser_in |-> ##1 (rx_data == 'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-259-ser_in,ser_in,"ser_in: that when the ser_in signal transitions from low to high, the rx_data should be stable in the subsequent cycle, indicating the data has been successfully captured.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ser_in) |-> ##1 $stable(rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-256-ser_in,ser_in,"ser_in: that if ser_in goes high, it correctly results in a new data byte being loaded into rx_data when 'ce_16' indicates the completion of data frame reception. Use the signals 'ce_16', 'ser_in', and 'rx_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ser_in) |-> ##[*] (1'b1 ##1 rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-260-ser_in,ser_in,"ser_in: that if the ser_in signal is high, within three clock cycles, new_rx_data should be asserted to indicate a new byte of data has been received.","```systemverilog
+asrt: assert property (@(posedge clock)
+    `ifdef ser_in  ser_in`else  1'b0`endif|-> ##[0:3] new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-261-ser_in,ser_in,"ser_in: that when the ser_in begins transmitting, ensuring ce_16 is also active confirms that data is sampled at the correct baud rate multiplied by 16.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ser_in) |-> 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-258-ser_in,ser_in,"ser_in: that when ser_in is stable and ce_16 has completed a reception cycle, a new_rx_data signal is generated to indicate data readiness. Use the signals 'ce_16', 'ser_in', and 'new_rx_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ($stable(ser_in) && $isunknown(ce_16)) |-> ##1 new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-257-ser_in,ser_in,"ser_in: that when ce_16 is asserted 16 times, a complete byte is successfully captured from the serial input ser_in and transferred to rx_data without errors. Use the signals 'ce_16', 'ser_in', and 'rx_data'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_rx_data && (rx_data == $sampled(expected_rx_data)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-264-ser_in,ser_in,"ser_in: that any change in ser_in signal should result in a new_rx_data assertion within the next two cycles, confirming the update cycle of the incoming data to the output.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $changed(ser_in) |-> ##[1:2] new_rx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-263-ser_in,ser_in,"ser_in: that during reset, any transitions in ser_in should have no effect on rx_data or new_rx_data, ensuring the system properly resets without false triggering data capture.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ($changed(ser_in) |-> ##0 ($stable(rx_data) && $stable(new_rx_data)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-267-ser_out,ser_out,"ser_out: that when 'ser_out' transitions from low to high, 'tx_busy' must also assert in the same cycle, using the signal 'baud_clk' to synchronize the timing.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ser_out, ) |-> tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-266-ser_in,ser_in,"ser_in: that when the ser_in transitions to indicate stop bits (usually and traditionally high), rx_data should hold the received byte and new_rx_data should be deasserted afterward, ensuring proper end of data reception protocol.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(ser_in) |-> ##1 ($stable(rx_data) ##1 !new_rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-262-ser_in,ser_in,"ser_in: that if ser_in is held high for more than eight clock cycles with ce_16 active, rx_data should not change, confirming the input is stable before a new data reception process starts.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (ser_in && $isunknown('0) ? 0 : '0)[*9:$] |-> $stable(rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-265-ser_in,ser_in,"ser_in: that when ser_in holds a zero value for a complete cycle with ce_16 active, it signifies a start bit, and data should follow in subsequent cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (1'b0 && ser_in == 0) |-> $stable(ser_in) throughout (1'b0 ##1 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-269-ser_out,ser_out,"ser_out: that when 'ser_out' begins a new transmission, 'new_tx_data' must be available prior to the start of the first cycle, checked using 'baud_clk'.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> ser_out ##0 baud_clk
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-268-ser_out,ser_out,"ser_out: that the data on 'ser_out' must change only when 'ce_16' is high, ensuring data synchronization with the internal clock.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b0 |-> $stable(ser_out)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-271-ser_out,ser_out,"ser_out: that if 'ser_out' remains high for more than five 'baud_clk' cycles, 'int_req' must be set to assert that an interruption occurred.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ser_out && $stable(ser_out)[*5:$] |-> int_req
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-272-ser_out,ser_out,"ser_out: that when 'ser_out' is asserted, the subsequent cycle 'ser_out' remains asserted until 'tx_busy' is deasserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ser_out |-> ser_out throughout (!tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-270-ser_out,ser_out,"ser_out: that the 'ser_out' signal must return to low within two clock cycles when transmission is completed, indicated by the deassertion of 'tx_busy', using 'baud_clk' for clocking.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !tx_busy |-> ##[1:2] !ser_out
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-273-ser_out,ser_out,ser_out: that 'ser_out' correctly reflects 'tx_data' when 'new_tx_data' is asserted and 'tx_busy' is low on the next 'baud_clk' rising edge.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ##1 (ser_out == tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-274-ser_out,ser_out,ser_out: that 'ser_out' transitions from low to high one clock cycle after 'new_rx_data' is valid and 'ser_in' is high.,"```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data && ser_in |-> ##1 $rose(ser_out)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-275-ser_out,ser_out,"ser_out: that if 'int_write' and 'int_req' are both high, 'ser_out' will remain low until 'int_gnt' is received and evaluated on a 'baud_clk' cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (int_write && int_req) |-> (ser_out == 1'b0) until_with int_gnt
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-279-ser_out,ser_out,"ser_out: that when ser_out is assigned a high value, in the subsequent cycle, it maintains a high state until the int_write signal is asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ser_out |-> ##1 ser_out until int_write
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-277-ser_out,ser_out,"ser_out: that if 'int_rd_data' becomes valid, 'ser_out' must reflect correct bus data by the next 'baud_clk' edge with 'ce_16' enabled.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_rd_data |-> ##1 ($isunknown(int_rd_data) && (ser_out == int_rd_data))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-280-ser_out,ser_out,"ser_out: that after the reset signal is deasserted, ser_out transitions from low to high within three clock cycles if int_req is asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset && int_req |-> ##[0:2] $rose(ser_out)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-281-ser_out,ser_out,"ser_out: that ser_out outputs a valid high signal when new_tx_data is received, provided tx_busy is low.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ser_out
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-276-ser_out,ser_out,"ser_out: that during reset, 'ser_out' is continuously low and becomes valid 3 cycles after 'reset' is released provided 'int_read' is high.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |=> ((ser_out == 1'b0) throughout ((reset ##1 (int_read ##2 1'b1)) |-> ##3 ser_out))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-278-ser_out,ser_out,"ser_out: that under an active condition of 'baud_limit', 'ser_out' toggles corresponding to 'int_wr_data' changes on 'baud_clk' edges if 'int_write' is asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    int_write && baud_limit |-> (baud_clk && $changed(int_wr_data) |-> $changed(ser_out))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-282-ser_out,ser_out,"ser_out: that ser_out remains at its current state when the baud_clk signal is toggling, and no new_rx_data is available.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_clk == $rose(baud_clk) && !new_rx_data) |-> $stable(ser_out)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-284-tx_busy,tx_busy,"tx_busy: that when the system is in reset, the signal tx_busy should be 1'b0 on the next clock edge when reset is deasserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset ##1 !reset |-> ##1 tx_busy == 1'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-283-ser_out,ser_out,"ser_out: that whenever int_gnt is asserted, ser_out switches to high within the next two clock cycles, ensuring reliable data transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    `ifdef int_gnt_defined (int_gnt |-> ##[1:2] ser_out) `else (1'b0 |-> ##[1:2] ser_out) `endif
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-285-tx_busy,tx_busy,"tx_busy: that when new_tx_data is asserted and tx_busy is deasserted, the signal tx_busy should be set to 1'b1 on the next clock edge.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ##1 tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-287-tx_busy,tx_busy,"tx_busy: that when the reset is deasserted and no new_tx_data is present, the signal tx_busy should remain at its current state on the subsequent clock cycle.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset && !new_tx_data |-> ##1 $stable(tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-289-tx_busy,tx_busy,"tx_busy: that if 'reset' is high, 'tx_busy' is immediately set to 0, ensuring that the transmission process is halted as per the reset condition.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> tx_busy == 0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-290-tx_busy,tx_busy,"tx_busy: that when 'tx_busy' is 0 and 'new_tx_data' is high, 'tx_busy' will be set to 1 in the next cycle, indicating the start of a new transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ##1 tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-286-tx_busy,tx_busy,"tx_busy: that if tx_busy is asserted and bit_count reaches 4'h9 and ce_1 is asserted, the signal tx_busy should transition to 1'b0 on the following clock edge.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_busy && (!($isunknown($past(bit_count, 1))) && ($past(bit_count, 1) == 4'h9)) && !($isunknown($past(ce_1, 1)) && $past(ce_1, 1))) |-> ##1 !tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-292-tx_busy,tx_busy,"tx_busy: that 'tx_busy' remains unchanged in the absence of a reset or the absence of conditions that trigger its toggling, ensuring stability during standard operations.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $past(reset) || (tx_busy == $past(tx_busy))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-293-tx_busy,tx_busy,"tx_busy: that when the system is initialized with 'reset' and 'new_tx_data' is low, 'tx_busy' remains 0 to verify that no unintended transmission processes are initiated.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (reset && !new_tx_data) |-> tx_busy == 0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-294-tx_busy,tx_busy,"tx_busy: that when reset is asserted, tx_busy becomes 1'b0 on the next rising edge of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ##1 !tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-288-tx_busy,tx_busy,"tx_busy: that when bit_count is not equal to 4'h9, regardless of the state of ce_1, the signal tx_busy should continue to reflect its current state unless new_tx_data is asserted without tx_busy being active.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ((defined(bit_count) ? bit_count : 4'bx) !== 4'h9 && !(new_tx_data && !tx_busy)) |-> $stable(tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-295-tx_busy,tx_busy,"tx_busy: that when tx_busy is 1'b0 and new_tx_data is asserted, tx_busy becomes 1'b1 on the next rising edge of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ##1 tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-291-tx_busy,tx_busy,"tx_busy: that if 'tx_busy' is 1 and 'bit_count' reaches 9 while 'ce_1' is high, 'tx_busy' transitions to 0 in the subsequent cycle, marking the completion of the current transmission process.","```systemverilog
+asrt: assert property (@(posedge clock)
+    tx_busy && $isunknown(bit_count) && bit_count == 9 && $isunknown(ce_1) && |-> ##1 !tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-298-tx_busy,tx_busy,"tx_busy: that on asserting reset, regardless of other conditions, tx_busy is immediately driven to 1'b0 on the next edge of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset |-> ##1 !tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-296-tx_busy,tx_busy,"tx_busy: that if tx_busy is 1'b1 and bit_count reaches 4'h9 while ce_1 is asserted, tx_busy transitions to 1'b0 on the next rising edge of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_busy && (uart_tx.bit_count == 4'h9) && uart_tx.ce_1) |-> ##1 !tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-299-tx_data,tx_data,"tx_data: that when tx_data is initially set to a known value, in the subsequent cycle, tx_data reflects the same value as long as tx_busy remains deasserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !tx_busy && $stable(tx_data) |-> ##1 $stable(tx_data) until tx_busy
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-301-tx_data,tx_data,"tx_data: that tx_data updates within 2 cycles after new_tx_data is asserted, confirming new data is ready for transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> ##[0:2] $changed(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-303-tx_data,tx_data,"tx_data: that tx_data maintains its current value during periods when tx_busy is asserted, preventing data corruption during active transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    tx_busy |-> $stable(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-300-tx_data,tx_data,"tx_data: that the tx_data value correctly transforms to its intended state 4 clock cycles after baud_clk goes high, ensuring baud rate stability.","```systemverilog
+asrt: assert property (@(posedge clock)
+    1'b1 |-> ##4 (tx_data == expected_state_default)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-297-tx_busy,tx_busy,"tx_busy: that tx_busy retains its value of 1'b1 until bit_count reaches 4'h9 and ce_1 is asserted, unless reset is asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (tx_busy && !reset) |-> (tx_busy until (($isunknown(bit_count) ? 1'b0 : (bit_count == 4'h9)) && ($isunknown(ce_1) ? 1'b0 : ce_1)) || reset)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-304-tx_data,tx_data,"tx_data: that tx_data remains unchanged if rx_data and new_rx_data do not assert any change signal, confirming independence of tx_data from receive path signals.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (!$changed(rx_data) && !$changed(new_rx_data)) |-> $stable(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-302-tx_data,tx_data,"tx_data: that when reset is deasserted, tx_data initializes to zero and remains stable until new_tx_data is asserted.","```systemverilog
+asrt: assert property (@(posedge clock)
+    reset == 0 |-> (tx_data == 0 && !$rose(new_tx_data) && $stable(tx_data))[*0:$] ##1 $rose(new_tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-305-tx_data,tx_data,"tx_data: that when int_write transitions high, tx_data captures the value of int_wr_data appropriately within 3 baud_clk cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(int_write) |-> ##[0:3] (tx_data == int_wr_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-308-tx_data,tx_data,"tx_data: that during periods where new_tx_data is continuously asserted, tx_data must continuously transmit the data until tx_busy transitions from low to high, indicating that transmission can initiate.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> (tx_data throughout (!tx_busy ##1 tx_busy))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-307-tx_data,tx_data,"tx_data: that when new_tx_data is asserted in the presence of a non-busy tx_busy signal, tx_data will transmit the expected data value synchronized with the baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ##1 (baud_clk && tx_data == 'expected_value')
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-310-tx_data,tx_data,"tx_data: that when the tx_busy signal transitions from high to low, indicating readiness, the next tx_data will be available corresponding to the asserted new_tx_data under the control of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $fell(tx_busy) |-> ##1 baud_clk && new_tx_data
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-311-tx_data,tx_data,"tx_data: that tx_data transmits in alignment with the baud_limit when new_tx_data is toggled, and this behavior persists in successive transmissions whenever the baud_clk allows data transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> baud_clk ##1 (tx_data && baud_limit)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-306-tx_data,tx_data,"tx_data: that after baud_limit reaches a predefined threshold, tx_data reflects an accurate byte based on previous int_rd_data and int_address within 2 baud_clk cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_limit >= 5'b10100) |-> ((int_rd_data == 8'hFF && int_address == 32'h1A2B3C4D) ##1 tx_data == 8'h0F)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-312-tx_data,tx_data,"tx_data: that when tx_busy is deasserted, tx_data begins transmission as soon as new_tx_data becomes active, ensuring the internal state correctly reflects data initiation.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !tx_busy && new_tx_data |-> tx_data != 8'b0
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-309-tx_data,tx_data,"tx_data: that immediately following four clock cycles after reset is deasserted, tx_data will correctly output the intended data if new_tx_data is asserted and tx_busy is low, ensuring proper initialization.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !reset ##4 (new_tx_data && !tx_busy) |-> (tx_data == $past(tx_data))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-315-tx_data,tx_data,"tx_data: that when new_tx_data is asserted, tx_data should reflect the correct output within two cycles, ensuring it correlates with the input data rx_data during the presence of baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data |-> ##[0:1] (baud_clk && tx_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-313-tx_data,tx_data,"tx_data: that upon each baud_clk pulse, tx_data accurately represents the value present in rx_data under conditions where new_tx_data is asserted and tx_busy permits transmission.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_tx_data && !tx_busy |-> ##1 (tx_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-316-tx_data,tx_data,"tx_data: that after a reset cycle, with reset deasserted and tx_busy low, tx_data should correctly capture the value of rx_data within five clock cycles driven by baud_clk.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (reset == 0 && tx_busy == 0) |-> ##1 ##[1:5] (tx_data == rx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-317-tx_data,tx_data,"tx_data: that if tx_busy becomes high, tx_data should hold its current value until tx_busy is deasserted, ensuring no premature data change occurs before the transaction completes.","```systemverilog
+asrt: assert property (@(posedge clock)
+    tx_busy |-> (tx_data throughout tx_busy)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-318-tx_data,tx_data,"tx_data: that when new_rx_data is high and the clock cycles at baud_clk frequency, tx_data should remain stable within the current cycle unless new data is loaded.","```systemverilog
+asrt: assert property (@(posedge clock)
+    new_rx_data && baud_clk |-> $stable(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-314-tx_data,tx_data,"tx_data: that upon asserting new_tx_data while resetting indicates readiness by maintaining tx_busy low, tx_data outputs correctly in accordance with baud_freq restrictions.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (new_tx_data && !tx_busy) |-> (##[0:$] tx_data == `EXPECTED_TX_DATA)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-321-tx_data,tx_data,"tx_data: that if rx_data changes when tx_busy is low and new_tx_data is not asserted, tx_data should ignore such changes, ensuring its stability until the next transfer initiation.","```systemverilog
+asrt: assert property (@(posedge clock)
+    ($changed(rx_data) && !tx_busy && !new_tx_data) |-> $stable(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-320-tx_data,tx_data,"tx_data: that in the absence of tx_busy, subsequent assertion of new_tx_data should update tx_data with the most recent rx_data within two baud_clk cycles.","```systemverilog
+asrt: assert property (@(posedge clock)
+    !tx_busy && new_tx_data |-> ##[1:2] (tx_data == $past(rx_data, 1) || tx_data == $past(rx_data, 2))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-322-tx_data,tx_data,"tx_data: that when baud_clk is active and baud_freq is set correctly, tx_data transmission events should align with expected timing derived from these configurations, validating proper module synchronization.","```systemverilog
+asrt: assert property (@(posedge clock)
+    (baud_clk && (baud_freq == `D_BAUD_FREQ)) |-> $rose(new_tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-319-tx_data,tx_data,"tx_data: that when baud_limit is configured to a specific value, tx_data transitions should occur according to the adjusted baud rate, confirming the relationship between baud_limit and data transmission timing.","```systemverilog
+asrt: assert property (@(posedge clock)
+    $rose(tx_data) |-> ##[0:$] $rose(tx_data)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
