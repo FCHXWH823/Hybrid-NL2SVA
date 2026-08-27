@@ -33,7 +33,10 @@ from openai import OpenAI
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 NL_PLANS_PATH = os.path.join(_HERE, "nl_plans_uart.txt")
-DEFAULT_UART_RTL_DIR = "<path-to-AssertLLM-clone>/rtl/uart"  # EDIT via --uart-rtl-dir
+# AssertLLM is now vendored alongside this script (see ../AssertLLM/README.md
+# for its no-LICENSE-file caveat) -- override via --uart-rtl-dir to point at
+# a different clone instead.
+DEFAULT_UART_RTL_DIR = os.path.join(_HERE, "AssertLLM", "rtl", "uart")
 
 # uart2bus_top.v FIRST: check_sva_elaboration/check_sva_proven insert the
 # assertion right before the FIRST `endmodule` in the combined text, and

@@ -6,7 +6,10 @@ verification properties) with this repo's own RAG+SOR pipeline as the
 **NL2SVA** back-end, closing the loop from a real specification document all
 the way to formally-checked SVAs -- as opposed to Part I's evaluation, which
 runs NL2SVA alone against FVEval-Verified's already-curated, single-property-
-per-row benchmark rows.
+per-row benchmark rows. Spec/RTL source data comes from
+[AssertLLM](https://github.com/hkust-zhiyao/AssertLLM) (hkust-zhiyao),
+vendored here too (`AssertLLM/`) -- see the license caveat in the Files
+section before reusing it outside this repo.
 
 ```
 spec.pdf + RTL/ ──[AssertionForge Stage 1: build KG]──▶ knowledge graph
@@ -119,6 +122,18 @@ Excluding these 4 signals lifts #Proven from 18.6%→20.3%. 46.1% of the 165
   License for AssertionForge -- non-commercial reproduction/redistribution
   with attribution is permitted, which is why the full source can be included
   here, not just isolated patch files) is preserved at its root.
+- `AssertLLM/` -- the full [AssertLLM](https://github.com/hkust-zhiyao/AssertLLM)
+  (hkust-zhiyao) dataset: spec PDFs + golden RTL for 20 designs, vendored
+  verbatim (upstream `.git` and a `.DS_Store` or two dropped; the `spec/
+  graph_rag_uart/` GraphRAG cache/output that ended up alongside it in our
+  scratch clone -- our own regenerable pipeline byproduct, not part of
+  AssertLLM's own dataset -- was dropped too). **License caveat**: unlike
+  AssertionForge, AssertLLM's repo ships with **no LICENSE file** at all, so
+  unlike the NVIDIA-licensed AssertionForge tree above, there's no explicit
+  grant permitting redistribution here -- default copyright applies. Included
+  anyway per explicit user instruction, for internal reproducibility; think
+  twice before re-publishing this subfolder elsewhere, and attribute
+  hkust-zhiyao/AssertLLM if you do use it.
 
 ## Vendoring: what we changed in `AssertionForge/`
 
@@ -130,11 +145,15 @@ implementations of all three in place of upstream's. `utils_LLM_client.py`'s
 `_HYBRID_NL2SVA_CONFIG` constant points at this repo's `Src/Config.yml`.
 
 `AssertionForge/src/config.py` is the actual config used for the UART Stage
-1/2 runs, with the AssertLLM/GraphRAG-template paths that were specific to
-our scratch environment genericized back to the `<path>/<to>/...`
-placeholder style the file already uses for every other design branch --
-fill those in for your own AssertLLM clone (see step 1 below) before
-re-running Stage 1/2. Its `ROOT = Path(__file__).resolve().parents[N]` line
+1/2 runs. Its `file_path`/`design_dir`/`input_file_path` for every design
+AssertLLM actually provides spec+RTL for (`openMSP430`, `tiny_pairing`,
+`uart`, `sockit`) now point at the vendored `AssertLLM/` folder above via a
+`_ASSERTLLM_DIR = Path(__file__).resolve().parents[2] / 'AssertLLM'`
+constant -- no path editing needed for those. `env_source_path`/
+`settings_source_path` (GraphRAG `.env`/`settings.yaml`) and every design's
+`KG_path` (a GraphRAG *run output* location, not part of AssertLLM's own
+dataset) are still `<path>/<to>/...` placeholders -- see step 1 below. Its
+`ROOT = Path(__file__).resolve().parents[N]` line
 was also adjusted (`parents[3]`, since this file now lives 3 levels under
 this repo's own root) so `config.py`'s `git.Repo(ROOT)` call -- used only for
 run-logging metadata -- resolves to *this* repo's `.git` rather than
@@ -150,17 +169,17 @@ and would otherwise create a nested git repo inside this one).
 
 ## Reproducing
 
-1. Clone [AssertLLM](https://github.com/hkust-zhiyao/AssertLLM) (spec + RTL
-   for UART and 4 other designs) somewhere.
-2. In `AssertionForge/src/config.py`, fill in the `<path>/<to>/...`
-   placeholders for `design_name == 'uart'` (both the `task = 'gen_plan'` and
-   `task = 'build_KG'` branches) with your AssertLLM clone's paths, plus
-   `env_source_path`/`settings_source_path` (a GraphRAG `.env`/`settings.yaml`
-   template -- `python -m graphrag.index --init --root <dir>` generates a
-   starting point; set `.env`'s `GRAPHRAG_API_KEY`, and in `settings.yaml` set
-   the model to `gpt-4o` and `snapshots.graphml: true`, matching the actual
-   run).
-3. `cd AssertionForge && pip install -r requirements.txt` in a fresh venv --
+AssertionForge and AssertLLM are both vendored here now, so no separate
+clones are needed -- just:
+
+1. In `AssertionForge/src/config.py`, fill in the `<path>/<to>/...`
+   placeholders for `env_source_path`/`settings_source_path` (a GraphRAG
+   `.env`/`settings.yaml` template -- `python -m graphrag.index --init --root
+   <dir>` generates a starting point; set `.env`'s `GRAPHRAG_API_KEY`, and in
+   `settings.yaml` set the model to `gpt-4o` and `snapshots.graphml: true`,
+   matching the actual run) and `design_name == 'uart'`'s `KG_path` (points
+   at wherever Stage 1 below writes its output).
+2. `cd AssertionForge && pip install -r requirements.txt` in a fresh venv --
    as shipped, 3 lines are broken and need removing first: `install==1.3.5`
    (nonexistent PyPI version), `py_sv_parser==0.3.0` (fails to build against
    current maturin/Rust), and the whole `pyautogen`+`llama-index-*` cluster
@@ -168,14 +187,27 @@ and would otherwise create a nested git repo inside this one).
    anywhere in `src/`). Then `pip install graphrag==0.3.6 gitpython`
    separately (matching AssertionForge's `python -m graphrag.index` CLI
    expectations; `graphrag` itself isn't pinned in `requirements.txt` at all).
-4. Run Stage 1 (`task = 'build_KG'`) then Stage 2 (`task = 'gen_plan'`,
+3. Run Stage 1 (`task = 'build_KG'`) then Stage 2 (`task = 'gen_plan'`,
    `subtask = 'actual_gen'`, `generate_SVAs = False`) via `python main.py`
    from `AssertionForge/src/`. Stage 2's log directory (under
    `AssertionForge/logs/`) contains `nl_plans.txt` (copy it in as
    `nl_plans_uart.txt` here, or point `NL_PLANS_PATH` at it).
-5. From this repo's root: `python3 end2end_evaluation/run_uart_nl2sva.py
-   --uart-rtl-dir <AssertLLM clone>/rtl/uart --workers 6`, then
-   `python3 end2end_evaluation/score_uart_assertionforge.py --workers 6`.
+4. From this repo's root: `python3 end2end_evaluation/run_uart_nl2sva.py
+   --workers 6` (defaults to the vendored `AssertLLM/rtl/uart`; override with
+   `--uart-rtl-dir` for a different clone), then `python3
+   end2end_evaluation/score_uart_assertionforge.py --workers 6`.
+
+   **Note (2026-08-27)**: `run_uart_nl2sva.py`'s generation stage currently
+   has a real bug -- `Src/MultiRoundPromptwithOperatorsExplanation/
+   run_rag_on_fveval_benchmarks.py`'s `wrap_property_expression`/
+   `jg_driven_syntax_cleanup`/`generate_rag_sva`/`process_row` don't actually
+   thread a `clock_signal` parameter through (despite `run_uart_nl2sva.py`
+   setting `args.clock_signal = "clock"` on the `Namespace` it builds --
+   nothing currently reads that field), so `wrap_property_expression` hard-
+   codes `@(posedge clk)` regardless. The original run that produced
+   `results/` had this wiring in place (its output genuinely uses `@(posedge
+   clock)`) but it's since been lost from the committed pipeline code and
+   needs restoring before a fresh run will work correctly against UART.
 
 ## Extending
 

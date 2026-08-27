@@ -11,6 +11,15 @@ from pathlib import Path
 from utils import get_user, get_host
 from collections import OrderedDict
 
+# AssertLLM (github.com/hkust-zhiyao/AssertLLM -- ships with no LICENSE file,
+# see ../../AssertLLM/README.md) is vendored alongside this repo's own
+# end2end_evaluation/ folder, 2 levels up from AssertionForge/src/. Used
+# below for the file_path/design_dir of any design_name AssertLLM actually
+# provides spec+RTL for (openMSP430, tiny_pairing, uart, sockit); KG_path
+# entries stay as placeholders since those are GraphRAG run outputs, not
+# part of AssertLLM's own dataset.
+_ASSERTLLM_DIR = Path(__file__).resolve().parents[2] / 'AssertLLM'
+
 task = 'gen_plan'
 # task = 'build_KG'
 # task = 'use_KG'
@@ -58,42 +67,37 @@ if task == 'gen_plan':
 
         elif design_name == 'openMSP430':
 
-            file_path = '/<path>/<to>/AssertLLM/spec/openMSP430.pdf'
-            design_dir = '/<path>/<to>/AssertLLM/rtl/openMSP430'
+            file_path = str(_ASSERTLLM_DIR / 'spec/openMSP430.pdf')
+            design_dir = str(_ASSERTLLM_DIR / 'rtl/openMSP430')
             KG_path = '/<path>/<to>/AssertLLM/spec/graph_rag_openMSP430/output/20240917-111039/artifacts/clustered_graph.0.graphml'
 
             # KG_path = '/<path>/<to>/AssertLLM/spec/graph_rag_openMSP430/output/20240920-120728/artifacts/clustered_graph.0.graphml'  # vanilla/baseline
 
         elif design_name == 'tiny_pairing':
 
-            file_path = '/<path>/<to>/AssertLLM/spec/tiny_pairing.pdf'
-            design_dir = '/<path>/<to>/AssertLLM/rtl/ting_pairing'
+            file_path = str(_ASSERTLLM_DIR / 'spec/tiny_pairing.pdf')
+            design_dir = str(_ASSERTLLM_DIR / 'rtl/ting_pairing')  # sic -- AssertLLM's own directory name
             KG_path = '/<path>/<to>/AssertLLM/spec/graph_rag/output/20240917-090624/artifacts/clustered_graph.0.graphml'
 
             # KG_path = '/<path>/<to>/AssertLLM/spec/graph_rag_tiny_pairing/output/20240920-145022/artifacts/clustered_graph.0.graphml' # vanilla/baseline
 
         elif design_name == 'uart':
 
-            # Paths below are placeholders like every other design_name branch
-            # in this file -- edit to point at your own AssertLLM clone. The
-            # actual UART pilot run (see ../../../README.md and ../../../
-            # results/) used <AssertLLM clone>/spec/uart.pdf,
-            # <AssertLLM clone>/rtl/uart, and a GraphRAG output dir produced
-            # by the build_KG task above.
-            file_path = '/<path>/<to>/AssertLLM/spec/uart.pdf'
-            design_dir = (
-                '/<path>/<to>/AssertLLM/rtl/uart'
-            )
-            KG_path = '/<path>/<to>/AssertLLM/spec/graph_rag_uart/output/clustered_graph.0.graphml'
+            # AssertLLM is vendored at ../../AssertLLM (see _ASSERTLLM_DIR
+            # above); the actual UART pilot run (see ../../../README.md and
+            # ../../../results/) used these same spec/rtl paths, plus a
+            # GraphRAG output dir produced by the build_KG task above (not
+            # vendored -- regenerable, see build_KG's KG output location).
+            file_path = str(_ASSERTLLM_DIR / 'spec/uart.pdf')
+            design_dir = str(_ASSERTLLM_DIR / 'rtl/uart')
+            KG_path = '/<path>/<to>/graph_rag_uart/output/clustered_graph.0.graphml'  # regenerate via build_KG below
 
             # KG_path = '/<path>/<to>/AssertLLM/spec/graph_rag_uart/output/20240920-163242/artifacts/clustered_graph.graphml'  # vanilla/baseline
 
         elif design_name == 'sockit':
 
-            file_path = '/<path>/<to>/AssertLLM/spec/sockit.pdf'
-            design_dir = (
-                '/<path>/<to>/AssertLLM/rtl/sockit'
-            )
+            file_path = str(_ASSERTLLM_DIR / 'spec/sockit.pdf')
+            design_dir = str(_ASSERTLLM_DIR / 'rtl/sockit')
 
             # KG_path = '/<path>/<to>/AssertLLM/spec/graph_rag_sockit/output/20250305-132436/artifacts/clustered_graph.0.graphml'
  
@@ -287,19 +291,15 @@ elif task == 'build_KG':
         ]
 
     elif design_name == 'tiny_pairing':
-        input_file_path = '/<path>/<to>/AssertLLM/spec/tiny_pairing.pdf'
+        input_file_path = str(_ASSERTLLM_DIR / 'spec/tiny_pairing.pdf')
 
     elif design_name == 'openMSP430':
-        input_file_path = '/<path>/<to>/AssertLLM/spec/openMSP430.pdf'
+        input_file_path = str(_ASSERTLLM_DIR / 'spec/openMSP430.pdf')
 
     elif design_name == 'uart':
-        input_file_path = (
-            '/<path>/<to>/AssertLLM/spec/uart.pdf'
-        )
+        input_file_path = str(_ASSERTLLM_DIR / 'spec/uart.pdf')
     elif design_name == 'sockit':
-        input_file_path = (
-            '/<path>/<to>/AssertLLM/spec/sockit.pdf'
-        )
+        input_file_path = str(_ASSERTLLM_DIR / 'spec/sockit.pdf')
 
     else:
         assert False
