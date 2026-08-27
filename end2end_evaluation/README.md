@@ -47,8 +47,16 @@ spec.pdf + RTL/ ──[AssertionForge Stage 1: build KG]──▶ knowledge grap
   | Subset | n | #SynC | #Proven |
   |---|---|---|---|
   | All 18 signals | 323 | 225 (69.7%) | 60 (18.6%) |
-  | Design-controlled only (excl. `ser_in`/`int_rd_data`/`int_gnt`/`ce_16`) | 256 | — | **52 (20.3%)** |
-  | Excluded (free inputs / out-of-scope) | 67 | — | 8 (11.9%) |
+  | Design-controlled only (excl. `ser_in`/`int_rd_data`/`int_gnt`/`ce_16`; current `nl_plans_uart.txt`) | 256 | 177 (69.1%) | **52 (20.3%)** |
+  | Excluded (free inputs / out-of-scope) | 67 | 48 (71.6%) | 8 (11.9%) |
+
+  (All three rows are computed by filtering the original 323-row scored
+  results by the signal named in each `task_id` -- not a fresh run against
+  the now-256-row `nl_plans_uart.txt` -- but the property text for the kept
+  256 is unchanged by that filtering, so the numbers should carry over
+  exactly. #SynC is close across all three subsets (~69-72%); the gap is
+  almost entirely in #Proven, consistent with the free-input/scope-bug
+  explanation below affecting provability, not syntax.)
 
   For reference, QiMeng-CodeV-SVA's own Table 5 reports, for UART with GPT-4o
   as both Spec2NL and NL2SVA: #SVA=265, #SynC=186 (70.2%), #Proven=54

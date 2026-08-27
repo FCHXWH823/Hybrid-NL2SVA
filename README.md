@@ -183,9 +183,13 @@ just mislabeled at the time, and have been renamed accordingly.
 | DeepSeek-V4-Flash (thinking) | human | 100.0% (73/73) | 86.3% (63/73) | 94.5% (69/73) |
 | DeepSeek-V4-Flash (thinking) | machine | 100.0% (283/283) | 92.9% (263/283) | 98.6% (279/283) |
 | gpt-5 | human | 100.0% (73/73) | 82.2% (60/73) | 91.8% (67/73) |
-| gpt-5 | machine | not yet run | — | — |
-| deepseek-chat (V4-Flash, thinking off) | human | not yet run | — | — |
-| deepseek-chat (V4-Flash, thinking off) | machine | not yet run | — | — |
+| gpt-5 | machine | interrupted (45/283, OpenAI credits) | — | — |
+| deepseek-chat (V4-Flash, thinking off) | human | 100.0% (73/73) | 74.0% (54/73) | 80.8% (59/73) |
+| deepseek-chat (V4-Flash, thinking off) | machine | 98.9% (280/283) | 85.5% (242/283) | 94.3% (267/283) |
+| qwen3-8b (Aliyun, thinking off) | human | 91.8% (67/73) | 35.6% (26/73) | 53.4% (39/73) |
+| qwen3-8b (Aliyun, thinking off) | machine | 88.7% (251/283) | 60.8% (172/283) | 73.9% (209/283) |
+| qwen3-14b (Aliyun, thinking off) | human | 91.8% (67/73) | 65.8% (48/73) | 79.5% (58/73) |
+| qwen3-14b (Aliyun, thinking off) | machine | 95.1% (269/283) | 81.6% (231/283) | 90.8% (257/283) |
 
 ### Cross-model comparison — raw model output (no pipeline)
 
@@ -201,23 +205,29 @@ pipeline numbers above.
 | CodeV-SVA-14B | human | 93.2% (68/73) | 74.0% (54/73) | 80.8% (59/73) |
 | CodeV-SVA-8B | machine | 96.5% (273/283) | 83.0% (235/283) | 93.3% (264/283) |
 | CodeV-SVA-14B | machine | 97.2% (275/283) | 80.9% (229/283) | 93.3% (264/283) |
-| ours-8B (fine-tuned in this repo) | human | 97.3% (71/73) | 47.9% (35/73) | 78.1% (57/73) |
-| ours-14B (fine-tuned in this repo) | human | 95.9% (70/73) | 49.3% (36/73) | 69.9% (51/73) |
-| ours-8B (fine-tuned in this repo) | machine | 91.2% (258/283) | 69.3% (196/283) | 82.3% (233/283) |
-| ours-14B (fine-tuned in this repo) | machine | 92.6% (262/283) | 67.8% (192/283) | 85.9% (243/283) |
 | gpt-5 (0-shot) | human | not yet run | — | — |
 | gpt-5 (0-shot) | machine | not yet run | — | — |
-| DeepSeek-V4-Flash (thinking, 0-shot) | human | not yet run | — | — |
-| DeepSeek-V4-Flash (thinking, 0-shot) | machine | not yet run | — | — |
-| deepseek-chat (V4-Flash, thinking off, 0-shot) | human | not yet run | — | — |
-| deepseek-chat (V4-Flash, thinking off, 0-shot) | machine | not yet run | — | — |
-| Qwen3-8B (base model) | human/machine | unavailable — no local GPU/hosting for it here | — | — |
-| Qwen3-14B (base model) | human/machine | unavailable — no local GPU/hosting for it here | — | — |
+| DeepSeek-V4-Flash (thinking, 0-shot) | human | 98.6% (72/73) | 76.7% (56/73) | 93.2% (68/73) |
+| DeepSeek-V4-Flash (thinking, 0-shot) | machine | 100.0% (283/283) | 90.8% (257/283) | 98.2% (278/283) |
+| deepseek-chat (V4-Flash, thinking off, 0-shot) | human | 94.5% (69/73) | 54.8% (40/73) | 76.7% (56/73) |
+| deepseek-chat (V4-Flash, thinking off, 0-shot) | machine | 97.5% (276/283) | 78.4% (222/283) | 89.4% (253/283) |
+| qwen3-8b (Aliyun, base model, 0-shot) | human | 89.0% (65/73) | 35.6% (26/73) | 57.5% (42/73) |
+| qwen3-8b (Aliyun, base model, 0-shot) | machine | 87.6% (248/283) | 51.2% (145/283) | 66.8% (189/283) |
+| qwen3-14b (Aliyun, base model, 0-shot) | human | 93.2% (68/73) | 49.3% (36/73) | 69.9% (51/73) |
+| qwen3-14b (Aliyun, base model, 0-shot) | machine | 91.9% (260/283) | 65.7% (186/283) | 76.3% (216/283) |
 
-`ours-8B`/`ours-14B` lag CodeV-SVA and gpt-4o+pipeline noticeably on FM-strict despite comparable SC.
-Root-caused by diffing failure cases against CodeV-SVA's successes on the same rows: nearly every gap
-traces to operators/idioms — `##[M:N]` range delays, `s_eventually`/`strong(...)`, `~^`/`^~`,
-`$onehot0({...})`'s concatenation-argument form — that appear **zero times** in the final SVA code
-blocks across all 5,000 examples of this repo's `codev_sva_ol_dfs_5000` fine-tuning set (confirmed by
-direct regex counts over the training data), i.e. a training-data coverage gap rather than a general
-reasoning-capability gap.
+qwen3-8b is the first model where the pipeline does NOT clearly beat its own 0-shot baseline on
+`nl2sva_human_verified`: FM-strict is identical (26/73 both ways) and FM-relaxed is slightly worse
+(53.4% vs. 57.5%). Row-by-row diffing shows why: 12/73 rows flip baseline-fail→pipeline-pass, but a
+near-equal 12/73 flip baseline-pass→pipeline-fail, netting to ~zero. The regressions cluster into three
+concrete bugs the pipeline (Stage 2 generation and/or SOR revision) introduces on a previously-correct
+answer: (1) inserting a spurious `##N` delay where none was needed (the flip side of the `|=>`+`##N`
+double-counting bug `--only-overlap-implication` targets -- here the "always state delays explicitly"
+nudge gets over-applied), (2) flipping a boolean's polarity while "fixing" something else, (3)
+rewriting a correct plain comparison into a fancier operator (`$onehot0({...})`) that isn't actually
+equivalent. `nl2sva_machine_verified` doesn't show this wash (pipeline clearly beats baseline: 60.8% vs.
+51.2% FM-strict) -- so the effect is dataset/row-shape dependent, not a blanket "qwen3-8b can't benefit
+from this pipeline" conclusion. Read together with stronger models (gpt-4o/gpt-5/DeepSeek) reliably
+gaining from the same pipeline, this suggests the pipeline's net benefit scales with the base model's
+own ability to self-correct without introducing new errors during revision -- not a property that holds
+unconditionally across models.

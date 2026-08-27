@@ -268,3 +268,77 @@ exit
     output = result.stdout.strip()
     ok = not re.search(r'\[ERROR', output)
     return ok, output
+
+
+_PROVEN_STATUS_NAME = "direct_proven_check"
+_PROVEN_STATUS_RE = re.compile(r'^PROVENSTATUS (\S+)\s*$')
+
+
+def check_sva_proven(testbench, sva_expression, sv_dir, experiment_id="proven_check", task_id="0",
+                      clock_signal="clk", disable_signal=None, timeout=90):
+    """Standalone formal PROOF of one candidate SVA against a real RTL design
+    -- no golden reference to compare against (unlike run_direct_equivalence_
+    check). For the AssertionForge-UART pilot's #SVA/#SynC/#Proven metrics
+    (matching QiMeng-CodeV-SVA's Table 5 methodology): #SVA counts every row
+    the NL2SVA pipeline returned a candidate for, #SynC counts elaboration
+    successes (this function's syntax_ok), #Proven counts get_status ==
+    "proven" (the property genuinely holds under the real design, not just
+    parses).
+
+    Returns (syntax_ok: bool, proven: bool, jg_output: str). syntax_ok=False
+    implies proven=False (a property that doesn't elaborate can't be proven
+    either way)."""
+    module_match = _MODULE_NAME_RE.search(testbench)
+    if not module_match:
+        raise ValueError("Could not find a `module <name>` declaration in the testbench")
+    module_name = module_match.group(1)
+
+    disable_clause = f" disable iff ({disable_signal})" if disable_signal else ""
+    block = (
+        f"{_PROVEN_STATUS_NAME}: assert property (@(posedge {clock_signal}){disable_clause}\n"
+        f"    {sva_expression.strip()}\n);\n"
+    )
+    if "endmodule" in testbench:
+        tb_text = testbench.replace("endmodule", block + "endmodule", 1)
+    else:
+        tb_text = testbench + "\n" + block
+
+    sv_dir = os.path.abspath(sv_dir)
+    os.makedirs(sv_dir, exist_ok=True)
+    sva_path = os.path.join(sv_dir, f"{experiment_id}_{task_id}.sva")
+    with open(sva_path, "w") as file:
+        file.write(tb_text)
+
+    reset_line = "reset -none" if not disable_signal else f"reset -expression {disable_signal}"
+    tcl_content = f"""clear -all
+analyze -clear
+analyze -sv12 {sva_path}
+elaborate
+clock {clock_signal}
+{reset_line}
+prove -all
+puts "PROVENSTATUS [get_status {module_name}.{_PROVEN_STATUS_NAME}]"
+exit
+"""
+    tcl_path = os.path.join(sv_dir, f"{experiment_id}_{task_id}.tcl")
+    with open(tcl_path, "w") as file:
+        file.write(tcl_content)
+
+    tmp_jg_proj_dir = os.path.join(sv_dir, "jg_proven_check", f"{experiment_id}_{task_id}")
+
+    jg_command = ["jg", "-fpv", "-batch", "-tcl", tcl_path, "-proj", tmp_jg_proj_dir, "-allow_unsupported_OS"]
+    try:
+        result = subprocess.run(jg_command, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return False, False, f"TIMEOUT: JasperGold execution exceeded {timeout}s"
+
+    output = result.stdout.strip()
+    status = None
+    for line in output.splitlines():
+        m = _PROVEN_STATUS_RE.match(line.strip())
+        if m:
+            status = m.group(1)
+    if status is None:
+        # Elaboration/analysis never completed -- a real syntax error.
+        return False, False, output
+    return True, status == "proven", output

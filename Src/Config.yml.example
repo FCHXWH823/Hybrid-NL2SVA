@@ -1,5 +1,7 @@
 Openai_API_Key:
 NVidia_API_Key:
+Aliyun_API_Key:
+Aliyun_Workspace_Id:
 DeepSeek_API_Key:
 PDF_Name: The Power of Assertions in SystemVerilog
 PDF_Txt: AllTextbooks.txt
