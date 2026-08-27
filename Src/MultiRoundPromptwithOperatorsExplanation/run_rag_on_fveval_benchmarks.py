@@ -1121,7 +1121,7 @@ def main():
     parser.add_argument("--output", default=None,
                          help="Defaults to Results/fveval_rag_outputs/{task}_{model_name}_{dynamicrag|baseline0shot}.csv")
     parser.add_argument("--config", default="Src/Config.yml")
-    parser.add_argument("--provider", default="openai", choices=["openai", "deepseek"],
+    parser.add_argument("--provider", default="openai", choices=["openai", "deepseek", "local"],
                          help="Which API the generation/grounding/SOR chat calls go through. "
                               "'deepseek' uses config['DeepSeek_API_Key'] against the OpenAI-compatible "
                               "https://api.deepseek.com endpoint (model defaults to 'deepseek-reasoner', "
@@ -1131,7 +1131,15 @@ def main():
                               "embeddings already.")
     parser.add_argument("--model-name", default=None,
                          help="Override the chat model name from config. Defaults to config['Model_Name'] "
-                              "for --provider openai, or 'deepseek-reasoner' for --provider deepseek.")
+                              "for --provider openai, or 'deepseek-reasoner' for --provider deepseek. "
+                              "Required for --provider local: it must match the name the vLLM server "
+                              "was started with (vLLM rejects a mismatched 'model' field).")
+    parser.add_argument("--base-url", default=None,
+                         help="OpenAI-compatible endpoint for --provider local, e.g. "
+                              "http://127.0.0.1:8000/v1 for a `vllm serve` process. Lets the pipeline "
+                              "drive a self-hosted model (Qwen3-8B/14B, our fine-tunes) through exactly "
+                              "the same code path as the hosted APIs. Ignored for the other providers, "
+                              "which pin their own endpoint.")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--workers", type=int, default=6,
                          help="Number of rows processed concurrently via a thread pool (the pipeline "
@@ -1232,7 +1240,22 @@ def main():
         config = yaml.safe_load(file)
     openai_api_key = config["Openai_API_Key"]
 
-    if args.provider == "deepseek":
+    if args.provider == "local":
+        # A `vllm serve` process speaks the OpenAI protocol but authenticates
+        # nothing; the client still has to send some non-empty key or the SDK
+        # refuses to build. Embeddings deliberately keep using openai_api_key
+        # below -- the persisted Chroma DB was built with OpenAI embeddings, and
+        # re-embedding it against a local model would silently change what
+        # HybridRetrieval retrieves, making these numbers incomparable to every
+        # other row in the README tables.
+        llm_api_key = "EMPTY"
+        llm_base_url = args.base_url
+        model_name = args.model_name
+        if not llm_base_url:
+            parser.error("--provider local requires --base-url (e.g. http://127.0.0.1:8000/v1)")
+        if not model_name:
+            parser.error("--provider local requires --model-name matching the served model")
+    elif args.provider == "deepseek":
         llm_api_key = config["DeepSeek_API_Key"]
         llm_base_url = "https://api.deepseek.com"
         model_name = args.model_name or "deepseek-reasoner"
@@ -1249,7 +1272,10 @@ def main():
         default_suffix = "dynamicrag_olnl"
     else:
         default_suffix = "dynamicrag"
-    output_path = args.output or f"Results/fveval_rag_outputs/{args.task}_{model_name}_{default_suffix}.csv"
+    # A served model is named by its HF path ("Qwen/Qwen3-8B"), whose slash would
+    # otherwise turn the default output filename into a nested directory.
+    safe_model_name = model_name.replace("/", "_")
+    output_path = args.output or f"Results/fveval_rag_outputs/{args.task}_{safe_model_name}_{default_suffix}.csv"
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
     client = OpenAI(api_key=llm_api_key, base_url=llm_base_url) if llm_base_url else OpenAI(api_key=llm_api_key)
