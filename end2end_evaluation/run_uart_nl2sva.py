@@ -129,6 +129,12 @@ def main():
                           "reflects each plan's position in the FULL nl_plans_uart.txt (not renumbered "
                           "within the filtered subset), so results stay comparable/mergeable across runs. "
                           "e.g. --signals baud_clk,baud_freq for a scoped pilot.")
+    ap.add_argument("--no-rag", action="store_true",
+                     help="0-shot baseline: bypasses RAG+SOR+syntax-cleanup entirely (generate_baseline_sva "
+                          "-- one plain completion call, model must produce the complete wrapped SVA itself, "
+                          "including @(posedge ...) -- NOT run through wrap_property_expression). For "
+                          "comparing the pipeline's contribution against the raw base model on the same NL "
+                          "properties.")
     cli_args = ap.parse_args()
 
     plans = parse_nl_plans(NL_PLANS_PATH)
@@ -159,7 +165,7 @@ def main():
                                           # disable_signal=None, matching the machine config
         csv=None, output=None, config=cli_args.config,
         provider="openai", model_name=None, limit=None, workers=cli_args.workers, max_retries=5,
-        no_rag=False, ol_nl_grounding=False, ol_nl_replace_question=False, ol_nl_conservative=False,
+        no_rag=cli_args.no_rag, ol_nl_grounding=False, ol_nl_replace_question=False, ol_nl_conservative=False,
         # skip_signal_list_note=False (NOT nl2sva_machine_verified's own best-
         # known config, which had it True): that config's assumption --
         # "the problem text already names every signal, so the note is

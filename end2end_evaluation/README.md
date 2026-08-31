@@ -152,6 +152,37 @@ in general.
 True` config) -- the #SynC/#Proven headline numbers in the Results table
 above will move once that's done.
 
+### 0-shot base-model baseline, same 36 properties
+
+Ran the same `baud_clk`/`baud_freq` 36 properties through `--no-rag` (plain
+gpt-4o completion, no RAG/SOR/syntax-cleanup) for comparison. First attempt
+hit a related-but-distinct format bug: 34/36 responses used a NAMED
+`property NAME; ... endproperty` + separate `assert property(NAME) else
+$error(...)` block instead of one inline `assert property(...)` --
+`extract_property_body`'s regex-based stripping (built for the single-
+statement form) can't parse that shape, so #SynC collapsed to 1/36 (2.8%)
+purely from the mismatch, not generation quality (same failure shape as an
+earlier confirmed qwen3-8b machine-baseline bug). Fixed the same way: for
+`--no-rag` + `nl2sva_machine_verified` specifically, `process_row` now
+appends an explicit "one inline `assert property(...)`, no named property
+block" instruction + worked example to the baseline prompt (`build_verified_
+machine_user_prompt`/`SYSTEM_PROMPT` give no output-format guidance at all
+otherwise). That alone took the named-property rate to 0/36. Re-scored:
+
+| | n | #SynC | #Proven |
+|---|---|---|---|
+| 0-shot baseline (format-fixed, still no signal-list guardrail) | 36 | 14 (38.9%) | 5 (13.9%) |
+| Full pipeline (clock_signal + skip_signal_list_note fixes) | 36 | **33 (91.7%)** | **13 (36.1%)** |
+
+The baseline's remaining 22 syntax failures are dominated by exactly the
+signal-scope/hallucination pattern from "A second gap" above (`ce_16` x16,
+`global_clock_freq` x8, `counter` x6, `baud_rate` x6, plus a few undefined
+macros) -- expected, since `--no-rag` never gets the `allowed_signals_note`
+guardrail regardless of `skip_signal_list_note` (that flag only gates the
+RAG/pipeline path; `generate_baseline_sva` doesn't take the note as a
+parameter at all). Files: `results/pilot_baseline_baudclk_baudfreq.csv` /
+`results/pilot_baseline_baudclk_baudfreq_jgscore.csv`.
+
 ## Files
 
 - `run_uart_nl2sva.py` -- feeds `nl_plans_uart.txt` through Hybrid-NL2SVA's

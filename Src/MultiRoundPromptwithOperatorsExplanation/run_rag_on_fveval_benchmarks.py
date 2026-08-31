@@ -1086,7 +1086,36 @@ def process_row(
         clock_signal = getattr(args, "clock_signal", "clk")
 
         if args.no_rag:
-            sva_text, initial_response = generate_baseline_sva(client, model_name, user_prompt)
+            baseline_user_prompt = user_prompt
+            if args.task == "nl2sva_machine_verified":
+                # build_verified_machine_user_prompt gives no output-format
+                # instruction/worked example at all (SYSTEM_PROMPT, used
+                # unmodified for the --no-rag path, doesn't either -- see
+                # its own docstring/definition in run_codev_sva_ol_dfs_eval.
+                # py). Against FVEval's real bare-dummy-module machine rows
+                # this is apparently harmless, but confirmed live against
+                # end2end_evaluation's real, richly-detailed UART RTL: 34/36
+                # gpt-4o responses on a pilot used a NAMED `property NAME;
+                # ... endproperty` + separate `assert property(NAME) else
+                # $error(...)` block instead of one inline `assert
+                # property(...)`, which extract_property_body's regex-based
+                # stripping (built for the single-statement form) cannot
+                # parse -- #SynC collapsed to 1/36 (2.8%) purely from this
+                # format mismatch, not generation quality. Same failure
+                # shape as an earlier confirmed qwen3-8b machine-baseline
+                # bug (SYSTEM_PROMPT alone wasn't enough there either).
+                baseline_user_prompt = user_prompt + (
+                    "\n\nEnclose your SVA code with ```systemverilog and ```. Output ONLY ONE inline "
+                    "`assert property (...)` statement -- do NOT declare a separate named `property "
+                    "NAME; ... endproperty` block, do NOT add an `else $error(...)` action block, and "
+                    "do NOT output any explanatory text. For example:\n"
+                    "```systemverilog\n"
+                    "asrt: assert property (@(posedge clk)\n"
+                    "    (a && b) != 1'b1\n"
+                    ");\n"
+                    "```"
+                )
+            sva_text, initial_response = generate_baseline_sva(client, model_name, baseline_user_prompt)
         else:
             sva_text, initial_response = generate_rag_sva(
                 client, model_name, rag_chain, rag_chain_checker, code_retriever,
