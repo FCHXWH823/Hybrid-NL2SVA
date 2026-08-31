@@ -70,17 +70,24 @@ VALID_SIGNALS = [
 # "design-controlled only" analysis without re-deriving it.
 NON_CONTROLLED_SIGNALS = ['ser_in', 'int_rd_data', 'int_gnt', 'ce_16']
 
-# The signal list actually fed to the model as the "authoritative signal
-# list" guardrail (see main()'s skip_signal_list_note=False below) --
+# NOT used by main() by default (see skip_signal_list_note=True below) --
+# kept here for anyone deliberately re-running the skip_signal_list_note=
+# False experiment (edit main() to pass skip_signal_list_note=False and
+# swap VALID_SIGNALS for ALLOWED_SIGNALS in the process_row call, as done
+# for the 2026-08-27 pilot). Would be the signal list fed to the
+# "authoritative signal list" guardrail:
 # VALID_SIGNALS minus ce_16 ONLY. Unlike NON_CONTROLLED_SIGNALS above (a
 # *provability* concern -- ser_in/int_rd_data/int_gnt are real, valid
 # identifiers in uart2bus_top's scope, just free/unconstrained inputs),
 # ce_16 is a genuine *scope* bug: not declared anywhere in uart2bus_top
 # (neither as a port nor as an internal wire -- confirmed by reading the
-# RTL), so telling the model it's a legal identifier would be actively
-# wrong, not just unhelpful. Keeping ser_in/int_rd_data/int_gnt in here
-# (unlike NON_CONTROLLED_SIGNALS's exclusion) since the guardrail's job is
-# "is this a real, in-scope identifier", not "is this provable".
+# RTL). Deliberately NOT wired up as the default: the pilot that used this
+# (2026-08-27) measurably helped #SynC/#Proven, but ~70% of the errors it
+# "fixes" trace back to AssertionForge's own NL plans referencing spec-
+# prose concepts (e.g. 'baud_rate'/'global_clock_freq') that were never
+# real RTL signals to begin with -- an explicit allow-list papers over that
+# upstream grounding gap rather than fixing it. See end2end_evaluation/
+# README.md's "A second gap" section.
 ALLOWED_SIGNALS = [s for s in VALID_SIGNALS if s != 'ce_16']
 
 DEFAULT_OUTPUT_PATH = os.path.join(_HERE, "results", "assertionforge_uart_gpt-4o_dynamicrag.csv")
@@ -166,21 +173,19 @@ def main():
         csv=None, output=None, config=cli_args.config,
         provider="openai", model_name=None, limit=None, workers=cli_args.workers, max_retries=5,
         no_rag=cli_args.no_rag, ol_nl_grounding=False, ol_nl_replace_question=False, ol_nl_conservative=False,
-        # skip_signal_list_note=False (NOT nl2sva_machine_verified's own best-
-        # known config, which had it True): that config's assumption --
-        # "the problem text already names every signal, so the note is
-        # redundant" -- holds for FVEval's real bare-dummy-module machine
-        # rows, but not for AssertionForge's UART NL plans (nothing
-        # guarantees every referenced signal is named) combined with a
-        # richly-detailed real 6-module RTL as context (unlike machine's bare
-        # port-list testbenches). Confirmed live: with the note off, 31/98
-        # syntax-fail rows referenced a signal hallucinated outright (not
-        # found anywhere in the RTL), and dozens more referenced a REAL RTL
-        # signal that's simply out of uart2bus_top's scope (submodule-
-        # internal registers like bit_count/rx_busy/main_sm/tx_sm -- the
-        # model can see them in the raw_testbench dump, nothing told it they
-        # weren't fair game). See end2end_evaluation/README.md.
-        skip_signal_list_note=False, sor_template_timing=False, sor_conservative=True,
+        # skip_signal_list_note=True, matching nl2sva_machine_verified's own
+        # best-known config -- kept at the DEFAULT deliberately (tried
+        # flipping to False in a 36-row pilot on 2026-08-27; it measurably
+        # helped #SynC/#Proven, but was deliberately NOT adopted: ~70% of the
+        # undeclared-identifier errors it "fixes" trace back to a word/
+        # concept literally present in the NL plan text itself -- e.g.
+        # 'baud_rate'/'global_clock_freq' from a formula AssertionForge's
+        # Stage 2 pulled out of spec-document prose, not real RTL signals
+        # (the real macros are `D_BAUD_FREQ`/`D_BAUD_LIMIT`) -- so an
+        # explicit allow-list papers over a real upstream NL-plan grounding
+        # gap rather than fixing it. See end2end_evaluation/README.md's "A
+        # second gap" section for the full analysis and the pilot numbers.
+        skip_signal_list_note=True, sor_template_timing=False, sor_conservative=True,
         only_overlap_implication=True, clock_signal="clock",
     )
 
@@ -237,7 +242,7 @@ def main():
             futures = [
                 executor.submit(
                     m.process_row, i, f"AssertionForge-UART-{i}-{plans[i][0]}", raw_testbench, plans[i][1],
-                    "", ALLOWED_SIGNALS, args, client, model_name, rich_operator_context,
+                    "", VALID_SIGNALS, args, client, model_name, rich_operator_context,
                     code_retriever, rag_chain, rag_chain_checker, step1_jg_sv_dir, experiment_id,
                 )
                 for i in indices
