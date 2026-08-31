@@ -88,12 +88,78 @@ assertion-binding scope), so it's not even a valid identifier there.
 Excluding these 4 signals lifts #Proven from 18.6%→20.3%. 46.1% of the 165
 "syntax-ok but not proven" (cex) rows reference one of these 3 free inputs.
 
+### A second gap: signal hallucination / wrong-scope references (fixed 2026-08-27)
+
+Of the 323-run's 98 syntax-fail rows, `'X' is not declared` errors named 68
+distinct identifiers, splitting into two categories (checked against the 6
+real RTL files):
+
+- **21 real RTL identifiers used at the wrong scope** (e.g. `ce_16` x34,
+  `bit_count` x26, `ce_1` x22, `rx_busy` x20, `main_sm`/`tx_sm` x14 each,
+  `data_in_hex_range` x12, `write_req` x10, ...) -- genuine registers/FSM
+  state declared *inside* `uart_rx.v`/`uart_tx.v`/`uart_parser.v`/
+  `baud_gen.v`, invisible from `uart2bus_top`'s scope (where the assertion
+  is actually bound).
+- **47 pure hallucinations, not found anywhere in the RTL** (e.g.
+  `local_global_clock_freq`, `logic_counter`, `write_req_signal`,
+  `some_declared_counter`, `undeclared_signal1`) -- affecting 31/98 (~32%)
+  of syntax-fail rows.
+
+**Root cause**: `run_uart_nl2sva.py` set `args.task = "nl2sva_machine_verified"`
+to reuse `build_verified_machine_user_prompt`/`disable_signal=None`, which
+also silently inherited that task's `--skip-signal-list-note` best-known
+setting. That flag is *correct* for FVEval's real `nl2sva_machine_verified`
+data (bare port-list testbenches, problem text already names every signal
+directly -- see `build_verified_machine_user_prompt`'s own docstring) but
+wrong for UART: `skip_signal_list_note=True` means `run_rag_on_fveval_
+benchmarks.py`'s `allowed_signals_note` ("you must use ONLY signals from
+this list") is never built at all, while the prompt still dumps the FULL
+32KB, 6-module UART RTL as context (`build_verified_machine_user_prompt`
+includes `raw_testbench` verbatim -- the same text used for JasperGold's
+elaboration check later). With no guardrail and every submodule's internals
+visible, the model freely reached for whatever register looked semantically
+relevant.
+
+**Fix**: `run_uart_nl2sva.py` now sets `skip_signal_list_note=False` and
+passes a new `ALLOWED_SIGNALS` constant (`VALID_SIGNALS` minus `ce_16` --
+17 signals; unlike `NON_CONTROLLED_SIGNALS`, `ser_in`/`int_rd_data`/
+`int_gnt` stay in since they're real, valid identifiers in scope, just
+unprovable, which is a different concern from this guardrail's job).
+`run_rag_on_fveval_benchmarks.py`'s `clock_signal` threading (see the
+Reproducing-section note below, now resolved) was restored at the same
+time, so this was validated as a combined fix.
+
+**Validation pilot** (`--signals baud_clk,baud_freq`, 36 of the 256
+properties, same 36 rows before/after):
+
+| | n | #SynC | #Proven |
+|---|---|---|---|
+| Before (old `skip_signal_list_note=True` run) | 36 | 26 (72.2%) | 9 (25.0%) |
+| After (fixed) | 36 | **33 (91.7%)** | **13 (36.1%)** |
+
+Files: `results/pilot_signalfix_baudclk_baudfreq.csv` (generation) /
+`results/pilot_signalfix_baudclk_baudfreq_jgscore.csv` (JasperGold scores).
+The 3 remaining syntax-fail rows after the fix are all genuine SVA-
+construction bugs unrelated to signal scope -- `|->` misused inside a
+sequence, an invented system function (`$steady_gclk`), and two invented
+macros (`` `BAUD_RATE ``/`` `GLOBAL_CLOCK_FREQ `` -- the real ones are
+`` `D_BAUD_FREQ ``/`` `D_BAUD_LIMIT ``) -- confirming the fix eliminated
+signal-hallucination/wrong-scope failures specifically, not syntax failures
+in general.
+
+**Not yet done**: a full rerun of all 256 properties with this fix (the 323/
+256-row `results/` CSVs above still reflect the OLD `skip_signal_list_note=
+True` config) -- the #SynC/#Proven headline numbers in the Results table
+above will move once that's done.
+
 ## Files
 
 - `run_uart_nl2sva.py` -- feeds `nl_plans_uart.txt` through Hybrid-NL2SVA's
   `process_row` (same machinery the main pipeline uses), writing
   `results/assertionforge_uart_gpt-4o_dynamicrag.csv`. Supports `--resume`
-  for backfilling after an API rate-limit/credit interruption.
+  for backfilling after an API rate-limit/credit interruption, and
+  `--signals sig1,sig2` for scoping a run to specific target signals (used
+  for the validation pilot below).
 - `score_uart_assertionforge.py` -- JasperGold-scores that CSV via
   `check_sva_proven` (new function in
   `verilogFinetune/jasper_direct_equiv_check.py` -- a standalone formal
@@ -194,20 +260,23 @@ clones are needed -- just:
    `nl_plans_uart.txt` here, or point `NL_PLANS_PATH` at it).
 4. From this repo's root: `python3 end2end_evaluation/run_uart_nl2sva.py
    --workers 6` (defaults to the vendored `AssertLLM/rtl/uart`; override with
-   `--uart-rtl-dir` for a different clone), then `python3
+   `--uart-rtl-dir` for a different clone; add `--signals sig1,sig2` to scope
+   a run to specific target signals), then `python3
    end2end_evaluation/score_uart_assertionforge.py --workers 6`.
 
-   **Note (2026-08-27)**: `run_uart_nl2sva.py`'s generation stage currently
-   has a real bug -- `Src/MultiRoundPromptwithOperatorsExplanation/
-   run_rag_on_fveval_benchmarks.py`'s `wrap_property_expression`/
-   `jg_driven_syntax_cleanup`/`generate_rag_sva`/`process_row` don't actually
-   thread a `clock_signal` parameter through (despite `run_uart_nl2sva.py`
-   setting `args.clock_signal = "clock"` on the `Namespace` it builds --
-   nothing currently reads that field), so `wrap_property_expression` hard-
-   codes `@(posedge clk)` regardless. The original run that produced
-   `results/` had this wiring in place (its output genuinely uses `@(posedge
-   clock)`) but it's since been lost from the committed pipeline code and
-   needs restoring before a fresh run will work correctly against UART.
+   **Update (2026-08-27)**: two real bugs (found while reviewing the
+   committed pipeline) are now fixed. (1) `clock_signal` wasn't actually
+   threaded through `wrap_property_expression`/`jg_driven_syntax_cleanup`/
+   `generate_rag_sva`/`process_row` in `run_rag_on_fveval_benchmarks.py`
+   despite `run_uart_nl2sva.py` setting `args.clock_signal = "clock"` --
+   restored, all four now accept/pass it correctly. (2) `skip_signal_list_
+   note=True` (inherited from `nl2sva_machine_verified`'s best-known config,
+   wrongly -- see "A second gap" above) let the model reference out-of-scope/
+   hallucinated signal names with no guardrail -- now `False`, with a proper
+   `ALLOWED_SIGNALS` list. Both fixes validated together on a 36-row pilot;
+   see "A second gap" above for the before/after numbers. The `results/`
+   CSVs (323/256-row) still reflect the OLD, unfixed config -- a full rerun
+   with the fix hasn't been done yet.
 
 ## Extending
 

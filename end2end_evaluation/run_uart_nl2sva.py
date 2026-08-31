@@ -70,6 +70,19 @@ VALID_SIGNALS = [
 # "design-controlled only" analysis without re-deriving it.
 NON_CONTROLLED_SIGNALS = ['ser_in', 'int_rd_data', 'int_gnt', 'ce_16']
 
+# The signal list actually fed to the model as the "authoritative signal
+# list" guardrail (see main()'s skip_signal_list_note=False below) --
+# VALID_SIGNALS minus ce_16 ONLY. Unlike NON_CONTROLLED_SIGNALS above (a
+# *provability* concern -- ser_in/int_rd_data/int_gnt are real, valid
+# identifiers in uart2bus_top's scope, just free/unconstrained inputs),
+# ce_16 is a genuine *scope* bug: not declared anywhere in uart2bus_top
+# (neither as a port nor as an internal wire -- confirmed by reading the
+# RTL), so telling the model it's a legal identifier would be actively
+# wrong, not just unhelpful. Keeping ser_in/int_rd_data/int_gnt in here
+# (unlike NON_CONTROLLED_SIGNALS's exclusion) since the guardrail's job is
+# "is this a real, in-scope identifier", not "is this provable".
+ALLOWED_SIGNALS = [s for s in VALID_SIGNALS if s != 'ce_16']
+
 DEFAULT_OUTPUT_PATH = os.path.join(_HERE, "results", "assertionforge_uart_gpt-4o_dynamicrag.csv")
 
 
@@ -110,17 +123,28 @@ def main():
                      help="Skip task_ids already present in --output and append only the missing rows "
                           "(instead of overwriting from scratch) -- for resuming after an API credit/rate-"
                           "limit interruption.")
+    ap.add_argument("--signals", default=None,
+                     help="Comma-separated signal names -- only process plans grouped under these "
+                          "'Signal <name>:' headers (see parse_nl_plans), skipping the rest. task_id still "
+                          "reflects each plan's position in the FULL nl_plans_uart.txt (not renumbered "
+                          "within the filtered subset), so results stay comparable/mergeable across runs. "
+                          "e.g. --signals baud_clk,baud_freq for a scoped pilot.")
     cli_args = ap.parse_args()
 
     plans = parse_nl_plans(NL_PLANS_PATH)
-    if cli_args.limit:
-        plans = plans[: cli_args.limit]
     print(f"{len(plans)} NL properties loaded from {NL_PLANS_PATH}")
+
+    indices = list(range(len(plans)))
+    if cli_args.signals:
+        wanted = {s.strip() for s in cli_args.signals.split(",") if s.strip()}
+        indices = [i for i in indices if plans[i][0] in wanted]
+        print(f"--signals {sorted(wanted)}: {len(indices)}/{len(plans)} plans selected")
+    if cli_args.limit:
+        indices = indices[: cli_args.limit]
 
     raw_testbench = build_combined_testbench(cli_args.uart_rtl_dir)
     print(f"Combined UART testbench: {len(raw_testbench)} chars, module order: {RTL_FILE_ORDER}")
 
-    indices = range(len(plans))
     done_ids = set()
     if cli_args.resume and os.path.exists(cli_args.output):
         with open(cli_args.output) as f:
@@ -136,7 +160,21 @@ def main():
         csv=None, output=None, config=cli_args.config,
         provider="openai", model_name=None, limit=None, workers=cli_args.workers, max_retries=5,
         no_rag=False, ol_nl_grounding=False, ol_nl_replace_question=False, ol_nl_conservative=False,
-        skip_signal_list_note=True, sor_template_timing=False, sor_conservative=True,
+        # skip_signal_list_note=False (NOT nl2sva_machine_verified's own best-
+        # known config, which had it True): that config's assumption --
+        # "the problem text already names every signal, so the note is
+        # redundant" -- holds for FVEval's real bare-dummy-module machine
+        # rows, but not for AssertionForge's UART NL plans (nothing
+        # guarantees every referenced signal is named) combined with a
+        # richly-detailed real 6-module RTL as context (unlike machine's bare
+        # port-list testbenches). Confirmed live: with the note off, 31/98
+        # syntax-fail rows referenced a signal hallucinated outright (not
+        # found anywhere in the RTL), and dozens more referenced a REAL RTL
+        # signal that's simply out of uart2bus_top's scope (submodule-
+        # internal registers like bit_count/rx_busy/main_sm/tx_sm -- the
+        # model can see them in the raw_testbench dump, nothing told it they
+        # weren't fair game). See end2end_evaluation/README.md.
+        skip_signal_list_note=False, sor_template_timing=False, sor_conservative=True,
         only_overlap_implication=True, clock_signal="clock",
     )
 
@@ -193,7 +231,7 @@ def main():
             futures = [
                 executor.submit(
                     m.process_row, i, f"AssertionForge-UART-{i}-{plans[i][0]}", raw_testbench, plans[i][1],
-                    "", VALID_SIGNALS, args, client, model_name, rich_operator_context,
+                    "", ALLOWED_SIGNALS, args, client, model_name, rich_operator_context,
                     code_retriever, rag_chain, rag_chain_checker, step1_jg_sv_dir, experiment_id,
                 )
                 for i in indices

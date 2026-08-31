@@ -183,11 +183,15 @@ EXPRESSION_ONLY_INSTRUCTION = (
 )
 
 
-def wrap_property_expression(expression, label="asrt", disable_signal="tb_reset"):
+def wrap_property_expression(expression, label="asrt", disable_signal="tb_reset", clock_signal="clk"):
     """Mechanically builds a complete, well-formed SVA from a bare property
-    expression, using this benchmark's fixed clock convention (every row's
-    testbench exposes `clk`) -- the model is never trusted to produce the
-    clock/disable-iff/label itself in our RAG+OL-NL flow.
+    expression, using this benchmark's fixed clock convention (every FVEval
+    row's testbench exposes `clk`) -- the model is never trusted to produce
+    the clock/disable-iff/label itself in our RAG+OL-NL flow.
+
+    clock_signal: override for testbenches whose clock port isn't literally
+    named `clk` (e.g. the end2end_evaluation/AssertionForge-UART pilot,
+    whose real RTL clock port is `clock`).
 
     disable_signal: nl2sva_human(_verified) testbenches all expose exactly
     `tb_reset` for this. Pass None for testbenches with no reset signal at
@@ -195,7 +199,7 @@ def wrap_property_expression(expression, label="asrt", disable_signal="tb_reset"
     none of its 283 rows declare one, and golden answers there have no
     disable iff clause either) to omit the clause entirely."""
     disable_clause = f" disable iff ({disable_signal})" if disable_signal else ""
-    return f"{label}: assert property (@(posedge clk){disable_clause}\n    {expression.strip()}\n);"
+    return f"{label}: assert property (@(posedge {clock_signal}){disable_clause}\n    {expression.strip()}\n);"
 
 
 def load_rich_operator_context(path="sva_temporal_operators.json"):
@@ -757,7 +761,7 @@ def looks_like_property_expression(text):
     return bool(_SVA_TOKEN_RE.search(text))
 
 
-def jg_driven_syntax_cleanup(rag_chain_checker, raw_testbench, sva_text, sv_dir, experiment_id, task_id, label, allowed_signals_note="", disable_signal="tb_reset"):
+def jg_driven_syntax_cleanup(rag_chain_checker, raw_testbench, sva_text, sv_dir, experiment_id, task_id, label, allowed_signals_note="", disable_signal="tb_reset", clock_signal="clk"):
     """Up to 3 rounds of real-JasperGold-elaboration-driven syntax cleanup
     on sva_text (see check_sva_elaboration). Each round FIRST checks with a
     real `jg` elaboration whether sva_text actually has a problem at all --
@@ -793,7 +797,7 @@ def jg_driven_syntax_cleanup(rag_chain_checker, raw_testbench, sva_text, sv_dir,
         ok, jg_output = check_sva_elaboration(
             raw_testbench, sva_text, sv_dir or "/tmp/syntax_cleanup_jgtmp",
             experiment_id=experiment_id or "syntax_cleanup", task_id=f"{task_id}_{label}{attempt}",
-            disable_signal=disable_signal,
+            disable_signal=disable_signal, clock_signal=clock_signal,
         )
         if ok:
             break
@@ -830,7 +834,7 @@ def generate_rag_sva(
     operator_context, user_prompt, prompt_text, ol_nl_text, max_retries,
     question_replaced=False, extra_note="", allowed_signals_note="",
     sv_dir=None, experiment_id=None, task_id=None, raw_testbench=None,
-    disable_signal="tb_reset", sor_template_timing=False, sor_conservative=False,
+    disable_signal="tb_reset", clock_signal="clk", sor_template_timing=False, sor_conservative=False,
     only_overlap_implication=False,
 ):
     """Runs one FVEval row through the full pipeline: HybridRetrieval-augmented
@@ -896,7 +900,7 @@ def generate_rag_sva(
     # time after SOR, below.
     sva_text = jg_driven_syntax_cleanup(
         rag_chain_checker, raw_testbench, sva_text, sv_dir, experiment_id, task_id, "presor",
-        allowed_signals_note=allowed_signals_note, disable_signal=disable_signal,
+        allowed_signals_note=allowed_signals_note, disable_signal=disable_signal, clock_signal=clock_signal,
     )
 
     sor_extra_note = extra_note
@@ -916,13 +920,13 @@ def generate_rag_sva(
     # nothing re-checked SOR's own output before it became the final answer.
     sva_text = jg_driven_syntax_cleanup(
         rag_chain_checker, raw_testbench, sva_text, sv_dir, experiment_id, task_id, "postsor",
-        allowed_signals_note=allowed_signals_note, disable_signal=disable_signal,
+        allowed_signals_note=allowed_signals_note, disable_signal=disable_signal, clock_signal=clock_signal,
     )
 
     # The only place a complete SVA gets assembled in this whole function --
     # mechanically, from a fixed template, never trusting the model to get
     # the clock/disable-iff/label right itself.
-    return wrap_property_expression(sva_text, disable_signal=disable_signal), initial_response
+    return wrap_property_expression(sva_text, disable_signal=disable_signal, clock_signal=clock_signal), initial_response
 
 
 def generate_baseline_sva(client, model_name, user_prompt):
@@ -1074,6 +1078,12 @@ def process_row(
         # signal at all (confirmed 0/283 rows) and golden answers have no
         # disable iff clause -- see DEFAULT_CSV_PATHS's comment.
         disable_signal = None if args.task == "nl2sva_machine_verified" else "tb_reset"
+        # Override point for testbenches whose clock port isn't named `clk`
+        # (e.g. end2end_evaluation/run_uart_nl2sva.py's UART pilot, which
+        # sets args.clock_signal = "clock" on the Namespace it builds).
+        # getattr, not args.clock_signal directly, so callers that build
+        # args without this field (older ad-hoc scripts) keep working.
+        clock_signal = getattr(args, "clock_signal", "clk")
 
         if args.no_rag:
             sva_text, initial_response = generate_baseline_sva(client, model_name, user_prompt)
@@ -1084,7 +1094,7 @@ def process_row(
                 question_replaced=args.ol_nl_replace_question, extra_note=allowed_signals_note,
                 allowed_signals_note=allowed_signals_note,
                 sv_dir=step1_jg_sv_dir, experiment_id=experiment_id, task_id=task_id,
-                raw_testbench=raw_testbench, disable_signal=disable_signal,
+                raw_testbench=raw_testbench, disable_signal=disable_signal, clock_signal=clock_signal,
                 sor_template_timing=args.sor_template_timing, sor_conservative=args.sor_conservative,
                 only_overlap_implication=args.only_overlap_implication,
             )
@@ -1214,6 +1224,11 @@ def main():
                               "root, by eliminating one of the two delay-encoding conventions the model "
                               "has to correctly combine, rather than trying to teach it to combine them "
                               "correctly. Opt-in, not a default -- untested at scale yet.")
+    parser.add_argument("--clock-signal", default="clk",
+                         help="Clock port name for wrap_property_expression/check_sva_elaboration. "
+                              "FVEval's own testbenches (nl2sva_human(_verified)/nl2sva_machine(_verified)) "
+                              "all use `clk`; override for real RTL with a different clock port name "
+                              "(e.g. end2end_evaluation/run_uart_nl2sva.py's UART pilot uses `clock`).")
     args = parser.parse_args()
 
     if args.ol_nl_replace_question and not args.ol_nl_grounding:
