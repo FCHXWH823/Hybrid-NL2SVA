@@ -54,3 +54,13 @@ VerilogTextBooks/*.pdf
 # regenerable working dirs, not meant to be committed
 *.jgtmp/
 *.step1_jgtmp/
+
+# Raw-model UART sweeps: the *_full.jsonl audit copies embed the 32KB combined
+# UART RTL in every row (~14MB each) and are regenerable from
+# generate_uart_raw.py; only the slim scoring CSVs are tracked. Same rationale
+# as the 31MB LMRESULT CSV noted in end2end_evaluation/README.md.
+end2end_evaluation/results/*_raw_full.jsonl
+
+# Slurm stdout captured next to the scripts that produced it (the
+# verilogFinetune/ rule above doesn't reach the repo root).
+/uart_raw_*.10g
