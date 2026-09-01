@@ -5,26 +5,70 @@ under the real UART design -- no golden reference needed).
 
 Run from the Hybrid-NL2SVA repo root, after run_uart_nl2sva.py:
     python3 end2end_evaluation/score_uart_assertionforge.py --workers 6
-"""
-import sys, os, csv, argparse, concurrent.futures, threading
+
+Scope-aware integration (2026-08-31): before insertion/elaboration, every
+bare SVA is passed through signal_scope.qualify_out_of_scope_references --
+see that module's docstring and end2end_evaluation/README.md's "A second
+gap" / scope-integration sections for the full diagnosis. This mechanically
+rewrites a real-but-out-of-scope RTL identifier (e.g. `ce_16`, declared
+inside uart_top/uart2bus_top's submodule, not uart2bus_top itself) into a
+correctly-qualified hierarchical path (`uart1.ce_16`), and a real macro
+name used bare (e.g. `MAIN_ADDR`) into a proper macro invocation
+(`` `MAIN_ADDR ``). The combined testbench's own `` `define ``s are also
+hoisted to the very front (Verilog's preprocessor is single-pass
+top-to-bottom -- a macro `` `define ``d in uart_parser.v, concatenated
+LAST in RTL_FILE_ORDER, isn't yet defined at the point earlier in the file
+where the assertion is spliced in, even once correctly backtick-qualified,
+unless hoisted). Neither fix touches prompt engineering, generation, or
+AssertionForge's own NL-plan quality -- pure mechanical integration repair,
+orthogonal to (and does not require adopting) the skip_signal_list_note=
+False experiment. Validated live: 24/58 originally-syntax-failing rows that
+reference a qualifiable name flip to syntax-OK from these two fixes alone."""
+import sys, os, csv, re, argparse, concurrent.futures, threading
 
 sys.path.insert(0, "verilogFinetune")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from jasper_direct_equiv_check import check_sva_proven
 from score_nl2sva_human import parse_code_response, extract_property_body
+from signal_scope import build_signal_scope_map, qualify_out_of_scope_references
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_INPUT_PATH = os.path.join(_HERE, "results", "assertionforge_uart_gpt-4o_dynamicrag.csv")
 DEFAULT_OUTPUT_PATH = os.path.join(_HERE, "results", "assertionforge_uart_gpt-4o_dynamicrag_jgscore.csv")
+DEFAULT_UART_RTL_DIR = os.path.join(_HERE, "AssertLLM", "rtl", "uart")
+
+_DEFINE_LINE_RE = re.compile(r"^`define\s+\w+.*$", re.MULTILINE)
+
+
+def hoist_defines(testbench):
+    """Moves every `define line to the front of the combined text (order
+    among themselves doesn't matter -- none reference each other here) so
+    a macro defined in a file concatenated LATER in RTL_FILE_ORDER is
+    already defined by the time the spliced-in assertion (near the very
+    front, inside uart2bus_top's body) references it."""
+    defines = _DEFINE_LINE_RE.findall(testbench)
+    if not defines:
+        return testbench
+    rest = _DEFINE_LINE_RE.sub("", testbench)
+    return "\n".join(defines) + "\n\n" + rest
+
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--input", default=DEFAULT_INPUT_PATH)
 ap.add_argument("--output", default=DEFAULT_OUTPUT_PATH)
+ap.add_argument("--uart-rtl-dir", default=DEFAULT_UART_RTL_DIR,
+                 help="Used only to (re-)derive the scope-qualification map (signal_scope.py) -- "
+                      "NOT the source of the testbench text itself, which still comes from the "
+                      "input CSV's output_tb column.")
 ap.add_argument("--workers", type=int, default=6)
 ap.add_argument("--timeout", type=int, default=90)
 ap.add_argument("--limit", type=int, default=None)
 cli_args = ap.parse_args()
 
 SV_DIR = f"{cli_args.output}.jgtmp"
+
+SCOPE_MAP, MACRO_NAMES = build_signal_scope_map(cli_args.uart_rtl_dir)
+print(f"Scope map: {len(SCOPE_MAP)} unambiguous internal signals, {len(MACRO_NAMES)} macros")
 
 with open(cli_args.input) as f:
     rows = list(csv.DictReader(f))
@@ -35,11 +79,12 @@ print(f"n={len(rows)}")
 
 def score_one(i, row):
     task_id = row["task_id"]
-    raw_testbench = row["output_tb"]
+    raw_testbench = hoist_defines(row["output_tb"])
     bare_sva = extract_property_body(parse_code_response(row["response"]))
+    qualified_sva = qualify_out_of_scope_references(bare_sva, SCOPE_MAP, MACRO_NAMES)
     try:
         syntax_ok, proven, jg_output = check_sva_proven(
-            raw_testbench, bare_sva, SV_DIR, experiment_id="uart_proven",
+            raw_testbench, qualified_sva, SV_DIR, experiment_id="uart_proven",
             task_id=str(i), clock_signal="clock", disable_signal=None,
             timeout=cli_args.timeout,
         )

@@ -48,3 +48,9 @@ Results/fveval_rag_outputs/
 # Copyrighted reference PDFs -- not meant to be redistributed via git
 RelatedWorks/*.pdf
 VerilogTextBooks/*.pdf
+
+# JasperGold scratch/proof-database directories (check_sva_elaboration/
+# check_sva_proven's SV_DIR, run_uart_nl2sva.py's step1_jg_sv_dir) --
+# regenerable working dirs, not meant to be committed
+*.jgtmp/
+*.step1_jgtmp/

@@ -1,10 +1,20 @@
 """Feeds AssertionForge's UART NL properties (nl_plans_uart.txt, Stage 2's
-output) through Hybrid-NL2SVA's own pipeline for NL2SVA, using the SAME flag
-configuration as nl2sva_machine_verified's best-known config:
---skip-signal-list-note --sor-conservative --only-overlap-implication, no
---ol-nl-grounding (these properties are already signal-grounded, same
-rationale as the machine task). Reuses process_row directly rather than
-plumbing a whole new --task branch into run_rag_on_fveval_benchmarks.py.
+output) through Hybrid-NL2SVA's own pipeline for NL2SVA. Reuses process_row
+directly rather than plumbing a whole new --task branch into
+run_rag_on_fveval_benchmarks.py.
+
+Adopted config (2026-08-31, after comparing several candidates on a 36-row
+pilot -- see end2end_evaluation/README.md's "A second gap"/human-route
+sections for the full writeup): `--skip-signal-list-note --sor-conservative
+--only-overlap-implication --ol-nl-grounding` (default -- pass
+--no-ol-nl-grounding to turn Step 1 back off), clock_signal="clock". NOT
+`--ol-nl-replace-question` -- tested alongside `--ol-nl-grounding` and found
+to make things WORSE (63.9% SynC vs 69.4%), since Step 1's own rewrite can
+introduce new structural errors on top of not reliably fixing the
+signal-hallucination pattern it was meant to address. skip_signal_list_
+note=False (the OTHER candidate fix, an explicit ALLOWED_SIGNALS guardrail)
+measurably outperformed ol_nl_grounding on the same pilot (91.7% SynC) but
+was deliberately NOT adopted -- see the README for why.
 
 Run from the Hybrid-NL2SVA repo root:
     python3 end2end_evaluation/run_uart_nl2sva.py --workers 6
@@ -142,6 +152,27 @@ def main():
                           "including @(posedge ...) -- NOT run through wrap_property_expression). For "
                           "comparing the pipeline's contribution against the raw base model on the same NL "
                           "properties.")
+    ap.add_argument("--no-ol-nl-grounding", action="store_true",
+                     help="Turns OFF Step 1 (generate_ol_nl_grounding) -- ADOPTED as the default as of "
+                          "2026-08-31, after comparing it against skip_signal_list_note=False and "
+                          "--ol-nl-replace-question on a 36-row pilot (see README's 'A second gap'/human-"
+                          "route sections). Step 1's own prompt says to 'name ONLY signals that actually "
+                          "appear in the testbench' -- meant to reduce AssertionForge's signal-"
+                          "hallucination pattern -- but without --ol-nl-replace-question (deliberately NOT "
+                          "auto-enabled, see below), the grounded restatement only feeds HybridRetrieval's "
+                          "query and SOR's recheck as supplementary system-prompt context; the ORIGINAL "
+                          "plan text (whatever ungrounded terms it has) is still what the generation call "
+                          "itself sees as the literal 'Question: ...'. Pass this flag to reproduce the "
+                          "pre-2026-08-31 baseline behavior for comparison.")
+    ap.add_argument("--ol-nl-replace-question", action="store_true",
+                     help="Requires Step 1 to be on (i.e. NOT passing --no-ol-nl-grounding). Makes Step "
+                          "1's grounded restatement actually REPLACE the 'Question: ...' text the "
+                          "generation call sees, instead of just appearing as supplementary system-prompt "
+                          "context alongside the still-original question. Tested on the same 36-row pilot "
+                          "and found to make things WORSE, not better (63.9%% SynC vs 69.4%% without it) --"
+                          "Step 1's own rewrite can introduce new structural SVA errors on top of not "
+                          "reliably fixing the signal-hallucination pattern it targets. Deliberately NOT "
+                          "adopted -- kept only for anyone wanting to reproduce/re-investigate that result.")
     cli_args = ap.parse_args()
 
     plans = parse_nl_plans(NL_PLANS_PATH)
@@ -172,7 +203,9 @@ def main():
                                           # disable_signal=None, matching the machine config
         csv=None, output=None, config=cli_args.config,
         provider="openai", model_name=None, limit=None, workers=cli_args.workers, max_retries=5,
-        no_rag=cli_args.no_rag, ol_nl_grounding=False, ol_nl_replace_question=False, ol_nl_conservative=False,
+        no_rag=cli_args.no_rag, ol_nl_grounding=not cli_args.no_ol_nl_grounding,
+        ol_nl_replace_question=cli_args.ol_nl_replace_question,
+        ol_nl_conservative=False,
         # skip_signal_list_note=True, matching nl2sva_machine_verified's own
         # best-known config -- kept at the DEFAULT deliberately (tried
         # flipping to False in a 36-row pilot on 2026-08-27; it measurably

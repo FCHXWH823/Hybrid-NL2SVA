@@ -157,6 +157,92 @@ behind that dataset's `--skip-signal-list-note` best-known setting.
   (`results/pilot_signalfix_baudclk_baudfreq*.csv`) are kept in the repo as
   a documented, reproducible experiment, not the adopted configuration.
 
+### The "human route" (`--ol-nl-grounding`) — ADOPTED default (2026-08-31)
+
+`nl2sva_human_verified`'s own best-known config includes `--ol-nl-grounding`
+(Step 1, `generate_ol_nl_grounding`) -- its prompt explicitly says to
+"rewrite the description... naming ONLY signals that actually appear in the
+testbench (never invented or paraphrased names)", which reads like a
+principled, source-level answer to "A second gap" above (fix the NL text
+itself, rather than restrict the final SVA's vocabulary). Tried two variants
+on the same 36-row pilot, both with the `clock_signal` fix and
+`skip_signal_list_note` left at its default `True`:
+
+| | n | #SynC | #Proven |
+|---|---|---|---|
+| Baseline (no Step 1) | 36 | 26 (72.2%) | 9 (25.0%) |
+| **`--ol-nl-grounding`** (no replace-question) | 36 | 25 (69.4%) | 10 (27.8%) |
+| `--ol-nl-grounding --ol-nl-replace-question` | 36 | 23 (63.9%) | 10 (27.8%) |
+
+Neither variant reliably fixes the pattern -- the remaining syntax failures
+under both still cite `ce_16`/`counter`/`global_clock_freq`/`baud_rate` at
+similar rates to the baseline. Root cause: Step 1's own "actually appear in
+the testbench" check is done against the FULL 32KB, 6-module RTL dump, not
+against `uart2bus_top`'s actual assertion-binding scope -- so it considers
+`ce_16` (declared in `uart_top`, not `uart2bus_top`) "grounded" too, the
+same scope-blindness as the underlying generation call. `--ol-nl-replace-
+question` additionally introduced NEW structural SVA errors (a fresh
+invented identifier `p_master_startl`, several `syntax error near ')'`/
+`'##'`/`'|->'` cases) by having the generation call see only Step 1's own
+rewrite -- net #SynC went DOWN, not up.
+
+**Decision: `--ol-nl-grounding` (without `--ol-nl-replace-question`)
+adopted as `run_uart_nl2sva.py`'s default anyway** (`--no-ol-nl-grounding`
+to opt out), despite measuring slightly worse than the no-Step-1 baseline
+on this small a sample (69.4% vs 72.2%, within noise at n=36) and clearly
+worse than the not-adopted `skip_signal_list_note=False` (91.7%) -- chosen
+as the more principled, source-level approach consistent with how
+`nl2sva_human_verified` itself is configured, over an explicit downstream
+allow-list. `--ol-nl-replace-question` stays off (measurably worse, see
+above). The scope-aware integration fix below is adopted independently and
+stacks with this -- it doesn't touch prompt engineering or NL-plan quality
+at all, so there's no tension between the two decisions.
+
+### Scope-aware integration fix (`signal_scope.py`) — adopted
+
+Separately from the NL-plan-quality debate above: of the original run's 98
+syntax-fail rows, 21 distinct "real RTL identifiers used at the wrong
+scope" (see "A second gap") are real, valid signals -- just not reachable
+as bare identifiers from `uart2bus_top`, the module every assertion gets
+spliced into (`ce_16` alone caused 34 failures). `signal_scope.py` fixes
+this mechanically, with no prompt/generation changes at all:
+
+1. **`build_signal_scope_map`**: statically parses the 6 RTL files, builds
+   `{internal_signal_name: hierarchical_prefix}` for every internal (non-
+   port) wire/reg/integer declared in exactly ONE of the 6 modules (28
+   found -- e.g. `ce_16` → `uart1.` since it's declared inside `uart_top`,
+   `main_sm` → `uart_parser1.`). Deliberately skips genuinely AMBIGUOUS
+   names declared identically in *different* sibling modules (`ce_1`/
+   `count16`/`bit_count`/`data_buf`, each independently declared in both
+   `uart_rx.v` and `uart_tx.v` -- guessing which one would risk silently
+   binding to the wrong net). Also collects every `` `define `` macro name
+   across the 6 files.
+2. **`qualify_out_of_scope_references`**: rewrites a bare reference to a
+   mapped internal signal into its qualified path (`ce_16` → `uart1.ce_16`)
+   and a bare reference to a known macro into a proper invocation
+   (`MAIN_ADDR` → `` `MAIN_ADDR ``, since a bare macro name is just an
+   ordinary, unresolvable identifier reference in Verilog, not a macro
+   call). Skips anything already preceded by `.`/`` ` `` (won't correct an
+   already-wrong hierarchical guess, only adds missing qualification).
+3. **`hoist_defines`** (in `score_uart_assertionforge.py`): Verilog macro
+   preprocessing is single-pass top-to-bottom, so a `` `define `` in
+   `uart_parser.v` (concatenated LAST in `RTL_FILE_ORDER`) isn't yet
+   defined at the point earlier in the file where the assertion is spliced
+   in -- confirmed live, `` `MAIN_ADDR `` still failed as "undefined macro"
+   even once correctly backtick-qualified, until all `` `define `` lines
+   are hoisted to the very front of the combined text.
+
+Both fixes are wired into `score_uart_assertionforge.py`, applied
+automatically before every JasperGold check. Validated live on the 58
+originally-syntax-failing rows (of the 98 total) that reference a name
+either fix can address: **0/58 → 24/58 (41.4%) now syntax-OK**, purely from
+these two mechanical fixes (21/58 from scope-qualification alone, +3 more
+from macro-hoisting). The remaining 34/58 fail for unrelated reasons
+confirmed by inspection -- a co-occurring pure hallucination in the same
+row, or a genuine SVA-construction bug (e.g. `main_sm == 'hMAIN_ADDR`, the
+model gluing a macro name onto a hex-literal base specifier instead of
+using `` ` ``).
+
 ### 0-shot base-model baseline, same 36 properties
 
 Ran the same `baud_clk`/`baud_freq` 36 properties through `--no-rag` (plain
@@ -201,7 +287,13 @@ parameter at all). Files: `results/pilot_baseline_baudclk_baudfreq.csv` /
   `verilogFinetune/jasper_direct_equiv_check.py` -- a standalone formal
   proof, `prove -all` + `get_status`, needing no golden reference, unlike
   that module's existing equivalence-checking functions), writing
-  `results/assertionforge_uart_gpt-4o_dynamicrag_jgscore.csv`.
+  `results/assertionforge_uart_gpt-4o_dynamicrag_jgscore.csv`. Also applies
+  the scope-aware integration fixes (`qualify_out_of_scope_references` +
+  `hoist_defines`, see "Scope-aware integration fix" above) to every row
+  before checking.
+- `signal_scope.py` -- the scope-aware integration fix's static-analysis
+  module (`build_signal_scope_map`, `qualify_out_of_scope_references`);
+  see "Scope-aware integration fix" above for the full writeup.
 - `nl_plans_uart.txt` -- AssertionForge Stage 2's output, grouped by signal,
   **filtered to the 256 properties for the 14 design-controlled signals**
   (originally 323 across all 18; see above). The `results/` CSVs were scored
@@ -210,9 +302,9 @@ parameter at all). Files: `results/pilot_baseline_baudclk_baudfreq.csv` /
   property: `task_id`, `signal`, `nl_property` (the NL text), `response`
   (the generated SVA), `signals_for_validity`. (The full LMRESULT-shaped CSV
   `run_uart_nl2sva.py` writes also embeds the ~32KB combined UART testbench
-  in every row, which is regenerable from `assertionforge_patches/` +
-  AssertLLM's RTL and wasn't worth committing at ~31MB; this slim version is
-  the one actually checked in.)
+  in every row, which is regenerable from the vendored `AssertionForge/` +
+  `AssertLLM/`'s RTL and wasn't worth committing at ~31MB; this slim version
+  is the one actually checked in.)
 - `results/assertionforge_uart_gpt-4o_dynamicrag_jgscore.csv` -- per-row
   `syntax`/`proven` verdicts (1.0/0.0) plus a `jg_output_tail` with the raw
   JasperGold status line.
@@ -300,19 +392,28 @@ clones are needed -- just:
    a run to specific target signals), then `python3
    end2end_evaluation/score_uart_assertionforge.py --workers 6`.
 
-   **Update (2026-08-27)**: a real bug, found while reviewing the committed
-   pipeline, is now fixed -- `clock_signal` wasn't actually threaded through
-   `wrap_property_expression`/`jg_driven_syntax_cleanup`/`generate_rag_sva`/
-   `process_row` in `run_rag_on_fveval_benchmarks.py` despite `run_uart_
-   nl2sva.py` setting `args.clock_signal = "clock"`; restored, all four now
-   accept/pass it correctly. A second candidate fix (`skip_signal_list_
-   note=False` + an `ALLOWED_SIGNALS` guardrail list, addressing the
-   signal-hallucination pattern in "A second gap" above) was validated on a
-   36-row pilot alongside this one but **deliberately not adopted as the
-   default** -- see "A second gap" for why. `run_uart_nl2sva.py` still uses
-   `skip_signal_list_note=True` by default. The `results/` CSVs (323/
-   256-row) reflect the config before the `clock_signal` fix -- a full
-   rerun with just that fix applied hasn't been done yet.
+   **Update (2026-08-31)**: several real fixes/decisions since the
+   `results/` CSVs (323/256-row) were generated -- those still reflect the
+   ORIGINAL config below. A full rerun with the current defaults hasn't
+   been done yet.
+   - `clock_signal` wasn't actually threaded through `wrap_property_
+     expression`/`jg_driven_syntax_cleanup`/`generate_rag_sva`/`process_row`
+     in `run_rag_on_fveval_benchmarks.py` despite `run_uart_nl2sva.py`
+     setting `args.clock_signal = "clock"` -- restored (real bug, always
+     on).
+   - `--ol-nl-grounding` (Step 1) is now ON by default (pass
+     `--no-ol-nl-grounding` to turn it off) -- **adopted**, see "The
+     'human route'" above. `--ol-nl-replace-question` stays off by
+     default -- tested and found to make things worse.
+   - `skip_signal_list_note=False` + `ALLOWED_SIGNALS` -- tested,
+     measurably helped more than `--ol-nl-grounding`, but **deliberately
+     NOT adopted**; `skip_signal_list_note` stays at its default `True`.
+     See "A second gap" for why.
+   - Scope-aware integration (`signal_scope.py`'s `qualify_out_of_scope_
+     references` + `hoist_defines`) is now applied automatically inside
+     `score_uart_assertionforge.py` -- **adopted**, orthogonal to the NL-
+     plan-quality decisions above (pure mechanical identifier-path repair,
+     no prompt/generation changes). See "Scope-aware integration fix".
 
 ## Extending
 

@@ -1,0 +1,251 @@
+task_id,syntax,proven,jg_output_tail
+AssertionForge-UART-3-baud_clk,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(81): 'defined_ce_16' is not declared
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(81): 'defined_ce_16' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(81): 'defined_ce_16' is not declared
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(81): 'defined_ce_16' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 8 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_3.tcl"
+AssertionForge-UART-5-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-1-baud_clk,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-4-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-0-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-2-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-9-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-6-baud_clk,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(81): 'ce_16_signal' is not declared
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(81): 'ce_16_signal' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(81): 'ce_16_signal' is not declared
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(81): 'ce_16_signal' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 8 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_10.tcl"
+AssertionForge-UART-8-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-11-baud_clk,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(81): 'valid_signal' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(81): 'valid_signal' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_12.tcl"
+AssertionForge-UART-12-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-7-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-10-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-13-baud_clk,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(81): 'counter_reg' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(81): 'counter_reg' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_14.tcl"
+AssertionForge-UART-15-baud_clk,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(81): 'counter' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(81): 'counter' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_17.tcl"
+AssertionForge-UART-14-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-17-baud_clk,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-18-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-20-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-19-baud_clk,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(81): 'ce_16' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(81): 'ce_16' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_20.tcl"
+AssertionForge-UART-16-baud_clk,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-21-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(81): syntax error near '[*'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(81): syntax error near '&&'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(81): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(81): syntax error near '[*'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(81): syntax error near '&&'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(81): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 9 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_23.tcl"
+AssertionForge-UART-22-baud_freq,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-24-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-25-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-26-baud_freq,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-23-baud_freq,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-30-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-33-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-29-baud_freq,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'ce_16' is not declared
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'counter' is not declared
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'global_clock_freq' is not declared
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'current_baud_rate' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'ce_16' is not declared
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'counter' is not declared
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'global_clock_freq' is not declared
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(81): 'current_baud_rate' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 10 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_29.tcl"
+AssertionForge-UART-28-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-31-baud_freq,0.0,0.0,"[ERROR (VERI-1158)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): use of undefined macro 'BAUD_RATE'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): syntax error near ')'
+[ERROR (VERI-1158)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): use of undefined macro 'GLOBAL_CLOCK_FREQ'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1158)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): use of undefined macro 'BAUD_RATE'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): syntax error near ')'
+	[ERROR (VERI-1158)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): use of undefined macro 'GLOBAL_CLOCK_FREQ'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(81): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 10 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_31.tcl"
+AssertionForge-UART-27-baud_freq,0.0,0.0,"[ERROR (VERI-1158)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(81): use of undefined macro 'GLOBAL_CLOCK_FREQ'
+[ERROR (VERI-1140)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(81): system call 'isunknown' expects one argument
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1158)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(81): use of undefined macro 'GLOBAL_CLOCK_FREQ'
+	[ERROR (VERI-1140)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(81): system call 'isunknown' expects one argument
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 8 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_32.tcl"
+AssertionForge-UART-34-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(81): syntax error near '&&'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(81): syntax error near '=='
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(83): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(151): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(209): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(327): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(423): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(1092): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(81): syntax error near '&&'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(81): syntax error near '=='
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(83): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(151): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(209): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(327): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(423): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.sva(1092): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 8 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/pilot_olnl_baudclk_baudfreq_jgscore.csv.jgtmp/uart_proven_35.tcl"
+AssertionForge-UART-32-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-35-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
