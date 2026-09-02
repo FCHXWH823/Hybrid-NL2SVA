@@ -842,15 +842,18 @@ def construct_static_nl_prompt(
         # `if valid_signals:` block -- it references "the Valid Signal Names
         # list above", which only exists when this branch renders.
         system_prompt += """
-    IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement:
-    ground the property's timing/sequencing structure in the specific operators listed in "SVA
-    Operator Context" below (e.g. ##N for an exact N-cycle delay, |-> for same-cycle implication,
-    $stable for "does not change") -- describe precisely which operator-expressible relationship
-    holds, rather than a vague qualifier with no operator equivalent. Name ONLY signals that
-    actually appear in the Valid Signal Names list above (never invented or paraphrased names,
-    even ones that sound plausible or related), and describe the property's structure as precisely
-    and concretely as possible -- e.g. for an implication-shaped property, state the antecedent
-    condition, then the consequent, in that order.
+    IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement, in
+    PLAIN ENGLISH PROSE -- do NOT write literal SVA syntax tokens (no "##N", no "|->"/"|=>", no
+    "$stable(...)"/"$rose(...)", no code) inside the test plan text itself; a test plan is a sentence
+    describing a property, not a code fragment. "Operator-level" means the property's MEANING should
+    map cleanly onto exactly one of the operators listed in "SVA Operator Context" below -- ground
+    your choice of wording in that operator's actual semantics -- but express that meaning entirely
+    in words. For example, ground in $stable's semantics by writing "does not change" (not writing
+    "$stable(...)" itself); ground in ##N's semantics by writing "N clock cycles later" (not writing
+    "##N" itself). Name ONLY signals that actually appear in the Valid Signal Names list above (never
+    invented or paraphrased names, even ones that sound plausible or related), and describe the
+    property's structure as precisely and concretely as possible -- e.g. for an implication-shaped
+    property, state the antecedent condition, then the consequent, in that order.
 
     Do NOT use vague, unquantified qualifiers such as "consistent", "expected", "predefined",
     "effectively", "correctly", "properly", "appropriate", or "stable" without stating exactly what
