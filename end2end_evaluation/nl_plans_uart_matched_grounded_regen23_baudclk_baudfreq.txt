@@ -1,0 +1,48 @@
+Signal baud_clk:
+Plan 1: 'baud_clk' frequency must match the ratio between 'baud_freq' and 'baud_limit'.
+Plan 2: 'baud_clk' must assert only when 'clock' is stable and 'reset' is deasserted.
+Plan 3: 'baud_clk' frequency must match the constant ratio when neither 'reset' is asserted nor 'baud_freq' changes.
+Plan 4: Each complete data transmission or reception via 'tx_data' or 'rx_data' must align with a specific and fixed count of 'baud_clk' cycles.
+Plan 5: 'baud_clk' must remain stable (not toggle) when 'tx_busy' is high or 'new_rx_data' is false.
+Plan 6: Changes in 'baud_freq' or 'baud_limit' must cause corresponding immediate adjustments to the 'baud_clk' frequency.
+Plan 7: During the stable periods of 'ser_in' and 'ser_out', 'baud_clk' must not introduce any glitches by maintaining its frequency.
+Plan 8: The 'baud_clk' signal must toggle at a rate defined by the values of 'baud_freq' and 'baud_limit', to ensure precise transmission and reception timing during normal operation.
+Plan 9: When 'reset' is asserted, the 'baud_clk' signal must be driven to a known state.
+Plan 10: The 'baud_clk' signal must maintain a frequency consistent with the expected baud rate, as determined by 'baud_freq' and 'baud_limit', irrespective of variations in these parameter values.
+Plan 11: The 'baud_clk' signal must be synchronized with the 'clock' signal to prevent any phase alignment issues.
+Plan 12: Under conditions of high 'tx_data' loads or frequent toggling of 'new_tx_data', 'baud_clk' must continue to produce an accurate clock signal without causing data errors.
+Plan 13: The 'baud_clk' signal must deactivate when there is neither active data transmission nor reception.
+Plan 14: The 'baud_clk' must only generate pulses when 'tx_busy' indicates the transmission module is active.
+Plan 15: Verify that baud_clk toggles at a frequency determined by baud_freq during both data transmission, when tx_busy is high, and reception, when new_rx_data is asserted.
+Plan 16: Ensure baud_clk remains stable without glitches during UART operations; this requires baud_clk to not change when ser_in or ser_out transitions occur.
+Plan 17: Confirm that when reset is asserted, baud_clk ceases toggling and stays low until reset is deasserted.
+Plan 18: Validate that baud_clk does not begin toggling until after baud_freq and baud_limit are configured, with a defined delay before the first toggle.
+Plan 19: After initialization, check that baud_clk toggles consistently in phase with the global clock, where global clock is tied to .clock in uart1.
+Plan 20: Verify that each edge of baud_clk corresponds with expected operations: a rising edge aligns with tx_data loading, and a falling edge aligns with new_rx_data reception.
+Plan 21: Ensure that the input port ce_16 is only active at expected intervals when enabled by baud_clk during UART transmission as indicated by tx_busy.
+Plan 22: Confirm that if baud_clk halts toggling unexpectedly, new_tx_data should not assert, and rx_data should stop being updated, entering an error state if false data transmission occurs.
+
+Signal baud_freq:
+Plan 23: The signal 'baud_freq' must always hold a value ranging from 0 to 4095, inclusive, indicating it is a non-negative 12-bit unsigned integer.
+Plan 24: The signal 'baud_freq' must remain stable, without changes, unless there is a change in the internal calculation parameters that are represented by predefined constants in the module setup.
+Plan 25: In steady-state operation, when there are no changes to its setup constants, the signal 'baud_freq' must remain stable without any unintended transients or oscillations.
+Plan 26: At any given time, under steady operating conditions, the added values of 'baud_freq' and 'baud_limit', represented by their respective constants, must sum to a predefined value when not in reset.
+Plan 27: The assignment of the signal 'baud_freq' must be synchronized with 'baud_limit', meaning both should be updated instantaneously when the module setup requires it, without delay between the two.
+Plan 28: Any update to 'baud_freq', reflecting predefined constant values, must result in correct alignment with the timing of 'baud_clk' to ensure proper frequency output for UART operations.
+Plan 29: The predefined constant representing 'baud_freq' must always ensure its value remains less than or equal to another constant representing the operational parameters of the module.
+Plan 30: Any updates to 'baud_freq', mirroring constant changes in the system, must not interfere with the value of 'ser_out' when the UART transmission is idle.
+Plan 31: It must always be the case that baud_freq is less than or equal to baud_limit.
+Plan 32: Whenever 16*baud_freq changes, baud_freq must be recalculated and updated to a new value.
+Plan 33: After a positive edge of reset, baud_freq must be recalculated within the next clock cycle.
+Plan 34: It must always be the case that baud_freq plus baud_limit equals an externally provided constant divided by the greatest common divisor of that constant and 16.
+Plan 35: A change in the baud_limit input must not result in the baud_freq being an undefined value in the next clock cycle.
+Plan 36: During normal operation without reset or reconfiguration, baud_freq must remain stable over contiguous cycles.
+Plan 37: When the signal ce_16 is asserted and no reset or reconfiguration occurs, baud_freq must remain stable over contiguous cycles.
+Plan 38: Whenever ce_16 changes state, if the change is due to altering related input signals, baud_freq recalculations must complete within one clock cycle.
+Plan 39: On the positive edge of reset, baud_freq must reset to its initial calculated value and stay stable until a reconfiguration occurs.
+Plan 40: There must never be any tick such that the sum of baud_freq and baud_limit is not equal to a value directly supported with signal operations.
+Plan 41: It must hold that there is an effect on ce_16, with its high transitions defining cycles marked every exact interval of 16 multiplied by baud_freq.
+Plan 42: It must never be the case that baud_freq takes a value representable in the design context as greater than any checked +1 value under defined practical operating limits, which references any intermediate value comparison.
+Plan 43: Upon the occurrence of a reset event, baud_freq must transition to a known design-specific initial state defined in timing with the reset cycle.
+Plan 44: Whenever there is a variation in baud_limit under the systematic value check, baud_freq must retain signal bounded correctness without deviations immediately post that tick which could disrupt defined timing.
+

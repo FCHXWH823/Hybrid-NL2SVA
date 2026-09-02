@@ -141,6 +141,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--uart-rtl-dir", default=DEFAULT_UART_RTL_DIR,
                      help="Path to AssertLLM's rtl/uart directory")
+    ap.add_argument("--plans", default=NL_PLANS_PATH,
+                     help="Path to a nl_plans.txt-shaped file (default: the committed "
+                          "nl_plans_uart.txt) -- override to score a freshly-regenerated "
+                          "AssertionForge Stage 2 output without touching the canonical file.")
     ap.add_argument("--output", default=DEFAULT_OUTPUT_PATH)
     ap.add_argument("--config", default="Src/Config.yml")
     ap.add_argument("--limit", type=int, default=None)
@@ -184,8 +188,8 @@ def main():
                           "adopted -- kept only for anyone wanting to reproduce/re-investigate that result.")
     cli_args = ap.parse_args()
 
-    plans = parse_nl_plans(NL_PLANS_PATH)
-    print(f"{len(plans)} NL properties loaded from {NL_PLANS_PATH}")
+    plans = parse_nl_plans(cli_args.plans)
+    print(f"{len(plans)} NL properties loaded from {cli_args.plans}")
 
     indices = list(range(len(plans)))
     if cli_args.signals:

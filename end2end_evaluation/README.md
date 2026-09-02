@@ -274,6 +274,94 @@ RAG/pipeline path; `generate_baseline_sva` doesn't take the note as a
 parameter at all). Files: `results/pilot_baseline_baudclk_baudfreq.csv` /
 `results/pilot_baseline_baudclk_baudfreq_jgscore.csv`.
 
+### Fixing "A second gap" at the source: AssertionForge Stage 2 rework (2026-09-02)
+
+Everything above treats AssertionForge's Stage 2 NL plans as fixed input and
+patches the NL2SVA side (`--ol-nl-grounding`, `skip_signal_list_note`,
+`signal_scope.py`). This section instead reworks `AssertionForge/src/
+gen_plan.py` itself -- a `baud_clk`/`baud_freq`-only pilot (`valid_signals`
+still the full 18-signal list; `max_num_signals_process` temporarily capped
+to 2 signals for iteration speed) -- to make Stage 2 generate more precise,
+signal-grounded plans directly, rather than relying entirely on downstream
+cleanup.
+
+**Two-step generation, mirroring Hybrid-NL2SVA's own Stage 1 OL-NL
+grounding.** The original `construct_static_nl_prompt` asked one LLM call to
+both invent a property AND state it with full operator-level precision in
+the same breath. Split into `construct_idea_prompt` (Step 1: free-form
+property ideas, no precision rules at all) and `construct_ol_nl_grounding_
+prompt` (Step 2: grounds Step 1's ideas into "OL NL" form -- carries the
+valid-signal whitelist, an operator-level/sequential-vs-combinational
+discipline, vague-qualifier/trailing-rationale/gcd bans, the same `SVA
+Operator Context` table Stage 1 itself uses, and worked examples -- literally
+the same grounding task Stage 1 performs, just batched over several ideas per
+call instead of one-at-a-time). `generate_dynamic_nl_plans` now calls both in
+sequence per retrieved context.
+
+**Confirmed negative-priming pattern**, consistent with earlier findings in
+this project (naming a specific bad SVA-syntax example in a NL2SVA prompt
+tends to make the model reproduce it, not avoid it -- see `Src/` for the
+FVEval-side version of this lesson): every prompt revision that named a
+*specific* thing to avoid (bad operator syntax, vague words, "abstract
+spec-level quantities") measurably made that exact category worse across
+several rounds, while revisions that stayed purely positive (list the valid
+signals, show one worked example of correct behavior) reliably helped. Full
+per-round data lives in git history (`gen_plan.py` commit messages,
+2026-09-02) -- not reproduced here since the numbered "regenN" comparison
+files themselves were transient debugging artifacts, deleted once the
+pipeline settled.
+
+**The hardest residual case traced to real RTL documentation, not noise or
+hallucination.** `baud_freq` plans kept citing `baud_rate`/`global_clock_
+freq`/`gcd` -- never real signals anywhere in the 6 RTL files -- no matter
+how the prompt was reworded, up to and including a dedicated worked example
+showing how to drop an ungroundable concept. Root cause: `baud_gen.v`'s own
+header comment verbatim documents `baud_freq = 16*baud_rate / gcd(global_
+clock_freq, 16*baud_rate)` -- genuine, directly-relevant design
+documentation (`baud_freq` is an *input* to `baud_gen`; the comment describes
+how an external register-loader is supposed to compute it) that the model has
+good reason to want to cite. Since the content is true and salient, not
+noise, prompt-level bans couldn't reliably suppress it.
+
+**Mechanical output filter, not prompt engineering, closed this one.**
+`filter_invalid_signal_references` (and its index-preserving twin,
+`filter_invalid_signal_references_paired`) drops any grounded plan
+referencing a snake_case, signal-shaped token not in `valid_signals` --
+applied as a pure post-hoc check, never fed back into a prompt, so it carries
+none of the negative-priming risk above. Restricted to snake_case
+(underscore-joined) tokens specifically to stay high-precision against real
+signal names in this codebase, rather than flagging ordinary English words.
+
+**Validated comparison, same 44 underlying properties.** To isolate
+grounding's actual contribution from unrelated batch-to-batch sampling
+variance, `generate_dynamic_nl_plans` also tracks each grounded plan's
+originating raw idea by index (`matched_raw_ideas.txt` / `matched_grounded_
+plans.txt`, same `Plan N:` numbering in both files, N referring to the same
+underlying idea in each) -- letting the identical 44 properties be tested
+both ways instead of two independently-sized/sampled batches (an earlier,
+methodologically flawed attempt compared 58 raw ideas against 48 *unrelated*
+grounded plans from a different sampling run, and showed only a marginal
+difference -- not reproduced here for that reason):
+
+| | n | #SynC | #Proven |
+|---|---|---|---|
+| Raw ideas (ungrounded Step 1 output) + `--no-rag` 0-shot gpt-4o baseline | 44 | 30 (68.2%) | 15 (34.1%) |
+| The SAME 44 ideas, grounded (Step 2 + filter) + full Hybrid-NL2SVA pipeline | 44 | **40 (90.9%)** | **24 (54.5%)** |
+
++22.7pp #SynC, +20.4pp #Proven from grounding + the full pipeline together,
+on identical underlying properties. Files: `nl_plans_uart_matched_rawideas_
+regen23_baudclk_baudfreq.txt` / `nl_plans_uart_matched_grounded_regen23_
+baudclk_baudfreq.txt` (inputs), `results/assertionforge_uart_regen23_
+matched_raw_baseline_jgscore.csv` / `results/assertionforge_uart_regen23_
+matched_grounded_pipeline_jgscore.csv` (JasperGold-scored outputs).
+
+**Scope**: `baud_clk`/`baud_freq` only (2/18 signals) -- a pilot to validate
+the two-step-generation + mechanical-filter approach before spending it on
+the remaining 16 signals and a full `nl_plans_uart.txt` regeneration.
+`AssertionForge/src/gen_plan.py`'s `config.py` still has `max_num_signals_
+process` temporarily capped and `valid_signals` set for this 2-signal pilot
+(see the `# TEMP` comment there) -- restore before any full-scale rerun.
+
 ## Files
 
 - `run_uart_nl2sva.py` -- feeds `nl_plans_uart.txt` through Hybrid-NL2SVA's
@@ -298,6 +386,13 @@ parameter at all). Files: `results/pilot_baseline_baudclk_baudfreq.csv` /
   **filtered to the 256 properties for the 14 design-controlled signals**
   (originally 323 across all 18; see above). The `results/` CSVs were scored
   from the original unfiltered 323.
+- `nl_plans_uart_matched_rawideas_regen23_baudclk_baudfreq.txt` /
+  `nl_plans_uart_matched_grounded_regen23_baudclk_baudfreq.txt` -- the
+  matched-pair, `baud_clk`/`baud_freq`-only pilot from "Fixing 'A second gap'
+  at the source" above: 44 properties each, same `Plan N:` numbering across
+  both files (N is the same underlying idea, ungrounded vs. grounded). NOT
+  the canonical `nl_plans_uart.txt` input -- a standalone comparison
+  artifact.
 - `results/assertionforge_uart_gpt-4o_dynamicrag_slim.csv` -- one row per
   property: `task_id`, `signal`, `nl_property` (the NL text), `response`
   (the generated SVA), `signals_for_validity`. (The full LMRESULT-shaped CSV
