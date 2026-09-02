@@ -454,6 +454,12 @@ def generate_dynamic_nl_plans(
     )
 
     nl_plans = {}
+    # 2026-09-02: also dump Step 1's raw (ungrounded) ideas to raw_ideas.txt,
+    # same directory/format convention as nl_plans.txt below -- for
+    # comparing the pre-grounding ideas against the final OL-NL plans (e.g.
+    # feeding the raw ideas through a different NL2SVA baseline). Purely a
+    # debug/analysis artifact -- doesn't affect nl_plans generation.
+    raw_ideas_by_signal = {}
     for i, signal_name in enumerate(sorted(valid_signals)):  # sorted is key!
         if i >= FLAGS.max_num_signals_process:
             print(
@@ -479,6 +485,7 @@ def generate_dynamic_nl_plans(
         assert len(dynamic_context_list) <= FLAGS.max_prompts_per_signal
 
         all_signal_plans = []
+        all_signal_ideas = []
 
         # Process each dynamic context separately
         for context_idx, dynamic_context in enumerate(dynamic_context_list):
@@ -507,6 +514,7 @@ def generate_dynamic_nl_plans(
                 print(
                     f"Generated {len(ideas)} raw ideas from context {context_idx+1} for signal {signal_name}"
                 )
+                all_signal_ideas.extend(ideas)
 
                 if not ideas:
                     print(f"No ideas parsed for signal {signal_name} context {context_idx+1}, skipping grounding step")
@@ -563,6 +571,25 @@ def generate_dynamic_nl_plans(
         print(
             f"Generated {len(unique_plans)} unique plans for signal {signal_name} from {len(all_signal_plans)} total plans"
         )
+
+        # Dedup raw ideas the same way as plans, for a comparable count.
+        unique_ideas = []
+        idea_set = set()
+        for idea in all_signal_ideas:
+            simplified_idea = ' '.join(idea.lower().split())
+            if simplified_idea not in idea_set:
+                idea_set.add(simplified_idea)
+                unique_ideas.append(idea)
+        raw_ideas_by_signal[signal_name] = unique_ideas
+
+    with open(Path(saver.logdir) / 'raw_ideas.txt', 'w') as f:
+        c = 1
+        for signal_name, ideas in raw_ideas_by_signal.items():
+            f.write(f'Signal {signal_name}:\n')
+            for idea in ideas:
+                f.write(f'Idea {c}: {idea}\n')
+                c += 1
+            f.write('\n')
 
     return nl_plans
 
