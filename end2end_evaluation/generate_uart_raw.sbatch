@@ -16,6 +16,9 @@
 #   GEN_MODEL      HF id or local path   (required)
 #   GEN_MODEL_TAG  short name for output filenames (required)
 #   GEN_RTL_DIR    AssertLLM's rtl/uart  (required)
+#   GEN_PLANS      NL plans file (optional; defaults to nl_plans_uart.txt).
+#                  Set it for the regen23 matched-subset files -- without the
+#                  passthrough this silently ran the full 256-plan default.
 
 set -euo pipefail
 
@@ -44,6 +47,7 @@ python ./end2end_evaluation/generate_uart_raw.py \
     --model "$GEN_MODEL" \
     --model-tag "$GEN_MODEL_TAG" \
     --uart-rtl-dir "$GEN_RTL_DIR" \
+    --plans "${GEN_PLANS:-/scratch/wx2356/Hybrid-NL2SVA/end2end_evaluation/nl_plans_uart.txt}" \
     --max-new-tokens "${GEN_MAXNEW:-31000}" \
     --temperature "${GEN_TEMP:-0.8}" \
     --top-p "${GEN_TOPP:-0.95}" \

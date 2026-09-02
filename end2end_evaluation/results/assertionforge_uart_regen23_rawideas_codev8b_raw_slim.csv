@@ -1,0 +1,298 @@
+task_id,signal,nl_property,response,signals_for_validity
+AssertionForge-UART-0-baud_clk,baud_clk,Verify that 'baud_clk' is generated correctly according to the specified 'baud_freq' and 'baud_limit' to ensure the UART operates at the intended baud rate.,"```systemverilog
+assert property (@(posedge clock)
+    $rose(baud_clk) |-> ##(`D_BAUD_FREQ + `D_BAUD_LIMIT) $rose(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-1-baud_clk,baud_clk,Ensure that 'baud_clk' transitions only occur when the 'clock' signal is stable and the 'reset' is inactive to avoid metastability issues.,"```systemverilog
+assert property (@(posedge clock)
+    $changed(baud_clk) |-> !reset
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-2-baud_clk,baud_clk,Validate that 'baud_clk' maintains a consistent frequency throughout the operation when 'uart1' is not affected by external factors like 'reset' or changes in 'baud_freq'.,"```systemverilog
+property baud_clk_period_consistent;
+    int expected_period;
+    expected_period = baud_limit / baud_freq;
+    @(posedge clock)
+    baud_clk |-> ##expected_period baud_clk;
+endproperty
+assert property (baud_clk_period_consistent);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-3-baud_clk,baud_clk,Confirm that 'baud_clk' exhibits the correct number of clock cycles between each transmission or reception of data indicated by 'tx_data' and 'rx_data' during UART communication.,"```systemverilog
+// Check that baud_clk period matches expected (baud_limit + 1) clock cycles
+property baud_clk_period;
+    @(posedge clock)
+    $rose(baud_clk) |-> ##(baud_limit + 1) $rose(baud_clk);
+endproperty
+
+assert property (baud_clk_period);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-4-baud_clk,baud_clk,Ensure 'baud_clk' does not unnecessarily toggle when no data has been transmitted ('tx_busy' is high) or received ('new_rx_data' is false) to conserve power.,"```systemverilog
+assert property (@(posedge clock)
+    (tx_busy || !new_rx_data) |-> $stable(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-5-baud_clk,baud_clk,"Verify that any change in 'baud_freq' or 'baud_limit' results in a proportional adjustment to the 'baud_clk' frequency, adapting precisely to new settings.","```systemverilog
+assert property (@(posedge clock)
+    $changed(baud_freq) || $changed(baud_limit) |=> 
+    (baud_clk == 1'b1) throughout ##1 (baud_clk == 1'b0) [*1:5] 
+    and ($rose(baud_clk) or $fell(baud_clk)) 
+    and not ($stable(baud_clk) during [1:5])
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-6-baud_clk,baud_clk,"Confirm that during periods of no data activity ('ser_in' and 'ser_out' are stable), the 'baud_clk' frequency stabilizes and does not introduce clock glitches.","```systemverilog
+assert property (@(posedge clock)
+    ($stable(ser_in) && $stable(ser_out)) |-> 
+    !$rose(baud_clk) && !$fell(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-7-baud_clk,baud_clk,"Verify that the 'baud_clk' signal toggles at a rate determined by 'baud_freq' and 'baud_limit' under nominal operation, ensuring proper transmission and reception timing.","```systemverilog
+property baud_clk_period;
+  @(posedge clock)
+  $rose(baud_clk) |-> ##(baud_limit + baud_freq) $rose(baud_clk);
+endproperty
+
+assert property (baud_clk_period);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-8-baud_clk,baud_clk,"Ensure that when 'reset' is asserted, the 'baud_clk' signal is driven to a known state, maintaining system stability during initialization.","```systemverilog
+assert property (@(posedge clock)
+    reset |-> !$isunknown(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-9-baud_clk,baud_clk,"Check that the 'baud_clk' maintains a consistent frequency that matches the expected baud rate, given different values of 'baud_freq' and 'baud_limit', to guarantee reliable data communication.","```systemverilog
+assert property (@(posedge clock)
+    ($rose(baud_clk), integer period = baud_limit - baud_freq + 1)
+    |=> ##period $rose(baud_clk)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-10-baud_clk,baud_clk,Validate that 'baud_clk' is synchronized with the 'clock' signal such that any phase alignment issues that can affect data integrity are mitigated.,"```systemverilog
+assert property (@(posedge clock) $stable(baud_clk));
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-11-baud_clk,baud_clk,"Confirm that under varying conditions, such as high 'tx_data' loads or frequent toggling of 'new_tx_data', the 'baud_clk' continues to generate the required accurate clock signal without introducing errors in the data flow.","```systemverilog
+assert property (@(posedge clock)
+    // During reset, baud_clk should be low
+    (reset) |-> (ce_16 == 1'b0)
+    // After reset, if baud_clk is high, it must be low in the next cycle
+    and
+    (!reset && ce_16) |=> !ce_16
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-12-baud_clk,baud_clk,Ascertain that 'baud_clk' deactivates appropriately if there is no active data transmission or reception to minimize unnecessary power consumption while maintaining system readiness.,"```systemverilog
+wire no_active_data = !tx_busy && !rx_busy;
+assert property (@(posedge clock)
+    no_active_data |-> (baud_clk == 1'b0)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-13-baud_clk,baud_clk,"Investigate the interaction between 'baud_clk' and 'tx_busy' to ensure that 'baud_clk' is generating pulses appropriately only when the transmission module is active, preventing clock wastage and data collisions.","```systemverilog
+property baud_clk_busy;
+    @(posedge clock)
+    baud_clk |-> tx_busy;
+endproperty
+assert property (baud_clk_busy);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-14-baud_clk,baud_clk,Verify that the baud_clk signal generates a clock with the correct frequency as determined by the baud_freq configuration during both transmission and reception of data.,"```systemverilog
+// Check that baud_clk has the correct frequency as determined by baud_freq
+property p_baud_clk_freq;
+    @(posedge clock)
+    $rose(baud_clk) |-> ##(baud_freq * 16) $rose(baud_clk);
+endproperty
+
+assert property (p_baud_clk_freq);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-15-baud_clk,baud_clk,"Ensure that baud_clk remains stable and glitch-free during UART operations, especially when transitioning between different baud rates by changing baud_freq or baud_limit values.","```systemverilog
+// Assertion to ensure baud_clk stability during baud rate transitions
+baud_stability_check: assert property (@(posedge clock)
+    (($changed(baud_freq) || $changed(baud_limit)) |=> $stable(baud_clk))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-16-baud_clk,baud_clk,Confirm that any reset signal applied to the UART module causes baud_clk to stop toggling and remain low until the reset is released.,"```systemverilog
+assert property (@(posedge clock) reset |-> (baud_clk == 0));
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-17-baud_clk,baud_clk,Validate that the first toggle of baud_clk occurs only after an appropriate setup time following the configuration of baud_freq and baud_limit.,"```systemverilog
+property p_first_toggle_after;
+    @(posedge clock)
+    $fell(reset) |-> ##baud_limit !baud_clk;
+endproperty
+a_first_toggle_after: assert property (p_first_toggle_after);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-18-baud_clk,baud_clk,Check that the baud_clk maintains a consistent phase relationship with the primary system clock after initialization.,"```systemverilog
+property baud_clk_phase_consistent;
+    @(posedge clock) 
+    if ($fell(reset))
+        ##[baud_limit] ce_16;
+    else if (ce_16)
+        ##[baud_limit+1] ce_16;
+endproperty
+
+assert property (baud_clk_phase_consistent);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-19-baud_clk,baud_clk,"Verify that each rising or falling edge of baud_clk triggers the intended behavior in the UART data transmission or reception process, aligning events accurately with communication protocol requirements.","```systemverilog
+// Assertion for baud_clk period and behavior
+assert property (@(posedge clock)
+    $rose(baud_clk) |=> ##16 $rose(baud_clk) 
+) else $error(""Baud clock period mismatch"");
+
+// Assertion for baud_clk edge usage
+assert property (@(posedge clock)
+    $rose(baud_clk) |-> (tx_busy || rx_busy) 
+) else $error(""UART busy not triggered by baud_clk rise"");
+
+// Assertion for baud_clk falling edge inactivity
+assert property (@(posedge clock)
+    $fell(baud_clk) |-> !tx_busy && !rx_busy 
+) else $error(""UART active during baud_clk fall"");
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-20-baud_clk,baud_clk,"Ensure that cea_16, as a function of baud_clk, correctly enables internal logic only at intended intervals during the UART transmission processing.","```systemverilog
+// In the uart_tx module, we check that ce_16 pulses occur every 16 global clock cycles
+assert property (@(posedge clock)
+    ce_16 |=> ##16 ce_16
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-21-baud_clk,baud_clk,"Confirm that if baud_clk stops toggling unexpectedly, corresponding UART operations halt, and an error state is entered to avoid false data transmission or reception.","```systemverilog
+assert property (@(posedge clock)
+    (
+        ((ce_16 == 1'b0) && ($past(ce_16,1) == 1'b0) && ($past(ce_16,2) == 1'b1) && !reset ||
+         (ce_16 == 1'b1) && ($past(ce_16,1) == 1'b1) && ($past(ce_16,2) == 1'b0) && !reset)
+    ) |=> 
+    (
+        ($stable(uart1.uart_rx_1.count16) && 
+         $stable(uart1.uart_rx_1.rx_busy) &&
+         $stable(uart1.uart_tx_1.count16) &&
+         $stable(uart1.uart_tx_1.tx_busy)
+    )
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-22-baud_freq,baud_freq,Verify that the computed value of 'baud_freq' is always a non-negative number within the expected 12-bit unsigned integer range.,"```systemverilog
+assert property (@(posedge clock) (baud_freq >= 0 && baud_freq <= 4095));
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-23-baud_freq,baud_freq,Check that changes to the 'baud_freq' signal are only made when there is a change in the 'baud_rate' or 'global_clock_freq' values.,"```systemverilog
+// Since the baud_freq signal is assigned from a constant macro, it should never change.
+// This assertion checks that baud_freq remains stable over time.
+assert property (@(posedge clock) $stable(baud_freq));
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-24-baud_freq,baud_freq,"Confirm that 'baud_freq' maintains a stable value in steady-state operation, without unexpected transients or oscillations when there are no changes at its inputs.","```systemverilog
+assert property (@(posedge clock)
+    $stable(baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-25-baud_freq,baud_freq,"Ensure synchronization between 'baud_freq' and 'baud_limit' such that the sum of 'baud_freq' and 'baud_limit' equals `global_clock_freq / gcd(global_clock_freq, 16 * baud_rate)` at all times.","```systemverilog
+// This assertion checks that the sum of baud_freq and baud_limit equals the total clock cycles per bit
+// at all times. The calculation uses global_clock_freq and baud_rate which are assumed to be available.
+assert property (@(posedge clock)
+    (baud_freq + baud_limit == (global_clock_freq / gcd(global_clock_freq, 16 * baud_rate)))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-26-baud_freq,baud_freq,Verify that 'baud_freq' is updated at the same clock edge as 'baud_limit' to ensure consistent baud rate generation.,"```systemverilog
+property baud_consistent;
+    @(posedge clock) 
+    ($changed(baud_freq) |-> $changed(baud_limit)) and
+    ($changed(baud_limit) |-> $changed(baud_freq));
+endproperty
+
+assert property (baud_consistent);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-27-baud_freq,baud_freq,Validate that any valid update to 'baud_freq' results in a predictable and accurate behavior of 'baud_clk' in generating an appropriate frequency output for UART communication.,"```systemverilog
+property baud_clk_update;
+    integer baud_freq_val = `D_BAUD_FREQ;
+    integer baud_limit_val = `D_BAUD_LIMIT;
+    integer expected_period = (baud_limit_val + baud_freq_val - 1) / baud_freq_val;
+    @(posedge clock) disable iff (reset)
+    $fell(reset) |=> (baud_clk == 0) [*expected_period] ##1 $rose(baud_clk);
+endproperty
+
+assert property (baud_clk_update);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-28-baud_freq,baud_freq,"Check that the signal 'baud_freq' never exceeds the value of 'global_clock_freq', ensuring proper division in the signal assignment.","```systemverilog
+assert property (@(posedge clock) (baud_freq <= global_clock_freq));
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-29-baud_freq,baud_freq,"Confirm that when the UART transmission is idle, any fluctuations or updates in 'baud_freq' do not interfere with ongoing data transactions or cause spurious errors in 'ser_out'.","```systemverilog
+property baud_freq_idle_stable;
+    @(posedge clock)
+    (tx_busy == 1'b0) && $changed(baud_freq) |-> $stable(ser_out);
+endproperty
+
+assert property (baud_freq_idle_stable);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-30-baud_freq,baud_freq,Verify that the `baud_freq` is always less than or equal to the `global_clock_freq` divided by the greatest common divisor of `global_clock_freq` and 16 times the `baud_rate`.,"```systemverilog
+// For 40MHz clock and 115200 baud configuration
+let gcd_val = $gcd(40000000, 16*115200);
+let max_val = 40000000 / gcd_val;
+assert property (@(posedge clock)
+    (baud_freq <= max_val)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-31-baud_freq,baud_freq,"Ensure that `baud_freq` is recalculated correctly when the `baud_rate` changes due to reconfiguring the system, thus maintaining synchronization.","```systemverilog
+// Check that baud_freq recalculates correctly when baud_rate changes
+// Since baud_rate is not a signal in this design, we assume it's provided externally
+// This assertion would monitor baud_rate changes and verify baud_freq updates accordingly
+assert property (@(posedge clock)
+    $changed(baud_rate) |-> (baud_freq == recalc_baud_freq(baud_rate))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-32-baud_freq,baud_freq,"Confirm that every time the `clock` is reset, the `baud_freq` is recalculated based on the current system's `global_clock_freq` and `baud_rate`.","```systemverilog
+function integer compute_baud_freq(input integer global_clock_freq, input integer baud_rate);
+   // Implementation of baud frequency calculation (as described in the baud_gen module)
+   integer gcd_val;
+   gcd_val = gcd(global_clock_freq, 16 * baud_rate);
+   return (16 * baud_rate / gcd_val);
+endfunction
+
+assert property (@(posedge clock)
+   $rose(reset) |=> (baud_freq == compute_baud_freq(global_clock_freq, baud_rate))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-33-baud_freq,baud_freq,Ensure that the calculated `baud_freq` respects the relationship where `baud_freq + baud_limit` equals the `global_clock_freq` divided by the greatest common divisor of `global_clock_freq` and 16 times the `baud_rate`.,"```systemverilog
+assert property (@(posedge clock)
+    (baud_freq + baud_limit) == (global_clock_freq / gcd(global_clock_freq, 16 * baud_rate))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-34-baud_freq,baud_freq,Verify that any transition in `global_clock_freq` or any related signals does not leave `baud_freq` in an undefined state.,"```systemverilog
+assert property (@(posedge clock)
+    !$isunknown(baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-35-baud_freq,baud_freq,Ensure that the `baud_freq` maintains a stable and expected value during normal operation when no reconfiguration or reset occurs.,"```systemverilog
+assert property (@(posedge clock) 
+    (baud_freq == `D_BAUD_FREQ)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-36-baud_freq,baud_freq,Confirm that `baud_freq` provides a stable clock frequency for `ce_16` to ensure correct baud rate timing in the absence of resets or reconfigurations.,"```systemverilog
+assert property (@(posedge clock)
+    !reset && $past(!reset) |-> $stable(baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-37-baud_freq,baud_freq,Verify that changes in input signals related to baud rate or global clock frequency lead to recalculations and updates of `baud_freq` in the expected clock cycles without unnecessary delays.,"```systemverilog
+assert property (@(posedge clock) 
+    (($changed(baud_freq) || $changed(baud_limit)) |=> 
+        (baud_gen.cea_16 != $past(baud_gen.cea_16)) 
+    )
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-38-baud_freq,baud_freq,Ensure that `baud_freq` correctly reflects any temporary suspension of operations caused by a reset signal by reverting to the initial calculated value after reset recovery.,"```systemverilog
+assert property (@(posedge clock)
+    !reset |-> (baud_freq == `D_BAUD_FREQ)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-39-baud_freq,baud_freq,Ensure that the sum of 'baud_freq' and 'baud_limit' is always equal to the quotient of 'global_clock_freq' divided by the greatest common divisor of 'global_clock_freq' and 16 times 'baud_rate'.,"```systemverilog
+assert property (@(posedge clock)
+    (baud_freq + baud_limit) == 16'd3125
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-40-baud_freq,baud_freq,"Check that 'baud_freq' influences the 'ce_16' signal by determining if it triggers a cycle every 16 'baud_freq' cycles, establishing the connection and impact on the output signal.","```systemverilog
+assert property (@(posedge clock)
+    !reset |-> 
+        (ce_16 == (counter >= baud_limit)) and 
+        (counter == $past(counter) + baud_freq)
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-41-baud_freq,baud_freq,"Validate that 'baud_freq' does not exceed the maximum value derived from its calculation constraints, ensuring it operates within its frequency range for proper baud rate generation.","```systemverilog
+assert property (@(posedge clock) (baud_freq <= 12'hFFF));
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-42-baud_freq,baud_freq,"Confirm that upon a reset event, 'baud_freq' initializes correctly to a predetermined state as defined by the design specification in 'baud_gen'.","```systemverilog
+assert property (@(posedge clock) (reset) |-> (baud_freq == `D_BAUD_FREQ));
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
+AssertionForge-UART-43-baud_freq,baud_freq,"Verify that when 'baud_limit' adjustments occur, 'baud_freq' maintains its calculated integrity without unintended alterations that might affect the communication timing.","```systemverilog
+assert property (@(posedge clock)
+    (baud_limit != $past(baud_limit)) |-> (baud_freq == $past(baud_freq))
+);
+```","baud_clk,baud_freq,baud_limit,ce_16,int_address,int_gnt,int_rd_data,int_read,int_req,int_wr_data,int_write,new_rx_data,new_tx_data,rx_data,ser_in,ser_out,tx_busy,tx_data"
