@@ -979,7 +979,17 @@ def construct_idea_prompt(dynamic_context: str, signal_name: str) -> Tuple[str, 
     2's job -- so this deliberately carries none of the precision-related
     rules (no valid-signal whitelist, no OL-NL/operator-level discipline, no
     vague-qualifier/trailing-rationale/gcd bans, no operator table, no OL-NL
-    few-shot examples)."""
+    few-shot examples).
+
+    2026-09-02: added one grounding constraint after regen16 showed Step 1's
+    total freedom let ideas latch onto abstract, spec-level quantities (e.g.
+    a rate/frequency described in the spec's prose but never itself a real
+    signal) -- Step 2 has the valid-signal whitelist, but it grounds
+    whatever idea it's handed rather than discarding an idea that was never
+    groundable to begin with, so invalid signal-name leakage went UP (from
+    ~1-2/39 to 6/43) rather than down. This doesn't ask for OL-NL precision,
+    only for ideas to stay anchored to things that actually appear in
+    dynamic_context, which is still a much lighter bar than Step 2's."""
     system_prompt = """You are a helpful bot that comes up with diverse, meaningful verification
     properties for hardware signals, based on design context, following the requested format
     exactly."""
@@ -992,8 +1002,15 @@ def construct_idea_prompt(dynamic_context: str, signal_name: str) -> Tuple[str, 
     Generate diverse test-plan ideas for the signal '{signal_name}' -- properties or behaviors of
     this signal that would be worth formally verifying. Write each idea as a natural, high-level
     statement of intended behavior -- you do not need to name every signal precisely or match any
-    particular format yet; a later step will handle that. Each idea should be on a new line and
-    start with 'Idea: '.
+    particular format yet; a later step will handle that.
+
+    Ground each idea in observable signal behavior -- how signals and modules that actually appear
+    in the context above transition, hold, or relate to each other -- rather than in abstract,
+    spec-level quantities or derived formulas that are not themselves signals in that context. If
+    the specification describes a value as computed from such an abstract quantity, describe the
+    idea in terms of the signal's own observable behavior instead of restating that derivation.
+
+    Each idea should be on a new line and start with 'Idea: '.
     """
     return system_prompt, user_prompt
 
