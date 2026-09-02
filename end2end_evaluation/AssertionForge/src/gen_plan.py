@@ -1081,12 +1081,22 @@ def construct_ol_nl_grounding_prompt(
     """
 
     system_prompt += """
-    Worked example (abstract/domain-level input, grounded in the real signals of an unrelated design):
+    Worked examples (abstract/domain-level input, grounded in the real signals of an unrelated design):
      Context (excerpt): a module with a status flag pending, its previous-cycle value pending_d1, a
     clear request clear_vld, and a saturation guard sat_guard.
+
      Idea given: that the pending flag never gets stuck.
      Plan: It must never be the case that pending_d1 is asserted and clear_vld is not asserted and
     pending is still asserted and sat_guard is not asserted
+
+     Idea given: that pending becomes asserted once the accumulated event count exceeds a configured
+    threshold.
+     Plan: that whenever sat_guard is asserted, pending must also be asserted
+
+    (the second idea mentions "accumulated event count" and "a configured threshold" -- neither is
+    one of pending/pending_d1/clear_vld/sat_guard -- so the grounded Plan drops that language
+    entirely and restates the property using only the real signal, sat_guard, that actually stands
+    for it in this design; it does not repeat "accumulated event count" or "threshold" anywhere.)
 
     Output exactly one 'Plan: ' line per idea below, in the same order, and nothing else.
     """
