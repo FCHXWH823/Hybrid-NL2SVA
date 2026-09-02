@@ -22,6 +22,27 @@ from dataclasses import dataclass
 print = saver.log_info
 
 
+# 2026-09-02: real bug found while investigating why Stage 2 (gen_plan.py)
+# test plans kept referencing signals like 'counter_assignment'/'baud_freq_
+# assignment' that don't exist anywhere in the RTL. Traced it here: rtl_kg.py
+# names every "assignment" node f"{lhs}_assignment" (a KG-internal synthetic
+# node representing "the code location where lhs gets assigned", not a real
+# Verilog identifier) -- and every path-description function below prints
+# that raw name field verbatim (e.g. "PATH ANALYSIS FROM counter_assignment
+# TO ..."). The LLM generating test plans from this retrieved context has no
+# way to distinguish "counter_assignment" from a real signal name, and
+# copies it straight into the plan text as if it were one. This helper
+# strips the "_assignment" suffix back to the real underlying signal name
+# (rtl_kg.py's own `lhs`) wherever an assignment node's name is displayed,
+# so the retrieved context talks about the real signal instead of a
+# synthetic graph-internal identifier.
+def _display_node_name(node_info: Dict, fallback: str) -> str:
+    name = node_info.get('name', fallback)
+    if node_info.get('type') == 'assignment' and name.endswith('_assignment'):
+        return name[: -len('_assignment')]
+    return name
+
+
 class PathBasedContextGenerator:
     """Extracts path-based contexts from a graph using structural and statistical analysis"""
 
@@ -335,11 +356,11 @@ class PathBasedContextGenerator:
         target_info = G.nodes[target_node]
 
         source_type = source_info.get('type', 'unknown')
-        source_name = source_info.get('name', source_node)
+        source_name = _display_node_name(source_info, source_node)
         source_module = source_info.get('module', 'unknown')
 
         target_type = target_info.get('type', 'unknown')
-        target_name = target_info.get('name', target_node)
+        target_name = _display_node_name(target_info, target_node)
         target_module = target_info.get('module', 'unknown')
 
         # Generate different representations based on style
@@ -403,11 +424,11 @@ class PathBasedContextGenerator:
                 next_info = G.nodes[next_node]
 
                 curr_type = curr_info.get('type', 'unknown')
-                curr_name = curr_info.get('name', curr_node)
+                curr_name = _display_node_name(curr_info, curr_node)
                 curr_module = curr_info.get('module', '')
 
                 next_type = next_info.get('type', 'unknown')
-                next_name = next_info.get('name', next_node)
+                next_name = _display_node_name(next_info, next_node)
                 next_module = next_info.get('module', '')
 
                 # Get edge attributes
@@ -563,8 +584,8 @@ class PathBasedContextGenerator:
         signal_flow = []
         for i in range(len(path) - 1):
             curr_node, next_node = path[i], path[i + 1]
-            curr_name = G.nodes[curr_node].get('name', curr_node)
-            next_name = G.nodes[next_node].get('name', next_node)
+            curr_name = _display_node_name(G.nodes[curr_node], curr_node)
+            next_name = _display_node_name(G.nodes[next_node], next_node)
 
             # Get edge relationship
             edge_data = G.get_edge_data(curr_node, next_node)
