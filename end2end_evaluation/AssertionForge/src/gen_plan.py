@@ -457,7 +457,7 @@ def generate_dynamic_nl_plans(
             # construct_ol_nl_grounding_prompt docstrings for rationale.
             try:
                 idea_system_prompt, idea_user_prompt = construct_idea_prompt(
-                    dynamic_context, signal_name,
+                    dynamic_context, signal_name, valid_signals,
                 )
                 idea_result = llm_inference(
                     llm_agent, idea_user_prompt, f"NL_Ideas_{signal_name}_{context_idx+1}",
@@ -972,24 +972,31 @@ def construct_static_nl_prompt(
 # ban, SVA Operator Context) and does nothing but rewrite Step 1's ideas into
 # OL NL form -- literally the same task Stage 1 performs, just batched over
 # several ideas per call instead of Stage 1's one-at-a-time.
-def construct_idea_prompt(dynamic_context: str, signal_name: str) -> Tuple[str, str]:
+def construct_idea_prompt(
+    dynamic_context: str, signal_name: str, valid_signals: Optional[Set[str]] = None
+) -> Tuple[str, str]:
     """Step 1: come up with WHAT properties are worth testing for signal_name,
     given dynamic_context (KG-retrieved context around that signal). Not
     required to be precise about signal names or structure -- that's Step
     2's job -- so this deliberately carries none of the precision-related
-    rules (no valid-signal whitelist, no OL-NL/operator-level discipline, no
-    vague-qualifier/trailing-rationale/gcd bans, no operator table, no OL-NL
-    few-shot examples).
+    rules (no OL-NL/operator-level discipline, no vague-qualifier/trailing-
+    rationale/gcd bans, no operator table, no OL-NL few-shot examples).
 
-    2026-09-02: added one grounding constraint after regen16 showed Step 1's
-    total freedom let ideas latch onto abstract, spec-level quantities (e.g.
-    a rate/frequency described in the spec's prose but never itself a real
-    signal) -- Step 2 has the valid-signal whitelist, but it grounds
-    whatever idea it's handed rather than discarding an idea that was never
-    groundable to begin with, so invalid signal-name leakage went UP (from
-    ~1-2/39 to 6/43) rather than down. This doesn't ask for OL-NL precision,
-    only for ideas to stay anchored to things that actually appear in
-    dynamic_context, which is still a much lighter bar than Step 2's."""
+    2026-09-02: regen16 showed Step 1's total freedom let ideas latch onto
+    abstract, spec-level quantities (e.g. a rate/frequency described in the
+    spec's prose but never itself a real signal) -- Step 2 has the valid-
+    signal whitelist, but it grounds whatever idea it's handed rather than
+    discarding one that was never groundable. First attempt at a fix (regen17)
+    told the model what to AVOID ("not abstract, spec-level quantities...")
+    -- this made every measured category worse, not better (invalid-signal
+    leakage rose from 6/43 to 10/46; gcd/trailing-rationale/vague-qualifier
+    all rose too), consistent with the negative-priming pattern already
+    confirmed multiple times elsewhere in this file (naming the thing to
+    avoid puts it in front of the model right before generation). Replaced
+    with a purely positive anchor instead: just list the design's real
+    signal names, with no "don't" framing at all -- the same
+    show-don't-forbid approach that worked for the OL-NL discipline
+    paragraph in construct_ol_nl_grounding_prompt."""
     system_prompt = """You are a helpful bot that comes up with diverse, meaningful verification
     properties for hardware signals, based on design context, following the requested format
     exactly."""
@@ -998,19 +1005,19 @@ def construct_idea_prompt(dynamic_context: str, signal_name: str) -> Tuple[str, 
     Context for signal '{signal_name}':
 
     {dynamic_context}
+    """
 
+    if valid_signals:
+        user_prompt += f"""
+    Signals that exist in this design: {', '.join(sorted(valid_signals))}
+    """
+
+    user_prompt += f"""
     Generate diverse test-plan ideas for the signal '{signal_name}' -- properties or behaviors of
-    this signal that would be worth formally verifying. Write each idea as a natural, high-level
-    statement of intended behavior -- you do not need to name every signal precisely or match any
-    particular format yet; a later step will handle that.
-
-    Ground each idea in observable signal behavior -- how signals and modules that actually appear
-    in the context above transition, hold, or relate to each other -- rather than in abstract,
-    spec-level quantities or derived formulas that are not themselves signals in that context. If
-    the specification describes a value as computed from such an abstract quantity, describe the
-    idea in terms of the signal's own observable behavior instead of restating that derivation.
-
-    Each idea should be on a new line and start with 'Idea: '.
+    this signal, expressed in terms of these signals' own observable behavior, that would be worth
+    formally verifying. Write each idea as a natural, high-level statement of intended behavior --
+    you do not need to name every signal precisely or match any particular format yet; a later step
+    will handle that. Each idea should be on a new line and start with 'Idea: '.
     """
     return system_prompt, user_prompt
 
