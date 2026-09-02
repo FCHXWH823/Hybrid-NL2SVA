@@ -841,19 +841,26 @@ def construct_static_nl_prompt(
         # signal-grounded natural language from the start. Kept inside this
         # `if valid_signals:` block -- it references "the Valid Signal Names
         # list above", which only exists when this branch renders.
+        # 2026-09-02: reworded to match Hybrid-NL2SVA's own Stage 1 instruction
+        # (PROMPT_TEMPLATE_OL_NL_NO_GOLDEN) much more literally -- that instruction
+        # never names a specific operator or points at its own operator table by
+        # name at all; it just asks for structural precision (antecedent, then
+        # consequent) in plain prose, trusting the table's mere presence in the
+        # system message to ground word choice implicitly. The previous wording
+        # here explicitly said "map onto one of the operators listed in SVA
+        # Operator Context" and named $stable/##N as worked examples -- likely
+        # PART OF why regen7 started writing literal "##1"/"$stable(...)" into
+        # the test plan text: naming the syntax as an example, even while saying
+        # "don't copy it literally," still put it directly in front of the model
+        # right before generation.
         system_prompt += """
-    IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement, in
-    PLAIN ENGLISH PROSE -- do NOT write literal SVA syntax tokens (no "##N", no "|->"/"|=>", no
-    "$stable(...)"/"$rose(...)", no code) inside the test plan text itself; a test plan is a sentence
-    describing a property, not a code fragment. "Operator-level" means the property's MEANING should
-    map cleanly onto exactly one of the operators listed in "SVA Operator Context" below -- ground
-    your choice of wording in that operator's actual semantics -- but express that meaning entirely
-    in words. For example, ground in $stable's semantics by writing "does not change" (not writing
-    "$stable(...)" itself); ground in ##N's semantics by writing "N clock cycles later" (not writing
-    "##N" itself). Name ONLY signals that actually appear in the Valid Signal Names list above (never
-    invented or paraphrased names, even ones that sound plausible or related), and describe the
-    property's structure as precisely and concretely as possible -- e.g. for an implication-shaped
-    property, state the antecedent condition, then the consequent, in that order.
+    IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement --
+    one that names ONLY signals that actually appear in the Valid Signal Names list above (never
+    invented or paraphrased names, even ones that sound plausible or related), and whose clauses
+    describe the property's structure as precisely and concretely as possible (e.g. for an
+    implication-shaped property, state the antecedent condition, then the consequent, in that
+    order). Write plain English prose -- a test plan is a sentence describing a property, not a
+    code fragment, so it should never contain SVA syntax itself.
 
     Do NOT use vague, unquantified qualifiers such as "consistent", "expected", "predefined",
     "effectively", "correctly", "properly", "appropriate", or "stable" without stating exactly what
