@@ -868,6 +868,12 @@ def construct_static_nl_prompt(
     specific comparison, a specific ratio, or a specific signal value -- not a qualitative judgment
     a reader would have to guess the threshold for.
 
+    Do NOT append a trailing rationale or purpose clause explaining why the property matters or
+    what it verifies (e.g. "...ensuring signal integrity", "...thereby putting the transmitter in a
+    hold state", "...verifying the timing path between X and Y", "...influencing the timing and
+    control of the module"). State the checkable claim itself and stop -- end the test plan as soon
+    as the property is fully and precisely stated, with nothing appended after it.
+
     SystemVerilog Assertions do not support arbitrary math functions (no gcd(), no general
     division/modulo against external constants). Do not describe an expected value via a
     derivation/formula unless that exact formula is itself directly expressible in SVA. If the
