@@ -104,7 +104,16 @@ DEFAULT_OUTPUT_PATH = os.path.join(_HERE, "results", "assertionforge_uart_gpt-4o
 
 
 def parse_nl_plans(path):
-    """Returns [(signal_name, plan_text), ...] in file order."""
+    """Returns [(plan_number, signal_name, plan_text), ...] in file order.
+
+    Keeps the embedded "Plan N:" number rather than each entry's position in
+    the file (matching generate_uart_raw.py's parser). nl_plans_uart.txt has
+    already been filtered once (323->256, design-controlled signals only),
+    which made position and plan number disagree for anything after the
+    first dropped block -- and could again after any future edit to this
+    file. task_id is built from the number (see main()), not position, so it
+    stays stable across such edits and matches generate_uart_raw.py's
+    numbering for the same plan."""
     plans = []
     current_signal = None
     with open(path) as f:
@@ -114,9 +123,9 @@ def parse_nl_plans(path):
             if sig_match:
                 current_signal = sig_match.group(1)
                 continue
-            plan_match = re.match(r"^Plan \d+:\s*(.*)$", line)
+            plan_match = re.match(r"^Plan (\d+):\s*(.*)$", line)
             if plan_match and current_signal:
-                plans.append((current_signal, plan_match.group(1).strip()))
+                plans.append((int(plan_match.group(1)), current_signal, plan_match.group(2).strip()))
     return plans
 
 
@@ -181,7 +190,7 @@ def main():
     indices = list(range(len(plans)))
     if cli_args.signals:
         wanted = {s.strip() for s in cli_args.signals.split(",") if s.strip()}
-        indices = [i for i in indices if plans[i][0] in wanted]
+        indices = [i for i in indices if plans[i][1] in wanted]
         print(f"--signals {sorted(wanted)}: {len(indices)}/{len(plans)} plans selected")
     if cli_args.limit:
         indices = indices[: cli_args.limit]
@@ -194,7 +203,8 @@ def main():
         with open(cli_args.output) as f:
             done_ids = {row["task_id"] for row in csv.DictReader(f)}
         indices = [i for i in indices if not any(
-            f"AssertionForge-UART-{i}-" == tid[: len(f"AssertionForge-UART-{i}-")] for tid in done_ids
+            f"AssertionForge-UART-{plans[i][0] - 1}-" == tid[: len(f"AssertionForge-UART-{plans[i][0] - 1}-")]
+            for tid in done_ids
         )]
         print(f"--resume: {len(done_ids)} rows already in {cli_args.output}, {len(indices)} remaining")
 
@@ -274,8 +284,8 @@ def main():
         with concurrent.futures.ThreadPoolExecutor(max_workers=cli_args.workers) as executor:
             futures = [
                 executor.submit(
-                    m.process_row, i, f"AssertionForge-UART-{i}-{plans[i][0]}", raw_testbench, plans[i][1],
-                    "", VALID_SIGNALS, args, client, model_name, rich_operator_context,
+                    m.process_row, i, f"AssertionForge-UART-{plans[i][0] - 1}-{plans[i][1]}", raw_testbench,
+                    plans[i][2], "", VALID_SIGNALS, args, client, model_name, rich_operator_context,
                     code_retriever, rag_chain, rag_chain_checker, step1_jg_sv_dir, experiment_id,
                 )
                 for i in indices

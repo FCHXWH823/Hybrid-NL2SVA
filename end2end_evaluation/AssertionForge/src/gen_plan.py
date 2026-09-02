@@ -785,8 +785,32 @@ def construct_static_nl_prompt(
     CRITICAL - Valid Signal Names (USE ONLY THESE SIGNALS):
     {', '.join(sorted(valid_signals))}
 
-    WARNING: It is ABSOLUTELY ESSENTIAL that you ONLY use signals from the above list in your test plans. 
+    WARNING: It is ABSOLUTELY ESSENTIAL that you ONLY use signals from the above list in your test plans.
     DO NOT introduce or use ANY signals that are not in this list. Any test plan using undefined signals will be considered invalid.
+
+    """
+
+        # 2026-08-31: added -- borrowed from Hybrid-NL2SVA's own Stage 1 OL-NL
+        # grounding step (generate_ol_nl_grounding/PROMPT_TEMPLATE_OL_NL_NO_GOLDEN),
+        # whose job is exactly this same discipline for a different input (an
+        # already-written NL description, there; a test plan being written from
+        # scratch, here). Write each test plan itself as operator-level,
+        # signal-grounded natural language from the start. Kept inside this
+        # `if valid_signals:` block -- it references "the Valid Signal Names
+        # list above", which only exists when this branch renders.
+        nl_gen_prompt += """
+    IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement,
+    the same discipline used when translating natural language into formal assertions: name ONLY
+    signals that actually appear in the Valid Signal Names list above (never invented or paraphrased
+    names, even ones that sound plausible or related), and describe the property's structure as
+    precisely and concretely as possible -- e.g. for an implication-shaped property, state the
+    antecedent condition, then the consequent, in that order.
+
+    SystemVerilog Assertions do not support arbitrary math functions (no gcd(), no general
+    division/modulo against external constants). Do not describe an expected value via a
+    derivation/formula unless that exact formula is itself directly expressible in SVA. If the
+    specification's own derivation is not checkable that way, state the property in terms of the
+    signal's actual, directly observable behavior instead.
 
     """
 
