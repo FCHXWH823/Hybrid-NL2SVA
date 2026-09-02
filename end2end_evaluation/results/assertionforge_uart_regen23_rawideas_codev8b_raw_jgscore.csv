@@ -1,0 +1,651 @@
+task_id,syntax,proven,jg_output_tail
+AssertionForge-UART-3-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_3.tcl"
+AssertionForge-UART-2-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near '='
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near 'baud_clk'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near 'endpropertyassert'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(193): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near '='
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near 'baud_clk'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(134): syntax error near 'endpropertyassert'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.sva(193): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_2.tcl"
+AssertionForge-UART-5-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(134): syntax error near 'during'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(134): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(134): syntax error near 'during'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(134): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 8 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_5.tcl"
+AssertionForge-UART-4-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-1-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-0-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-7-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(193): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(194): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(199): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(193): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(194): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.sva(199): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_7.tcl"
+AssertionForge-UART-9-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(134): syntax error near 'period'
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(134): 'period' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(134): syntax error near 'period'
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(134): 'period' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 8 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_9.tcl"
+AssertionForge-UART-11-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_11.tcl"
+AssertionForge-UART-6-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-8-baud_clk,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-10-baud_clk,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-12-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(134): syntax error near 'wire'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(134): SystemVerilog 2012 keyword 'wire' used in incorrect context
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(134): syntax error near 'wire'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(134): SystemVerilog 2012 keyword 'wire' used in incorrect context
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 8 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_12.tcl"
+AssertionForge-UART-14-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_14.tcl"
+AssertionForge-UART-15-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_15.tcl"
+AssertionForge-UART-13-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(134): syntax error near 'endpropertyassert'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(193): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(194): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(134): syntax error near 'endpropertyassert'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(193): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(194): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.sva(199): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_13.tcl"
+AssertionForge-UART-17-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(134): syntax error near 'endpropertya_first_toggle_after'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(193): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(194): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(134): syntax error near 'endpropertya_first_toggle_after'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(193): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(194): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.sva(199): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_17.tcl"
+AssertionForge-UART-18-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near ']'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near 'else'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): SystemVerilog 2012 keyword 'else' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near ']'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near 'endpropertyassert'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near ']'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near 'else'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): SystemVerilog 2012 keyword 'else' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near ']'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(134): syntax error near 'endpropertyassert'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.sva(192): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_18.tcl"
+AssertionForge-UART-16-baud_clk,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-20-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_20.tcl"
+AssertionForge-UART-19-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_19.tcl"
+AssertionForge-UART-21-baud_clk,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(135): syntax error near ';'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(135): syntax error near ';'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_21.tcl"
+AssertionForge-UART-23-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_23.tcl"
+AssertionForge-UART-22-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-25-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_25.tcl"
+AssertionForge-UART-24-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-26-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(193): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(194): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(199): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(193): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(194): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.sva(199): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_26.tcl"
+AssertionForge-UART-27-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(193): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(194): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(199): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(193): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(194): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.sva(199): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_27.tcl"
+AssertionForge-UART-29-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(134): syntax error near 'property'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(162): syntax error near 'input'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(184): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(185): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(186): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(191): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(192): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(193): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(194): syntax error near ')'
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(199): syntax error near ','
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(134): syntax error near 'property'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(134): SystemVerilog 2012 keyword 'property' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(162): syntax error near 'input'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(162): SystemVerilog 2012 keyword 'input' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(184): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(185): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(186): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(191): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(192): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(193): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(194): syntax error near ')'
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(199): syntax error near ','
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.sva(199): syntax error near ','
+ERROR (ENL034): 19 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_29.tcl"
+AssertionForge-UART-28-baud_freq,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(134): 'global_clock_freq' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(134): 'global_clock_freq' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_28.tcl"
+AssertionForge-UART-31-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_31.tcl"
+AssertionForge-UART-30-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(135): syntax error near ')'
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(135): syntax error near ')'
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 7 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_30.tcl"
+AssertionForge-UART-32-baud_freq,0.0,0.0,"[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(134): syntax error near 'function'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(134): SystemVerilog 2012 keyword 'function' used in incorrect context
+[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(136): syntax error near 'endmodule'
+[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(134): syntax error near 'function'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(134): SystemVerilog 2012 keyword 'function' used in incorrect context
+	[ERROR (VERI-1137)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(136): syntax error near 'endmodule'
+	[ERROR (VERI-2344)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(136): SystemVerilog 2012 keyword 'endmodule' used in incorrect context
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 10 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_32.tcl"
+AssertionForge-UART-33-baud_freq,0.0,0.0,"[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(134): 'global_clock_freq' is not declared
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(134): 'global_clock_freq' is not declared
+[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(134): 'baud_rate' is not declared
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(136): module 'uart2bus_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(204): module 'uart_top' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(262): module 'baud_gen' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(380): module 'uart_rx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(476): module 'uart_tx' is ignored due to previous errors
+[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(1145): module 'uart_parser' is ignored due to previous errors
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(134): 'global_clock_freq' is not declared
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(134): 'global_clock_freq' is not declared
+	[ERROR (VERI-1128)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(134): 'baud_rate' is not declared
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(136): module 'uart2bus_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(204): module 'uart_top' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(262): module 'baud_gen' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(380): module 'uart_rx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(476): module 'uart_tx' is ignored due to previous errors
+	[ERROR (VERI-1072)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.sva(1145): module 'uart_parser' is ignored due to previous errors
+ERROR (ENL034): 9 errors detected in the design file(s).
+ERROR: problem encountered at line 3 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_33.tcl"
+AssertionForge-UART-34-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-37-baud_freq,0.0,0.0,"[ERROR (VERI-1187)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_37.sva(134): 'cea_16' is not declared under prefix 'baud_gen'
+[ERROR (VERI-1187)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_37.sva(134): 'cea_16' is not declared under prefix 'baud_gen'
+	[ERROR (VERI-1187)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_37.sva(134): 'cea_16' is not declared under prefix 'baud_gen'
+	[ERROR (VERI-1187)] /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_37.sva(134): 'cea_16' is not declared under prefix 'baud_gen'
+ERROR (ENL034): 2 errors detected in the design file(s).
+ERROR: problem encountered at line 4 in file /home/wx2356/Hybrid-NL2SVA/end2end_evaluation/results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv.jgtmp/uart_proven_37.tcl"
+AssertionForge-UART-35-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-36-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-39-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-38-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-40-baud_freq,1.0,0.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS cex"
+AssertionForge-UART-41-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-42-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"
+AssertionForge-UART-43-baud_freq,1.0,1.0,"[<embedded>] % puts ""PROVENSTATUS [get_status uart2bus_top.direct_proven_check]""
+PROVENSTATUS proven"

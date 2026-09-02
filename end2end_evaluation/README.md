@@ -346,14 +346,25 @@ difference -- not reproduced here for that reason):
 | | n | #SynC | #Proven |
 |---|---|---|---|
 | Raw ideas (ungrounded Step 1 output) + `--no-rag` 0-shot gpt-4o baseline | 44 | 30 (68.2%) | 15 (34.1%) |
+| Raw ideas (same 44), CodeV-SVA-8B, no pipeline | 44 | 18 (40.9%) | 12 (27.3%) |
+| Raw ideas (same 44), CodeV-SVA-14B, no pipeline | 44 | 21 (47.7%) | 13 (29.5%) |
 | The SAME 44 ideas, grounded (Step 2 + filter) + full Hybrid-NL2SVA pipeline | 44 | **40 (90.9%)** | **24 (54.5%)** |
 
 +22.7pp #SynC, +20.4pp #Proven from grounding + the full pipeline together,
-on identical underlying properties. Files: `nl_plans_uart_matched_rawideas_
-regen23_baudclk_baudfreq.txt` / `nl_plans_uart_matched_grounded_regen23_
-baudclk_baudfreq.txt` (inputs), `results/assertionforge_uart_regen23_
-matched_raw_baseline_jgscore.csv` / `results/assertionforge_uart_regen23_
-matched_grounded_pipeline_jgscore.csv` (JasperGold-scored outputs).
+on identical underlying properties, over the best of the three ungrounded
+baselines (gpt-4o 0-shot). Both CodeV-SVA sizes -- run via `generate_uart_
+raw.py` on a separate GPU/vLLM node against the SAME `nl_plans_uart_matched_
+rawideas_regen23_baudclk_baudfreq.txt` -- score BELOW the plain gpt-4o
+baseline on this ungrounded input (14B > 8B, consistent with scale, but
+neither catches up); a specialized NL2SVA model alone doesn't compensate for
+starting from hallucinated-signal input the way grounding does. Files:
+`nl_plans_uart_matched_rawideas_regen23_baudclk_baudfreq.txt` /
+`nl_plans_uart_matched_grounded_regen23_baudclk_baudfreq.txt` (inputs),
+`results/assertionforge_uart_regen23_matched_raw_baseline_jgscore.csv` /
+`results/assertionforge_uart_regen23_matched_grounded_pipeline_jgscore.csv`
+/ `results/assertionforge_uart_regen23_rawideas_codev8b_raw_jgscore.csv` /
+`results/assertionforge_uart_regen23_rawideas_codev14b_raw_jgscore.csv`
+(JasperGold-scored outputs).
 
 **Scope**: `baud_clk`/`baud_freq` only (2/18 signals) -- a pilot to validate
 the two-step-generation + mechanical-filter approach before spending it on
