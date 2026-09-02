@@ -810,12 +810,7 @@ def construct_static_nl_prompt(
     "effectively", "correctly", "properly", "appropriate", or "stable" without stating exactly what
     that means. Every claim must state a specific, checkable relationship: an exact cycle count, a
     specific comparison, a specific ratio, or a specific signal value -- not a qualitative judgment
-    a reader would have to guess the threshold for. This ban includes all grammatical variants (e.g.
-    "consistently" for "consistent", "predefined" used as an adjective) and equivalent vague phrases
-    (e.g. "without interruption", "without deviation", "without glitches", "as expected"). If you
-    cannot state a specific, checkable value or timing relationship for part of a claim, omit that
-    part entirely rather than hedge it with a vague qualifier -- a shorter, fully-precise test plan
-    is better than a longer one with an unquantified clause.
+    a reader would have to guess the threshold for.
 
     SystemVerilog Assertions do not support arbitrary math functions (no gcd(), no general
     division/modulo against external constants). Do not describe an expected value via a
