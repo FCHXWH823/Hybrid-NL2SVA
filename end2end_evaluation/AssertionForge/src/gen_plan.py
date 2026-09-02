@@ -856,11 +856,13 @@ def construct_static_nl_prompt(
         system_prompt += """
     IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement --
     one that names ONLY signals that actually appear in the Valid Signal Names list above (never
-    invented or paraphrased names, even ones that sound plausible or related), and whose clauses
-    describe the property's structure as precisely and concretely as possible (e.g. for an
-    implication-shaped property, state the antecedent condition, then the consequent, in that
-    order). Write plain English prose -- a test plan is a sentence describing a property, not a
-    code fragment, so it should never contain SVA syntax itself.
+    invented or paraphrased names, even ones that sound plausible or related). A property is formed
+    by the relationship between signals: each such relationship corresponds to an operator, and a
+    relationship involving timing or sequencing corresponds to one of the operators listed in "SVA
+    Operator Context" below. Describe the property's structure as precisely and concretely as
+    possible -- e.g. for an implication-shaped property, state the antecedent condition, then the
+    consequent, in that order. Write plain English prose -- a test plan is a sentence describing a
+    property, not a code fragment, so it should never contain SVA syntax itself.
 
     Do NOT use a vague, unquantified qualifier without stating exactly what it means. Every claim
     must state a specific, checkable relationship: an exact cycle count, a specific comparison, a
