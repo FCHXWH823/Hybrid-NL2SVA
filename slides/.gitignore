@@ -1,0 +1,12 @@
+# LaTeX build artifacts -- regenerable from main.tex via
+# xelatex -interaction=nonstopmode main.tex (run twice, for TOC/refs).
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
