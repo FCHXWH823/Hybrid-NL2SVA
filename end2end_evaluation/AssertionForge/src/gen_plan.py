@@ -770,6 +770,36 @@ def get_sva_icl_examples():
     """
 
 
+# 2026-09-02: construct_static_nl_prompt's OL-NL discipline instruction (added
+# 2026-08-31) told the model to write "operator-level" test plans without ever
+# telling it what operators exist -- unlike Hybrid-NL2SVA's own Step 1 OL-NL
+# grounding (generate_ol_nl_grounding), which puts this exact table in its
+# system message. Same table, same formatting, as that pipeline's own
+# load_rich_operator_context (run_rag_on_fveval_benchmarks.py) -- the ONE
+# operator reference used everywhere else there (Step 1, Step 2 generation,
+# SOR); operators.json's older 11-entry table couldn't even teach the model
+# strong()/weak() exist, which is why that pipeline replaced it in the first
+# place. Loaded fresh each call (small file, called ~50x per Stage 2 run --
+# not worth caching) rather than threaded through generate_dynamic_nl_plans/
+# generate_static_nl_plans as a parameter, since it's a fixed, global
+# resource, not something that varies per-signal or per-call.
+_SVA_OPERATOR_TABLE_PATH = os.environ.get(
+    "HYBRID_NL2SVA_SVA_OPERATOR_TABLE", "/home/wx2356/Hybrid-NL2SVA/sva_temporal_operators.json"
+)
+
+
+def load_sva_operator_context():
+    with open(_SVA_OPERATOR_TABLE_PATH) as f:
+        data = json.load(f)
+    lines = []
+    for op, entry in data.items():
+        lines.append(
+            f"{op} ({entry['type']}): {entry['natural_langage_explanation']} "
+            f"Example: {entry['example_usgae']}"
+        )
+    return "\n".join(lines)
+
+
 def construct_static_nl_prompt(
     spec_text: str, kg: Optional[Dict], valid_signals: Optional[Set[str]]
 ) -> str:
@@ -817,6 +847,14 @@ def construct_static_nl_prompt(
     derivation/formula unless that exact formula is itself directly expressible in SVA. If the
     specification's own derivation is not checkable that way, state the property in terms of the
     signal's actual, directly observable behavior instead.
+
+    """
+
+        nl_gen_prompt += f"""
+    SVA Operator Context (the actual operators available for expressing timing/sequencing --
+    prefer phrasing each test plan's structure so it maps directly onto one of these, rather than
+    a vague qualifier with no direct operator equivalent):
+    {load_sva_operator_context()}
 
     """
 
