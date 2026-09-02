@@ -37,7 +37,29 @@ DEFAULT_INPUT_PATH = os.path.join(_HERE, "results", "assertionforge_uart_gpt-4o_
 DEFAULT_OUTPUT_PATH = os.path.join(_HERE, "results", "assertionforge_uart_gpt-4o_dynamicrag_jgscore.csv")
 DEFAULT_UART_RTL_DIR = os.path.join(_HERE, "AssertLLM", "rtl", "uart")
 
+# Same order as run_uart_nl2sva.py/generate_uart_raw.py -- uart2bus_top.v
+# FIRST since it's the true top of the hierarchy every assertion is spliced
+# into.
+RTL_FILE_ORDER = [
+    "uart2bus_top.v", "uart_top.v", "baud_gen.v", "uart_rx.v", "uart_tx.v", "uart_parser.v",
+]
+
 _DEFINE_LINE_RE = re.compile(r"^`define\s+\w+.*$", re.MULTILINE)
+
+
+def build_combined_testbench(uart_rtl_dir):
+    """2026-09-02: fallback for "slim" input CSVs (task_id/signal/
+    nl_property/response/signals_for_validity -- see README's slim-CSV
+    note) that never embedded the ~32KB output_tb column in the first
+    place, e.g. generate_uart_raw.py's CodeV-SVA outputs. The testbench is
+    identical for every row regardless of which model generated the SVA,
+    so it's cheap to reconstruct once from the RTL files rather than
+    requiring it be duplicated into every row of every results CSV."""
+    parts = []
+    for fname in RTL_FILE_ORDER:
+        with open(os.path.join(uart_rtl_dir, fname)) as f:
+            parts.append(f.read())
+    return "\n\n".join(parts)
 
 
 def hoist_defines(testbench):
@@ -57,9 +79,10 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--input", default=DEFAULT_INPUT_PATH)
 ap.add_argument("--output", default=DEFAULT_OUTPUT_PATH)
 ap.add_argument("--uart-rtl-dir", default=DEFAULT_UART_RTL_DIR,
-                 help="Used only to (re-)derive the scope-qualification map (signal_scope.py) -- "
-                      "NOT the source of the testbench text itself, which still comes from the "
-                      "input CSV's output_tb column.")
+                 help="Used to (re-)derive the scope-qualification map (signal_scope.py), and as "
+                      "the testbench source for 'slim' input CSVs that have no output_tb column "
+                      "(see build_combined_testbench) -- for a full LMRESULT-shaped CSV, the "
+                      "testbench still comes from the input CSV's own output_tb column instead.")
 ap.add_argument("--workers", type=int, default=6)
 ap.add_argument("--timeout", type=int, default=90)
 ap.add_argument("--limit", type=int, default=None)
@@ -76,10 +99,20 @@ if cli_args.limit:
     rows = rows[: cli_args.limit]
 print(f"n={len(rows)}")
 
+# "slim" CSVs (task_id/signal/nl_property/response/signals_for_validity)
+# have no output_tb column at all -- build it once, up front, rather than
+# per-row.
+_HAS_OUTPUT_TB = "output_tb" in rows[0] if rows else True
+_FALLBACK_TESTBENCH = (
+    None if _HAS_OUTPUT_TB else hoist_defines(build_combined_testbench(cli_args.uart_rtl_dir))
+)
+if not _HAS_OUTPUT_TB:
+    print(f"Input has no output_tb column -- reconstructed testbench from {cli_args.uart_rtl_dir}")
+
 
 def score_one(i, row):
     task_id = row["task_id"]
-    raw_testbench = hoist_defines(row["output_tb"])
+    raw_testbench = _FALLBACK_TESTBENCH if _FALLBACK_TESTBENCH is not None else hoist_defines(row["output_tb"])
     bare_sva = extract_property_body(parse_code_response(row["response"]))
     qualified_sva = qualify_out_of_scope_references(bare_sva, SCOPE_MAP, MACRO_NAMES)
     try:
