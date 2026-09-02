@@ -806,6 +806,12 @@ def construct_static_nl_prompt(
     precisely and concretely as possible -- e.g. for an implication-shaped property, state the
     antecedent condition, then the consequent, in that order.
 
+    Do NOT use vague, unquantified qualifiers such as "consistent", "expected", "predefined",
+    "effectively", "correctly", "properly", "appropriate", or "stable" without stating exactly what
+    that means. Every claim must state a specific, checkable relationship: an exact cycle count, a
+    specific comparison, a specific ratio, or a specific signal value -- not a qualitative judgment
+    a reader would have to guess the threshold for.
+
     SystemVerilog Assertions do not support arbitrary math functions (no gcd(), no general
     division/modulo against external constants). Do not describe an expected value via a
     derivation/formula unless that exact formula is itself directly expressible in SVA. If the
@@ -829,6 +835,8 @@ def construct_static_nl_prompt(
     3. that if the input data 'PWDATA' is within the range of 138 to 153 inclusive, then in the subsequent cycles, 'PWDATA' must continue to be within the range of 98 to 153 inclusive. Use the signals 'PWDATA' and 'PCLK'.
     4. that the input data PWDATA has a value between 83 and 165, inclusive, 3 clock cycles after the reset signal PRESETn becomes deasserted. Use the signals 'PRESETn', 'PCLK', and 'PWDATA'.
     5. that the input data signal 'PWDATA' is within the range 0 to 45 inclusive, starting from four clock cycles after the reset signal 'PRESETn' becomes deasserted. Use the signals 'PRESETn', 'PCLK', and 'PWDATA'.
+    6. that the output signal remains unchanged for at least 3 clock cycles after the input signal changes, then updates to reflect the new input value. Use the signals 'clk', 'input_sig', and 'output_sig'.
+    7. that the enable signal toggles at exactly one-fourth the rate of the clock signal, maintaining a fixed phase relationship. Use the signals 'clk' and 'enable'.
 
     Generate diverse test plans based on the given specification"""
 
