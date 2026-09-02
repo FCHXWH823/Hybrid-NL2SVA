@@ -860,9 +860,10 @@ def construct_static_nl_prompt(
     by the relationship between signals, and that relationship is what must be operator-level: a
     combinational relationship holds within a single clock cycle; a sequential relationship spans
     more than one clock cycle -- state precisely which kind each relationship is, including its exact
-    timing when sequential. Describe the property's structure as precisely and concretely as possible.
-    Write plain English prose -- a test plan is a sentence describing a property, not a code fragment,
-    so it should never contain SVA syntax itself.
+    timing when sequential. Describe the property's structure as precisely and concretely as possible
+    -- e.g. state the condition first, then the outcome, in that order, and stop as soon as the
+    property is fully stated. Write plain English prose -- a test plan is a sentence describing a
+    property, not a code fragment, so it should never contain SVA syntax itself.
 
     Do NOT use a vague, unquantified qualifier without stating exactly what it means. Every claim
     must state a specific, checkable relationship: an exact cycle count, a specific comparison, a
