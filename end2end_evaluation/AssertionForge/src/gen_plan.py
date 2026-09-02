@@ -452,19 +452,35 @@ def generate_dynamic_nl_plans(
             # Context enhancement is now integrated in prompt builder
             # No need to call add_enhanced_context here anymore
 
-            # Rest of the existing code...
-            system_prompt, user_prompt = construct_static_nl_prompt(
-                dynamic_context,
-                kg=None,  # KG info already included in dynamic context
-                valid_signals=valid_signals,
-            )
-            user_prompt += f"\n\nGenerate diverse test plans for the signal '{signal_name}'. Each test plan should be on a new line and start with 'Plan: '."
-
+            # 2026-09-02: two-step generation -- Step 1 invents idea(s),
+            # Step 2 grounds them into OL NL. See construct_idea_prompt /
+            # construct_ol_nl_grounding_prompt docstrings for rationale.
             try:
-                # Get LLM response for this context prompt
+                idea_system_prompt, idea_user_prompt = construct_idea_prompt(
+                    dynamic_context, signal_name,
+                )
+                idea_result = llm_inference(
+                    llm_agent, idea_user_prompt, f"NL_Ideas_{signal_name}_{context_idx+1}",
+                    system_prompt=idea_system_prompt,
+                )
+                ideas = []
+                for line in idea_result.split('\n'):
+                    if line.strip().startswith('Idea:'):
+                        ideas.append(line.split(':', 1)[-1].strip())
+                print(
+                    f"Generated {len(ideas)} raw ideas from context {context_idx+1} for signal {signal_name}"
+                )
+
+                if not ideas:
+                    print(f"No ideas parsed for signal {signal_name} context {context_idx+1}, skipping grounding step")
+                    continue
+
+                ground_system_prompt, ground_user_prompt = construct_ol_nl_grounding_prompt(
+                    ideas, dynamic_context, signal_name, valid_signals,
+                )
                 result = llm_inference(
-                    llm_agent, user_prompt, f"NL_Plans_{signal_name}_{context_idx+1}",
-                    system_prompt=system_prompt,
+                    llm_agent, ground_user_prompt, f"NL_Plans_{signal_name}_{context_idx+1}",
+                    system_prompt=ground_system_prompt,
                 )
 
                 # Extract plans from the result
@@ -928,6 +944,138 @@ def construct_static_nl_prompt(
         user_prompt += " and Knowledge Graph"
     user_prompt += "."
 
+    return system_prompt, user_prompt
+
+
+# 2026-09-02: two-step plan generation, used by generate_dynamic_nl_plans (the
+# only path actually exercised in the UART pilot -- FLAGS.prompt_builder is
+# always 'dynamic' -- so generate_static_nl_plans/construct_static_nl_prompt
+# above are left as the single-call fallback, unchanged).
+#
+# Rationale: comparing regen15's plans against Hybrid-NL2SVA's own Stage 1
+# OL-NL worked example and the FVEval-NL2SVA-Human reference corpus (both
+# tight, single-clause boolean conditions -- "if A and B, then C") showed
+# AssertionForge's plans consistently reading as more narrative/descriptive
+# even at matched word counts, and residual vague-qualifier/trailing-
+# rationale rates that no amount of tuning the single combined prompt fully
+# closed. Hypothesis: construct_static_nl_prompt asks one LLM call to do two
+# different jobs at once -- invent what property is worth testing, AND state
+# it with full operator-level precision -- whereas Stage 1's own OL-NL
+# grounding (generate_ol_nl_grounding/PROMPT_TEMPLATE_OL_NL_NO_GOLDEN) only
+# ever does the second job: it's handed an already-written property
+# description and grounds it, never invents the idea itself. Splitting these
+# into two calls mirrors that division: Step 1 (construct_idea_prompt) is
+# free to be exploratory/imprecise about exact phrasing and signal names;
+# Step 2 (construct_ol_nl_grounding_prompt) carries ALL the precision
+# discipline (valid-signal whitelist, operator-level/sequential-vs-
+# combinational, vague-qualifier ban, trailing-rationale ban, gcd/formula
+# ban, SVA Operator Context) and does nothing but rewrite Step 1's ideas into
+# OL NL form -- literally the same task Stage 1 performs, just batched over
+# several ideas per call instead of Stage 1's one-at-a-time.
+def construct_idea_prompt(dynamic_context: str, signal_name: str) -> Tuple[str, str]:
+    """Step 1: come up with WHAT properties are worth testing for signal_name,
+    given dynamic_context (KG-retrieved context around that signal). Not
+    required to be precise about signal names or structure -- that's Step
+    2's job -- so this deliberately carries none of the precision-related
+    rules (no valid-signal whitelist, no OL-NL/operator-level discipline, no
+    vague-qualifier/trailing-rationale/gcd bans, no operator table, no OL-NL
+    few-shot examples)."""
+    system_prompt = """You are a helpful bot that comes up with diverse, meaningful verification
+    properties for hardware signals, based on design context, following the requested format
+    exactly."""
+
+    user_prompt = f"""
+    Context for signal '{signal_name}':
+
+    {dynamic_context}
+
+    Generate diverse test-plan ideas for the signal '{signal_name}' -- properties or behaviors of
+    this signal that would be worth formally verifying. Write each idea as a natural, high-level
+    statement of intended behavior -- you do not need to name every signal precisely or match any
+    particular format yet; a later step will handle that. Each idea should be on a new line and
+    start with 'Idea: '.
+    """
+    return system_prompt, user_prompt
+
+
+def construct_ol_nl_grounding_prompt(
+    ideas: List[str], dynamic_context: str, signal_name: str, valid_signals: Optional[Set[str]]
+) -> Tuple[str, str]:
+    """Step 2: ground Step 1's raw ideas into precise "OL NL" (operator-
+    level, signal-grounded) statements -- genuinely the same task as Stage
+    1's own OL-NL grounding, just batched over several ideas at once instead
+    of one-at-a-time. Carries all the precision discipline that used to be
+    jammed into construct_static_nl_prompt's single combined call."""
+    system_prompt = """You are a helpful bot that rewrites natural-language descriptions of
+    hardware verification properties into a precise, signal-grounded, operator-level form,
+    following the requested format exactly."""
+
+    if valid_signals:
+        system_prompt += f"""
+
+    CRITICAL - Valid Signal Names (USE ONLY THESE SIGNALS):
+    {', '.join(sorted(valid_signals))}
+
+    WARNING: It is ABSOLUTELY ESSENTIAL that you ONLY use signals from the above list in your test plans.
+    DO NOT introduce or use ANY signals that are not in this list. Any test plan using undefined signals will be considered invalid.
+
+    """
+
+    system_prompt += """
+    IMPORTANT -- rewrite each idea below as an "OL NL" (operator-level, signal-grounded) statement --
+    one that names ONLY signals that actually appear in the Valid Signal Names list above (never
+    invented or paraphrased names, even ones that sound plausible or related). A property is formed
+    by the relationship between signals, and that relationship is what must be operator-level: a
+    combinational relationship holds within a single clock cycle; a sequential relationship spans
+    more than one clock cycle -- state precisely which kind each relationship is, including its exact
+    timing when sequential. Describe the property's structure as precisely and concretely as possible
+    -- e.g. state the condition first, then the outcome, in that order, and stop as soon as the
+    property is fully stated. Write plain English prose -- a test plan is a sentence describing a
+    property, not a code fragment, so it should never contain SVA syntax itself.
+
+    Do NOT use a vague, unquantified qualifier without stating exactly what it means. Every claim
+    must state a specific, checkable relationship: an exact cycle count, a specific comparison, a
+    specific ratio, or a specific signal value -- not a qualitative judgment a reader would have to
+    guess the threshold for.
+
+    Do NOT append a trailing rationale or purpose clause explaining why the property matters or
+    what it verifies. State the checkable claim itself and stop -- end the test plan as soon as the
+    property is fully and precisely stated, with nothing appended after it.
+
+    SystemVerilog Assertions do not support arbitrary math functions (no gcd(), no general
+    division/modulo against external constants). Do not describe an expected value via a
+    derivation/formula unless that exact formula is itself directly expressible in SVA. If the
+    specification's own derivation is not checkable that way, state the property in terms of the
+    signal's actual, directly observable behavior instead.
+
+    """
+
+    system_prompt += f"""
+    SVA Operator Context (the actual operators available for expressing timing/sequencing):
+    {load_sva_operator_context()}
+
+    """
+
+    system_prompt += """
+    Worked example (abstract/domain-level input, grounded in the real signals of an unrelated design):
+     Context (excerpt): a module with a status flag pending, its previous-cycle value pending_d1, a
+    clear request clear_vld, and a saturation guard sat_guard.
+     Idea given: that the pending flag never gets stuck.
+     Plan: It must never be the case that pending_d1 is asserted and clear_vld is not asserted and
+    pending is still asserted and sat_guard is not asserted
+
+    Output exactly one 'Plan: ' line per idea below, in the same order, and nothing else.
+    """
+
+    idea_list = "\n".join(f"{i+1}. {idea}" for i, idea in enumerate(ideas))
+    user_prompt = f"""
+    Context for signal '{signal_name}':
+
+    {dynamic_context}
+
+    Ideas to ground (rewrite each as one 'Plan: ' line, same order, same count):
+    {idea_list}
+    """
     return system_prompt, user_prompt
 
 
