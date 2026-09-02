@@ -407,6 +407,11 @@ def generate_nl_plans(
 _SNAKE_CASE_TOKEN_RE = re.compile(r"\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+\b")
 
 
+def _has_invalid_signal_reference(plan: str, valid_lower: Set[str]) -> bool:
+    tokens = _SNAKE_CASE_TOKEN_RE.findall(plan.lower())
+    return any(t not in valid_lower for t in tokens)
+
+
 def filter_invalid_signal_references(
     plans: List[str], valid_signals: Optional[Set[str]]
 ) -> Tuple[List[str], int]:
@@ -420,12 +425,33 @@ def filter_invalid_signal_references(
     kept = []
     n_dropped = 0
     for plan in plans:
-        tokens = _SNAKE_CASE_TOKEN_RE.findall(plan.lower())
-        bad_tokens = [t for t in tokens if t not in valid_lower]
-        if bad_tokens:
+        if _has_invalid_signal_reference(plan, valid_lower):
             n_dropped += 1
             continue
         kept.append(plan)
+    return kept, n_dropped
+
+
+def filter_invalid_signal_references_paired(
+    pairs: List[Tuple[str, str]], valid_signals: Optional[Set[str]]
+) -> Tuple[List[Tuple[str, str]], int]:
+    """Same check as filter_invalid_signal_references, but applied to
+    (raw_idea, grounded_plan) pairs -- checked against the GROUNDED plan
+    (index 1), keeping/dropping the pair together. Lets a caller recover
+    which raw idea a surviving grounded plan came from, for an apples-to-
+    apples same-underlying-idea comparison (2026-09-02, per user request to
+    test the raw and grounded sides on the identical set of ideas rather
+    than independently-sized batches)."""
+    if not valid_signals:
+        return pairs, 0
+    valid_lower = {s.lower() for s in valid_signals}
+    kept = []
+    n_dropped = 0
+    for idea, plan in pairs:
+        if _has_invalid_signal_reference(plan, valid_lower):
+            n_dropped += 1
+            continue
+        kept.append((idea, plan))
     return kept, n_dropped
 
 
@@ -460,6 +486,13 @@ def generate_dynamic_nl_plans(
     # feeding the raw ideas through a different NL2SVA baseline). Purely a
     # debug/analysis artifact -- doesn't affect nl_plans generation.
     raw_ideas_by_signal = {}
+    # 2026-09-02: (raw_idea, grounded_plan) survivors, index-matched across
+    # a matched_raw_ideas.txt / matched_grounded_plans.txt pair -- so a
+    # caller can test "the same N ideas, ungrounded vs grounded" instead of
+    # independently-sized raw_ideas.txt/nl_plans.txt batches (which differ
+    # in count AND in which specific ideas they cover, since filtering and
+    # per-signal dedup aren't index-preserving on their own).
+    paired_by_signal = {}
     for i, signal_name in enumerate(sorted(valid_signals)):  # sorted is key!
         if i >= FLAGS.max_num_signals_process:
             print(
@@ -486,6 +519,7 @@ def generate_dynamic_nl_plans(
 
         all_signal_plans = []
         all_signal_ideas = []
+        all_signal_pairs = []  # (raw_idea, grounded_plan) survivors, index-matched
 
         # Process each dynamic context separately
         for context_idx, dynamic_context in enumerate(dynamic_context_list):
@@ -535,8 +569,27 @@ def generate_dynamic_nl_plans(
                         plan = line.split(':', 1)[-1].strip()
                         context_plans.append(plan)
 
+                # Pair each grounded plan with the raw idea it came from
+                # BEFORE filtering, so a caller can recover "the same idea,
+                # ungrounded" for any plan that survives. construct_ol_nl_
+                # grounding_prompt asks for exactly one 'Plan:' line per
+                # idea, in the same order -- but the LLM doesn't always
+                # honor that exactly, so only zip the overlap and log if the
+                # counts disagree (best effort; a count mismatch just means
+                # fewer pairs are recoverable this context, not an error).
+                if len(context_plans) != len(ideas):
+                    print(
+                        f"WARNING: {len(ideas)} ideas but {len(context_plans)} grounded plans "
+                        f"for signal {signal_name} context {context_idx+1} -- idea<->plan "
+                        f"pairing only covers the first {min(len(ideas), len(context_plans))}"
+                    )
+                context_pairs = list(zip(ideas, context_plans))
+
                 context_plans, n_dropped = filter_invalid_signal_references(
                     context_plans, valid_signals,
+                )
+                context_pairs, _ = filter_invalid_signal_references_paired(
+                    context_pairs, valid_signals,
                 )
                 if n_dropped:
                     print(
@@ -545,6 +598,7 @@ def generate_dynamic_nl_plans(
                     )
 
                 all_signal_plans.extend(context_plans)
+                all_signal_pairs.extend(context_pairs)
                 print(
                     f"Generated {len(context_plans)} plans from context {context_idx+1} for signal {signal_name}"
                 )
@@ -582,6 +636,19 @@ def generate_dynamic_nl_plans(
                 unique_ideas.append(idea)
         raw_ideas_by_signal[signal_name] = unique_ideas
 
+        # Dedup pairs the same way, keyed on the GROUNDED side (matches how
+        # nl_plans itself is deduped -- two different raw ideas that
+        # happened to ground to the same plan text should still collapse to
+        # one entry, same as unique_plans above).
+        unique_pairs = []
+        pair_plan_set = set()
+        for idea, plan in all_signal_pairs:
+            simplified_plan = ' '.join(plan.lower().split())
+            if simplified_plan not in pair_plan_set:
+                pair_plan_set.add(simplified_plan)
+                unique_pairs.append((idea, plan))
+        paired_by_signal[signal_name] = unique_pairs
+
     with open(Path(saver.logdir) / 'raw_ideas.txt', 'w') as f:
         c = 1
         for signal_name, ideas in raw_ideas_by_signal.items():
@@ -590,6 +657,23 @@ def generate_dynamic_nl_plans(
                 f.write(f'Idea {c}: {idea}\n')
                 c += 1
             f.write('\n')
+
+    # matched_raw_ideas.txt / matched_grounded_plans.txt: same "Plan N:"
+    # format/numbering in BOTH files, N referring to the same underlying
+    # idea in each -- for testing "the same N properties, ungrounded vs
+    # grounded" through two different downstream pipelines.
+    with open(Path(saver.logdir) / 'matched_raw_ideas.txt', 'w') as f_idea, \
+         open(Path(saver.logdir) / 'matched_grounded_plans.txt', 'w') as f_plan:
+        c = 1
+        for signal_name, pairs in paired_by_signal.items():
+            f_idea.write(f'Signal {signal_name}:\n')
+            f_plan.write(f'Signal {signal_name}:\n')
+            for idea, plan in pairs:
+                f_idea.write(f'Plan {c}: {idea}\n')
+                f_plan.write(f'Plan {c}: {plan}\n')
+                c += 1
+            f_idea.write('\n')
+            f_plan.write('\n')
 
     return nl_plans
 
