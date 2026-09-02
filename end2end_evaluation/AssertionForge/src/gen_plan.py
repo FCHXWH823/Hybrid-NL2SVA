@@ -862,17 +862,14 @@ def construct_static_nl_prompt(
     order). Write plain English prose -- a test plan is a sentence describing a property, not a
     code fragment, so it should never contain SVA syntax itself.
 
-    Do NOT use vague, unquantified qualifiers such as "consistent", "expected", "predefined",
-    "effectively", "correctly", "properly", "appropriate", or "stable" without stating exactly what
-    that means. Every claim must state a specific, checkable relationship: an exact cycle count, a
-    specific comparison, a specific ratio, or a specific signal value -- not a qualitative judgment
-    a reader would have to guess the threshold for.
+    Do NOT use a vague, unquantified qualifier without stating exactly what it means. Every claim
+    must state a specific, checkable relationship: an exact cycle count, a specific comparison, a
+    specific ratio, or a specific signal value -- not a qualitative judgment a reader would have to
+    guess the threshold for.
 
     Do NOT append a trailing rationale or purpose clause explaining why the property matters or
-    what it verifies (e.g. "...ensuring signal integrity", "...thereby putting the transmitter in a
-    hold state", "...verifying the timing path between X and Y", "...influencing the timing and
-    control of the module"). State the checkable claim itself and stop -- end the test plan as soon
-    as the property is fully and precisely stated, with nothing appended after it.
+    what it verifies. State the checkable claim itself and stop -- end the test plan as soon as the
+    property is fully and precisely stated, with nothing appended after it.
 
     SystemVerilog Assertions do not support arbitrary math functions (no gcd(), no general
     division/modulo against external constants). Do not describe an expected value via a
