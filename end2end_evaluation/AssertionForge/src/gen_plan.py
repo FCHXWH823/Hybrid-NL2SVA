@@ -453,17 +453,18 @@ def generate_dynamic_nl_plans(
             # No need to call add_enhanced_context here anymore
 
             # Rest of the existing code...
-            full_prompt = construct_static_nl_prompt(
+            system_prompt, user_prompt = construct_static_nl_prompt(
                 dynamic_context,
                 kg=None,  # KG info already included in dynamic context
                 valid_signals=valid_signals,
             )
-            full_prompt += f"\n\nGenerate diverse test plans for the signal '{signal_name}'. Each test plan should be on a new line and start with 'Plan: '."
+            user_prompt += f"\n\nGenerate diverse test plans for the signal '{signal_name}'. Each test plan should be on a new line and start with 'Plan: '."
 
             try:
                 # Get LLM response for this context prompt
                 result = llm_inference(
-                    llm_agent, full_prompt, f"NL_Plans_{signal_name}_{context_idx+1}"
+                    llm_agent, user_prompt, f"NL_Plans_{signal_name}_{context_idx+1}",
+                    system_prompt=system_prompt,
                 )
 
                 # Extract plans from the result
@@ -507,10 +508,10 @@ def generate_dynamic_nl_plans(
 def generate_static_nl_plans(
     spec_text: str, kg: Optional[Dict], llm_agent, valid_signals: Optional[Set[str]]
 ) -> Dict[str, List[str]]:
-    nl_gen_prompt = construct_static_nl_prompt(spec_text, kg, valid_signals)
+    system_prompt, user_prompt = construct_static_nl_prompt(spec_text, kg, valid_signals)
 
     try:
-        result = llm_inference(llm_agent, nl_gen_prompt, "NL_Plans")
+        result = llm_inference(llm_agent, user_prompt, "NL_Plans", system_prompt=system_prompt)
 
         # Parse the result into a dictionary
         nl_plans = parse_nl_plans(result)
@@ -802,16 +803,28 @@ def load_sva_operator_context():
 
 def construct_static_nl_prompt(
     spec_text: str, kg: Optional[Dict], valid_signals: Optional[Set[str]]
-) -> str:
-    nl_gen_prompt = f"""
-    Given the following design specification{' and Knowledge Graph' if kg else ''}, generate natural language test plans:
-
-    {spec_text}
-
-    """
+) -> Tuple[str, str]:
+    """Returns (system_prompt, user_prompt) -- 2026-09-02, restructured to
+    mirror Hybrid-NL2SVA's own Stage 1 OL-NL grounding (generate_ol_nl_
+    grounding): general instructions/constraints/reference material (role
+    description, the valid-signal list + warnings, the OL-NL discipline +
+    vague-qualifier ban + SVA-math note, the SVA operator table, the few-shot
+    examples, the final reminder + output-format instruction) go in the
+    SYSTEM message; the actual task-specific input (spec text/dynamic
+    context, KG) and the one per-call instruction that follows it go in the
+    USER message. Previously this was ALL one user-role message (this file's
+    own llm_inference had no system-message concept until now -- see its
+    docstring) -- confirmed live that adding the SVA operator table to that
+    single user message, with no positional/semantic distinction from
+    everything else, showed no measurable improvement over not having it at
+    all."""
+    system_prompt = """You are a helpful bot that writes precise, operator-level, signal-grounded
+    natural language test plans for formal hardware verification, following the requested format
+    exactly."""
 
     if valid_signals:
-        nl_gen_prompt += f"""
+        system_prompt += f"""
+
     CRITICAL - Valid Signal Names (USE ONLY THESE SIGNALS):
     {', '.join(sorted(valid_signals))}
 
@@ -828,13 +841,16 @@ def construct_static_nl_prompt(
         # signal-grounded natural language from the start. Kept inside this
         # `if valid_signals:` block -- it references "the Valid Signal Names
         # list above", which only exists when this branch renders.
-        nl_gen_prompt += """
-    IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement,
-    the same discipline used when translating natural language into formal assertions: name ONLY
-    signals that actually appear in the Valid Signal Names list above (never invented or paraphrased
-    names, even ones that sound plausible or related), and describe the property's structure as
-    precisely and concretely as possible -- e.g. for an implication-shaped property, state the
-    antecedent condition, then the consequent, in that order.
+        system_prompt += """
+    IMPORTANT -- write each test plan as an "OL NL" (operator-level, signal-grounded) statement:
+    ground the property's timing/sequencing structure in the specific operators listed in "SVA
+    Operator Context" below (e.g. ##N for an exact N-cycle delay, |-> for same-cycle implication,
+    $stable for "does not change") -- describe precisely which operator-expressible relationship
+    holds, rather than a vague qualifier with no operator equivalent. Name ONLY signals that
+    actually appear in the Valid Signal Names list above (never invented or paraphrased names,
+    even ones that sound plausible or related), and describe the property's structure as precisely
+    and concretely as possible -- e.g. for an implication-shaped property, state the antecedent
+    condition, then the consequent, in that order.
 
     Do NOT use vague, unquantified qualifiers such as "consistent", "expected", "predefined",
     "effectively", "correctly", "properly", "appropriate", or "stable" without stating exactly what
@@ -850,22 +866,13 @@ def construct_static_nl_prompt(
 
     """
 
-        nl_gen_prompt += f"""
-    SVA Operator Context (the actual operators available for expressing timing/sequencing --
-    prefer phrasing each test plan's structure so it maps directly onto one of these, rather than
-    a vague qualifier with no direct operator equivalent):
+        system_prompt += f"""
+    SVA Operator Context (the actual operators available for expressing timing/sequencing):
     {load_sva_operator_context()}
 
     """
 
-    if kg:
-        nl_gen_prompt += f"""
-    Knowledge Graph:
-    {json.dumps(kg, indent=2)}
-
-    """
-
-    nl_gen_prompt += """
+    system_prompt += """
     Use the following examples as a guide for the format and style of the test plans:
 
     1. that when PWDATA is within the range of 230 to 255, in the next cycle PWDATA will remain within the range of 205 to 255. Use the signals 'PCLK' for the clock edge and 'PWDATA' for the data being checked.
@@ -875,15 +882,6 @@ def construct_static_nl_prompt(
     5. that the input data signal 'PWDATA' is within the range 0 to 45 inclusive, starting from four clock cycles after the reset signal 'PRESETn' becomes deasserted. Use the signals 'PRESETn', 'PCLK', and 'PWDATA'.
     6. that the output signal remains unchanged for at least 3 clock cycles after the input signal changes, then updates to reflect the new input value. Use the signals 'clk', 'input_sig', and 'output_sig'.
     7. that the enable signal toggles at exactly one-fourth the rate of the clock signal, maintaining a fixed phase relationship. Use the signals 'clk' and 'enable'.
-
-    Generate diverse test plans based on the given specification"""
-
-    if kg:
-        nl_gen_prompt += " and Knowledge Graph"
-
-    nl_gen_prompt += "."
-
-    nl_gen_prompt += """
 
     FINAL REMINDER:
     - You MUST ONLY use signals from the 'Valid Signal Names' list provided above.
@@ -895,7 +893,26 @@ def construct_static_nl_prompt(
     PWDATA: that when PWDATA is within the range of 230 to 255, in the next cycle PWDATA will remain within the range of 205 to 255.
     """
 
-    return nl_gen_prompt
+    user_prompt = f"""
+    Given the following design specification{' and Knowledge Graph' if kg else ''}, generate natural language test plans:
+
+    {spec_text}
+
+    """
+
+    if kg:
+        user_prompt += f"""
+    Knowledge Graph:
+    {json.dumps(kg, indent=2)}
+
+    """
+
+    user_prompt += "Generate diverse test plans based on the given specification"
+    if kg:
+        user_prompt += " and Knowledge Graph"
+    user_prompt += "."
+
+    return system_prompt, user_prompt
 
 
 def construct_static_sva_prompt(

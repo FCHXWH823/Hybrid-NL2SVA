@@ -25,11 +25,28 @@ def count_prompt_tokens(text):
     return len(_ENCODING.encode(text))
 
 
-def llm_inference(llm_agent, prompt, tag=""):
+def llm_inference(llm_agent, prompt, tag="", system_prompt=None):
+    """system_prompt (2026-09-02, added): optional, defaults to None (every
+    pre-existing call site -- context_pruner.py, design_context_summarizer.py,
+    most of gen_plan.py -- is unaffected, still gets a single user-role
+    message exactly as before). gen_plan.py's plan-generation call sites pass
+    one now, mirroring how Hybrid-NL2SVA's own Stage 1 OL-NL grounding
+    (generate_ol_nl_grounding, run_rag_on_fveval_benchmarks.py) puts general
+    instructions/constraints/reference material (its SVA operator table
+    included) in an actual system message rather than folding everything
+    into one big user message -- this file's own llm_inference had no system-
+    message concept at all until now, since the original empty stub gave no
+    guidance on it and the call-site contract this was written against
+    (gen_plan.py's OTHER callers) never needed one."""
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
     completion = llm_agent.client.chat.completions.create(
         model=llm_agent.model_name,
-        messages=[{"role": "user", "content": prompt}],
+        messages=messages,
     )
     result = completion.choices[0].message.content
-    print(f"[llm_inference:{tag}] prompt={len(prompt)} chars -> response={len(result)} chars")
+    prompt_len = len(prompt) + (len(system_prompt) if system_prompt else 0)
+    print(f"[llm_inference:{tag}] prompt={prompt_len} chars -> response={len(result)} chars")
     return result
