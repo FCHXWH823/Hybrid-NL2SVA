@@ -392,6 +392,43 @@ def generate_nl_plans(
         raise NotImplementedError("Unsupported prompt builder type")
 
 
+# 2026-09-02: mechanical backstop, added after regen16-19 showed prompt-only
+# fixes (negative-framed ban, positive-anchor signal list, a second worked
+# example) all failed to stop invalid signal-like tokens (baud_rate,
+# global_clock_freq) from leaking into grounded plans -- root-caused to a
+# verbatim, genuinely-relevant RTL header comment in baud_gen.v describing
+# baud_freq's intended value via a formula over those two non-signal names.
+# Since the model has good reason to want to cite that comment (it's true
+# and directly about the signal being processed), prompting alone couldn't
+# reliably suppress it -- this filters the OUTPUT instead of trying to
+# police the generation. Only checks snake_case identifier-shaped tokens
+# (real signal names in this codebase all look like this); a bare English
+# phrase like "the baud rate" (no underscore) is not flagged.
+_SNAKE_CASE_TOKEN_RE = re.compile(r"\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+\b")
+
+
+def filter_invalid_signal_references(
+    plans: List[str], valid_signals: Optional[Set[str]]
+) -> Tuple[List[str], int]:
+    """Drops any plan that references a snake_case, signal-shaped token not
+    present in valid_signals. Returns (kept_plans, num_dropped). A no-op
+    (returns plans unchanged, 0 dropped) if valid_signals is falsy -- there's
+    nothing to check against."""
+    if not valid_signals:
+        return plans, 0
+    valid_lower = {s.lower() for s in valid_signals}
+    kept = []
+    n_dropped = 0
+    for plan in plans:
+        tokens = _SNAKE_CASE_TOKEN_RE.findall(plan.lower())
+        bad_tokens = [t for t in tokens if t not in valid_lower]
+        if bad_tokens:
+            n_dropped += 1
+            continue
+        kept.append(plan)
+    return kept, n_dropped
+
+
 def generate_dynamic_nl_plans(
     spec_text: str,
     kg: Optional[Dict],
@@ -489,6 +526,15 @@ def generate_dynamic_nl_plans(
                     if line.strip().startswith('Plan:'):
                         plan = line.split(':', 1)[-1].strip()
                         context_plans.append(plan)
+
+                context_plans, n_dropped = filter_invalid_signal_references(
+                    context_plans, valid_signals,
+                )
+                if n_dropped:
+                    print(
+                        f"Dropped {n_dropped} plans referencing non-whitelisted signal-like "
+                        f"tokens for signal {signal_name} context {context_idx+1}"
+                    )
 
                 all_signal_plans.extend(context_plans)
                 print(
