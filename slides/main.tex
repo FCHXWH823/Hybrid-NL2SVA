@@ -321,10 +321,18 @@ later, ack must be asserted.
   \end{card}
 \end{frame}
 
-\begin{frame}{Stage 3 in detail: syntax cleanup + SOR}
+\begin{frame}{Stage 3 / SOR: then vs.\ now}
   \centering
-  \vfill
-  \resizebox{\textwidth}{!}{%
+  \textbf{\small As published (MLCAD'25 paper):} flat, per-operator lookup
+
+  \vspace{2pt}
+  \includegraphics[width=0.3\textwidth]{Figs/SVAOperatorRefine.pdf}
+
+  \vspace{10pt}
+  \textbf{\small Today:} full Pre-SOR / SOR / Post-SOR pipeline, syntax-tree-based
+
+  \vspace{2pt}
+  \resizebox{0.92\textwidth}{!}{%
   \begin{tikzpicture}[
       node/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=3.2cm, minimum height=1.1cm, align=center, font=\small},
       arrow/.style={-{Latex[length=2.5mm]}, thick, nyuvioletdark},
@@ -345,24 +353,6 @@ later, ack must be asserted.
     \node[note] at (8,-1.1) {Bottom-up explanation-\\merge-tree vs.\ OL-NL text};
     \node[note] at (12,-1.1) {Same mechanism as\\Pre-SOR -- SOR can\\itself break elaboration};
   \end{tikzpicture}}
-  \vfill
-\end{frame}
-
-\begin{frame}{As published: SVA operator-based rechecking}
-  \framesubtitle{From the MLCAD'25 paper -- the originally published SOR mechanism}
-  \centering
-  \includegraphics[width=0.5\textwidth]{Figs/SVAOperatorRefine.pdf}
-  \vspace{6pt}
-  \begin{card}
-  \scriptsize
-  Extract the operators the LLM assertion actually used, look each one up
-  in the SVA quick-reference table, and hand the assertion, the
-  specification, and those explanations to a \textit{SVA Rechecking
-  Prompt}. \textbf{Since published:} the explanation-merge-tree (next
-  slide) replaced this flat operator lookup with a full bottom-up
-  rebuild of the assertion's meaning, catching mismatches the
-  original per-operator check could miss.
-  \end{card}
 \end{frame}
 
 \begin{frame}[fragile]{Inside SOR: the explanation-merge-tree}
