@@ -187,8 +187,14 @@
 \begin{frame}{Our approach: three steps}
   \framesubtitle{Never trust one AI answer}
   \begin{card}
-    \textbf{Step 1:} rewrite the input into OL-NL -- a precise,
-    signal-grounded plain-English restatement
+    \small
+    \textbf{Step 1:} rewrite the input into \textbf{OL-NL} (operator-level
+    natural language) -- name only real signals (e.g.\ \texttt{req},
+    \texttt{ack}, \texttt{clk}, \texttt{rstn}), and describe how they
+    relate in plain words that match one specific operator, e.g.\
+    \textit{``whenever req rises, ack must be asserted exactly 1 clock
+    cycle later''} matches \texttt{\$rose(req) |-> \#\#1 ack}, operator
+    for operator, in plain English
   \end{card}
   \vspace{6pt}
   \begin{card}
