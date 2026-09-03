@@ -302,14 +302,6 @@ later, ack must be asserted.
   Names only real signals, states the exact timing -- matches
   \texttt{\$rose(req) |-> \#\#1 ack} operator for operator, in plain English.
   \end{card}
-  \vspace{3pt}
-  \begin{card}
-  \tiny
-  \textbf{When it runs:} needed when the input doesn't already name real
-  signals (\texttt{nl2sva\_human\_verified}); skipped when it already does
-  (\texttt{nl2sva\_machine\_verified}). It also has a strict mode: stay
-  strictly literal -- never add detail the description didn't state.
-  \end{card}
 \end{frame}
 
 \begin{frame}{Stage 2 in detail: HybridRetrieval-augmented generation}
