@@ -172,12 +172,17 @@
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
-      \scriptsize\textbf{Our approach.} Don't just ask a general AI model once:
+      \scriptsize\textbf{Our approach.} Never trust one AI answer -- three
+      steps instead:
       \begin{itemize}
-        \item look up real, correct operator rules first
-        \item write a first-try answer
-        \item check and fix it with a real formal-verification tool
-          (JasperGold) before trusting it
+        \item \textbf{Step 1:} rewrite the input into OL-NL -- a precise,
+          signal-grounded plain-English restatement
+        \item \textbf{Step 2:} HybridRetrieval-Augmented Generation --
+          give the model the right operator knowledge, then write a
+          first answer
+        \item \textbf{Step 3:} use JasperGold to fix syntax errors, and
+          automatically rebuild the answer's meaning as a tree to catch
+          and fix mistakes in what it actually checks
       \end{itemize}
     \end{column}
   \end{columns}
