@@ -221,8 +221,53 @@
 
 \section{Pipeline Architecture}
 
+\begin{frame}{The original pipeline (MLCAD'25 paper)}
+  \framesubtitle{Two stages: HybridRetrieval-Augmented Generation, then SOR}
+  \centering
+  \resizebox{0.72\textwidth}{!}{%
+  \begin{tikzpicture}[
+      stage/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=4cm, minimum height=1.5cm, align=center, font=\small},
+      sub/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=3.6cm, minimum height=0.9cm, align=center, font=\scriptsize},
+      arrow/.style={-{Latex[length=2.5mm]}, thick, nyuvioletdark},
+    ]
+    \node[stage] (s2) at (0,0) {\textbf{Stage 2}\\HybridRetrieval-\\Augmented Generation};
+    \node[stage] (s3) at (6,0) {\textbf{Stage 3}\\JG Syntax Cleanup\\+ SOR};
+
+    \node[sub] (s2a) at (0,-1.9) {Retrieve operator docs\\+ code examples;\\generate bare SVA expr};
+    \node[sub] (s3a) at (6,-1.9) {Real JG elaboration\\feedback loop; SVA\\Operator-based Recheck};
+
+    \draw[arrow] (s2) -- (s3);
+    \draw[-, nyuvioletlight] (s2) -- (s2a);
+    \draw[-, nyuvioletlight] (s3) -- (s3a);
+  \end{tikzpicture}}
+  \vspace{10pt}
+  \begin{card}
+  \small
+  Given a natural-language property that already names real signals, the
+  model retrieves the right operator knowledge, writes a first answer, and
+  JasperGold + SOR check and fix it. (Numbered Stage 2/3 to match the
+  labels used later in this talk -- Stage 1 is what we added, next slide.)
+  \end{card}
+\end{frame}
+
+\begin{frame}{As published: the overall pipeline}
+  \framesubtitle{The customized RAG framework, TCAD paper Fig.~2}
+  \centering
+  \includegraphics[width=0.62\textwidth]{Figs/RAGSVAG.pdf}
+  \vspace{6pt}
+  \begin{card}
+  \scriptsize
+  \textit{Customized RAG} bundles two techniques: \textbf{dynamic
+  splitting} (builds a code-centric retrieval database from SVA textbooks,
+  preserving each code snippet with its surrounding explanation) and
+  \textbf{HybridRetrieval} (next slide). Retrieved context enriches the
+  Initial SVA Generation Prompt; the output is then passed through SVA
+  Operator-based Rechecking (Stage 3) for a refined final assertion.
+  \end{card}
+\end{frame}
+
 \begin{frame}{The pipeline today: three stages}
-  \framesubtitle{Stages 2 \& 3 are from the published MLCAD'25 paper; Step 1 was added since}
+  \framesubtitle{Step 1 (OL-NL grounding) is new -- Stages 2 \& 3 are unchanged from the paper}
   \centering
   \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
@@ -249,28 +294,10 @@
 
   \begin{card}
   \small
-  The paper's own Fig.~2 only shows \textbf{Customized RAG} (dynamic
-  splitting + HybridRetrieval) and \textbf{SOR} -- Step 1 (OL-NL grounding)
-  is a later addition, only needed when the input isn't already
-  signal-grounded. The model is \emph{never} trusted to write the
-  clock/\texttt{disable iff}/label itself -- these are added automatically
-  once the bare expression is finalized.
-  \end{card}
-\end{frame}
-
-\begin{frame}{As published: the overall pipeline}
-  \framesubtitle{The customized RAG framework, TCAD paper Fig.~2}
-  \centering
-  \includegraphics[width=0.62\textwidth]{Figs/RAGSVAG.pdf}
-  \vspace{6pt}
-  \begin{card}
-  \scriptsize
-  \textit{Customized RAG} bundles two techniques: \textbf{dynamic
-  splitting} (builds a code-centric retrieval database from SVA textbooks,
-  preserving each code snippet with its surrounding explanation) and
-  \textbf{HybridRetrieval} (next slide). Retrieved context enriches the
-  Initial SVA Generation Prompt; the output is then passed through SVA
-  Operator-based Rechecking (Stage 3) for a refined final assertion.
+  Step 1 is only needed when the input isn't already signal-grounded. The
+  model is \emph{never} trusted to write the clock/\texttt{disable iff}/label
+  itself -- these are added automatically once the bare expression is
+  finalized.
   \end{card}
 \end{frame}
 
