@@ -148,16 +148,16 @@
 \begin{frame}{Why NL2SVA is hard}
   \framesubtitle{Hardware verification can take up to 70\% of chip design time}
   \begin{card}
-  \scriptsize
+  \tiny
   SVAs are small checkers built into the design: they watch the hardware
   run and flag it the moment real behavior breaks a rule from the spec.
   Writing them by hand has two steps: (1) find the rules to check, in
   plain English, and (2) turn each rule into an SVA -- step (2) is
   \textbf{NL2SVA}, and it is what this project is about.
   \end{card}
-  \vspace{4pt}
+  \vspace{3pt}
   \begin{card}
-  \scriptsize
+  \tiny
   \textbf{Why a general AI model struggles.}
   \begin{itemize}
     \item Not much SVA code in the data these models learned from
@@ -169,11 +169,17 @@
         \item \texttt{a \#\#2 b}: b \emph{exactly} 2 cycles later.
           \texttt{a \#\#[1:3] b}: b \emph{anywhere} in cycles 1--3
       \end{itemize}
-    \item Input descriptions come at different levels of detail -- e.g.\
-      \textit{``that ack correctly follows a request''} (vague) vs.\
-      \textit{``whenever req rises, ack must be asserted exactly 1 clock
-      cycle later''} (already precise and names real signals); vague ones
-      need grounding first (Step 1, next slide)
+    \item Input descriptions can be written at very different levels of
+      detail, for the same rule:
+      \begin{itemize}
+        \item \emph{high-level idea:} \textit{``the handshake should
+          work correctly''}
+        \item \emph{some detail:} \textit{``that ack correctly follows a
+          request''}
+        \item \emph{fully precise:} \textit{``whenever req rises, ack
+          must be asserted exactly 1 clock cycle later''}
+      \end{itemize}
+      the first two need grounding first (Step 1, next slide)
   \end{itemize}
   \end{card}
 \end{frame}
