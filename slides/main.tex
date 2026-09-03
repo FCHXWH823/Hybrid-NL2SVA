@@ -146,35 +146,38 @@
 \section{Motivation}
 
 \begin{frame}{Why NL2SVA is hard}
+  \framesubtitle{Hardware verification can take up to 70\% of chip design time}
+  \begin{card}
+  \scriptsize
+  SVAs are small checkers built into the design: they watch the hardware
+  run and flag it the moment real behavior breaks a rule from the spec.
+  Writing them by hand has two steps: (1) find the rules to check, in
+  plain English, and (2) turn each rule into an SVA -- step (2) is
+  \textbf{NL2SVA}, and it is what this project is about.
+  \end{card}
+  \vspace{4pt}
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
-      \textbf{The task.} Given
+      \scriptsize\textbf{Why a general AI model struggles.}
       \begin{itemize}
-        \item an RTL design (or testbench), and
-        \item a natural-language verification property,
+        \item SVA has timing words that look almost the same but mean
+          different things (\texttt{|->} vs.\ \texttt{|=>},
+          \texttt{\#\#N} vs.\ \texttt{\#\#[M:N]})
+        \item Easy to get the order of operations wrong (\texttt{and}/
+          \texttt{or} bind tighter than \texttt{|->})
+        \item Not much SVA code in the data these models learned from
       \end{itemize}
-      produce a SystemVerilog Assertion (SVA) that is \emph{functionally
-      equivalent} to what a verification engineer intended.
     \end{column}
     \begin{column}{0.5\textwidth}
-      \textbf{Why general-purpose LLMs struggle.}
+      \scriptsize\textbf{Our approach.} Don't just ask a general AI model once:
       \begin{itemize}
-        \item SVA has subtle, easy-to-confuse temporal operators
-          (\texttt{|->} vs.\ \texttt{|=>}, \texttt{\#\#N} vs.\ \texttt{\#\#[M:N]},
-          \texttt{s\_eventually} vs.\ plain \texttt{eventually})
-        \item Operator precedence traps (\texttt{and}/\texttt{or} binding
-          tighter than \texttt{|->})
-        \item Little SVA-specific data in general pretraining corpora
+        \item look up real, correct operator rules first
+        \item write a first-try answer
+        \item check and fix it with a real formal-verification tool
+          (JasperGold) before trusting it
       \end{itemize}
     \end{column}
   \end{columns}
-  \vspace{6pt}
-  \begin{card}
-    \textbf{Our approach:} don't just prompt a general LLM once --
-    retrieve grounded operator knowledge, generate, then \emph{mechanically
-    verify and self-correct} against a real formal tool (JasperGold) before
-    ever trusting the answer.
-  \end{card}
 \end{frame}
 
 \begin{frame}{The anatomy of an SVA}
@@ -223,8 +226,8 @@
   \begin{card}
   \small
   The model is \emph{never} trusted to write the clock/\texttt{disable iff}/label
-  itself (\texttt{EXPRESSION\_ONLY\_INSTRUCTION}) --- these are mechanically
-  attached (\texttt{wrap\_property\_expression}) once the bare boolean/temporal
+  itself (\texttt{EXPRESSION\_ONLY\_INSTRUCTION}) --- these are added
+  automatically (\texttt{wrap\_property\_expression}) once the bare boolean/temporal
   expression is finalized.
   \end{card}
 \end{frame}
@@ -245,35 +248,37 @@
   \end{card}
 \end{frame}
 
-\begin{frame}[fragile]{Stage 1 in detail: OL-NL grounding}
-  \framesubtitle{\texttt{--ol-nl-grounding} -- only needed when the input isn't already signal-grounded}
+\begin{frame}[fragile]{Stage 1 in detail: what is OL-NL?}
+  \framesubtitle{Only needed when the input doesn't already name real signals}
   \begin{card}
   \scriptsize
-  ``OL NL'' = \textbf{operator-level natural language}: a restatement naming
-  \emph{only} signals that actually appear in the testbench (never invented/
-  paraphrased names), stating the property's structure as precisely as
-  possible -- condition first, then outcome. One best-effort LLM call, no
-  golden SVA shown.
+  \textbf{OL-NL} = \textbf{operator-level natural language}: a plain-English
+  sentence with two rules -- (1) name \emph{only} real signals from the
+  design, never a made-up name, and (2) say exactly how those signals
+  relate (e.g.\ ``at the same time'' or ``N cycles later''); each such
+  relation matches one specific SVA operator, but stays plain words, not
+  code.
   \end{card}
-  \vspace{4pt}
+  \vspace{3pt}
   \begin{card}
   \tiny
-  \textbf{Worked example:}
+  \textbf{Worked example} (same signals as the earlier SVA):
   \begin{verbatim}
-Description: that the pending flag never gets stuck.
-  Signals: pending, pending_d1, clear_vld, sat_guard
-OL NL: It must never be the case that pending_d1 is asserted
-and clear_vld is not asserted and pending is still asserted
-and sat_guard is not asserted
+Plain description: that ack correctly follows a request.
+  Real signals: req, ack, clk, rstn
+OL-NL: Whenever req rises, then exactly 1 clock cycle
+later, ack must be asserted.
   \end{verbatim}
+  Names only real signals, states the exact timing -- matches
+  \texttt{\$rose(req) |-> \#\#1 ack} operator for operator, in plain English.
   \end{card}
-  \vspace{4pt}
+  \vspace{3pt}
   \begin{card}
-  \scriptsize
-  \textbf{When it runs:} needed for \texttt{nl2sva\_human\_verified}; \emph{
-  redundant} for \texttt{nl2sva\_machine\_verified} (already names every
-  signal) -- skipped there. \texttt{--ol-nl-conservative}: stay maximally
-  literal, never invent structure the description doesn't state.
+  \tiny
+  \textbf{When it runs:} needed when the input doesn't already name real
+  signals (\texttt{nl2sva\_human\_verified}); skipped when it already does
+  (\texttt{nl2sva\_machine\_verified}). \texttt{--ol-nl-conservative}: stay
+  strictly literal -- never add detail the description didn't state.
   \end{card}
 \end{frame}
 
@@ -339,7 +344,7 @@ and sat_guard is not asserted
   specification, and those explanations to a \textit{SVA Rechecking
   Prompt}. \textbf{Since published:} the explanation-merge-tree (next
   slide) replaced this flat operator lookup with a full bottom-up
-  recomposition of the assertion's meaning, catching mismatches the
+  rebuild of the assertion's meaning, catching mismatches the
   original per-operator check could miss.
   \end{card}
 \end{frame}
@@ -387,11 +392,11 @@ Candidate SVA:  a && b |-> ##2 c
 \section{Key Mechanisms}
 
 \begin{frame}{The bug this talk's improvement targets}
-  \framesubtitle{A confirmed, systematic timing error in \texttt{|=>} + \texttt{\#\#N} composition}
+  \framesubtitle{A confirmed, repeated timing error in \texttt{|=>} + \texttt{\#\#N} together}
   \begin{card}
   \scriptsize
-  Composing \texttt{|=>} (which itself already advances one clock cycle)
-  with an explicit \texttt{\#\#N} delay silently lands on \texttt{N+1} total
+  Using \texttt{|=>} (which itself already moves forward one clock cycle)
+  together with a written-out \texttt{\#\#N} delay silently lands on \texttt{N+1} total
   cycles instead of \texttt{N} -- both at \textbf{generation time} and
   inside \textbf{SOR's own revision step}, so the error can survive the
   self-correction pass meant to catch it.
@@ -399,16 +404,16 @@ Candidate SVA:  a && b |-> ##2 c
   \vspace{5pt}
   \begin{card}
   \scriptsize
-  \textbf{Fix (\texttt{--only-overlap-implication}):} sidestep it at the
-  root -- always use \texttt{|->}, express any delay explicitly via
-  \texttt{\#\#N} using the \emph{total} cycle count, never combine an
-  implicit-advance operator with an explicit one.
+  \textbf{Fix (\texttt{--only-overlap-implication}):} avoid it at the
+  root -- always use \texttt{|->}, and always write out any delay with
+  \texttt{\#\#N} using the \emph{total} cycle count, instead of combining
+  a hidden-cycle operator with a written-out one.
   \end{card}
   \vspace{5pt}
   \begin{card}
   \tiny
   \texttt{--sor-template-timing}: SOR's explanation-merge-tree can also use
-  fixed, deterministic, LLM-free templates (\texttt{sva\_temporal\_
+  fixed, rule-based, LLM-free templates (\texttt{sva\_temporal\_
   operators.json}'s per-operator fields) instead of an LLM composing each
   node's meaning -- removes another source of the same timing slip.
   \end{card}
@@ -565,8 +570,8 @@ Candidate SVA:  a && b |-> ##2 c
   \small
   \textbf{Conclusion:} the pipeline's net benefit scales with the base
   model's own ability to self-correct \emph{without introducing new errors}
-  during revision -- not a property that holds unconditionally across
-  models. (nl2sva\_machine\_verified does \emph{not} show this wash for the
+  during revision -- not something that is true for every model, no matter
+  what. (nl2sva\_machine\_verified does \emph{not} show this wash for the
   same model: 60.8\% vs.\ 51.2\% FM-strict.)
   \end{card}
 \end{frame}
@@ -754,7 +759,7 @@ asrt: assert property (@(posedge clock)
     \texttt{valid\_signals} list (the cloned config only had a 2-signal
     placeholder); we have no evidence the paper's own run used the same
     signal scope, so this is not a strict apples-to-apples comparison --
-    only evidence our pipeline lands in a plausible, self-consistent range.
+    only evidence our pipeline lands in a reasonable, self-consistent range.
     \#Proven checked via a new \texttt{check\_sva\_proven} utility
     (\texttt{prove -all} + \texttt{get\_status}, no golden SVA needed).
   \end{card}
@@ -821,7 +826,7 @@ asrt: assert property (@(posedge clock)
     corresponding NL plan's own text} -- e.g.\ the \texttt{baud\_freq} plan on
     the earlier slide reads \textit{``\dots\ using the formula
     16*baud\_rate / gcd(global\_clock\_freq, 16*baud\_rate)''}, and NL2SVA
-    just faithfully transcribed \texttt{baud\_rate}/\texttt{global\_clock\_freq}
+    just copied \texttt{baud\_rate}/\texttt{global\_clock\_freq} word for word
     as identifiers -- except neither is a real RTL signal. This is a
     Spec2NL grounding gap, not (only) an NL2SVA one.
   \end{card}
@@ -853,8 +858,8 @@ asrt: assert property (@(posedge clock)
     revisions -- consistent with Part I's negative-priming finding: naming
     the exact bad pattern put that pattern in front of the model right
     before generation. Invalid-signal leakage rose
-    14\%$\to$22\%$\to$27\%$\to$30\% across successive attempts to ban it in
-    words.
+    14\%$\to$22\%$\to$27\%$\to$30\% across several tries, one after
+    another, to ban it in words.
   \end{card}
 \end{frame}
 
@@ -887,7 +892,7 @@ asrt: assert property (@(posedge clock)
 \end{frame}
 
 \begin{frame}{Validated: same 44 properties, ungrounded vs.\ grounded}
-  \framesubtitle{\texttt{baud\_clk}/\texttt{baud\_freq} pilot -- identical underlying ideas, index-matched}
+  \framesubtitle{\texttt{baud\_clk}/\texttt{baud\_freq} pilot -- the exact same starting ideas, matched one to one}
   \begin{card}
   \centering
   \renewcommand{\arraystretch}{1.3}
@@ -906,12 +911,13 @@ asrt: assert property (@(posedge clock)
   \vspace{5pt}
   \begin{card}
     \scriptsize
-    Same 44 properties both ways (index-matched) -- grounding + the full
-    pipeline is \textbf{+22.7pp \#SynC, +20.4pp \#Proven} over the best
+    Same 44 properties both ways (matched one to one) -- grounding + the
+    full pipeline is \textbf{+22.7pp \#SynC, +20.4pp \#Proven} over the best
     ungrounded baseline; a specialized NL2SVA model alone (CodeV-SVA)
-    doesn't compensate for hallucinated-signal input the way grounding
+    can't make up for bad, made-up signal names the way grounding
     does. \textit{Scope: \texttt{baud\_clk}/\texttt{baud\_freq} only (2/18
-    signals) -- pilot before the remaining 16 and a full regeneration.}
+    signals) -- a small test before the remaining 16 signals and a full
+    re-run.}
   \end{card}
 \end{frame}
 
