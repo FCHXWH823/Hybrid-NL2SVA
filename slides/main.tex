@@ -356,48 +356,59 @@ later, ack must be asserted.
 \end{frame}
 
 \begin{frame}[fragile]{Inside SOR: the explanation-merge-tree}
-  \framesubtitle{Merge bottom-up into NL, then compare against the original ask}
+  \framesubtitle{Parse to a syntax tree, merge bottom-up into NL, then compare against the original ask}
   \begin{card}
   \tiny
-  \begin{verbatim}
-Candidate SVA:  a && b |-> ##2 c
-  \end{verbatim}
+  \textbf{LLM-generated SVA (Stage 2):} \texttt{a \&\& b |-> \#\#2 c}\\
+  \textbf{Original ask -- OL-NL (Stage 1):} whenever a and b are both asserted, then c is asserted \textcolor{warnamber}{\textbf{3}} cycles later
   \end{card}
   \vspace{1pt}
-  \centering
-  \resizebox{0.44\textwidth}{!}{%
-  \begin{tikzpicture}[
-      leaf/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=3.6cm, minimum height=0.8cm, align=center, font=\scriptsize},
-      merge/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=6.4cm, minimum height=0.8cm, align=center, font=\scriptsize},
-      root/.style={rectangle, rounded corners, draw=white, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=9.5cm, minimum height=0.9cm, align=center, font=\scriptsize},
-      arrow/.style={-{Latex[length=2mm]}, thick, nyuvioletdark},
-      lbl/.style={font=\scriptsize, text=nyumuted},
-    ]
-    \node[leaf] (la) at (-4.0,0) {\texttt{a} is asserted};
-    \node[leaf] (lb) at (-1.5,0) {\texttt{b} is asserted};
-    \node[leaf] (lc) at (2.7,0) {\texttt{c} is asserted 2 cycles later};
+  \begin{columns}[T]
+    \begin{column}{0.20\textwidth}
+      \vspace{14pt}
+      \begin{card}[0.98\textwidth]
+      \tiny
+      \textbf{1.} Parse the SVA into a syntax tree
 
-    \node[merge] (mand) at (-2.75,1.5) {a and b are both asserted};
-    \node[lbl, fill=white, inner sep=1pt] at (-3.5,0.75) {merge via \texttt{\&\&}};
-    \node[root] (root) at (0,3.1) {whenever a and b are both asserted, then c is asserted 2 cycles later};
-    \node[lbl, fill=white, inner sep=1pt] at (-1.4,2.3) {merge via \texttt{|-> \#\#2}};
+      \vspace{3pt}
+      \textbf{2.} Merge the tree bottom-up into NL
 
-    \draw[arrow] (la) -- (mand);
-    \draw[arrow] (lb) -- (mand);
-    \draw[arrow] (mand) -- (root);
-    \draw[arrow] (lc) -- (root);
-  \end{tikzpicture}}
+      \vspace{3pt}
+      \textbf{3.} Compare with the original ask above
+      \end{card}
+    \end{column}
+    \begin{column}{0.80\textwidth}
+      \centering
+      \resizebox{0.72\textwidth}{!}{%
+      \begin{tikzpicture}[
+          leaf/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=1.6cm, minimum height=0.8cm, align=center, font=\scriptsize},
+          merge/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=6.4cm, minimum height=0.8cm, align=center, font=\scriptsize},
+          root/.style={rectangle, rounded corners, draw=white, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=9.5cm, minimum height=0.9cm, align=center, font=\scriptsize},
+          arrow/.style={-{Latex[length=2mm]}, thick, nyuvioletdark},
+          lbl/.style={font=\scriptsize, text=nyumuted},
+        ]
+        \node[leaf] (la) at (-4.0,0) {\texttt{a}};
+        \node[leaf] (lb) at (-2.2,0) {\texttt{b}};
+        \node[leaf] (lc) at (2.7,0) {\texttt{c}};
+
+        \node[merge] (mand) at (-2.75,1.5) {a and b are both asserted};
+        \node[lbl, fill=white, inner sep=1pt] at (-3.5,0.75) {parse node: \texttt{\&\&}};
+        \node[root] (root) at (0,3.1) {whenever a and b are both asserted, then c is asserted 2 cycles later};
+        \node[lbl, fill=white, inner sep=1pt] at (-1.4,2.3) {parse node: \texttt{|-> \#\#2}};
+
+        \draw[arrow] (la) -- (mand);
+        \draw[arrow] (lb) -- (mand);
+        \draw[arrow] (mand) -- (root);
+        \draw[arrow] (lc) -- (root);
+      \end{tikzpicture}}
+    \end{column}
+  \end{columns}
   \vspace{3pt}
   \begin{card}
   \tiny
-  \textbf{From the SVA} (merged bottom-up): \textit{whenever a and b are
-  both asserted, then c is asserted 2 cycles later}\\
-  \textbf{OL-NL, Stage 1} (what was actually asked for): \textit{whenever a
-  and b are both asserted, then c is asserted \textcolor{warnamber}{\textbf{3}}
-  cycles later}\\
-  $\rightarrow$ \textbf{Mismatch} on the delay -- SOR flags just the
-  \texttt{\#\#2} node and revises it to \texttt{\#\#3}, not the whole
-  property.
+  $\rightarrow$ \textbf{Mismatch found:} the tree's root says \textbf{2} cycles
+  later, but the original ask above says \textbf{3} -- SOR flags just the
+  \texttt{\#\#2} node and revises it to \texttt{\#\#3}, not the whole property.
   \end{card}
 \end{frame}
 
