@@ -569,7 +569,7 @@ Candidate SVA:  a && b |-> ##2 c
     \begin{column}{0.55\textwidth}
       \begin{card}
       \footnotesize
-      \textbf{Net effect: a wash.}
+      \textbf{Net effect: no real change.}
       \begin{itemize}
         \item FM-strict identical: 26/73 both ways
         \item FM-relaxed \emph{slightly worse}: 53.4\% vs.\ 57.5\%
@@ -579,9 +579,9 @@ Candidate SVA:  a && b |-> ##2 c
       \end{card}
     \end{column}
     \begin{column}{0.45\textwidth}
-      \textbf{Three regressions found:}
+      \textbf{Three ways it got worse:}
       \begin{itemize}
-        \item Spurious \texttt{\#\#N} inserted where none was needed
+        \item An extra, unneeded \texttt{\#\#N} added where none was needed
         \item A boolean's polarity flipped while ``fixing'' something else
         \item A correct plain comparison rewritten into a non-equivalent
           \texttt{\$onehot0(\{...\})} form
@@ -594,8 +594,8 @@ Candidate SVA:  a && b |-> ##2 c
   \textbf{Conclusion:} the pipeline's net benefit scales with the base
   model's own ability to self-correct \emph{without introducing new errors}
   during revision -- not something that is true for every model, no matter
-  what. (nl2sva\_machine\_verified does \emph{not} show this wash for the
-  same model: 60.8\% vs.\ 51.2\% FM-strict.)
+  what. (nl2sva\_machine\_verified does \emph{not} show this no-change
+  pattern for the same model: 60.8\% vs.\ 51.2\% FM-strict.)
   \end{card}
 \end{frame}
 
@@ -604,12 +604,13 @@ Candidate SVA:  a && b |-> ##2 c
 
 \section{Motivation}
 
-\begin{frame}{From curated benchmarks to real designs}
+\begin{frame}{From ready-made benchmarks to real designs}
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
       \textbf{What Part I evaluated:} \\
-      NL2SVA on FVEval-Verified -- properties and RTL are already curated,
-      one property per row, always paired with a golden SVA.
+      NL2SVA on FVEval-Verified -- properties and RTL are already picked
+      out and ready to use, one property per row, always paired with a
+      golden (known-correct) SVA.
     \end{column}
     \begin{column}{0.5\textwidth}
       \textbf{What real verification looks like:} \\
@@ -816,8 +817,8 @@ asrt: assert property (@(posedge clock)
     \tiny
     A primary \emph{input} port is free/unconstrained under JasperGold with
     no environment \texttt{assume}s -- a property claiming ``this input
-    settles into range X'' is essentially unprovable by construction,
-    regardless of NL2SVA quality. Excluding these 4 signals lifts \#Proven
+    settles into range X'' is nearly impossible to prove, just because of
+    how the design is built, regardless of NL2SVA quality. Excluding these 4 signals lifts \#Proven
     from 18.6\%$\to$\textbf{20.3\%}, matching the GPT-4o/GPT-4o reference
     almost exactly. (\texttt{ce\_16}: declared inside \texttt{uart\_top}, one
     level below our assertion scope \texttt{uart2bus\_top} -- not even a
@@ -878,9 +879,9 @@ asrt: assert property (@(posedge clock)
   \begin{card}
     \scriptsize
     \textbf{Prompt-only fixes made this WORSE, not better}, across several
-    revisions -- consistent with Part I's negative-priming finding: naming
-    the exact bad pattern put that pattern in front of the model right
-    before generation. Invalid-signal leakage rose
+    revisions -- we saw the same pattern elsewhere too: naming the exact
+    bad thing to avoid puts it right in front of the model, and it tends
+    to copy it instead of avoiding it. Invalid-signal leakage rose
     14\%$\to$22\%$\to$27\%$\to$30\% across several tries, one after
     another, to ban it in words.
   \end{card}
@@ -901,16 +902,16 @@ asrt: assert property (@(posedge clock)
       task Stage 1 performs, on AssertionForge's side instead
     \item \textbf{Mechanical filter (post-hoc, not a prompt):} drops any
       grounded plan still referencing a snake\_case, signal-shaped token not
-      in \texttt{valid\_signals} -- carries none of the negative-priming risk
-      above, since it never goes back into a prompt
+      in \texttt{valid\_signals} -- carries none of the copy-the-bad-example
+      risk above, since it never goes back into a prompt
   \end{itemize}
   \end{card}
   \vspace{8pt}
   \begin{card}
     \footnotesize
-    \textbf{Lesson:} banning a specific bad pattern \emph{in words} tends to
-    backfire; pushing the same constraint \emph{out of the prompt} into a
-    mechanical check is what actually held.
+    \textbf{Lesson:} banning a specific bad pattern \emph{in words} tends
+    to make it worse; moving the same rule \emph{out of the prompt} into a
+    mechanical check is what actually worked.
   \end{card}
 \end{frame}
 
