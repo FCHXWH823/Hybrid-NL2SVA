@@ -340,7 +340,7 @@ later, ack must be asserted.
     ]
     \node[node] (gen) at (0,0) {Stage 2\\candidate SVA};
     \node[node] (pre) at (4,0) {Pre-SOR\\JG syntax cleanup};
-    \node[node] (sor) at (8,0) {SOR\\(functional recheck)};
+    \node[node] (sor) at (8,0) {Syntax-tree-based\\SOR\\(functional recheck)};
     \node[node] (post) at (12,0) {Post-SOR\\JG syntax cleanup};
     \node[node, fill=goodgreen] (final) at (16,0) {Final SVA};
 
@@ -356,41 +356,48 @@ later, ack must be asserted.
 \end{frame}
 
 \begin{frame}[fragile]{Inside SOR: the explanation-merge-tree}
-  \framesubtitle{Parse the candidate's own operator structure bottom-up, then compare}
+  \framesubtitle{Merge bottom-up into NL, then compare against the original ask}
   \begin{card}
-  \scriptsize
+  \tiny
   \begin{verbatim}
 Candidate SVA:  a && b |-> ##2 c
   \end{verbatim}
   \end{card}
-  \vspace{2pt}
+  \vspace{1pt}
   \centering
-  \resizebox{0.56\textwidth}{!}{%
+  \resizebox{0.44\textwidth}{!}{%
   \begin{tikzpicture}[
       leaf/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=3.6cm, minimum height=0.8cm, align=center, font=\scriptsize},
       merge/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=6.4cm, minimum height=0.8cm, align=center, font=\scriptsize},
       root/.style={rectangle, rounded corners, draw=white, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=9.5cm, minimum height=0.9cm, align=center, font=\scriptsize},
       arrow/.style={-{Latex[length=2mm]}, thick, nyuvioletdark},
+      lbl/.style={font=\scriptsize, text=nyumuted},
     ]
     \node[leaf] (la) at (-4.0,0) {\texttt{a} is asserted};
     \node[leaf] (lb) at (-1.5,0) {\texttt{b} is asserted};
     \node[leaf] (lc) at (2.7,0) {\texttt{c} is asserted 2 cycles later};
 
-    \node[merge] (mand) at (-2.75,1.3) {\texttt{a \&\& b}: \texttt{a} and \texttt{b} are both asserted};
-    \node[root] (root) at (0,2.6) {\texttt{|-> \#\#2}: whenever \texttt{a} and \texttt{b} are both asserted, then \texttt{c} is asserted 2 cycles later};
+    \node[merge] (mand) at (-2.75,1.5) {a and b are both asserted};
+    \node[lbl, fill=white, inner sep=1pt] at (-3.5,0.75) {merge via \texttt{\&\&}};
+    \node[root] (root) at (0,3.1) {whenever a and b are both asserted, then c is asserted 2 cycles later};
+    \node[lbl, fill=white, inner sep=1pt] at (-1.4,2.3) {merge via \texttt{|-> \#\#2}};
 
     \draw[arrow] (la) -- (mand);
     \draw[arrow] (lb) -- (mand);
     \draw[arrow] (mand) -- (root);
     \draw[arrow] (lc) -- (root);
   \end{tikzpicture}}
-  \vspace{4pt}
+  \vspace{3pt}
   \begin{card}
-  \scriptsize
-  \textbf{Compare} the root's composed meaning against the Stage~1 OL-NL
-  description. Match $\rightarrow$ confirm verbatim. Mismatch $\rightarrow$
-  the model revises, but is told to change \emph{only} the flagged node
-  (e.g.\ just \texttt{\#\#2}), not rewrite the whole property.
+  \tiny
+  \textbf{From the SVA} (merged bottom-up): \textit{whenever a and b are
+  both asserted, then c is asserted 2 cycles later}\\
+  \textbf{OL-NL, Stage 1} (what was actually asked for): \textit{whenever a
+  and b are both asserted, then c is asserted \textcolor{warnamber}{\textbf{3}}
+  cycles later}\\
+  $\rightarrow$ \textbf{Mismatch} on the delay -- SOR flags just the
+  \texttt{\#\#2} node and revises it to \texttt{\#\#3}, not the whole
+  property.
   \end{card}
 \end{frame}
 
