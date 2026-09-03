@@ -112,35 +112,27 @@
 \institute{New York University}
 \date{\today}
 
-% A simple typographic NYU mark -- a bold "NYU" wordmark on a violet
-% roundel, echoing NYU's own single-word violet lockup. Drawn locally
-% (no official brand asset file was available to embed) rather than
-% pulling an unverified copy from a third-party logo site.
-\newcommand{\nyuemblem}[1][1]{%
-  \begin{tikzpicture}[scale=#1]
-    \node[circle, fill=white, minimum size=2.1cm] (c) at (0,0) {};
-    \node[circle, draw=white, line width=1.2pt, minimum size=2.1cm] at (0,0) {};
-    \node[text=nyuviolet, font=\bfseries\fontsize{22}{22}\selectfont] at (0,0) {NYU};
-  \end{tikzpicture}%
-}
-
 \begin{document}
 
 % ============================================================================
+% Title page: light canvas (matching the rest of the deck), the real NYU
+% wordmark (extracted 2026-09-03 from nyu.edu's own homepage header SVG,
+% recolored from its native white-on-violet-header to NYU violet for use
+% on our white canvas -- not a hand-drawn placeholder, not a third-party
+% mirror) placed bottom-left, and a two-line Part I/II summary.
 \begin{frame}[plain]
   \begin{tikzpicture}[remember picture, overlay]
-    \fill[nyuviolet] (current page.south west) rectangle (current page.north east);
+    \node[anchor=south west, xshift=0.7cm, yshift=0.6cm] at (current page.south west) {\includegraphics[width=2.6cm]{Figs/nyu_logo.pdf}};
   \end{tikzpicture}
-  \vspace{6pt}
+  \vspace{20pt}
   \begin{center}
-    \nyuemblem[0.85]
-
-    \vspace{14pt}
-    {\usebeamerfont{title}\usebeamercolor[fg]{title}\Huge\bfseries\inserttitle}\\[10pt]
-    {\usebeamerfont{subtitle}\color{nyuvioletlight}\large\insertsubtitle}\\[22pt]
-    {\color{white}\insertauthor}\\[2pt]
-    {\color{nyuvioletlight}\insertinstitute}\\[2pt]
-    {\color{nyuvioletlight}\small\insertdate}
+    {\usebeamerfont{title}\color{nyuviolet}\Huge\bfseries\inserttitle}\\[10pt]
+    {\usebeamerfont{subtitle}\color{nyumuted}\large\insertsubtitle}\\[26pt]
+    {\large\bfseries\color{nyuviolet}Part 1:} {\large Improving the Hybrid-NL2SVA pipeline}\\[6pt]
+    {\large\bfseries\color{nyuviolet}Part 2:} {\large An end-to-end Spec2SVA framework}\\[30pt]
+    {\color{bodytext}\insertauthor}\\[2pt]
+    {\color{nyumuted}\insertinstitute}\\[2pt]
+    {\color{nyumuted}\small\insertdate}
   \end{center}
 \end{frame}
 
