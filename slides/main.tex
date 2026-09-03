@@ -274,9 +274,7 @@
   Step 1 is only needed when the input isn't already signal-grounded.
   Stage 3's SOR now parses the candidate SVA into a syntax tree and
   rebuilds its meaning bottom-up, replacing the paper's flat per-operator
-  lookup. The model is \emph{never} trusted to write the
-  clock/\texttt{disable iff}/label itself -- these are added automatically
-  once the bare expression is finalized.
+  lookup.
   \end{card}
 \end{frame}
 
@@ -309,7 +307,7 @@ later, ack must be asserted.
   \tiny
   \textbf{When it runs:} needed when the input doesn't already name real
   signals (\texttt{nl2sva\_human\_verified}); skipped when it already does
-  (\texttt{nl2sva\_machine\_verified}). \texttt{--ol-nl-conservative}: stay
+  (\texttt{nl2sva\_machine\_verified}). It also has a strict mode: stay
   strictly literal -- never add detail the description didn't state.
   \end{card}
 \end{frame}
@@ -415,9 +413,8 @@ Candidate SVA:  a && b |-> ##2 c
   \scriptsize
   \textbf{Compare} the root's composed meaning against the Stage~1 OL-NL
   description. Match $\rightarrow$ confirm verbatim. Mismatch $\rightarrow$
-  the model revises -- \texttt{--sor-conservative} tells it to change
-  \emph{only} the flagged node (e.g.\ just \texttt{\#\#2}), not rewrite the
-  whole property.
+  the model revises, but is told to change \emph{only} the flagged node
+  (e.g.\ just \texttt{\#\#2}), not rewrite the whole property.
   \end{card}
 \end{frame}
 
@@ -436,18 +433,17 @@ Candidate SVA:  a && b |-> ##2 c
   \vspace{5pt}
   \begin{card}
   \scriptsize
-  \textbf{Fix (\texttt{--only-overlap-implication}):} avoid it at the
-  root -- always use \texttt{|->}, and always write out any delay with
-  \texttt{\#\#N} using the \emph{total} cycle count, instead of combining
-  a hidden-cycle operator with a written-out one.
+  \textbf{Fix:} avoid it at the root -- always use \texttt{|->}, and
+  always write out any delay with \texttt{\#\#N} using the \emph{total}
+  cycle count, instead of combining a hidden-cycle operator with a
+  written-out one.
   \end{card}
   \vspace{5pt}
   \begin{card}
   \tiny
-  \texttt{--sor-template-timing}: SOR's explanation-merge-tree can also use
-  fixed, rule-based, LLM-free templates (\texttt{sva\_temporal\_
-  operators.json}'s per-operator fields) instead of an LLM composing each
-  node's meaning -- removes another source of the same timing slip.
+  SOR's explanation-merge-tree can also use fixed, rule-based templates
+  for each operator's meaning, instead of asking an LLM to compose it --
+  removes another source of the same timing slip.
   \end{card}
 \end{frame}
 
@@ -474,10 +470,9 @@ Candidate SVA:  a && b |-> ##2 c
   \vspace{8pt}
   \begin{card}
   \scriptsize
-  \texttt{sva\_graph.py} also had a real, unrelated parsing bug fixed along
-  the way: range/unbounded delays (\texttt{\#\#[M:N]}, \texttt{\#\#[*]},
-  \texttt{\#\#[+]}) were mislabeled \texttt{"\#\#None"} internally,
-  discarding their real bounds.
+  A separate, unrelated bug was also fixed along the way: range/unbounded
+  delays (\texttt{\#\#[M:N]}, \texttt{\#\#[*]}, \texttt{\#\#[+]}) were
+  losing their real bounds internally.
   \end{card}
 \end{frame}
 
@@ -694,12 +689,10 @@ Candidate SVA:  a && b |-> ##2 c
   \vspace{10pt}
   \begin{card}
     \footnotesize
-    NL2SVA runs with \textbf{the same flag configuration as the
-    nl2sva\_machine\_verified evaluation}: \texttt{--skip-signal-list-note
-    --sor-conservative --only-overlap-implication}, no \texttt{--ol-nl-grounding}
-    (AssertionForge's plans are already signal-grounded) --- plus a new
-    \texttt{clock\_signal} parameter (real RTL rarely names its clock
-    \texttt{clk}).
+    NL2SVA runs with \textbf{the same settings as the
+    nl2sva\_machine\_verified evaluation}, minus Step 1 (AssertionForge's
+    plans are already signal-grounded) -- plus support for a real design's
+    actual clock name (rarely just \texttt{clk}).
   \end{card}
 \end{frame}
 
@@ -733,10 +726,10 @@ Candidate SVA:  a && b |-> ##2 c
   \vspace{6pt}
   \begin{card}
     \scriptsize
-    \textbf{A real gap found \& fixed along the way:} upstream's
-    \texttt{valid\_signals} example only listed 2 of 18 signals; and
-    \texttt{utils\_LLM.py}/\texttt{utils\_LLM\_client.py} ship as empty ``add
-    your own client'' stubs -- both needed fixing before Stage 1/2 ran end to end.
+    \textbf{A real gap found \& fixed along the way:} upstream's own
+    signal list example only listed 2 of the 18 real signals, and its
+    LLM-client code shipped as an empty ``add your own client'' stub --
+    both needed fixing before Stage 1/2 ran end to end.
   \end{card}
 \end{frame}
 
@@ -788,18 +781,17 @@ asrt: assert property (@(posedge clock)
   \vspace{10pt}
   \begin{card}
     \footnotesize
-    \textbf{Caveat:} we independently reconstructed the 18-signal
-    \texttt{valid\_signals} list (the cloned config only had a 2-signal
-    placeholder); we have no evidence the paper's own run used the same
-    signal scope, so this is not a strict apples-to-apples comparison --
-    only evidence our pipeline lands in a reasonable, self-consistent range.
-    \#Proven checked via a new \texttt{check\_sva\_proven} utility
-    (\texttt{prove -all} + \texttt{get\_status}, no golden SVA needed).
+    \textbf{Caveat:} we independently reconstructed the 18-signal list
+    ourselves (the cloned config only had a 2-signal placeholder); we have
+    no evidence the paper's own run used the same signal scope, so this is
+    not a strict apples-to-apples comparison -- only evidence our pipeline
+    lands in a reasonable, self-consistent range. \#Proven checked with a
+    real formal proof, no golden SVA needed.
   \end{card}
 \end{frame}
 
 \begin{frame}{A methodology gap: properties about free inputs}
-  \framesubtitle{AssertionForge's own few-shot prompt (\texttt{get\_sva\_icl\_examples}) is entirely PWDATA-shaped}
+  \framesubtitle{AssertionForge's own worked examples are entirely PWDATA-shaped}
   \begin{card}
   \scriptsize
   \textit{``that the input data PWDATA has a value between 83 and 165 \dots\ 3 clock
@@ -897,7 +889,7 @@ asrt: assert property (@(posedge clock)
 \end{frame}
 
 \begin{frame}{Fix: two-step generation + a mechanical filter}
-  \framesubtitle{Reworking AssertionForge's Stage 2 (\texttt{gen\_plan.py}) directly}
+  \framesubtitle{Reworking AssertionForge's Stage 2 directly}
   \begin{card}
   \scriptsize
   \begin{itemize}
@@ -910,8 +902,8 @@ asrt: assert property (@(posedge clock)
       table Hybrid-NL2SVA's own Stage 1 uses -- literally the same grounding
       task Stage 1 performs, on AssertionForge's side instead
     \item \textbf{Mechanical filter (post-hoc, not a prompt):} drops any
-      grounded plan still referencing a snake\_case, signal-shaped token not
-      in \texttt{valid\_signals} -- carries none of the copy-the-bad-example
+      grounded plan still referencing a signal-shaped word that isn't on
+      the real signal list -- carries none of the copy-the-bad-example
       risk above, since it never goes back into a prompt
   \end{itemize}
   \end{card}
