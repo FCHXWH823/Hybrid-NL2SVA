@@ -13,6 +13,7 @@
 \usetikzlibrary{arrows.meta, positioning, fit, backgrounds, shapes.geometric}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{multirow}
 \usepackage{xcolor}
 \usepackage{listings}
 
@@ -151,7 +152,8 @@
 
 \section{Pipeline Architecture}
 
-\begin{frame}{Three-stage pipeline}
+\begin{frame}{Recap: the original three-stage pipeline}
+  \framesubtitle{The baseline this talk's improvements build on top of}
   \centering
   \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
@@ -184,6 +186,72 @@
   \end{card}
 \end{frame}
 
+\begin{frame}[fragile]{Stage 1 in detail: OL-NL grounding}
+  \framesubtitle{\texttt{--ol-nl-grounding} -- only needed when the input isn't already signal-grounded}
+  \begin{card}
+  \scriptsize
+  ``OL NL'' = \textbf{operator-level natural language}: a restatement naming
+  \emph{only} signals that actually appear in the testbench (never invented/
+  paraphrased names), stating the property's structure as precisely as
+  possible -- condition first, then outcome. One best-effort LLM call, no
+  golden SVA shown.
+  \end{card}
+  \vspace{4pt}
+  \begin{card}
+  \tiny
+  \textbf{Worked example:}
+  \begin{verbatim}
+Description: that the pending flag never gets stuck.
+  Signals: pending, pending_d1, clear_vld, sat_guard
+OL NL: It must never be the case that pending_d1 is asserted
+and clear_vld is not asserted and pending is still asserted
+and sat_guard is not asserted
+  \end{verbatim}
+  \end{card}
+  \vspace{4pt}
+  \begin{card}
+  \scriptsize
+  \textbf{When it runs:} needed for \texttt{nl2sva\_human\_verified}; \emph{
+  redundant} for \texttt{nl2sva\_machine\_verified} (already names every
+  signal) -- skipped there. \texttt{--ol-nl-conservative}: stay maximally
+  literal, never invent structure the description doesn't state.
+  \end{card}
+\end{frame}
+
+\begin{frame}{Stage 2 in detail: HybridRetrieval-augmented generation}
+  \framesubtitle{Two independent retrieval paths feed one generation call}
+  \centering
+  \resizebox{0.72\textwidth}{!}{%
+  \begin{tikzpicture}[
+      node/.style={rectangle, rounded corners, draw=white, fill=nyuvioletdark, text=white, minimum width=4.4cm, minimum height=1cm, align=center, font=\small},
+      wide/.style={rectangle, rounded corners, draw=white, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=4.4cm, minimum height=1cm, align=center, font=\small},
+      arrow/.style={-{Latex[length=2.5mm]}, thick, white},
+      note/.style={font=\scriptsize, text=nyuvioletlight, align=center},
+    ]
+    \node[node] (in) at (0,1.6) {OL-NL grounded property\\+ RTL testbench};
+    \node[node] (kw) at (-3.6,0) {Keyword/operator-guided\\retrieval};
+    \node[node] (sem) at (3.6,0) {General-semantic\\retrieval};
+    \node[wide] (gen) at (0,-1.6) {Single completion\\$\rightarrow$ bare property expression};
+
+    \draw[arrow] (in) -- (kw);
+    \draw[arrow] (in) -- (sem);
+    \draw[arrow] (kw) -- (gen);
+    \draw[arrow] (sem) -- (gen);
+
+    \node[note] at (-3.6,-0.9) {\texttt{extract\_keywords} +\\46-entry operator table};
+    \node[note] at (3.6,-0.9) {query on the raw\\NL prompt directly};
+  \end{tikzpicture}}
+  \vspace{6pt}
+  \begin{card}
+  \scriptsize
+  Retrieves matching code-centric chunks from \textbf{10 SVA textbooks +
+  IEEE~1800-2017's own Assertions chapter} (persisted Chroma vector DB),
+  injected as grounding context. The model still outputs only the bare
+  boolean/temporal expression -- \texttt{clk}/\texttt{disable iff}/label are
+  never its job.
+  \end{card}
+\end{frame}
+
 \begin{frame}{Stage 3 in detail: syntax cleanup + SOR}
   \centering
   \resizebox{0.95\textwidth}{!}{%
@@ -203,9 +271,9 @@
     \draw[arrow] (sor) -- (post);
     \draw[arrow] (post) -- (final);
 
-    \node[note] at (4,-1.1) {Up to 3 rounds;\\real \texttt{jg} elaboration\\each round};
-    \node[note] at (8,-1.1) {Explanation-merge-tree\\vs.\ OL-NL text;\\model flags mismatches};
-    \node[note] at (12,-1.1) {SOR can itself\\introduce new\\elaboration errors};
+    \node[note] at (4,-1.1) {Up to 3 rounds;\\real \texttt{jg} elaboration\\each round; LLM fix only\\on a real JG error};
+    \node[note] at (8,-1.1) {Bottom-up explanation-\\merge-tree (\texttt{sva\_tree/})\\vs.\ OL-NL text};
+    \node[note] at (12,-1.1) {Same mechanism as\\Pre-SOR -- SOR can\\itself break elaboration};
   \end{tikzpicture}}
   \vspace{10pt}
   \begin{card}
@@ -217,39 +285,103 @@
   \end{card}
 \end{frame}
 
-\section{Key Mechanisms}
+\begin{frame}[fragile]{Inside SOR: the explanation-merge-tree}
+  \framesubtitle{Parse the candidate's own operator structure bottom-up, then compare}
+  \begin{card}
+  \scriptsize
+  \begin{verbatim}
+Candidate SVA:  a && b |-> ##2 c
+  \end{verbatim}
+  \end{card}
+  \vspace{2pt}
+  \centering
+  \resizebox{0.56\textwidth}{!}{%
+  \begin{tikzpicture}[
+      leaf/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=3.6cm, minimum height=0.8cm, align=center, font=\scriptsize},
+      merge/.style={rectangle, rounded corners, draw=white, fill=nyuvioletdark, text=white, minimum width=6.4cm, minimum height=0.8cm, align=center, font=\scriptsize},
+      root/.style={rectangle, rounded corners, draw=white, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=9.5cm, minimum height=0.9cm, align=center, font=\scriptsize},
+      arrow/.style={-{Latex[length=2mm]}, thick, nyuvioletlight},
+    ]
+    \node[leaf] (la) at (-4.0,0) {\texttt{a} is asserted};
+    \node[leaf] (lb) at (-1.5,0) {\texttt{b} is asserted};
+    \node[leaf] (lc) at (2.7,0) {\texttt{c} is asserted 2 cycles later};
 
-\begin{frame}{HybridRetrieval}
-  \begin{itemize}
-    \item Splits the NL property description into operator-level phrases
-    \item Maps each phrase to the most relevant SVA operator via a
-      46-entry operator table (\texttt{sva\_temporal\_operators.json})
-    \item Retrieves matching code-centric chunks from 10 SVA textbooks +
-      IEEE~1800-2017's own Assertions chapter (persisted Chroma vector DB)
-    \item Injected into Stage 2's generation prompt as grounding context
-  \end{itemize}
+    \node[merge] (mand) at (-2.75,1.3) {\texttt{a \&\& b}: \texttt{a} and \texttt{b} are both asserted};
+    \node[root] (root) at (0,2.6) {\texttt{|-> \#\#2}: whenever \texttt{a} and \texttt{b} are both asserted, then \texttt{c} is asserted 2 cycles later};
+
+    \draw[arrow] (la) -- (mand);
+    \draw[arrow] (lb) -- (mand);
+    \draw[arrow] (mand) -- (root);
+    \draw[arrow] (lc) -- (root);
+  \end{tikzpicture}}
+  \vspace{4pt}
+  \begin{card}
+  \scriptsize
+  \textbf{Compare} the root's composed meaning against the Stage~1 OL-NL
+  description. Match $\rightarrow$ confirm verbatim. Mismatch $\rightarrow$
+  the model revises -- \texttt{--sor-conservative} tells it to change
+  \emph{only} the flagged node (e.g.\ just \texttt{\#\#2}), not rewrite the
+  whole property.
+  \end{card}
 \end{frame}
 
-\begin{frame}{SOR: SVA Operator-based Rechecking}
-  \begin{itemize}
-    \item Builds an \textbf{explanation-merge-tree}: parses the candidate
-      SVA's operator structure (\texttt{sva\_graph.py}), composes a
-      natural-language explanation bottom-up
-    \item Compares that composed explanation against the OL-NL grounded
-      description
-    \item If they disagree, the model revises the SVA -- but is instructed
-      to change \emph{only} the minimal part responsible
-      (\texttt{--sor-conservative})
-  \end{itemize}
-  \vspace{6pt}
+\section{Key Mechanisms}
+
+\begin{frame}{The bug this talk's improvement targets}
+  \framesubtitle{A confirmed, systematic timing error in \texttt{|=>} + \texttt{\#\#N} composition}
   \begin{card}
-    \footnotesize
-    \textbf{A confirmed, systematic bug this design targets:} composing
-    \texttt{|=>} (which itself advances one clock cycle) together with an
-    explicit \texttt{\#\#N} delay silently lands on \texttt{N+1} total cycles
-    instead of the intended \texttt{N}. \texttt{--only-overlap-implication}
-    sidesteps it at the root: always use \texttt{|->}, express any delay
-    explicitly via \texttt{\#\#N} using the \emph{total} cycle count.
+  \scriptsize
+  Composing \texttt{|=>} (which itself already advances one clock cycle)
+  with an explicit \texttt{\#\#N} delay silently lands on \texttt{N+1} total
+  cycles instead of \texttt{N} -- both at \textbf{generation time} and
+  inside \textbf{SOR's own revision step}, so the error can survive the
+  self-correction pass meant to catch it.
+  \end{card}
+  \vspace{5pt}
+  \begin{card}
+  \scriptsize
+  \textbf{Fix (\texttt{--only-overlap-implication}):} sidestep it at the
+  root -- always use \texttt{|->}, express any delay explicitly via
+  \texttt{\#\#N} using the \emph{total} cycle count, never combine an
+  implicit-advance operator with an explicit one.
+  \end{card}
+  \vspace{5pt}
+  \begin{card}
+  \tiny
+  \texttt{--sor-template-timing}: SOR's explanation-merge-tree can also use
+  fixed, deterministic, LLM-free templates (\texttt{sva\_temporal\_
+  operators.json}'s per-operator fields) instead of an LLM composing each
+  node's meaning -- removes another source of the same timing slip.
+  \end{card}
+\end{frame}
+
+\begin{frame}{The improvement: SOR-timing fixes vs.\ the original pipeline}
+  \framesubtitle{Same benchmark rows, same pipeline, only the timing-fix flags differ}
+  \begin{card}
+  \centering
+  \renewcommand{\arraystretch}{1.3}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{l l r r}
+    \toprule
+    \textbf{Dataset} & \textbf{Configuration} & \textbf{FM-strict} & \textbf{FM-relaxed} \\
+    \midrule
+    \multirow{2}{*}{\shortstack[l]{nl2sva\_human\_\\verified (73)}}
+      & Original pipeline & 71.2--74.0\% & 83.6--87.7\% \\
+      & \textbf{+ SOR-timing fixes} & \textbf{74.0\%} & \textbf{87.7\%} \\
+    \midrule
+    \multirow{2}{*}{\shortstack[l]{nl2sva\_machine\_\\verified (283)}}
+      & Original pipeline & 82.0\% (232/283) & 90.5\% (256/283) \\
+      & \textbf{+ SOR-timing fixes} & \textbf{85.2\% (241/283)} & \textbf{95.4\% (270/283)} \\
+    \bottomrule
+  \end{tabular}}
+  \end{card}
+  \vspace{8pt}
+  \begin{card}
+  \scriptsize
+  \texttt{sva\_graph.py} also had a real, unrelated parsing bug fixed along
+  the way: range/unbounded delays (\texttt{\#\#[M:N]}, \texttt{\#\#[*]},
+  \texttt{\#\#[+]}) were mislabeled \texttt{"\#\#None"} internally,
+  discarding their real bounds.
   \end{card}
 \end{frame}
 
