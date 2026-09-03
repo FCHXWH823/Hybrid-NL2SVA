@@ -221,18 +221,19 @@
 
 \section{Pipeline Architecture}
 
-\begin{frame}{Recap: the original three-stage pipeline}
-  \framesubtitle{The baseline this talk's improvements build on top of}
+\begin{frame}{The pipeline today: three stages}
+  \framesubtitle{Stages 2 \& 3 are from the published MLCAD'25 paper; Step 1 was added since}
   \centering
   \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
       stage/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=3.6cm, minimum height=1.5cm, align=center, font=\small},
+      newstage/.style={rectangle, rounded corners, draw=goodgreen!70!nyuvioletdark, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=3.6cm, minimum height=1.5cm, align=center, font=\small},
       sub/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=3.3cm, minimum height=0.9cm, align=center, font=\scriptsize},
       arrow/.style={-{Latex[length=2.5mm]}, thick, nyuvioletdark},
     ]
-    \node[stage] (s1) at (0,0) {\textbf{Step 1}\\OL-NL Grounding};
-    \node[stage] (s2) at (5.2,0) {\textbf{Stage 2}\\HybridRetrieval-\\Augmented Generation};
-    \node[stage] (s3) at (10.4,0) {\textbf{Stage 3}\\JG Syntax Cleanup\\+ SOR};
+    \node[newstage] (s1) at (0,0) {\textbf{Step 1 (new)}\\OL-NL Grounding};
+    \node[stage] (s2) at (5.2,0) {\textbf{Stage 2 (paper)}\\HybridRetrieval-\\Augmented Generation};
+    \node[stage] (s3) at (10.4,0) {\textbf{Stage 3 (paper)}\\JG Syntax Cleanup\\+ SOR};
 
     \node[sub] (s1a) at (0,-1.9) {Rewrite abstract NL\\into signal-grounded,\\operator-level restatement};
     \node[sub] (s2a) at (5.2,-1.9) {Retrieve operator docs\\+ code examples;\\generate bare SVA expr};
@@ -248,10 +249,12 @@
 
   \begin{card}
   \small
-  The model is \emph{never} trusted to write the clock/\texttt{disable iff}/label
-  itself (\texttt{EXPRESSION\_ONLY\_INSTRUCTION}) --- these are added
-  automatically (\texttt{wrap\_property\_expression}) once the bare boolean/temporal
-  expression is finalized.
+  The paper's own Fig.~2 only shows \textbf{Customized RAG} (dynamic
+  splitting + HybridRetrieval) and \textbf{SOR} -- Step 1 (OL-NL grounding)
+  is a later addition, only needed when the input isn't already
+  signal-grounded. The model is \emph{never} trusted to write the
+  clock/\texttt{disable iff}/label itself -- these are added automatically
+  once the bare expression is finalized.
   \end{card}
 \end{frame}
 
