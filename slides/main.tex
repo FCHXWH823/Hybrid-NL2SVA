@@ -9,6 +9,7 @@
 % ---------------------------------------------------------------------------
 
 \usepackage{fontspec}
+\usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, fit, backgrounds, shapes.geometric}
 \usepackage{booktabs}
@@ -150,6 +151,22 @@
   \end{card}
 \end{frame}
 
+\begin{frame}{The anatomy of an SVA}
+  \framesubtitle{Four nested layers, each with its own operators -- the source of most confusion}
+  \centering
+  \includegraphics[width=0.52\textwidth]{Figs/FourLayersSVA.png}
+  \vspace{8pt}
+  \begin{card}
+  \small
+  A Boolean expression (\texttt{req}) is wrapped by a sequence expression
+  (\texttt{\$rose(req) |-> \#\#1 ack}), wrapped by a property expression,
+  wrapped by the assertion statement itself -- getting any one layer's
+  operator wrong (e.g.\ a sequence operator used where a property operator
+  belongs) silently changes the property's meaning rather than raising a
+  syntax error.
+  \end{card}
+\end{frame}
+
 \section{Pipeline Architecture}
 
 \begin{frame}{Recap: the original three-stage pipeline}
@@ -186,6 +203,22 @@
   \end{card}
 \end{frame}
 
+\begin{frame}{As published: the overall pipeline}
+  \framesubtitle{The customized RAG framework, TCAD paper Fig.~2}
+  \centering
+  \includegraphics[width=0.62\textwidth]{Figs/RAGSVAG.pdf}
+  \vspace{6pt}
+  \begin{card}
+  \scriptsize
+  \textit{Customized RAG} bundles two techniques: \textbf{dynamic
+  splitting} (builds a code-centric retrieval database from SVA textbooks,
+  preserving each code snippet with its surrounding explanation) and
+  \textbf{HybridRetrieval} (next slide). Retrieved context enriches the
+  Initial SVA Generation Prompt; the output is then passed through SVA
+  Operator-based Rechecking (Stage 3) for a refined final assertion.
+  \end{card}
+\end{frame}
+
 \begin{frame}[fragile]{Stage 1 in detail: OL-NL grounding}
   \framesubtitle{\texttt{--ol-nl-grounding} -- only needed when the input isn't already signal-grounded}
   \begin{card}
@@ -219,36 +252,19 @@ and sat_guard is not asserted
 \end{frame}
 
 \begin{frame}{Stage 2 in detail: HybridRetrieval-augmented generation}
-  \framesubtitle{Two independent retrieval paths feed one generation call}
+  \framesubtitle{Two independent retrieval paths feed one generation call -- TCAD paper Fig.~3}
   \centering
-  \resizebox{0.72\textwidth}{!}{%
-  \begin{tikzpicture}[
-      node/.style={rectangle, rounded corners, draw=white, fill=nyuvioletdark, text=white, minimum width=4.4cm, minimum height=1cm, align=center, font=\small},
-      wide/.style={rectangle, rounded corners, draw=white, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=4.4cm, minimum height=1cm, align=center, font=\small},
-      arrow/.style={-{Latex[length=2.5mm]}, thick, white},
-      note/.style={font=\scriptsize, text=nyuvioletlight, align=center},
-    ]
-    \node[node] (in) at (0,1.6) {OL-NL grounded property\\+ RTL testbench};
-    \node[node] (kw) at (-3.6,0) {Keyword/operator-guided\\retrieval};
-    \node[node] (sem) at (3.6,0) {General-semantic\\retrieval};
-    \node[wide] (gen) at (0,-1.6) {Single completion\\$\rightarrow$ bare property expression};
-
-    \draw[arrow] (in) -- (kw);
-    \draw[arrow] (in) -- (sem);
-    \draw[arrow] (kw) -- (gen);
-    \draw[arrow] (sem) -- (gen);
-
-    \node[note] at (-3.6,-0.9) {\texttt{extract\_keywords} +\\46-entry operator table};
-    \node[note] at (3.6,-0.9) {query on the raw\\NL prompt directly};
-  \end{tikzpicture}}
+  \includegraphics[width=0.58\textwidth]{Figs/HybridRetrieval.pdf}
   \vspace{6pt}
   \begin{card}
-  \scriptsize
-  Retrieves matching code-centric chunks from \textbf{10 SVA textbooks +
-  IEEE~1800-2017's own Assertions chapter} (persisted Chroma vector DB),
-  injected as grounding context. The model still outputs only the bare
-  boolean/temporal expression -- \texttt{clk}/\texttt{disable iff}/label are
-  never its job.
+  \tiny
+  \textbf{Path 1 (top):} Basic RAG on the full assertion specification --
+  global-semantic similarity against the code database. \textbf{Path 2
+  (bottom):} an LLM decomposes the description into keyword phrases
+  (\textit{Keyword Extraction Prompt}), maps each to the closest of 10 SVA
+  operators (\textit{SVA Operator Extraction Prompt}), then a second Basic
+  RAG pass retrieves chunks specifically discussing those operators. Both
+  paths' \textbf{Relevant Context} feeds the single generation call.
   \end{card}
 \end{frame}
 
@@ -282,6 +298,23 @@ and sat_guard is not asserted
   invalid \texttt{else} inside a property -- without the post-SOR pass, this
   went straight through as the final answer. Running cleanup \emph{twice}
   (once before, once after SOR) closes that gap.
+  \end{card}
+\end{frame}
+
+\begin{frame}{As published: SVA operator-based rechecking}
+  \framesubtitle{TCAD paper Fig.~5 -- the originally published SOR mechanism}
+  \centering
+  \includegraphics[width=0.5\textwidth]{Figs/SVAOperatorRefine.pdf}
+  \vspace{6pt}
+  \begin{card}
+  \scriptsize
+  Extract the operators the LLM assertion actually used, look each one up
+  in the SVA quick-reference table, and hand the assertion, the
+  specification, and those explanations to a \textit{SVA Rechecking
+  Prompt}. \textbf{Since published:} the explanation-merge-tree (next
+  slide) replaced this flat operator lookup with a full bottom-up
+  recomposition of the assertion's meaning, catching mismatches the
+  original per-operator check could miss.
   \end{card}
 \end{frame}
 
