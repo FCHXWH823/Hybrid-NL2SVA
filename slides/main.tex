@@ -412,34 +412,45 @@ later, ack must be asserted.
   \end{card}
 \end{frame}
 
-\section{Key Mechanisms}
+\section{Evaluation Setup}
 
-\begin{frame}{The bug this talk's improvement targets}
-  \framesubtitle{A confirmed, repeated timing error in \texttt{|=>} + \texttt{\#\#N} together}
+\begin{frame}{Benchmark \& metrics}
+  \footnotesize
+  \begin{card}
+  \footnotesize
+  \textbf{FVEval-Verified} (\href{https://huggingface.co/wyt2000}{wyt2000/FVEval-Verified}):
+  a human-expert-corrected version of FVEval's \texttt{nl2sva\_human} and
+  \texttt{nl2sva\_machine} benchmarks.
+  \begin{itemize}
+    \item \textbf{nl2sva\_human\_verified} (73 rows) -- expert-written
+      ground-truth SVAs and NL descriptions
+    \item \textbf{nl2sva\_machine\_verified} (283 rows) -- rule-generated
+      SVAs, LLM-written NL descriptions; bare dummy testbenches, no reset
+      signal
+  \end{itemize}
+  \end{card}
+  \vspace{4pt}
   \begin{card}
   \scriptsize
-  Using \texttt{|=>} (which itself already moves forward one clock cycle)
-  together with a written-out \texttt{\#\#N} delay silently lands on \texttt{N+1} total
-  cycles instead of \texttt{N} -- both at \textbf{generation time} and
-  inside \textbf{SOR's own revision step}, so the error can survive the
-  self-correction pass meant to catch it.
+  \textbf{Comparison work:} \href{https://arxiv.org/abs/2603.14239}{QiMeng-CodeV-SVA:
+  Training Specialized LLMs for Hardware Assertion Generation via
+  RTL-Grounded Bidirectional Data Synthesis}, DAC 2026 -- a model
+  finetuned specifically for NL2SVA; shown alongside general models as a
+  raw-output baseline.
   \end{card}
-  \vspace{5pt}
-  \begin{card}
-  \scriptsize
-  \textbf{Fix:} avoid it at the root -- always use \texttt{|->}, and
-  always write out any delay with \texttt{\#\#N} using the \emph{total}
-  cycle count, instead of combining a hidden-cycle operator with a
-  written-out one.
-  \end{card}
-  \vspace{5pt}
-  \begin{card}
-  \tiny
-  SOR's explanation-merge-tree can also use fixed, rule-based templates
-  for each operator's meaning, instead of asking an LLM to compose it --
-  removes another source of the same timing slip.
-  \end{card}
+  \vspace{4pt}
+  \textbf{Metrics} (all via a real JasperGold \texttt{prop\_eq\_checker}):
+  \begin{itemize}
+    \item \textbf{SC} (Syntax Correctness) -- does the candidate elaborate
+      against the real testbench on its own?
+    \item \textbf{FM-strict} -- formally proven full equivalence to the
+      golden SVA
+    \item \textbf{FM-relaxed} -- FM-strict plus one-directional
+      \texttt{implies} matches
+  \end{itemize}
 \end{frame}
+
+\section{Key Mechanisms}
 
 \begin{frame}{The improvement: SOR-timing fixes vs.\ the original pipeline}
   \framesubtitle{Same benchmark rows, same pipeline, only the timing-fix flags differ}
@@ -468,33 +479,6 @@ later, ack must be asserted.
   delays (\texttt{\#\#[M:N]}, \texttt{\#\#[*]}, \texttt{\#\#[+]}) were
   losing their real bounds internally.
   \end{card}
-\end{frame}
-
-\section{Evaluation Setup}
-
-\begin{frame}{Benchmark \& metrics}
-  \begin{card}
-  \textbf{FVEval-Verified} (\href{https://huggingface.co/wyt2000}{wyt2000/FVEval-Verified}):
-  a human-expert-corrected version of FVEval's \texttt{nl2sva\_human} and
-  \texttt{nl2sva\_machine} benchmarks.
-  \begin{itemize}
-    \item \textbf{nl2sva\_human\_verified} (73 rows) -- expert-written
-      ground-truth SVAs and NL descriptions
-    \item \textbf{nl2sva\_machine\_verified} (283 rows) -- rule-generated
-      SVAs, LLM-written NL descriptions; bare dummy testbenches, no reset
-      signal
-  \end{itemize}
-  \end{card}
-  \vspace{10pt}
-  \textbf{Metrics} (all via a real JasperGold \texttt{prop\_eq\_checker}):
-  \begin{itemize}
-    \item \textbf{SC} (Syntax Correctness) -- does the candidate elaborate
-      against the real testbench on its own?
-    \item \textbf{FM-strict} -- formally proven full equivalence to the
-      golden SVA
-    \item \textbf{FM-relaxed} -- FM-strict plus one-directional
-      \texttt{implies} matches
-  \end{itemize}
 \end{frame}
 
 \section{Results: RAG+SOR Pipeline}
