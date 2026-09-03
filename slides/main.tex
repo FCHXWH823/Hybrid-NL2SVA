@@ -445,8 +445,6 @@ later, ack must be asserted.
       against the real testbench on its own?
     \item \textbf{FM-strict} -- formally proven full equivalence to the
       golden SVA
-    \item \textbf{FM-relaxed} -- FM-strict plus one-directional
-      \texttt{implies} matches
   \end{itemize}
 \end{frame}
 
@@ -457,18 +455,18 @@ later, ack must be asserted.
   \begin{card}
   \centering
   \renewcommand{\arraystretch}{1.3}
-  \resizebox{\linewidth}{!}{%
-  \begin{tabular}{l l r r}
+  \resizebox{0.7\linewidth}{!}{%
+  \begin{tabular}{l l r}
     \toprule
-    \textbf{Dataset} & \textbf{Configuration} & \textbf{FM-strict} & \textbf{FM-relaxed} \\
+    \textbf{Dataset} & \textbf{Configuration} & \textbf{FM-strict} \\
     \midrule
     \multirow{2}{*}{\shortstack[l]{nl2sva\_human\_\\verified (73)}}
-      & Original pipeline & 71.2--74.0\% & 83.6--87.7\% \\
-      & \textbf{+ SOR-timing fixes} & \textbf{74.0\%} & \textbf{87.7\%} \\
+      & Original pipeline & 71.2--74.0\% \\
+      & \textbf{+ SOR-timing fixes} & \textbf{74.0\%} \\
     \midrule
     \multirow{2}{*}{\shortstack[l]{nl2sva\_machine\_\\verified (283)}}
-      & Original pipeline & 82.0\% (232/283) & 90.5\% (256/283) \\
-      & \textbf{+ SOR-timing fixes} & \textbf{85.2\% (241/283)} & \textbf{95.4\% (270/283)} \\
+      & Original pipeline & 82.0\% (232/283) \\
+      & \textbf{+ SOR-timing fixes} & \textbf{85.2\% (241/283)} \\
     \bottomrule
   \end{tabular}}
   \end{card}
@@ -483,102 +481,79 @@ later, ack must be asserted.
 
 \section{Results: RAG+SOR Pipeline}
 
-\begin{frame}{Cross-model comparison --- RAG+SOR pipeline}
-  \framesubtitle{Each row uses that dataset's best-known flag configuration}
+\begin{frame}{Results (nl2sva\_human\_verified)}
+  \framesubtitle{Our pipeline vs.\ raw model output vs.\ CodeV-SVA}
   \begin{card}
+  \centering
   \tiny
-  \renewcommand{\arraystretch}{1.25}
+  \renewcommand{\arraystretch}{0.95}
+  \setlength{\tabcolsep}{6pt}
   \begin{tabular}{l l r r r}
     \toprule
-    \textbf{Model} & \textbf{Dataset} & \textbf{SC} & \textbf{FM-strict} & \textbf{FM-relaxed} \\
+    \textbf{Model} & \textbf{Configuration} & \textbf{SC} & \textbf{FM-strict} & \textbf{$\Delta$} \\
     \midrule
-    gpt-4o & human & 98.6\% (72/73) & 74.0\% (54/73) & 87.7\% (64/73) \\
-    gpt-4o & machine & 99.6\% (282/283) & 84.8\% (240/283) & 94.7\% (268/283) \\
-    DeepSeek-V4-Flash (thinking) & human & 100.0\% (73/73) & \textbf{86.3\%} (63/73) & \textbf{94.5\%} (69/73) \\
-    DeepSeek-V4-Flash (thinking) & machine & 100.0\% (283/283) & \textbf{92.9\%} (263/283) & \textbf{98.6\%} (279/283) \\
-    gpt-5 & human & 100.0\% (73/73) & 82.2\% (60/73) & 91.8\% (67/73) \\
-    gpt-5 & machine & \statuspill{warnamber}{interrupted (45/283)} & -- & -- \\
-    deepseek-chat (thinking off) & human & 100.0\% (73/73) & 74.0\% (54/73) & 80.8\% (59/73) \\
-    deepseek-chat (thinking off) & machine & 98.9\% (280/283) & 85.5\% (242/283) & 94.3\% (267/283) \\
-    qwen3-8b (Aliyun) & human & 91.8\% (67/73) & 35.6\% (26/73) & 53.4\% (39/73) \\
-    qwen3-8b (Aliyun) & machine & 88.7\% (251/283) & 60.8\% (172/283) & 73.9\% (209/283) \\
-    qwen3-14b (Aliyun) & human & 91.8\% (67/73) & 65.8\% (48/73) & 79.5\% (58/73) \\
-    qwen3-14b (Aliyun) & machine & 95.1\% (269/283) & 81.6\% (231/283) & 90.8\% (257/283) \\
+    \multirow{2}{*}{gpt-4o} & Raw (0-shot) & 94.5\% & 63.0\% & \\
+      & \textbf{+ Our pipeline} & 98.6\% & \textbf{74.0\%} & \textbf{+11.0} \\
+    \midrule
+    \multirow{2}{*}{DeepSeek-V4-Flash (thinking)} & Raw (0-shot) & 98.6\% & 76.7\% & \\
+      & \textbf{+ Our pipeline} & 100.0\% & \textbf{86.3\%} & \textbf{+9.6} \\
+    \midrule
+    \multirow{2}{*}{deepseek-chat (thinking off)} & Raw (0-shot) & 94.5\% & 54.8\% & \\
+      & \textbf{+ Our pipeline} & 100.0\% & \textbf{74.0\%} & \textbf{+19.2} \\
+    \midrule
+    \multirow{2}{*}{qwen3-8b (Aliyun)} & Raw (base) & 89.0\% & 35.6\% & \\
+      & + Our pipeline & 91.8\% & 35.6\% & +0.0 \\
+    \midrule
+    \multirow{2}{*}{qwen3-14b (Aliyun)} & Raw (base) & 93.2\% & 49.3\% & \\
+      & \textbf{+ Our pipeline} & 91.8\% & \textbf{65.8\%} & \textbf{+16.5} \\
+    \midrule
+    gpt-5 (+ our pipeline, no raw run) & -- & 100.0\% & 82.2\% & -- \\
+    \midrule
+    CodeV-SVA-8B (DAC 2026, specialized) & -- & 97.3\% & 75.3\% & -- \\
+    CodeV-SVA-14B (DAC 2026, specialized) & -- & 93.2\% & 74.0\% & -- \\
     \bottomrule
   \end{tabular}
   \end{card}
-  \vspace{4pt}
-  {\scriptsize\textcolor{nyumuted}{DeepSeek-V4-Flash (thinking) was originally run and labeled ``DeepSeek-R1''
-  -- DeepSeek has since silently remapped the \texttt{deepseek-reasoner} API
-  alias to route to V4-Flash with thinking mode on; relabeled accordingly.}}
+  \vspace{2pt}
+  {\scriptsize\textcolor{nyumuted}{Best per model family in \textbf{bold} (out of 73 rows).
+  DeepSeek-V4-Flash + our pipeline (86.3\%) already beats both CodeV-SVA sizes
+  (75.3\% / 74.0\%), a model finetuned specifically for NL2SVA.}}
 \end{frame}
 
-\begin{frame}{Cross-model comparison --- raw model output (no pipeline)}
-  \framesubtitle{Same JasperGold scorer, no RAG / OL-NL grounding / SOR}
+\begin{frame}{Results (nl2sva\_machine\_verified)}
+  \framesubtitle{Our pipeline vs.\ raw model output vs.\ CodeV-SVA}
   \begin{card}
+  \centering
   \tiny
-  \renewcommand{\arraystretch}{1.25}
+  \renewcommand{\arraystretch}{0.95}
+  \setlength{\tabcolsep}{6pt}
   \begin{tabular}{l l r r r}
     \toprule
-    \textbf{Model} & \textbf{Dataset} & \textbf{SC} & \textbf{FM-strict} & \textbf{FM-relaxed} \\
+    \textbf{Model} & \textbf{Configuration} & \textbf{SC} & \textbf{FM-strict} & \textbf{$\Delta$} \\
     \midrule
-    gpt-4o (0-shot) & human & 94.5\% (69/73) & 63.0\% (46/73) & 76.7\% (56/73) \\
-    CodeV-SVA-8B & human & 97.3\% (71/73) & 75.3\% (55/73) & 83.6\% (61/73) \\
-    CodeV-SVA-14B & human & 93.2\% (68/73) & 74.0\% (54/73) & 80.8\% (59/73) \\
-    CodeV-SVA-8B & machine & 96.5\% (273/283) & 83.0\% (235/283) & 93.3\% (264/283) \\
-    CodeV-SVA-14B & machine & 97.2\% (275/283) & 80.9\% (229/283) & 93.3\% (264/283) \\
-    DeepSeek-V4-Flash (thinking, 0-shot) & human & 98.6\% (72/73) & 76.7\% (56/73) & 93.2\% (68/73) \\
-    DeepSeek-V4-Flash (thinking, 0-shot) & machine & 100.0\% (283/283) & 90.8\% (257/283) & 98.2\% (278/283) \\
-    deepseek-chat (thinking off, 0-shot) & human & 94.5\% (69/73) & 54.8\% (40/73) & 76.7\% (56/73) \\
-    deepseek-chat (thinking off, 0-shot) & machine & 97.5\% (276/283) & 78.4\% (222/283) & 89.4\% (253/283) \\
-    qwen3-8b (Aliyun, base) & human & 89.0\% (65/73) & 35.6\% (26/73) & 57.5\% (42/73) \\
-    qwen3-8b (Aliyun, base) & machine & 87.6\% (248/283) & 51.2\% (145/283) & 66.8\% (189/283) \\
-    qwen3-14b (Aliyun, base) & human & 93.2\% (68/73) & 49.3\% (36/73) & 69.9\% (51/73) \\
-    qwen3-14b (Aliyun, base) & machine & 91.9\% (260/283) & 65.7\% (186/283) & 76.3\% (216/283) \\
+    gpt-4o (+ our pipeline, no 0-shot run) & -- & 99.6\% & 84.8\% & -- \\
+    \midrule
+    \multirow{2}{*}{DeepSeek-V4-Flash (thinking)} & Raw (0-shot) & 100.0\% & 90.8\% & \\
+      & \textbf{+ Our pipeline} & 100.0\% & \textbf{92.9\%} & \textbf{+2.1} \\
+    \midrule
+    \multirow{2}{*}{deepseek-chat (thinking off)} & Raw (0-shot) & 97.5\% & 78.4\% & \\
+      & \textbf{+ Our pipeline} & 98.9\% & \textbf{85.5\%} & \textbf{+7.1} \\
+    \midrule
+    \multirow{2}{*}{qwen3-8b (Aliyun)} & Raw (base) & 87.6\% & 51.2\% & \\
+      & \textbf{+ Our pipeline} & 88.7\% & \textbf{60.8\%} & \textbf{+9.6} \\
+    \midrule
+    \multirow{2}{*}{qwen3-14b (Aliyun)} & Raw (base) & 91.9\% & 65.7\% & \\
+      & \textbf{+ Our pipeline} & 95.1\% & \textbf{81.6\%} & \textbf{+15.9} \\
+    \midrule
+    CodeV-SVA-8B (DAC 2026, specialized) & -- & 96.5\% & 83.0\% & -- \\
+    CodeV-SVA-14B (DAC 2026, specialized) & -- & 97.2\% & 80.9\% & -- \\
     \bottomrule
   \end{tabular}
   \end{card}
-  \vspace{4pt}
-  \scriptsize\textbf{Takeaway:} the pipeline (RAG + OL-NL grounding + SOR) lifts gpt-4o's
-  FM-strict from 63.0\%$\to$74.0\% (human) and (with the machine config) from
-  a similarly weak 0-shot baseline to 84.8\% -- a real, structural gain
-  from retrieval + self-correction, not just a stronger base model.
-\end{frame}
-
-\begin{frame}{Case study: when the pipeline does \emph{not} help}
-  \framesubtitle{qwen3-8b on nl2sva\_human\_verified}
-  \begin{columns}[T]
-    \begin{column}{0.55\textwidth}
-      \begin{card}
-      \footnotesize
-      \textbf{Net effect: no real change.}
-      \begin{itemize}
-        \item FM-strict identical: 26/73 both ways
-        \item FM-relaxed \emph{slightly worse}: 53.4\% vs.\ 57.5\%
-        \item 12/73 rows flip fail$\to$pass \dots
-        \item \dots but a near-equal 12/73 flip pass$\to$fail
-      \end{itemize}
-      \end{card}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \textbf{Three ways it got worse:}
-      \begin{itemize}
-        \item An extra, unneeded \texttt{\#\#N} added where none was needed
-        \item A boolean's polarity flipped while ``fixing'' something else
-        \item A correct plain comparison rewritten into a non-equivalent
-          \texttt{\$onehot0(\{...\})} form
-      \end{itemize}
-    \end{column}
-  \end{columns}
-  \vspace{10pt}
-  \begin{card}
-  \small
-  \textbf{Conclusion:} the pipeline's net benefit scales with the base
-  model's own ability to self-correct \emph{without introducing new errors}
-  during revision -- not something that is true for every model, no matter
-  what. (nl2sva\_machine\_verified does \emph{not} show this no-change
-  pattern for the same model: 60.8\% vs.\ 51.2\% FM-strict.)
-  \end{card}
+  \vspace{6pt}
+  {\scriptsize\textcolor{nyumuted}{Best per model family in \textbf{bold} (out of 283 rows).
+  DeepSeek-V4-Flash + our pipeline (92.9\%) is the strongest result overall, ahead of both CodeV-SVA sizes
+  (83.0\% / 80.9\%). gpt-5's machine run was interrupted (45/283) and is omitted.}}
 \end{frame}
 
 % ============================================================================
@@ -740,159 +715,6 @@ asrt: assert property (@(posedge clock)
 \end{frame}
 
 \section{Results}
-
-\begin{frame}{UART: full NL2SVA + formal verification results}
-  \framesubtitle{323-property run via Hybrid-NL2SVA (gpt-4o, machine config), scored with JasperGold}
-  \begin{card}
-  \centering
-  \renewcommand{\arraystretch}{1.3}
-  \resizebox{\linewidth}{!}{%
-  \begin{tabular}{l r r r}
-    \toprule
-    \textbf{Spec2NL / NL2SVA} & \textbf{\#SVA} & \textbf{\#SynC} & \textbf{\#Proven} \\
-    \midrule
-    QiMeng-CodeV-SVA: GPT-4o / GPT-4o & 265 & 186 (70.2\%) & 54 (20.4\%) \\
-    Ours -- all 18 signals & 323 & 225 (69.7\%) & 60 (18.6\%) \\
-    \bottomrule
-  \end{tabular}}
-  \end{card}
-  \vspace{10pt}
-  \begin{card}
-    \footnotesize
-    \textbf{Caveat:} we independently reconstructed the 18-signal list
-    ourselves (the cloned config only had a 2-signal placeholder); we have
-    no evidence the paper's own run used the same signal scope, so this is
-    not a strict apples-to-apples comparison -- only evidence our pipeline
-    lands in a reasonable, self-consistent range. \#Proven checked with a
-    real formal proof, no golden SVA needed.
-  \end{card}
-\end{frame}
-
-\begin{frame}{A methodology gap: properties about free inputs}
-  \framesubtitle{AssertionForge's own worked examples are entirely PWDATA-shaped}
-  \begin{card}
-  \scriptsize
-  \textit{``that the input data PWDATA has a value between 83 and 165 \dots\ 3 clock
-  cycles after reset deasserted''} -- \texttt{PWDATA} is APB's free bus-input
-  signal; every one of AssertionForge's 5 hardcoded style examples follows
-  this same shape.
-  \end{card}
-  \vspace{8pt}
-  \begin{card}
-  \centering
-  \renewcommand{\arraystretch}{1.3}
-  \resizebox{\linewidth}{!}{%
-  \begin{tabular}{l r r}
-    \toprule
-    \textbf{UART signal subset} & \textbf{n} & \textbf{\#Proven} \\
-    \midrule
-    Free inputs / out-of-scope (\texttt{ser\_in}, \texttt{int\_rd\_data}, \texttt{int\_gnt}, \texttt{ce\_16}) & 67 & 11.9\% \\
-    \textbf{Design-controlled only} (outputs + internal wires) & \textbf{256} & \textbf{20.3\%} \\
-    \bottomrule
-  \end{tabular}}
-  \end{card}
-  \vspace{4pt}
-  \begin{card}
-    \tiny
-    A primary \emph{input} port is free/unconstrained under JasperGold with
-    no environment \texttt{assume}s -- a property claiming ``this input
-    settles into range X'' is nearly impossible to prove, just because of
-    how the design is built, regardless of NL2SVA quality. Excluding these 4 signals lifts \#Proven
-    from 18.6\%$\to$\textbf{20.3\%}, matching the GPT-4o/GPT-4o reference
-    almost exactly. (\texttt{ce\_16}: declared inside \texttt{uart\_top}, one
-    level below our assertion scope \texttt{uart2bus\_top} -- not even a
-    valid identifier there.)
-  \end{card}
-\end{frame}
-
-\begin{frame}{A second gap: signal hallucination, not just free inputs}
-  \framesubtitle{Of 98 syntax-fail rows, ``X' is not declared'' errors name 68 distinct identifiers}
-  \begin{card}
-  \centering
-  \renewcommand{\arraystretch}{1.3}
-  \resizebox{\linewidth}{!}{%
-  \begin{tabular}{l r}
-    \toprule
-    \textbf{Category (checked against the 6 real RTL files)} & \textbf{occurrences} \\
-    \midrule
-    Real RTL identifiers used at the \emph{wrong scope} (e.g.\ \texttt{ce\_16}$\times$34, \texttt{bit\_count}$\times$26, \texttt{ce\_1}$\times$22) & 21 distinct \\
-    Pure hallucinations, not found anywhere in the RTL (\texttt{local\_global\_clock\_freq}, \texttt{logic\_counter}, \dots) & 47 distinct \\
-    \bottomrule
-  \end{tabular}}
-  \end{card}
-  \vspace{8pt}
-  \begin{card}
-    \footnotesize
-    \textbf{But most of this traces back further, to the NL plans
-    themselves:} of 338 undeclared-identifier occurrences, \textbf{236
-    (69.8\%)} have their ``core'' name \emph{literally present in the
-    corresponding NL plan's own text} -- e.g.\ the \texttt{baud\_freq} plan on
-    the earlier slide reads \textit{``\dots\ using the formula
-    16*baud\_rate / gcd(global\_clock\_freq, 16*baud\_rate)''}, and NL2SVA
-    just copied \texttt{baud\_rate}/\texttt{global\_clock\_freq} word for word
-    as identifiers -- except neither is a real RTL signal. This is a
-    Spec2NL grounding gap, not (only) an NL2SVA one.
-  \end{card}
-\end{frame}
-
-\begin{frame}[fragile]{Root cause: real RTL documentation, not noise}
-  \framesubtitle{\texttt{baud\_gen.v}'s own header comment, verbatim}
-  \begin{card}
-  \scriptsize
-  \begin{verbatim}
-// the two registers should be calculated as follows:
-//   baud_freq  = 16*baud_rate / gcd(global_clock_freq, 16*baud_rate)
-//   baud_limit = (global_clock_freq / gcd(...)) - baud_freq
-  \end{verbatim}
-  \end{card}
-  \vspace{5pt}
-  \begin{card}
-    \scriptsize
-    \texttt{baud\_freq} is an \emph{input} to \texttt{baud\_gen} --
-    \texttt{baud\_rate}/\texttt{global\_clock\_freq} never appear as actual
-    Verilog identifiers anywhere in the 6 files, only in this comment. True,
-    directly-relevant content, not retrieval noise -- the model has good
-    reason to want to cite it.
-  \end{card}
-  \vspace{4pt}
-  \begin{card}
-    \scriptsize
-    \textbf{Prompt-only fixes made this WORSE, not better}, across several
-    revisions -- we saw the same pattern elsewhere too: naming the exact
-    bad thing to avoid puts it right in front of the model, and it tends
-    to copy it instead of avoiding it. Invalid-signal leakage rose
-    14\%$\to$22\%$\to$27\%$\to$30\% across several tries, one after
-    another, to ban it in words.
-  \end{card}
-\end{frame}
-
-\begin{frame}{Fix: two-step generation + a mechanical filter}
-  \framesubtitle{Reworking AssertionForge's Stage 2 directly}
-  \begin{card}
-  \scriptsize
-  \begin{itemize}
-    \item \textbf{Step 1 (idea):} free-form property ideas, no precision
-      rules at all -- just ``what's worth testing''
-    \item \textbf{Step 2 (OL-NL grounding):} rewrites Step 1's ideas into
-      precise, signal-grounded form -- valid-signal whitelist,
-      operator-level/sequential-vs-combinational discipline, vague-qualifier
-      / trailing-rationale / gcd bans, the \emph{same} SVA Operator Context
-      table Hybrid-NL2SVA's own Stage 1 uses -- literally the same grounding
-      task Stage 1 performs, on AssertionForge's side instead
-    \item \textbf{Mechanical filter (post-hoc, not a prompt):} drops any
-      grounded plan still referencing a signal-shaped word that isn't on
-      the real signal list -- carries none of the copy-the-bad-example
-      risk above, since it never goes back into a prompt
-  \end{itemize}
-  \end{card}
-  \vspace{8pt}
-  \begin{card}
-    \footnotesize
-    \textbf{Lesson:} banning a specific bad pattern \emph{in words} tends
-    to make it worse; moving the same rule \emph{out of the prompt} into a
-    mechanical check is what actually worked.
-  \end{card}
-\end{frame}
 
 \begin{frame}{Validated: same 44 properties, ungrounded vs.\ grounded}
   \framesubtitle{\texttt{baud\_clk}/\texttt{baud\_freq} pilot -- the exact same starting ideas, matched one to one}
