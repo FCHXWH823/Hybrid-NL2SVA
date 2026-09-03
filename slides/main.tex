@@ -122,17 +122,19 @@
 % mirror) placed bottom-left, and a two-line Part I/II summary.
 \begin{frame}[plain]
   \begin{tikzpicture}[remember picture, overlay]
-    \node[anchor=south west, xshift=0.7cm, yshift=0.6cm] at (current page.south west) {\includegraphics[width=2.6cm]{Figs/nyu_logo.pdf}};
+    \node[anchor=south west, xshift=0.7cm, yshift=0.45cm] at (current page.south west) {\includegraphics[width=2.1cm]{Figs/nyu_logo.pdf}};
   \end{tikzpicture}
-  \vspace{20pt}
+  \vspace{6pt}
   \begin{center}
-    {\usebeamerfont{title}\color{nyuviolet}\Huge\bfseries\inserttitle}\\[10pt]
-    {\usebeamerfont{subtitle}\color{nyumuted}\large\insertsubtitle}\\[26pt]
-    {\large\bfseries\color{nyuviolet}Part 1:} {\large Improving the Hybrid-NL2SVA pipeline}\\[6pt]
-    {\large\bfseries\color{nyuviolet}Part 2:} {\large An end-to-end Spec2SVA framework}\\[30pt]
+    {\usebeamerfont{title}\color{nyuviolet}\Huge\bfseries\inserttitle}\\[8pt]
+    {\usebeamerfont{subtitle}\color{nyumuted}\large\insertsubtitle}\\[16pt]
+    {\large\bfseries\color{nyuviolet}Part 1:} {\large Improving the Hybrid-NL2SVA pipeline}\\[4pt]
+    {\large\bfseries\color{nyuviolet}Part 2:} {\large An end-to-end Spec2SVA framework}\\[16pt]
     {\color{bodytext}\insertauthor}\\[2pt]
     {\color{nyumuted}\insertinstitute}\\[2pt]
-    {\color{nyumuted}\small\insertdate}
+    {\color{nyumuted}\small\insertdate}\\[10pt]
+    {\scriptsize\color{nyumuted}Builds on Xiao, Ekberg, Garg, Karri,
+    \href{https://doi.org/10.1109/MLCAD65511.2025.11189208}{\underline{Hybrid-NL2SVA}}, MLCAD 2025.}
   \end{center}
 \end{frame}
 
