@@ -162,8 +162,13 @@
       \begin{itemize}
         \item Not much SVA code in the data these models learned from
         \item SVA has timing words that look almost the same but mean
-          different things (\texttt{|->} vs.\ \texttt{|=>},
-          \texttt{\#\#N} vs.\ \texttt{\#\#[M:N]})
+          different things:
+          \begin{itemize}
+            \item \texttt{a |-> b}: b same cycle as a. \texttt{a |=> b}:
+              b \emph{1 cycle later}
+            \item \texttt{a \#\#2 b}: b \emph{exactly} 2 cycles later.
+              \texttt{a \#\#[1:3] b}: b \emph{anywhere} in cycles 1--3
+          \end{itemize}
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
