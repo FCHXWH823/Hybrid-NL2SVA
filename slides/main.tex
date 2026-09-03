@@ -19,30 +19,37 @@
 \usepackage{listings}
 
 % ------------------------------ NYU palette ---------------------------------
-\definecolor{nyuviolet}{HTML}{57068C}      % NYU primary violet
-\definecolor{nyuvioletdark}{HTML}{3C0561}  % darker shade, for gradients/shadows
-\definecolor{nyuvioletlight}{HTML}{B185D6} % light accent (bullets, rules)
-\definecolor{nyulavender}{HTML}{E9DCF5}    % pale panel background
+% Light theme (2026-09-03 rework, replacing the earlier all-violet-canvas
+% look): white content canvas, NYU violet reserved for accents/headings, a
+% dark-violet "hero" treatment kept only for the title page and the Part
+% divider frames (\dividerframe) for pacing/contrast -- a common academic-
+% deck pattern (bold cover + section breaks, readable light content pages).
+\definecolor{nyuviolet}{HTML}{57068C}      % NYU primary violet -- headings, accents
+\definecolor{nyuvioletdark}{HTML}{3C0561}  % darker shade -- hero backgrounds, diagram fills/arrows
+\definecolor{nyuvioletlight}{HTML}{B185D6} % pale violet -- soft rules/borders (legible on white OR dark)
+\definecolor{nyumuted}{HTML}{7A5A99}       % muted violet -- secondary text on the WHITE canvas (subtitles, notes, footline)
+\definecolor{nyulavender}{HTML}{F1E9FA}    % very pale panel background (light theme)
 \definecolor{cardwhite}{HTML}{FFFFFF}
 \definecolor{cardtext}{HTML}{221033}
+\definecolor{bodytext}{HTML}{2B2438}       % near-black body text on white canvas
 \definecolor{goodgreen}{HTML}{2E8B57}
 \definecolor{warnamber}{HTML}{C97A1F}
 
 \setbeamertemplate{navigation symbols}{}
-\setbeamercolor{background canvas}{bg=nyuviolet}
-\setbeamercolor{normal text}{fg=white}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=bodytext}
 \setbeamercolor{title}{fg=white}
 \setbeamercolor{subtitle}{fg=nyuvioletlight}
 \setbeamercolor{author}{fg=white}
 \setbeamercolor{date}{fg=nyuvioletlight}
-\setbeamercolor{frametitle}{fg=white}
-\setbeamercolor{framesubtitle}{fg=nyuvioletlight}
-\setbeamercolor{structure}{fg=nyuvioletlight}
-\setbeamercolor{itemize item}{fg=nyuvioletlight}
-\setbeamercolor{itemize subitem}{fg=nyuvioletlight}
-\setbeamercolor{section in toc}{fg=white}
-\setbeamercolor{subsection in toc}{fg=nyuvioletlight}
-\setbeamercolor{page number in head/foot}{fg=nyuvioletlight}
+\setbeamercolor{frametitle}{fg=nyuviolet}
+\setbeamercolor{framesubtitle}{fg=nyumuted}
+\setbeamercolor{structure}{fg=nyuviolet}
+\setbeamercolor{itemize item}{fg=nyuviolet}
+\setbeamercolor{itemize subitem}{fg=nyuviolet}
+\setbeamercolor{section in toc}{fg=bodytext}
+\setbeamercolor{subsection in toc}{fg=nyumuted}
+\setbeamercolor{page number in head/foot}{fg=nyumuted}
 \setbeamertemplate{itemize item}{\raise1pt\hbox{\small\textbullet}}
 \setbeamertemplate{itemize subitem}{\raise1pt\hbox{\footnotesize\textendash}}
 \setbeamerfont{frametitle}{series=\bfseries, size=\Large}
@@ -60,18 +67,15 @@
 \setbeamertemplate{footline}{
   \leavevmode
   \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=2.4ex,dp=1ex,left,leftskip=1em,right,rightskip=1em]{page number in head/foot}
-    \textcolor{nyuvioletlight}{\scriptsize Hybrid-NL2SVA}
+    \textcolor{nyumuted}{\scriptsize Hybrid-NL2SVA}
     \hfill
-    \textcolor{nyuvioletlight}{\scriptsize\insertframenumber\,/\,\inserttotalframenumber}
+    \textcolor{nyumuted}{\scriptsize\insertframenumber\,/\,\inserttotalframenumber}
   \end{beamercolorbox}}
 }
 
-% A "card": white rounded panel for data-heavy content (tables, code) so it
-% stays legible against the violet background. Needs its own named beamer
-% color (bg=cardwhite/fg=cardtext) -- passing a raw xcolor name like "white"
-% straight to beamercolorbox silently resolves to an undefined/transparent
-% fill, which just left text sitting directly on the violet canvas.
-\setbeamercolor{card}{bg=cardwhite, fg=cardtext}
+% A "card": pale lavender rounded panel for data-heavy content (tables,
+% code), grouping it visually against the white canvas.
+\setbeamercolor{card}{bg=nyulavender, fg=cardtext}
 \newenvironment{card}[1][\textwidth]{%
   \begin{beamercolorbox}[wd=#1,sep=8pt,rounded=true,shadow=false]{card}
 }{%
@@ -86,12 +90,17 @@
 % sections (empty when called before any \part begins, which is where an
 % Outline slide belongs), so this sidesteps that entirely: no \part command,
 % no beamer part-tracking, sections stay globally visible to \tableofcontents.
+% Kept as a full-bleed dark-violet "hero" frame (matching the title page)
+% for visual pacing against the light content frames elsewhere.
 \newcommand{\dividerframe}[2]{%
-  \begin{frame}
+  \begin{frame}[plain]
+    \begin{tikzpicture}[remember picture, overlay]
+      \fill[nyuviolet] (current page.south west) rectangle (current page.north east);
+    \end{tikzpicture}
     \vfill
     \begin{center}
       {\Large\textcolor{nyuvioletlight}{Part #1}}\\[10pt]
-      {\Huge\bfseries #2}
+      {\Huge\bfseries\textcolor{white}{#2}}
     \end{center}
     \vfill
   \end{frame}
@@ -103,11 +112,36 @@
 \institute{New York University}
 \date{\today}
 
+% A simple typographic NYU mark -- a bold "NYU" wordmark on a violet
+% roundel, echoing NYU's own single-word violet lockup. Drawn locally
+% (no official brand asset file was available to embed) rather than
+% pulling an unverified copy from a third-party logo site.
+\newcommand{\nyuemblem}[1][1]{%
+  \begin{tikzpicture}[scale=#1]
+    \node[circle, fill=white, minimum size=2.1cm] (c) at (0,0) {};
+    \node[circle, draw=white, line width=1.2pt, minimum size=2.1cm] at (0,0) {};
+    \node[text=nyuviolet, font=\bfseries\fontsize{22}{22}\selectfont] at (0,0) {NYU};
+  \end{tikzpicture}%
+}
+
 \begin{document}
 
 % ============================================================================
-\begin{frame}
-  \titlepage
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[nyuviolet] (current page.south west) rectangle (current page.north east);
+  \end{tikzpicture}
+  \vspace{6pt}
+  \begin{center}
+    \nyuemblem[0.85]
+
+    \vspace{14pt}
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\Huge\bfseries\inserttitle}\\[10pt]
+    {\usebeamerfont{subtitle}\color{nyuvioletlight}\large\insertsubtitle}\\[22pt]
+    {\color{white}\insertauthor}\\[2pt]
+    {\color{nyuvioletlight}\insertinstitute}\\[2pt]
+    {\color{nyuvioletlight}\small\insertdate}
+  \end{center}
 \end{frame}
 
 \begin{frame}{Outline}
@@ -174,9 +208,9 @@
   \centering
   \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
-      stage/.style={rectangle, rounded corners, draw=white, fill=nyuvioletdark, text=white, minimum width=3.6cm, minimum height=1.5cm, align=center, font=\small},
+      stage/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=3.6cm, minimum height=1.5cm, align=center, font=\small},
       sub/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=3.3cm, minimum height=0.9cm, align=center, font=\scriptsize},
-      arrow/.style={-{Latex[length=2.5mm]}, thick, white},
+      arrow/.style={-{Latex[length=2.5mm]}, thick, nyuvioletdark},
     ]
     \node[stage] (s1) at (0,0) {\textbf{Step 1}\\OL-NL Grounding};
     \node[stage] (s2) at (5.2,0) {\textbf{Stage 2}\\HybridRetrieval-\\Augmented Generation};
@@ -272,9 +306,9 @@ and sat_guard is not asserted
   \centering
   \resizebox{0.95\textwidth}{!}{%
   \begin{tikzpicture}[
-      node/.style={rectangle, rounded corners, draw=white, fill=nyuvioletdark, text=white, minimum width=3.2cm, minimum height=1.1cm, align=center, font=\small},
-      arrow/.style={-{Latex[length=2.5mm]}, thick, white},
-      note/.style={font=\scriptsize, text=nyuvioletlight, align=center},
+      node/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=3.2cm, minimum height=1.1cm, align=center, font=\small},
+      arrow/.style={-{Latex[length=2.5mm]}, thick, nyuvioletdark},
+      note/.style={font=\scriptsize, text=nyumuted, align=center},
     ]
     \node[node] (gen) at (0,0) {Stage 2\\candidate SVA};
     \node[node] (pre) at (4,0) {Pre-SOR\\JG syntax cleanup};
@@ -331,9 +365,9 @@ Candidate SVA:  a && b |-> ##2 c
   \resizebox{0.56\textwidth}{!}{%
   \begin{tikzpicture}[
       leaf/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=3.6cm, minimum height=0.8cm, align=center, font=\scriptsize},
-      merge/.style={rectangle, rounded corners, draw=white, fill=nyuvioletdark, text=white, minimum width=6.4cm, minimum height=0.8cm, align=center, font=\scriptsize},
+      merge/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=6.4cm, minimum height=0.8cm, align=center, font=\scriptsize},
       root/.style={rectangle, rounded corners, draw=white, fill=goodgreen!70!nyuvioletdark, text=white, minimum width=9.5cm, minimum height=0.9cm, align=center, font=\scriptsize},
-      arrow/.style={-{Latex[length=2mm]}, thick, nyuvioletlight},
+      arrow/.style={-{Latex[length=2mm]}, thick, nyuvioletdark},
     ]
     \node[leaf] (la) at (-4.0,0) {\texttt{a} is asserted};
     \node[leaf] (lb) at (-1.5,0) {\texttt{b} is asserted};
@@ -472,7 +506,7 @@ Candidate SVA:  a && b |-> ##2 c
   \end{tabular}
   \end{card}
   \vspace{4pt}
-  {\scriptsize\textcolor{nyuvioletlight}{DeepSeek-V4-Flash (thinking) was originally run and labeled ``DeepSeek-R1''
+  {\scriptsize\textcolor{nyumuted}{DeepSeek-V4-Flash (thinking) was originally run and labeled ``DeepSeek-R1''
   -- DeepSeek has since silently remapped the \texttt{deepseek-reasoner} API
   alias to route to V4-Flash with thinking mode on; relabeled accordingly.}}
 \end{frame}
@@ -600,31 +634,32 @@ Candidate SVA:  a && b |-> ##2 c
 
 \begin{frame}{Spec2NL + NL2SVA = end-to-end Spec2SVA}
   \centering
-  \resizebox{\textwidth}{!}{%
+  \vspace{6pt}
+  \resizebox{0.88\textwidth}{!}{%
   \begin{tikzpicture}[
-      big/.style={rectangle, rounded corners, draw=white, very thick, minimum width=5.2cm, minimum height=2.6cm, align=center},
+      big/.style={rectangle, rounded corners, draw=nyuvioletdark, very thick, minimum width=5.2cm, minimum height=2.9cm, align=center},
       inner/.style={rectangle, rounded corners, draw=nyuvioletlight, fill=white, text=cardtext, minimum width=4.4cm, minimum height=0.8cm, align=center, font=\scriptsize},
-      arrow/.style={-{Latex[length=3mm]}, ultra thick, white},
+      arrow/.style={-{Latex[length=3mm]}, ultra thick, nyuvioletdark},
     ]
-    \node[big, minimum height=3.2cm, fill=nyuvioletdark] (af) at (0,0) {};
-    \node[align=center, text=white, font=\bfseries] at (0,1.45) {AssertionForge\\(Spec2NL)};
+    \node[big, minimum height=3.5cm, fill=nyuvioletdark] (af) at (0,0) {};
+    \node[align=center, text=white, font=\bfseries] at (0,1.15) {AssertionForge\\(Spec2NL)};
     \node[inner] (af1) at (0,0.35) {Stage 1: build KG\\(spec + RTL)};
     \node[inner] (af2) at (0,-0.75) {Stage 2: generate\\NL test plans};
     \draw[-{Latex[length=2mm]}, nyuvioletlight] (af1) -- (af2);
 
-    \node[big, minimum height=3.2cm, fill=goodgreen!70!nyuvioletdark] (hn) at (8,0) {};
-    \node[align=center, text=white, font=\bfseries] at (8,1.45) {Hybrid-NL2SVA\\(NL2SVA)};
+    \node[big, minimum height=3.5cm, fill=goodgreen!70!nyuvioletdark] (hn) at (8,0) {};
+    \node[align=center, text=white, font=\bfseries] at (8,1.15) {Hybrid-NL2SVA\\(NL2SVA)};
     \node[inner] (hn1) at (8,0.35) {HybridRetrieval\\generation};
     \node[inner] (hn2) at (8,-0.75) {JG syntax cleanup\\+ SOR};
     \draw[-{Latex[length=2mm]}, nyuvioletlight] (hn1) -- (hn2);
 
-    \node[rectangle, rounded corners, draw=white, fill=warnamber, text=white, minimum width=2.8cm, minimum height=1.3cm, align=center, font=\small] (jg) at (13.6,0) {JasperGold\\formal\\verification};
+    \node[rectangle, rounded corners, draw=warnamber, fill=warnamber, text=white, minimum width=2.8cm, minimum height=1.3cm, align=center, font=\small] (jg) at (13.6,0) {JasperGold\\formal\\verification};
 
     \draw[arrow] (af) -- (hn);
     \draw[arrow] (hn) -- (jg);
 
-    \node[font=\scriptsize, text=nyuvioletlight, align=center] at (4,-2.2) {NL property\\(per signal)};
-    \node[font=\scriptsize, text=nyuvioletlight, align=center] at (11,-2.2) {candidate\\SVA};
+    \node[font=\scriptsize, text=nyumuted, align=center] at (4,-2.2) {NL property\\(per signal)};
+    \node[font=\scriptsize, text=nyumuted, align=center] at (11,-2.2) {candidate\\SVA};
   \end{tikzpicture}}
   \vspace{10pt}
   \begin{card}
