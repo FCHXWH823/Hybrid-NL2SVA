@@ -323,7 +323,8 @@ later, ack must be asserted.
 
 \begin{frame}{Stage 3 in detail: syntax cleanup + SOR}
   \centering
-  \resizebox{0.95\textwidth}{!}{%
+  \vfill
+  \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
       node/.style={rectangle, rounded corners, draw=nyuvioletdark, fill=nyuvioletdark, text=white, minimum width=3.2cm, minimum height=1.1cm, align=center, font=\small},
       arrow/.style={-{Latex[length=2.5mm]}, thick, nyuvioletdark},
@@ -341,17 +342,10 @@ later, ack must be asserted.
     \draw[arrow] (post) -- (final);
 
     \node[note] at (4,-1.1) {Up to 3 rounds;\\real \texttt{jg} elaboration\\each round; LLM fix only\\on a real JG error};
-    \node[note] at (8,-1.1) {Bottom-up explanation-\\merge-tree (\texttt{sva\_tree/})\\vs.\ OL-NL text};
+    \node[note] at (8,-1.1) {Bottom-up explanation-\\merge-tree vs.\ OL-NL text};
     \node[note] at (12,-1.1) {Same mechanism as\\Pre-SOR -- SOR can\\itself break elaboration};
   \end{tikzpicture}}
-  \vspace{10pt}
-  \begin{card}
-  \footnotesize
-  \textbf{Confirmed live (Human-69):} SOR combined two implications with an
-  invalid \texttt{else} inside a property -- without the post-SOR pass, this
-  went straight through as the final answer. Running cleanup \emph{twice}
-  (once before, once after SOR) closes that gap.
-  \end{card}
+  \vfill
 \end{frame}
 
 \begin{frame}{As published: SVA operator-based rechecking}
